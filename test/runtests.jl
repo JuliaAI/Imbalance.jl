@@ -9,4 +9,5 @@ using MLUtils
 include("test_utils.jl")
 
 @testset "SMOTE" begin include("smote.jl") end
+@testset "ROSE" begin include("rose.jl") end
 @testset "Utils" begin include("utils.jl") end

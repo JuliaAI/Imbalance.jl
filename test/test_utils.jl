@@ -1,3 +1,7 @@
+### Contains functions to be used for testing purposes
+
+
+rng = Random.default_rng(123)
 
 """
 Generate num_rows observations of num_features features with the given probabilities of each class and the given type of data structure.
