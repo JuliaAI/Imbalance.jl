@@ -8,13 +8,7 @@ using NearestNeighbors
 using Tables
 
 
-# greet function
-function greet(name)
-    return "Hello $name"
-end
-
-
-include("utils.jl")
+include("common.jl")
 include("smote.jl")
 
 export SMOTE

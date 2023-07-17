@@ -99,44 +99,13 @@ Oversample a dataset given by a matrix of observations X and a categorical vecto
 - `Xover`: A matrix or matrix table that includes oversampled observations.
 - `yover`: A categorical vector of labels that includes oversampled labels.
 """
+
 function SMOTE(X::AbstractMatrix{<:AbstractFloat}, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
-    # Both MLUtils and NearestNeighbors assume observations are columns
-    X = transpose(X)
-    # Get maps from labels to indices and the needed counts
-    label_inds = group_indices(y)
-    extra_counts = get_class_counts(y, ratios)
-    # Apply smote per class on each set of points belonging to the same class
-    for (label, inds) in label_inds
-        X_label = getobs(X, inds)
-        n = extra_counts[label]
-        n == 0 && continue
-        Xnew = smote_per_class(X_label, n; k, rng)
-        ynew = fill(label, size(Xnew, 2))
-        X = hcat(X, Xnew)
-        y = vcat(y, ynew)        
-    end
-    Xover = transpose(X)
-    yover = y
+    Xover, yover = generic_oversample(X, y, smote_per_class; ratios, k, rng)
     return Xover, yover
 end
 
 function SMOTE(X, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
-    # if its a table then convert it to a matrix then proceed as usual
-    if Tables.istable(X)
-        Xm = Tables.matrix(X)
-        Xover, yover = SMOTE(Xm, y; k, ratios, rng)
-        # convert the resulting matrix into a matrix table using the column names of the original table
-        header = Tables.columnnames(X)
-        if length(header) == numobs(Xm)
-            return Tables.table(Xover; header=header), yover
-        else
-            return Tables.table(Xover), yover
-        end
-    # if not then it must be an unsupported type 
-    else
-        T = typeof(X)
-        msg = "Expected tabular data or matrix. Got data of type $T."
-        error(ArgumentError(msg))
-    end
+    Xover, yover = Tablify(SMOTE, X, y; k, ratios, rng)
+    return Xover, yover
 end
-
