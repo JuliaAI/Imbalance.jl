@@ -84,7 +84,7 @@ end
     SMOTE(X::AbstractMatrix{<:AbstractFloat}, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
     SMOTE(X, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng()
 
-Oversample a dataset given by a matrix of observations X and a categorical vector of labels y using SMOTE.
+Oversample a dataset given by a matrix or table of observations X and a categorical vector of labels y using SMOTE.
 
 # Arguments
 - `X`: A matrix or table where each row is an observation of floats

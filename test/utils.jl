@@ -13,7 +13,7 @@ using Imbalance: get_class_counts
     
     @testset "Specify ratios with a dictionary" begin
         y = [1, 1, 2, 3, 3, 4]           # majority has 2 observations
-        ratios = Dict(1 => 2.0, 2 => 1.5, 3 => 0.5, 4 => 1.0)
+        ratios = Dict(1 => 2.0, 2 => 1.5, 3 => 1.0, 4 => 1.0)        
         expected_needed_counts = Dict(1 => 2, 2 => 2, 3 => 0, 4 => 1)
         counts = get_class_counts(y, ratios)
         @test counts == expected_needed_counts

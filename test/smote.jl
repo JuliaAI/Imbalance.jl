@@ -1,8 +1,6 @@
 
 using Imbalance: SMOTE, smote_per_class, get_midway_point, generate_new_smote_point, get_random_neighbor
 
-rng = Random.default_rng(123)
-
 # Test that a point is indeed midway
 @testset "get_midway_point" begin
     x₁ = [1.0, 2.0, 3.0]
@@ -47,22 +45,23 @@ end
     for table in tables
         @testset "SMOTE with $table type" begin
             X, y = generate_imbalanced_data(1000, 2; probs=[0.2, 0.6, 0.2], type=table, rng=rng)
-            
-            X_balanced, y_balanced = SMOTE(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
+            counts_per_class = group_counts(y)
+            majority_count = maximum(values(counts_per_class))
+            Xover, yover = SMOTE(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
             # if index is not 7 then return type must be a matrix table
             if i != 7
-                @test Tables.istable(X_balanced)
+                @test Tables.istable(Xover)
                 # convert to matrix so the following tests can proceed
                 X = Tables.matrix(X)'
-                X_balanced = Tables.matrix(X_balanced)'
-                # Does is return the right number of points per class? (We take into account that probs is not exact so check for 1% error)
-                @test abs(numobs(X_balanced) - (0.6 * 1.0 * numobs(X) + 0.6 * 1.2 * numobs(X) + 0.6 * 0.9 * numobs(X))) < numobs(X) * 0.05
-                @test numobs(X_balanced) == numobs(y_balanced)
+                Xover = Tables.matrix(Xover)'
+                # Does is return the right number of points per class? (We take into account that probs is not exact so check for 3% error)
+                @test abs(numobs(Xover) - (1.0 * majority_count + 1.2 * majority_count + 0.9 * majority_count) < majority_count * 0.03) 
+                @test numobs(Xover) == numobs(yover)
             else
-                @test !Tables.istable(X_balanced) && isa(X_balanced, AbstractMatrix)
-                X, X_balanced = X', X_balanced'
-                @test abs(numobs(X_balanced) - (0.6 * 1.0 * numobs(X) + 0.6 * 1.2 * numobs(X) + 0.6 * 0.9 * numobs(X))) < numobs(X) * 0.05
-                @test numobs(X_balanced) == numobs(y_balanced)
+                @test !Tables.istable(Xover) && isa(Xover, AbstractMatrix)
+                X, Xover = X', Xover'
+                @test abs(numobs(Xover) - (1.0 * majority_count + 1.2 * majority_count + 0.9 * majority_count) < majority_count * 0.03) 
+                @test numobs(Xover) == numobs(yover)
             end
         end
         i += 1
