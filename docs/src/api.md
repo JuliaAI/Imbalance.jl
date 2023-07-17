@@ -11,7 +11,7 @@ Pages = ["api.md"]
 ## Random Oversampler
 
 ```@docs
-random_oversampler
+random_oversample
 ```
 
 ## ROSE
