@@ -11,8 +11,9 @@ using Tables
 include("common.jl")
 include("smote.jl")
 include("rose.jl")
+include("basic.jl")
 
-export SMOTE, ROSE
+export SMOTE, ROSE, random_oversample
 
 end # module Imbalance
 
