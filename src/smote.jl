@@ -94,8 +94,8 @@ Oversample a dataset given by a matrix or table of observations X and a categori
 - `rng::AbstractRNG`: Random number generator
 
 # Returns
-- `Xover`: A matrix or matrix table that includes oversampled observations.
-- `yover`: A categorical vector of labels that includes oversampled labels.
+- `Xover`: A matrix or matrix table depending on whether input is a matrix or table respectively that includes original data and oversampled observations.
+- `yover`: A categorical array (vector) of labels that includes original labels and oversampled labels.
 """
 function SMOTE(X::AbstractMatrix{<:AbstractFloat}, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
     Xover, yover = generic_oversample(X, y, smote_per_class; ratios, k, rng)

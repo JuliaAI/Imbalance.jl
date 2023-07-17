@@ -50,8 +50,8 @@ Oversample a dataset given by a matrix or table of observations X and a categori
 - `rng::AbstractRNG`: Random number generator
 
 # Returns
-- `Xover`: A matrix or matrix table that includes oversampled observations.
-- `yover`: A categorical vector of labels that includes oversampled labels.
+- `Xover`: A matrix or matrix table depending on whether input is a matrix or table respectively that includes original data and oversampled observations.
+- `yover`: A categorical array (vector) of labels that includes original labels and oversampled labels.
 
 """
 function ROSE(X::AbstractMatrix{<:AbstractFloat}, y; s::AbstractFloat=0.1, ratios=nothing, rng::AbstractRNG=default_rng())

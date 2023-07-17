@@ -29,16 +29,17 @@ end
                 # convert to matrix so the following tests can proceed
                 X = Tables.matrix(X)'
                 Xover = Tables.matrix(Xover)'
-                # Does is return the right number of points per class? (We take into account that probs is not exact so check for 1% error)
-                @test abs(numobs(Xover) - (1.0 * majority_count + 1.2 * majority_count + 0.9 * majority_count) < majority_count * 0.03) 
+                # Does is return the right number of points per class? 
+                @test numobs(Xover) == (Int(round(1.0 * majority_count)) + Int(round(1.2 * majority_count)) + Int(round(0.9 * majority_count)))
                 @test numobs(Xover) == numobs(yover)
             else
                 @test !Tables.istable(Xover) && isa(Xover, AbstractMatrix)
                 X, Xover = X', Xover'
-                @test abs(numobs(Xover) - (1.0 * majority_count + 1.2 * majority_count + 0.9 * majority_count) < majority_count * 0.03) 
+                @test numobs(Xover) == (Int(round(1.0 * majority_count)) + Int(round(1.2 * majority_count)) + Int(round(0.9 * majority_count)))
                 @test numobs(Xover) == numobs(yover)
             end
         end
         i += 1
     end
 end
+
