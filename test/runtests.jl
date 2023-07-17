@@ -1,8 +1,12 @@
 using Test
-using Plots
 using CategoricalArrays
 using DataFrames
+using Random
+using NearestNeighbors
+using MLUtils
+
 
 include("test_utils.jl")
 
-@testset "smote" begin include("smote.jl") end
+@testset "SMOTE" begin include("smote.jl") end
+@testset "Utils" begin include("utils.jl") end

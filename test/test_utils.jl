@@ -1,5 +1,19 @@
 
+"""
+Generate num_rows observations of num_features features with the given probabilities of each class and the given type of data structure.
 
+# Arguments
+- `num_rows::Int`: Number of observations to generate
+- `num_features::Int`: Number of features to generate
+- `probs::AbstractVector`: A vector of probabilities of each class
+- `type::String`: Type of data structure to generate. Valid values are "DF", "Matrix", "RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"
+- `rng::AbstractRNG`: Random number generator
+
+# Returns
+- `X:`: A table or matrix where each row is an observation of floats
+- `y::CategoricalArray`: A categorical vector of labels with classes 0, 1, 2, ..., k-1 where k is determined by the length of the probs vector
+
+"""
 function generate_imbalanced_data(num_rows, num_features; probs=[0.5, 0.5], type="DF", rng=Random.default_rng())
     if type == "DF"
         X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
@@ -23,50 +37,28 @@ function generate_imbalanced_data(num_rows, num_features; probs=[0.5, 0.5], type
     else 
         error("Invalid type")
     end
-    # Get the number of classes from the length of the probabilities vector
-    num_classes = length(probs)
     # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
     cum_probs = cumsum(probs)
     rands = rand(rng, num_rows)
-    y = CategoricalArray([findfirst(x -> rands[i] <= x , cumsum(probs)) - 1 for i in 1:num_rows])
+    y = CategoricalArray([findfirst(x -> rands[i] <= x , cum_probs) - 1 for i in 1:num_rows])
     return X, y
 end
 
 
+"""
+Test if point a is between points b and c
 
-function plot_data(y_before, y_after, X_before, X_after)
+# Arguments
+- `a::AbstractVector`: A point
+- `b::AbstractVector`: A point
+- `c::AbstractVector`: A point
 
-    if Tables.istable(X_before)
-        X_before = Tables.matrix(X_before)
-    end
-    
-    if Tables.istable(X_after)
-        X_after = Tables.matrix(X_after)
-    end
-
-    # Frequency table
-    # Find labels of y
-    labels = unique(y_before)
-
-    # map labels to integers
-    label_map = Dict(label => i for (i, label) in enumerate(labels))
-
-    # Find counts of each label for each version of y
-    label_counts1 = [count(yi -> yi == label, y_before) for label in labels]    
-    label_counts2 = [count(yi -> yi == label, y_after) for label in labels]
-    
-    class_colors = [:blue, :yellow, :red]
-
-    # Plot the counts vs the labels in each case
-    p1 = bar(labels, label_counts1, xlabel="Label", ylabel="Count", title="\nBefore Oversampling", legend=false)
-    p2 = bar(labels, label_counts2, xlabel="Label", ylabel="Count", title="\nAfter Oversampling", legend=false)
-    
-    # Scatter plot
-    p3 = scatter(X_before[:, 1], X_before[:, 2], xlabel="X1", ylabel="X2", title="Before Oversampling with size $(size(X_before)[1])", legend=false,
-                color=[class_colors[label_map[yi]] for yi in y_before])
-    p4 = scatter(X_after[:, 1], X_after[:, 2], xlabel="X1", ylabel="X2", title="After Oversampling with size $(size(X_after)[1])", legend=false,
-                color=[class_colors[label_map[yi]] for yi in y_after])
-    
-    # Plotting the figures together in a 2x2 layout
-    plot(p1, p2, p3, p4,   layout=(2, 2), size=(900, 900))
+# Returns
+- `Bool`: True if a is between b and c, false otherwise
+"""
+function _is_in_between(a, b, c; atol=0.01)::Bool
+    dist_ab = sqrt(sum((a .- b).^2))
+    dist_ac = sqrt(sum((a .- c).^2))
+    dist_total = sqrt(sum((b .- c).^2))
+    return isapprox(dist_ab + dist_ac, dist_total; atol)
 end
