@@ -10,8 +10,9 @@ using Tables
 
 include("common.jl")
 include("smote.jl")
+include("rose.jl")
 
-export SMOTE
+export SMOTE, ROSE
 
 end # module Imbalance
 
