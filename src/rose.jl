@@ -37,18 +37,16 @@ end
 
 """
     ROSE(X::AbstractMatrix{<:AbstractFloat}, y; s::AbstractFloat=0.1, ratios=nothing, rng::AbstractRNG=default_rng())
-    ROSE(X, y; s::AbstractFloat=0.1, ratios=nothing, rng::AbstractRNG=default_rng()
+    ROSE(X, y; s::AbstractFloat=0.1, ratios=nothing, rng::AbstractRNG=default_rng())
 
 Oversample a dataset given by a matrix or table of observations X and a categorical vector of labels y using ROSE.
 
 # Arguments
 
-- `X`: A matrix or table where each row is an observation of floats
-- `y::AbstractVector`: A categorical vector of labels
+- `X`: A matrix or table where each row is an observation (vector) of floats
+- `y::AbstractVector`: A categorical vector of labels that corresponds to the observations in X
 - `s::float`: A parameter that proportionally controls the bandwidth of the Gaussian kernel
-- `ratios`: A dictionary mapping each class to the ratio of the needed number of observations of that class to
- the current number of observations of the majority class. If nothing, then each class will be oversampled to the size
-  of the majority class and if float then each class will be oversampled to the size of the majority class times the float.
+- `ratios`: A float or dictionary mapping each class to the ratio of the needed number of observations of that class to the current number of observations of the majority class. If nothing, then each class will be oversampled to the size of the majority class and if float then each class will be oversampled to the size of the majority class times the float.
 - `rng::AbstractRNG`: Random number generator
 
 # Returns
