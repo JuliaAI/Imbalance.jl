@@ -9,11 +9,14 @@ using Tables
 
 
 include("common.jl")
-include("smote.jl")
-include("rose.jl")
+
 include("basic.jl")
+export random_oversample
 
-export SMOTE, ROSE, random_oversample
+include("rose.jl")
+export rose
 
-end # module Imbalance
+include("smote.jl")
+export smote
 
+end

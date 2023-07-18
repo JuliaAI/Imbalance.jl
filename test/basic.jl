@@ -8,7 +8,9 @@ using Imbalance: random_oversample
     Xover, yover = random_oversample(X, y; ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
     # Check that the number of samples increased correctly
     X, Xover = X', Xover'
-    @test numobs(Xover) == (Int(round(1.0 * majority_count)) + Int(round(1.2 * majority_count)) + Int(round(0.9 * majority_count)))
+    @test numobs(Xover) == (Int(round(1.0 * majority_count)) + 
+                            Int(round(1.2 * majority_count)) + 
+                            Int(round(0.9 * majority_count)))
     # Check that the number of uniques is the same
     @test length(unique(Xover, dims=2)) == length(unique(X, dims=2))
 end

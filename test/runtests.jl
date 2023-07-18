@@ -11,4 +11,4 @@ include("test_utils.jl")
 @testset "Basic Random Oversampler" begin include("basic.jl") end
 @testset "SMOTE" begin include("smote.jl") end
 @testset "ROSE" begin include("rose.jl") end
-@testset "Utils" begin include("utils.jl") end
+@testset "common" begin include("common.jl") end
