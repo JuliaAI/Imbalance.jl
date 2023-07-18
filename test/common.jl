@@ -1,5 +1,5 @@
 # this tests the utils file. check test_utils for utility functions used in testing
-using Imbalance: get_class_counts, group_lens, group_inds
+using Imbalance: get_class_counts, group_lens, group_inds, randrows
 
 
 @testset "get_class_counts" begin
@@ -25,4 +25,31 @@ using Imbalance: get_class_counts, group_lens, group_inds
         counts = get_class_counts(y, ratio)
         @test counts == expected_needed_counts
     end
+end
+
+
+@testset "randrows" begin
+    rng = MersenneTwister(1234)     
+    X = [1 2; 3 4; 5 6] # create a 3x2 matrix
+    @test randrows(rng, X) in [[1, 2], [3, 4], [5, 6]] 
+end
+
+
+@testset "randrows" begin
+    rng = MersenneTwister(1234) 
+    X = [1 2; 3 4; 5 6] 
+    @test randrows(rng, X, 2)[1, :] in [[1, 2], [3, 4], [5, 6]] 
+    @test randrows(rng, X, 2)[2, :] in [[1, 2], [3, 4], [5, 6]] 
+end
+
+
+@testset "group_inds" begin
+    categorical_array = ["a", "b", "a", "c", "b"] 
+    @test group_inds(categorical_array) == Dict("a" => [1, 3], "b" => [2, 5], "c" => [4]) 
+end
+
+
+@testset "group_lens" begin
+    categorical_array = ["a", "b", "a", "c", "b"] 
+    @test group_lens(categorical_array) == Dict("a" => 2, "b" => 2, "c" => 1) 
 end
