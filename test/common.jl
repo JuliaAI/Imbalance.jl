@@ -1,5 +1,5 @@
 # this tests the utils file. check test_utils for utility functions used in testing
-using Imbalance: get_class_counts
+using Imbalance: get_class_counts, group_lens, group_inds
 
 
 @testset "get_class_counts" begin

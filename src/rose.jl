@@ -16,13 +16,13 @@ function rose_per_class(
     s::AbstractFloat=1.0,  rng::AbstractRNG=default_rng()
 )
     # sample n rows from X
-    Xnew = randobs(rng, X, n)
+    Xnew = randrows(rng, X, n)
     # For s == 0 this is just random oversampling
     if s == 0.0 return Xnew end
     # compute the standard deviation column-wise
     σs = vec(std(Xnew, dims=2))
-    d = numobs(σs)
-    N = numobs(Xnew)
+    d = size(Xnew, 2)
+    N = size(Xnew, 1)
     h = (4/((d+2)*N))^(1/(d+4))
     # make a diagonal matrix of the result
     H = Diagonal(σs * s * h)

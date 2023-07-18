@@ -1,6 +1,5 @@
 module Imbalance
 
-using MLUtils
 using Random: AbstractRNG, default_rng
 using Statistics
 using LinearAlgebra

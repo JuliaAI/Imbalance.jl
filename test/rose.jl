@@ -7,7 +7,7 @@ using Imbalance: rose, rose_per_class
     k = 10
     n = 100
     smote_points = rose_per_class(X, n; s=1.0, rng=rng)
-    @test numobs(smote_points) == n
+    @test size(smote_points, 1) == n
     # check that there are no duplicates in the generated points
     @test length(unique(smote_points, dims=2)) == length(smote_points)
 end
@@ -19,27 +19,27 @@ end
               "DictRowTable", "DictColTable", "Matrix", "MatrixTable"]
     for i in eachindex(tables)
         @testset "ROSE with $tables[i] type" begin
-            X, y = generate_imbalanced_data(1000, 2; probs=[0.2, 0.6, 0.2], type=tables[i], rng=rng)
-            counts_per_class = group_counts(y)
+            X, y = generate_imbalanced_data(1000, 2; probs=[0.2, 0.6, 0.2], 
+                                            type=tables[i], rng=rng)
+            counts_per_class = group_lens(y)
             majority_count = maximum(values(counts_per_class))
             Xover, yover = rose(X, y; s=1.0, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
             # if index is not 7 then return type must be a matrix table
             if i != 7
                 @test Tables.istable(Xover)
                 # convert to matrix so the following tests can proceed
-                X = Tables.matrix(X)'
-                Xover = Tables.matrix(Xover)'
-                @test numobs(Xover) == (Int(round(1.0 * majority_count)) + 
+                X = Tables.matrix(X)
+                Xover = Tables.matrix(Xover)
+                @test size(Xover, 1) == (Int(round(1.0 * majority_count)) + 
                                         Int(round(1.2 * majority_count)) + 
                                         Int(round(0.9 * majority_count)))
-                @test numobs(Xover) == numobs(yover)
+                @test size(Xover, 1) == length(yover)
             else
                 @test !Tables.istable(Xover) && isa(Xover, AbstractMatrix)
-                X, Xover = X', Xover'
-                @test numobs(Xover) == (Int(round(1.0 * majority_count)) + 
+                @test size(Xover, 1) == (Int(round(1.0 * majority_count)) + 
                                         Int(round(1.2 * majority_count)) + 
                                         Int(round(0.9 * majority_count)))
-                @test numobs(Xover) == numobs(yover)
+                @test size(Xover, 1) == length(yover)
             end
         end
     end

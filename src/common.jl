@@ -25,22 +25,20 @@ function generic_oversample(
     X::AbstractMatrix{<:AbstractFloat}, y, oversample_per_class; 
     ratios=nothing, kwargs...
 )
-    # NearestNeighbors assumes observations are columns
-    X = transpose(X)
     # Get maps from labels to indices and the needed counts
-    label_inds = group_indices(y)
+    label_inds = group_inds(y)
     extra_counts = get_class_counts(y, ratios)
     # Apply oversample per class on each set of points belonging to the same class
     for (label, inds) in label_inds
-        X_label = getobs(X, inds)
+        X_label = X[inds, :]
         n = extra_counts[label]
         n == 0 && continue
         Xnew = oversample_per_class(X_label, n; kwargs...)
-        ynew = fill(label, size(Xnew, 2))
-        X = hcat(X, Xnew)
+        ynew = fill(label, size(Xnew, 1))
+        X = vcat(X, Xnew)
         y = vcat(y, ynew)
     end
-    Xover = transpose(X)
+    Xover = X
     yover = y
     return Xover, yover
 end
@@ -70,7 +68,7 @@ function tablify(func::Function, X, y; kwargs...)
         Xover, yover = func(Xm, y; kwargs...)
         # convert the resulting matrix into a matrix table using the column names of the original table
         header = Tables.columnnames(X)
-        if length(header) == numobs(Xm)
+        if length(header) == size(Xm, 2)
             return Tables.table(Xover; header=header), yover
         else
             return Tables.table(Xover), yover
@@ -104,7 +102,7 @@ relative to the majority class.
     that class to achieve the given ratio relative to the majority class.
 """
 function get_class_counts(y, ratios=nothing)
-    label_counts = group_counts(y)
+    label_counts = group_lens(y)
     majority_count = maximum(values(label_counts))
     extra_counts = Dict()
     if isnothing(ratios)
@@ -164,5 +162,27 @@ function get_class_counts(y, ratios=nothing)
 end
 
 
-randobs(rng::AbstractRNG, X) = getobs(X, rand(rng, 1:numobs(X)))  
-randobs(rng::AbstractRNG, X, n) = getobs(X, rand(rng, 1:numobs(X), n))
+randrows(rng::AbstractRNG, X) = X[rand(rng, 1:size(X, 1)), :]
+randrows(rng::AbstractRNG, X, n) = X[rand(rng, 1:size(X, 1), n), :]
+
+function group_inds(categorical_array)
+    result = Dict()
+    for (i, v) in enumerate(categorical_array)
+        if !haskey(result, v)
+            result[v] = []
+        end
+        push!(result[v], i)
+    end
+    return result
+end
+
+function group_lens(categorical_array)
+    result = Dict()
+    for v in categorical_array
+        if !haskey(result, v)
+            result[v] = 0
+        end
+        result[v] += 1
+    end
+    return result
+end

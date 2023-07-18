@@ -17,8 +17,9 @@ function get_collinear_point(
     rng::AbstractRNG=default_rng()
 )
     r = rand(rng)
-    return (1 - r) .* x₁ .+ r .* x₂ 
+    collinear_point =  (1 - r) .* x₁ .+ r .* x₂ 
     # Equivalent to (x₂  .- x₁ ) .* r .+ x₁  but avoids allocating a new vector
+    return reshape(collinear_point, 1, :)
 end
 
 
@@ -42,8 +43,8 @@ function get_random_neighbor(
 )
     inds, _ = knn(tree, x, k + 1, true)
     # Need to deal with that the first neighbor is the point itself; hence, the k+1 and the 2:end
-    random_neighbor_index = randobs(rng, inds[2:end])
-    random_neighbor = getobs(X, random_neighbor_index)
+    random_neighbor_index = randrows(rng, inds[2:end])[1]
+    random_neighbor = X[random_neighbor_index, :]
     return random_neighbor
 end
 
@@ -64,7 +65,7 @@ function generate_new_smote_point(
     X::AbstractMatrix{<:AbstractFloat}, tree;
     k::Int, rng::AbstractRNG
 )
-    random_point = randobs(rng, X)
+    random_point = randrows(rng, X)
     random_neighbor = get_random_neighbor(X, tree, random_point; k, rng)
     new_point = get_collinear_point(random_point, random_neighbor; rng)
     return new_point
@@ -89,9 +90,9 @@ function smote_per_class(
     X::AbstractMatrix{<:AbstractFloat}, n::Int; 
     k::Int=5, rng::AbstractRNG=default_rng()
 )
-    k = (k > 0) ? min(k, numobs(X) - 1) : 1
-    tree = KDTree(X)
-    return hcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)    
+    k = (k > 0) ? min(k, size(X, 1) - 1) : 1
+    tree = KDTree(X')
+    return vcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)    
 end
 
 
@@ -105,7 +106,7 @@ Oversample a dataset given by a matrix or table of observations X and a categori
 - `X`: A matrix or table where each row is an observation (vector) of floats
 - `y`: A categorical array (vector) of labels that corresponds to the observations in X
 - `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
-    Should be within the range [1, numobs(X) - 1] else set to the nearest of these two values.
+    Should be within the range `[1, size(X, 1) - 1]`` else set to the nearest of these two values.
 - `ratios`: A float or dictionary mapping each class to the ratio of the 
     needed number of observations of that class to the current number of observations 
     of the majority class.
