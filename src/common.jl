@@ -30,7 +30,7 @@ function generic_oversample(
     extra_counts = get_class_counts(y, ratios)
     # Apply oversample per class on each set of points belonging to the same class
     for (label, inds) in label_inds
-        X_label = X[inds, :]
+        X_label = @view X[inds, :]
         n = extra_counts[label]
         n == 0 && continue
         Xnew = oversample_per_class(X_label, n; kwargs...)
