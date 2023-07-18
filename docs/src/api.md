@@ -17,13 +17,13 @@ random_oversample
 ## ROSE
 
 ```@docs
-ROSE
+rose
 ```
 
 ## SMOTE
 
 ```@docs
-SMOTE
+smote
 ```
 
 
