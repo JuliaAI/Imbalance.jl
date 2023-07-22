@@ -1,5 +1,5 @@
 ### Contains functions to be used for testing purposes
-rng = Random.default_rng(123)
+rng = StableRNG(123)
 
 """
 Generate num_rows observations of num_features features with the given probabilities of 
