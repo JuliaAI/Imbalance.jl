@@ -13,7 +13,7 @@ and the given type of data structure.
 
 # Returns
 - `X:`: A table or matrix where each row is an observation of floats
-- `y::CategoricalArray`: A categorical vector of labels with classes 0, 1, 2, ..., k-1 
+- `y::CategoricalArray`: An abstract vector of class labels with classes 0, 1, 2, ..., k-1 
     where k is determined by the length of the probs vector
 
 """
@@ -58,8 +58,8 @@ the histogram of the labels before and after oversampling and the second row is 
 scatter plot of the observations before and after oversampling.
 
 # Arguments
-- `y_before::CategoricalArray`: A categorical vector of labels before oversampling
-- `y_after::CategoricalArray`: A categorical vector of labels after oversampling
+- `y_before::CategoricalArray`: An abstract vector of class labels before oversampling
+- `y_after::CategoricalArray`: An abstract vector of class labels after oversampling
 - `X_before::AbstractMatrix`: A matrix where each column is an observation before oversampling
 - `X_after::AbstractMatrix`: A matrix where each column is an observation after oversampling
 - `hist_only::Bool`: If true, only plot the histograms of the labels before and after oversampling. 

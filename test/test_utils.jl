@@ -15,7 +15,7 @@ each class and the given type of data structure.
 
 # Returns
 - `X:`: A table or matrix where each row is an observation of floats
-- `y::CategoricalArray`: A categorical vector of labels with classes 0, 1, 2, ..., k-1
+- `y::CategoricalArray`: An abstract vector of class labels with classes 0, 1, 2, ..., k-1
     where k is determined by the length of the probs vector
 """
 function generate_imbalanced_data(
