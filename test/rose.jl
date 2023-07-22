@@ -21,7 +21,7 @@ end
         @testset "ROSE with $tables[i] type" begin
             X, y = generate_imbalanced_data(1000, 2; probs=[0.2, 0.6, 0.2], 
                                             type=tables[i], rng=rng)
-            counts_per_class = group_lens(y)
+            counts_per_class = group_lengths(y)
             majority_count = maximum(values(counts_per_class))
             Xover, yover = rose(X, y; s=1.0, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
             # if index is not 7 then return type must be a matrix table

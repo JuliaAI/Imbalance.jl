@@ -1,5 +1,5 @@
 # this tests the utils file. check test_utils for utility functions used in testing
-using Imbalance: get_class_counts, group_lens, group_inds, randrows, rng_handler
+using Imbalance: get_class_counts, group_lengths, group_inds, randrows, rng_handler
 
 
 @testset "get_class_counts" begin
@@ -49,9 +49,9 @@ end
 end
 
 
-@testset "group_lens" begin
+@testset "group_lengths" begin
     categorical_array = ["a", "b", "a", "c", "b"] 
-    @test group_lens(categorical_array) == Dict("a" => 2, "b" => 2, "c" => 1) 
+    @test group_lengths(categorical_array) == Dict("a" => 2, "b" => 2, "c" => 1) 
 end
 
 

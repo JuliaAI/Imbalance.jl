@@ -101,7 +101,7 @@ relative to the majority class.
     that class to achieve the given ratio relative to the majority class.
 """
 function get_class_counts(y::AbstractVector, ratios=nothing)
-    label_counts = group_lens(y)
+    label_counts = group_lengths(y)
     majority_count = maximum(values(label_counts))
     extra_counts = Dict()
     if isnothing(ratios)
@@ -166,12 +166,14 @@ randrows(rng::AbstractRNG, X, n) = X[rand(rng, 1:size(X, 1), n), :]
 rng_handler(rng::Integer) = StableRNG(rng)
 rng_handler(rng::AbstractRNG) = rng
 
+
 """
 Return a dictionary mapping each unique value in an abstract vector to the indices of the array
 where that value occurs.
 """
-function group_inds(categorical_array::AbstractVector)
-    result = Dict()
+function group_inds(categorical_array::AbstractVector{T}) where T   
+    result = LittleDict{T, AbstractVector{Int}}()
+    freeze(result)
     for (i, v) in enumerate(categorical_array)
         if !haskey(result, v)
             result[v] = []
@@ -181,11 +183,13 @@ function group_inds(categorical_array::AbstractVector)
     return result
 end
 
+
 """
 Return a dictionary mapping each unique value in an abstract vector to the number of times that value occurs.
 """
-function group_lens(categorical_array::AbstractVector)
-    result = Dict()
+function group_lengths(categorical_array::AbstractVector{T}) where T   
+    result = LittleDict{T, Int}()
+    freeze(result)
     for v in categorical_array
         if !haskey(result, v)
             result[v] = 0
