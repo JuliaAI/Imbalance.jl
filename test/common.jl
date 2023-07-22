@@ -1,5 +1,5 @@
 # this tests the utils file. check test_utils for utility functions used in testing
-using Imbalance: get_class_counts, group_lengths, group_inds, randrows, rng_handler
+using Imbalance: get_class_counts, group_lengths, group_inds, randrows, rng_handler, ERR_MISSING_CLASS, ERR_INVALID_RATIO
 
 
 @testset "get_class_counts" begin
@@ -10,6 +10,28 @@ using Imbalance: get_class_counts, group_lengths, group_inds, randrows, rng_hand
         @test counts == expected_needed_counts
     end
     
+    @testset "Error Tests" begin
+        # Test for missing class in ratios
+        @test_throws ERR_MISSING_CLASS begin
+            y = [1, 2, 3]
+            ratios = Dict(1 => 0.9, 2 => 0.9)
+            get_class_counts(y, ratios)
+        end
+
+        # Test for invalid ratio (non-positive)
+        @test_throws ERR_INVALID_RATIO begin
+            y = [1, 2, 3]
+            ratios = Dict(1 => 0.9, 2 => -0.9, 3 => 0.9)
+            get_class_counts(y, ratios)
+        end
+
+        @test_logs (:warn, "ratio 0.5 for class 1 implies that the class should have -1 less samples because it is already 1.0 of the majority class but SMOTE cannot undersample.\n        Will skip oversampling for this class.") begin
+            y = [1,1,1,2,2,2]
+            ratios = Dict(1=>0.5, 2=>1.0)
+            get_class_counts(y, ratios)
+        end
+    end
+
     @testset "Specify ratios with a dictionary" begin
         y = [1, 1, 2, 3, 3, 4]           # majority has 2 observations
         ratios = Dict(1 => 2.0, 2 => 1.5, 3 => 1.0, 4 => 1.0)        

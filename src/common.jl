@@ -100,6 +100,8 @@ relative to the majority class.
 - `Dict`: A dictionary mapping each class to the number of extra samples needed for
     that class to achieve the given ratio relative to the majority class.
 """
+const ERR_MISSING_CLASS = "Error: found a class in y that is not in ratios."
+const ERR_INVALID_RATIO = "Error: ratio for any class must be greater than 0."
 
 # Method for handling ratios as a dictionary
 function get_class_counts(y::AbstractVector, ratios::Dict{T, <:AbstractFloat}) where T 
@@ -109,18 +111,10 @@ function get_class_counts(y::AbstractVector, ratios::Dict{T, <:AbstractFloat}) w
 
     # each class needs to be the size specified in `ratios`
     for (label, count) in label_counts
-        if !(label in keys(ratios))
-            msg = "ratios must contain a key for each class in y. \
-            Could not find ratio for class $label"
-            error(ArgumentError(msg))
-        elseif ratios[label] < 0
-            msg = "ratio for any class must be greater than or equal to 0."
-            error(ArgumentError(msg))
-        else
-            extra_counts[label] = calculate_extra_counts(ratios[label], majority_count, count)
-        end
+        (label in keys(ratios)) || throw(ERR_MISSING_CLASS)
+        ratios[label] > 0 || throw(ERR_INVALID_RATIO) 
+        extra_counts[label] = calculate_extra_counts(ratios[label], majority_count, count, label)
     end
-
     return extra_counts
 end
 
@@ -132,7 +126,7 @@ function get_class_counts(y::AbstractVector{T}, ratio::AbstractFloat) where T
 
     # each class needs to be the size specified in `ratio`
     for (label, count) in label_counts
-        extra_counts[label] = calculate_extra_counts(ratio, majority_count, count)
+        extra_counts[label] = calculate_extra_counts(ratio, majority_count, count, label)
     end
 
     return extra_counts
@@ -146,7 +140,7 @@ end
 """
 Helper function for calculating the number of extra samples needed for a class given a ratio, its count and majoiry count.
 """
-function calculate_extra_counts(ratio::AbstractFloat, majority_count::Integer, label_count::Integer)
+function calculate_extra_counts(ratio::AbstractFloat, majority_count::Integer, label_count::Integer, label)
     extra_count = Int(round(ratio * majority_count)) - label_count
     if extra_count < 0
         old_ratio = label_count / majority_count
