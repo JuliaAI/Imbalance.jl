@@ -1,5 +1,5 @@
 # this tests the utils file. check test_utils for utility functions used in testing
-using Imbalance: get_class_counts, group_lengths, group_inds, randrows, rng_handler, ERR_MISSING_CLASS, ERR_INVALID_RATIO
+using Imbalance: get_class_counts, group_lengths, group_inds, randrows, rng_handler, ERR_MISSING_CLASS, ERR_INVALID_RATIO, WRN_UNDERSAMPLE
 
 
 @testset "get_class_counts" begin
@@ -12,20 +12,20 @@ using Imbalance: get_class_counts, group_lengths, group_inds, randrows, rng_hand
     
     @testset "Error Tests" begin
         # Test for missing class in ratios
-        @test_throws ERR_MISSING_CLASS begin
+        @test_throws ERR_MISSING_CLASS(3) begin
             y = [1, 2, 3]
             ratios = Dict(1 => 0.9, 2 => 0.9)
             get_class_counts(y, ratios)
         end
 
         # Test for invalid ratio (non-positive)
-        @test_throws ERR_INVALID_RATIO begin
+        @test_throws ERR_INVALID_RATIO(2) begin
             y = [1, 2, 3]
             ratios = Dict(1 => 0.9, 2 => -0.9, 3 => 0.9)
             get_class_counts(y, ratios)
         end
 
-        @test_logs (:warn, "ratio 0.5 for class 1 implies that the class should have -1 less samples because it is already 1.0 of the majority class but SMOTE cannot undersample.\n        Will skip oversampling for this class.") begin
+        @test_logs (:warn, WRN_UNDERSAMPLE(0.5, 1, -1, 1.0)) begin
             y = [1,1,1,2,2,2]
             ratios = Dict(1=>0.5, 2=>1.0)
             get_class_counts(y, ratios)
