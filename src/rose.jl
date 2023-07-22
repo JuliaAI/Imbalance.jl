@@ -55,7 +55,7 @@ vector of labels y using ROSE.
 - `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` seed to be used with `StableRNG`.
 
 # Returns
-- `Xover`: A matrix or matrix table depending on whether input is a matrix or table 
+- `Xover`: A matrix or table like X (if possible, else a columntable) depending on whether X is a matrix or table 
     respectively that includes original data and the new observations due to oversampling.
 - `yover`: An abstract vector of labels that includes the original
     labels and the new instances of them due to oversampling.
