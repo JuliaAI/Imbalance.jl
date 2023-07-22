@@ -66,9 +66,9 @@ function tablify(matrix_func::Function, X, y:: AbstractVector; kwargs...)
     if Tables.istable(X)
         Xm = Tables.matrix(X)
         Xover, yover = matrix_func(Xm, y; kwargs...)
-        # convert the resulting matrix into a matrix table using the column names of the original table
+        # convert the resulting matrix into a matrix table using original columnnames
         header = Tables.columnnames(X)
-        if length(header) == size(Xm, 2)
+        if header != Tables.propertynames(X)
             return Tables.table(Xover; header=header), yover
         else
             return Tables.table(Xover), yover
