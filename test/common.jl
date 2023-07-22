@@ -51,14 +51,14 @@ end
 
 
 @testset "randrows" begin
-    rng = MersenneTwister(1234)     
+    rng = StableRNG(1234)     
     X = [1 2; 3 4; 5 6] # create a 3x2 matrix
     @test randrows(rng, X) in [[1, 2], [3, 4], [5, 6]] 
 end
 
 
 @testset "randrows" begin
-    rng = MersenneTwister(1234) 
+    rng = StableRNG(1234) 
     X = [1 2; 3 4; 5 6] 
     @test randrows(rng, X, 2)[1, :] in [[1, 2], [3, 4], [5, 6]] 
     @test randrows(rng, X, 2)[2, :] in [[1, 2], [3, 4], [5, 6]] 
