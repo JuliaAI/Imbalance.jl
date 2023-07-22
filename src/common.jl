@@ -164,6 +164,8 @@ end
 
 randrows(rng::AbstractRNG, X) = X[rand(rng, 1:size(X, 1)), :]
 randrows(rng::AbstractRNG, X, n) = X[rand(rng, 1:size(X, 1), n), :]
+rng_handler(rng::Integer) = StableRNG(rng)
+rng_handler(rng::AbstractRNG) = rng
 
 function group_inds(categorical_array)
     result = Dict()

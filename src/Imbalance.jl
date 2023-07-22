@@ -1,6 +1,7 @@
 module Imbalance
 
 using Random: AbstractRNG, default_rng
+using StableRNGs: StableRNG
 using Statistics
 using LinearAlgebra
 using NearestNeighbors

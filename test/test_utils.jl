@@ -22,6 +22,7 @@ function generate_imbalanced_data(
     num_rows, num_features; 
     probs=[0.5, 0.5], type="DF", rng=Random.default_rng()
 )
+    rng = rng_handler(rng)
     if type == "DF"
         X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
     elseif type == "Matrix"

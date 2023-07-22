@@ -20,7 +20,7 @@ labels y using random oversampling.
 - `yover`: A categorical array (vector) of labels that includes original
     labels and oversampled labels.
 """
-function random_oversample(X,y; ratios=nothing, rng=default_rng())
+function random_oversample(X,y; ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng())
     # ROSE with s=0 is equivalent to random_oversample
     Xover, yover = rose(X, y; s=0.0, ratios=ratios, rng=rng)
     return Xover, yover

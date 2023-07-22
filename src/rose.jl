@@ -62,13 +62,17 @@ categorical vector of labels y using ROSE.
 """
 function rose(
     X::AbstractMatrix{<:AbstractFloat}, y; 
-    s::AbstractFloat=0.1, ratios=nothing, rng::AbstractRNG=default_rng()
+    s::AbstractFloat=0.1, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
 )
+    rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, rose_per_class; s, ratios, rng)
     return Xover, yover
 end
 
-function rose(X, y; s::AbstractFloat=0.1, ratios=nothing, rng::AbstractRNG=default_rng())
+function rose(
+    X, y; 
+    s::AbstractFloat=0.1, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
+)
     Xover, yover = tablify(rose, X, y; s, ratios, rng)
     return Xover, yover
 end

@@ -89,7 +89,7 @@ observation matrix X belong to the same class.
 function smote_per_class(
     X::AbstractMatrix{<:AbstractFloat}, n::Int; 
     k::Int=5, rng::AbstractRNG=default_rng()
-)
+)   
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
     tree = KDTree(X')
     return vcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)    
@@ -122,8 +122,9 @@ Oversample a dataset given by a matrix or table of observations X and a categori
 """
 function smote(
     X::AbstractMatrix{<:AbstractFloat}, y; 
-    k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng()
+    k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
 )
+    rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, smote_per_class; ratios, k, rng)
     return Xover, yover
 end
@@ -131,7 +132,7 @@ end
 
 function smote(
     X, y; 
-    k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng()
+    k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
 )
     Xover, yover = tablify(smote, X, y; k, ratios, rng)
     return Xover, yover
