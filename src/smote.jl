@@ -90,6 +90,10 @@ function smote_per_class(
     X::AbstractMatrix{<:AbstractFloat}, n::Int; 
     k::Int=5, rng::AbstractRNG=default_rng()
 )   
+    if  size(X, 1) == 1
+        @warn "one of the classes has a single observation and will be ignored"
+        return X
+    end
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
     tree = KDTree(X')
     return vcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)    
