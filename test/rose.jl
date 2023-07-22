@@ -16,7 +16,7 @@ end
 # Test that ROSE adds the right number of points per class and that the input and output types are as expected
 @testset "ROSE Algorithm" begin
     tables = ["DF", "RowTable", "ColTable", "MatrixTable", 
-              "DictRowTable", "DictColTable", "Matrix", "MatrixTable"]
+              "DictRowTable", "DictColTable", "Matrix"]
     for i in eachindex(tables)
         @testset "ROSE with $tables[i] type" begin
             X, y = generate_imbalanced_data(1000, 2; probs=[0.2, 0.6, 0.2], 

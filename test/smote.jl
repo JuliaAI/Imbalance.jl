@@ -93,7 +93,7 @@ end
 # Test that RNG can be int or StableRNG of int in SMOTE
 @testset "RNG in SMOTE Algorithm" begin
     tables = ["DF", "RowTable", "ColTable", "MatrixTable", 
-              "DictRowTable", "DictColTable", "Matrix", "MatrixTable"]
+              "DictRowTable", "DictColTable", "Matrix"]
     for i in eachindex(tables)
         @testset "SMOTE with $tables[i] type" begin
             rng = StableRNG(1234)
