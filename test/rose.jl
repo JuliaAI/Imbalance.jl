@@ -44,3 +44,30 @@ end
         end
     end
 end
+
+
+
+# Test that RNG can be int or StableRNG of int in ROSE
+@testset "RNG in SMOTE Algorithm" begin
+    tables = ["DF", "RowTable", "ColTable", "MatrixTable", 
+              "DictRowTable", "DictColTable", "Matrix", "MatrixTable"]
+    for i in eachindex(tables)
+        @testset "ROSE with $tables[i] type" begin
+            rng = StableRNG(1234)
+            rng_int = 1234
+            X, y = generate_imbalanced_data(100, 2; probs=[0.2, 0.6, 0.2], 
+                                            type=tables[i], rng=rng)
+            rng = StableRNG(1234)
+            Xover1, yover1 = rose(X, y; s=0.03, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
+            Xover2, yover2 = rose(X, y; s=0.03, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng_int)
+            Xover3, yover3 = rose(X, y; s=0.03, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=99)
+            if Tables.istable(X)
+                Xover1 = Tables.matrix(Xover1)
+                Xover2 = Tables.matrix(Xover2)
+                Xover3 = Tables.matrix(Xover3)                
+            end
+            @test sum(Xover1, dims=1) == sum(Xover2, dims=1)
+            @test sum(Xover1, dims=1) != sum(Xover3, dims=1)
+        end
+    end
+end

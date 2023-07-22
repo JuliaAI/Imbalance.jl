@@ -3,6 +3,7 @@ using CategoricalArrays
 using DataFrames
 using Random
 using NearestNeighbors
+using StableRNGs: StableRNG
 
 
 include("test_utils.jl")

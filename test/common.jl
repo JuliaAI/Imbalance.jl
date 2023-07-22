@@ -1,5 +1,5 @@
 # this tests the utils file. check test_utils for utility functions used in testing
-using Imbalance: get_class_counts, group_lens, group_inds, randrows
+using Imbalance: get_class_counts, group_lens, group_inds, randrows, rng_handler
 
 
 @testset "get_class_counts" begin
@@ -52,4 +52,10 @@ end
 @testset "group_lens" begin
     categorical_array = ["a", "b", "a", "c", "b"] 
     @test group_lens(categorical_array) == Dict("a" => 2, "b" => 2, "c" => 1) 
+end
+
+
+# compare rng_handler(rng::Integer) = StableRNG(rng) with rng_handler(rng::AbstractRNG) = rng
+@testset "rng_handler" begin
+    @test rng_handler(1234) == rng_handler(StableRNG(1234))
 end

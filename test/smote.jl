@@ -1,6 +1,5 @@
 using Imbalance: smote, smote_per_class, generate_new_smote_point, get_random_neighbor, 
     get_collinear_point
-
 # Test that a point is indeed collinear
 @testset "get_collinear_point" begin
     x₁ = [1.0, 2.0, 3.0]
@@ -67,3 +66,51 @@ end
     end
 end
 
+
+# Test RNG for generate_new_smote_point, get_random_neighbor, get_collinear_point
+@testset "RNG for Basic Functions" begin
+    # check for consistency of results
+    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]
+    tree = KDTree(X')
+    k = 2
+    rng = StableRNG(1234)
+    random_neighbor1 = get_random_neighbor(X, tree, X[1, :]; k, rng)
+    rng = StableRNG(1234)
+    random_neighbor2 = get_random_neighbor(X, tree, X[1, :]; k, rng)
+    @test random_neighbor1 == random_neighbor2
+    rng = StableRNG(1234)
+    collinear1 = vec(get_collinear_point(X[1, :], X[2, :]; rng))
+    rng = StableRNG(1234)
+    collinear2 = vec(get_collinear_point(X[1, :], X[2, :]; rng))
+    @test collinear1 == collinear2
+    rng = StableRNG(1234)
+    new_point1 = vec(generate_new_smote_point(X, tree; k, rng))
+    rng = StableRNG(1234)
+    new_point2 = vec(generate_new_smote_point(X, tree; k, rng))
+    @test new_point1 == new_point2
+end
+
+# Test that RNG can be int or StableRNG of int in SMOTE
+@testset "RNG in SMOTE Algorithm" begin
+    tables = ["DF", "RowTable", "ColTable", "MatrixTable", 
+              "DictRowTable", "DictColTable", "Matrix", "MatrixTable"]
+    for i in eachindex(tables)
+        @testset "SMOTE with $tables[i] type" begin
+            rng = StableRNG(1234)
+            rng_int = 1234
+            X, y = generate_imbalanced_data(100, 2; probs=[0.2, 0.6, 0.2], 
+                                            type=tables[i], rng=rng)
+            rng = StableRNG(1234)
+            Xover1, yover1 = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
+            Xover2, yover2 = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng_int)
+            Xover3, yover3 = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=99)
+            if Tables.istable(X)
+                Xover1 = Tables.matrix(Xover1)
+                Xover2 = Tables.matrix(Xover2)
+                Xover3 = Tables.matrix(Xover3)                
+            end
+            @test sum(Xover1, dims=1) == sum(Xover2, dims=1)
+            @test sum(Xover1, dims=1) != sum(Xover3, dims=1)
+        end
+    end
+end
