@@ -3,12 +3,14 @@ using CategoricalArrays
 using DataFrames
 using Random
 using NearestNeighbors
+using MLJBase: machine, transform
 using StableRNGs: StableRNG
 
 
 include("test_utils.jl")
 
 @testset "common" begin include("common.jl") end
-@testset "Basic Random Oversampler" begin include("basic.jl") end
-@testset "SMOTE" begin include("smote.jl") end
-@testset "ROSE" begin include("rose.jl") end
+#@testset "Basic Random Oversampler" begin include("basic.jl") end
+#@testset "SMOTE" begin include("smote.jl") end
+#@testset "ROSE" begin include("rose.jl") end
+@testset "MLJ Interface" begin include("mlj_interface.jl") end

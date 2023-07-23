@@ -112,7 +112,7 @@ const WRN_UNDERSAMPLE(new_ratio, label, less_counts, old_ratio) =  "ratio $new_r
 function get_class_counts(y::AbstractVector, ratios::Dict{T, <:AbstractFloat}) where T 
     label_counts = group_lengths(y)
     majority_count = maximum(values(label_counts))
-    extra_counts = Dict{T, Int}()
+    extra_counts = OrderedDict{T, Int}()
 
     # each class needs to be the size specified in `ratios`
     for (label, count) in label_counts
@@ -127,7 +127,7 @@ end
 function get_class_counts(y::AbstractVector{T}, ratio::AbstractFloat) where T
     label_counts = group_lengths(y)
     majority_count = maximum(values(label_counts))
-    extra_counts = Dict{T, Int}()
+    extra_counts = OrderedDict{T, Int}()
 
     # each class needs to be the size specified in `ratio`
     for (label, count) in label_counts
@@ -139,6 +139,9 @@ end
 
 # Default method for when ratios is nothing
 function get_class_counts(y::AbstractVector)
+    get_class_counts(y, 1.0)
+end
+function get_class_counts(y::AbstractVector, ratio::Nothing)
     get_class_counts(y, 1.0)
 end
 

@@ -6,8 +6,9 @@ using Statistics
 using LinearAlgebra
 using NearestNeighbors
 using Tables
+using MLJModelInterface
 using OrderedCollections
-
+using Parameters
 
 include("common.jl")
 
@@ -20,4 +21,7 @@ export rose
 include("smote.jl")
 export smote
 
+const MMI = MLJModelInterface
+include("mlj_interface.jl")
+export SMOTE, ROSE, RandomOversampler
 end
