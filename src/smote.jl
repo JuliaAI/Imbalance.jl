@@ -100,27 +100,19 @@ end
 
 
 """
-    smote(X::AbstractMatrix{<:AbstractFloat}, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
-    smote(X, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
+    function smote(
+        X, y::AbstractVector;
+        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
+    )
 
 Oversample a dataset given by a matrix or table of observations `X` and an abstract vector of labels y using SMOTE.
 
-# Arguments
-- `X`: A matrix or table where each row is an observation (vector) of floats
-- `y`: An abstract vector of labels that correspond to the observations in `X`
+$DOC_MAIN_ARGUMENTS
 - `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-- `ratios`: A parameter that controls the amount of oversampling to be done for each class.
-    - Can be a dictionary mapping each class to the ratio of the needed number of observations for that class to the initial number of observations of the majority class.
-    - Can be nothing and in this case each class will be oversampled to the size of the majority class.
-    - Can be a float and in this case each class will be oversampled to the size of the majority class times the float.
-- `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` seed to be used with `StableRNG`.
-
-# Returns
-- `Xover`: A matrix or table like X (if possible, else a columntable) depending on whether X is a matrix or table 
-    respectively that includes original data and the new observations due to oversampling.
-- `yover`: An abstract vector of labels that includes the original
-    labels and the new instances of them due to oversampling.
+$DOC_RATIOS_ARGUMENT
+$DOC_RNG_ARGUMENT
+$DOC_RETURNS
 """
 function smote(
     X::AbstractMatrix{<:AbstractFloat}, y::AbstractVector;

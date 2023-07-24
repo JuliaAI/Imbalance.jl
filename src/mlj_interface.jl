@@ -1,5 +1,3 @@
-
-
 macro mlj_continuous_metadata(model_name)
     quote
         MMI.metadata_pkg($model_name, name=string($model_name),
