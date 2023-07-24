@@ -1,7 +1,7 @@
 # Disclaimer: This implementation is inspired by that of Resample.jl
 
 """
-Genrate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
+Generate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
 
 # Arguments
 - `x₁::AbstractVector`: First observation 
@@ -17,9 +17,8 @@ function get_collinear_point(
     rng::AbstractRNG=default_rng()
 )
     r = rand(rng)
-    collinear_point =  (1 - r) .* x₁ .+ r .* x₂ 
     # Equivalent to (x₂  .- x₁ ) .* r .+ x₁  but avoids allocating a new vector
-    return reshape(collinear_point, 1, :)
+    return @. (1 - r) * x₁ + r * x₂ 
 end
 
 
@@ -96,7 +95,7 @@ function smote_per_class(
     end
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
     tree = KDTree(X')
-    return vcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)    
+    return hcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)'    
 end
 
 
