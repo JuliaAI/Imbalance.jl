@@ -9,20 +9,27 @@ using Tables
 using MLJModelInterface
 using OrderedCollections
 using Parameters
+const MMI = MLJModelInterface
 
 include("commondocs.jl")
 include("common.jl")
+include("utils.jl")
 
-include("basic.jl")
+include("class_counts.jl")
+
+include("basic/basic.jl")
+include("basic/interfaces.jl")
 export random_oversample
 
-include("rose.jl")
+include("rose/rose.jl")
+include("rose/interfaces.jl")
 export rose
 
-include("smote.jl")
+include("smote/smote.jl")
+include("smote/interfaces.jl")
 export smote
 
-const MMI = MLJModelInterface
+
 include("mlj_interface.jl")
 export SMOTE, ROSE, RandomOversampler
 end
