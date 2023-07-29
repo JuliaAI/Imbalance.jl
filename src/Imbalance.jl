@@ -10,6 +10,7 @@ using MLJModelInterface
 using OrderedCollections
 using Parameters
 
+include("commondocs.jl")
 include("common.jl")
 
 include("basic.jl")

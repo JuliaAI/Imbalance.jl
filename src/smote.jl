@@ -1,7 +1,7 @@
 # Disclaimer: This implementation is inspired by that of Resample.jl
 
 """
-Genrate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
+Generate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
 
 # Arguments
 - `x₁::AbstractVector`: First observation 
@@ -17,9 +17,8 @@ function get_collinear_point(
     rng::AbstractRNG=default_rng()
 )
     r = rand(rng)
-    collinear_point =  (1 - r) .* x₁ .+ r .* x₂ 
     # Equivalent to (x₂  .- x₁ ) .* r .+ x₁  but avoids allocating a new vector
-    return reshape(collinear_point, 1, :)
+    return @. (1 - r) * x₁ + r * x₂ 
 end
 
 
@@ -96,32 +95,24 @@ function smote_per_class(
     end
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
     tree = KDTree(X')
-    return vcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)    
+    return hcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)'    
 end
 
 
 """
-    smote(X::AbstractMatrix{<:AbstractFloat}, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
-    smote(X, y; k::Int=5, ratios=nothing, rng::AbstractRNG=default_rng())
+    function smote(
+        X, y::AbstractVector;
+        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
+    )
 
 Oversample a dataset given by a matrix or table of observations `X` and an abstract vector of labels y using SMOTE.
 
-# Arguments
-- `X`: A matrix or table where each row is an observation (vector) of floats
-- `y`: An abstract vector of labels that correspond to the observations in `X`
+$DOC_MAIN_ARGUMENTS
 - `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-- `ratios`: A parameter that controls the amount of oversampling to be done for each class.
-    - Can be a dictionary mapping each class to the ratio of the needed number of observations for that class to the initial number of observations of the majority class.
-    - Can be nothing and in this case each class will be oversampled to the size of the majority class.
-    - Can be a float and in this case each class will be oversampled to the size of the majority class times the float.
-- `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` seed to be used with `StableRNG`.
-
-# Returns
-- `Xover`: A matrix or table like X (if possible, else a columntable) depending on whether X is a matrix or table 
-    respectively that includes original data and the new observations due to oversampling.
-- `yover`: An abstract vector of labels that includes the original
-    labels and the new instances of them due to oversampling.
+$DOC_RATIOS_ARGUMENT
+$DOC_RNG_ARGUMENT
+$DOC_RETURNS
 """
 function smote(
     X::AbstractMatrix{<:AbstractFloat}, y::AbstractVector;

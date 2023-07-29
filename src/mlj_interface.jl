@@ -1,3 +1,4 @@
+
 ### SMOTE
 @mlj_model mutable struct SMOTE <: Static
     # TODO: add check for k > 0 and others
