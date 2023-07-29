@@ -18,8 +18,11 @@ and the given type of data structure.
 
 """
 function generate_imbalanced_data(
-    num_rows, num_features;
-    probs=[0.5, 0.5], type="DF", rng=Random.default_rng()
+    num_rows,
+    num_features;
+    probs = [0.5, 0.5],
+    type = "DF",
+    rng = Random.default_rng(),
 )
     rng = Imbalance.rng_handler(rng)
     if type == "DF"
@@ -41,13 +44,13 @@ function generate_imbalanced_data(
     elseif type == "DictColTable"
         X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
         X = Tables.dictcolumntable(X)
-    else 
+    else
         error("Invalid type")
     end
     # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
     cum_probs = cumsum(probs)
     rands = rand(rng, num_rows)
-    y = CategoricalArray([findfirst(x -> rands[i] <= x , cum_probs) - 1 for i in 1:num_rows])
+    y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
     return X, y
 end
 
@@ -65,12 +68,12 @@ scatter plot of the observations before and after oversampling.
 - `hist_only::Bool`: If true, only plot the histograms of the labels before and after oversampling. 
     If false, plot the histograms and the scatter plots of the observations before and after oversampling.
 """
-function plot_data(y_before, y_after, X_before, X_after; hist_only=false)
+function plot_data(y_before, y_after, X_before, X_after; hist_only = false)
 
     if Tables.istable(X_before)
         X_before = Tables.matrix(X_before)
     end
-    
+
     if Tables.istable(X_after)
         X_after = Tables.matrix(X_after)
     end
@@ -83,26 +86,52 @@ function plot_data(y_before, y_after, X_before, X_after; hist_only=false)
     label_map = Dict(label => i for (i, label) in enumerate(labels))
 
     # Find counts of each label for each version of y
-    label_counts1 = [count(yi -> yi == label, y_before) for label in labels]    
+    label_counts1 = [count(yi -> yi == label, y_before) for label in labels]
     label_counts2 = [count(yi -> yi == label, y_after) for label in labels]
-    
+
     class_colors = distinguishable_colors(length(labels))
 
     # Plot the counts vs the labels in each case
-    p1 = bar(labels, label_counts1, xlabel="Label", ylabel="Count", 
-            title="\nBefore Oversampling with size $(size(X_before, 1))", legend=false)
-    p2 = bar(labels, label_counts2, xlabel="Label", ylabel="Count", 
-            title="\nAfter Oversampling with size $(size(X_after, 1))", legend=false)
-    
+    p1 = bar(
+        labels,
+        label_counts1,
+        xlabel = "Label",
+        ylabel = "Count",
+        title = "\nBefore Oversampling with size $(size(X_before, 1))",
+        legend = false,
+    )
+    p2 = bar(
+        labels,
+        label_counts2,
+        xlabel = "Label",
+        ylabel = "Count",
+        title = "\nAfter Oversampling with size $(size(X_after, 1))",
+        legend = false,
+    )
+
     if !hist_only
         # Scatter plot
-        p3 = scatter(X_before[:, 1], X_before[:, 2], xlabel="X1", ylabel="X2", 
-                    title="", legend=true, color=[class_colors[label_map[yi]] for yi in y_before])
-        p4 = scatter(X_after[:, 1], X_after[:, 2], xlabel="X1", ylabel="X2", 
-                    title="", legend=true, color=[class_colors[label_map[yi]] for yi in y_after])
+        p3 = scatter(
+            X_before[:, 1],
+            X_before[:, 2],
+            xlabel = "X1",
+            ylabel = "X2",
+            title = "",
+            legend = true,
+            color = [class_colors[label_map[yi]] for yi in y_before],
+        )
+        p4 = scatter(
+            X_after[:, 1],
+            X_after[:, 2],
+            xlabel = "X1",
+            ylabel = "X2",
+            title = "",
+            legend = true,
+            color = [class_colors[label_map[yi]] for yi in y_after],
+        )
 
-        plot(p1, p2, p3, p4, layout=(2, 2), size=(900, 900))
+        plot(p1, p2, p3, p4, layout = (2, 2), size = (900, 900))
     else
-        plot(p1, p2, layout=(1, 2), size=(900, 450))
+        plot(p1, p2, layout = (1, 2), size = (900, 450))
     end
 end

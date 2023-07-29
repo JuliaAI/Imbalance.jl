@@ -13,10 +13,12 @@ $DOC_RNG_ARGUMENT
 $DOC_RETURNS
 """
 function random_oversample(
-    X, y::AbstractVector; 
-    ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
+    X,
+    y::AbstractVector;
+    ratios = nothing,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     # ROSE with s=0 is equivalent to random_oversample
-    Xover, yover = rose(X, y; s=0.0, ratios=ratios, rng=rng)
+    Xover, yover = rose(X, y; s = 0.0, ratios = ratios, rng = rng)
     return Xover, yover
 end

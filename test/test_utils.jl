@@ -19,8 +19,11 @@ each class and the given type of data structure.
     where k is determined by the length of the probs vector
 """
 function generate_imbalanced_data(
-    num_rows, num_features; 
-    probs=[0.5, 0.5], type="DF", rng=Random.default_rng()
+    num_rows,
+    num_features;
+    probs = [0.5, 0.5],
+    type = "DF",
+    rng = Random.default_rng(),
 )
     rng = rng_handler(rng)
     if type == "DF"
@@ -42,13 +45,13 @@ function generate_imbalanced_data(
     elseif type == "DictColTable"
         X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
         X = Tables.dictcolumntable(X)
-    else 
+    else
         error("Invalid type")
     end
     # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
     cum_probs = cumsum(probs)
     rands = rand(rng, num_rows)
-    y = CategoricalArray([findfirst(x -> rands[i] <= x , cum_probs) - 1 for i in 1:num_rows])
+    y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
     return X, y
 end
 
@@ -64,9 +67,9 @@ Test if point a is between points b and c
 # Returns
 - `Bool`: True if a is between b and c, false otherwise
 """
-function is_in_between(a, b, c; atol=0.01)::Bool
-    dist_ab = sqrt(sum((a .- b).^2))
-    dist_ac = sqrt(sum((a .- c).^2))
-    dist_total = sqrt(sum((b .- c).^2))
+function is_in_between(a, b, c; atol = 0.01)::Bool
+    dist_ab = sqrt(sum((a .- b) .^ 2))
+    dist_ac = sqrt(sum((a .- c) .^ 2))
+    dist_total = sqrt(sum((b .- c) .^ 2))
     return isapprox(dist_ab + dist_ac, dist_total; atol)
 end

@@ -12,9 +12,9 @@ for model_name in [:SMOTE, :ROSE, :RandomOversampler]
             $model_name,
             input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
             output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-            load_path = "Imbalance."* string($model_name),
+            load_path = "Imbalance." * string($model_name),
         )
-        print("Imbalance."* string($model_name))
+        print("Imbalance." * string($model_name))
         function MMI.transform_scitype(s::$model_name)
             return Tuple{
                 Union{Table(Continuous),AbstractMatrix{Continuous}},
@@ -22,9 +22,4 @@ for model_name in [:SMOTE, :ROSE, :RandomOversampler]
             }
         end
     end |> eval
-end 
-
-
-
-
-
+end

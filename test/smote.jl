@@ -1,11 +1,15 @@
-using Imbalance: smote, smote_per_class, generate_new_smote_point, get_random_neighbor, 
+using Imbalance:
+    smote,
+    smote_per_class,
+    generate_new_smote_point,
+    get_random_neighbor,
     get_collinear_point
 # Test that a point is indeed collinear
 @testset "get_collinear_point" begin
     x₁ = [1.0, 2.0, 3.0]
     x₂ = [4.0, 5.0, 6.0]
     collinear = vec(get_collinear_point(x₁, x₂; rng))
-    @test is_in_between(collinear, x₁ , x₂)
+    @test is_in_between(collinear, x₁, x₂)
 end
 
 # Test that a random neighbor is indeed one of the nearest neighbors
@@ -25,8 +29,10 @@ end
     tree = KDTree(X)
     k = 2
     new_point = vec(generate_new_smote_point(X, tree; k, rng))
-    @test any(is_in_between(new_point, X[:, i], X[:, j])
-    for i in 1:size(X, 2), j in 1:size(X, 2) if i != j)
+    @test any(
+        is_in_between(new_point, X[:, i], X[:, j]) for
+        i = 1:size(X, 2), j = 1:size(X, 2) if i != j
+    )
 end
 
 # Test that it indeed generates n new points
@@ -41,15 +47,29 @@ end
 
 # Test that SMOTE adds the right number of points per class and that the input and output types are as expected
 @testset "SMOTE Algorithm" begin
-    tables = ["DF", "RowTable", "ColTable", "MatrixTable", 
-              "DictRowTable", "DictColTable", "Matrix", "MatrixTable"]
+    tables = [
+        "DF",
+        "RowTable",
+        "ColTable",
+        "MatrixTable",
+        "DictRowTable",
+        "DictColTable",
+        "Matrix",
+        "MatrixTable",
+    ]
     for i in eachindex(tables)
         @testset "SMOTE with $tables[i] type" begin
-            X, y = generate_imbalanced_data(1000, 2; probs=[0.2, 0.6, 0.2], 
-                                            type=tables[i], rng=rng)
+            X, y = generate_imbalanced_data(
+                1000,
+                2;
+                probs = [0.2, 0.6, 0.2],
+                type = tables[i],
+                rng = rng,
+            )
             counts_per_class = group_lengths(y)
             majority_count = maximum(values(counts_per_class))
-            Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
+            Xover, yover =
+                smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = rng)
             # if index is not 7 then return type must be a matrix table
             if i != 7
                 @test Tables.istable(Xover)
@@ -59,9 +79,11 @@ end
             else
                 @test !Tables.istable(Xover) && isa(Xover, AbstractMatrix)
             end
-            @test size(Xover, 1) == (Int(round(1.0 * majority_count)) + 
-            Int(round(1.2 * majority_count)) + 
-            Int(round(0.9 * majority_count)))
+            @test size(Xover, 1) == (
+                Int(round(1.0 * majority_count)) +
+                Int(round(1.2 * majority_count)) +
+                Int(round(0.9 * majority_count))
+            )
             @test size(Xover, 1) == length(yover)
         end
     end
@@ -93,25 +115,45 @@ end
 
 # Test that RNG can be int or StableRNG of int in SMOTE
 @testset "RNG in SMOTE Algorithm" begin
-    tables = ["DF", "RowTable", "ColTable", "MatrixTable", 
-              "DictRowTable", "DictColTable", "Matrix"]
+    tables = [
+        "DF",
+        "RowTable",
+        "ColTable",
+        "MatrixTable",
+        "DictRowTable",
+        "DictColTable",
+        "Matrix",
+    ]
     for i in eachindex(tables)
         @testset "SMOTE with $tables[i] type" begin
             rng = StableRNG(1234)
             rng_int = 1234
-            X, y = generate_imbalanced_data(100, 2; probs=[0.2, 0.6, 0.2], 
-                                            type=tables[i], rng=rng)
+            X, y = generate_imbalanced_data(
+                100,
+                2;
+                probs = [0.2, 0.6, 0.2],
+                type = tables[i],
+                rng = rng,
+            )
             rng = StableRNG(1234)
-            Xover1, yover1 = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng)
-            Xover2, yover2 = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=rng_int)
-            Xover3, yover3 = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=99)
+            Xover1, yover1 =
+                smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = rng)
+            Xover2, yover2 = smote(
+                X,
+                y;
+                k = 5,
+                ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9),
+                rng = rng_int,
+            )
+            Xover3, yover3 =
+                smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 99)
             if Tables.istable(X)
                 Xover1 = Tables.matrix(Xover1)
                 Xover2 = Tables.matrix(Xover2)
-                Xover3 = Tables.matrix(Xover3)                
+                Xover3 = Tables.matrix(Xover3)
             end
-            @test sum(Xover1, dims=1) == sum(Xover2, dims=1)
-            @test sum(Xover1, dims=1) != sum(Xover3, dims=1)
+            @test sum(Xover1, dims = 1) == sum(Xover2, dims = 1)
+            @test sum(Xover1, dims = 1) != sum(Xover3, dims = 1)
         end
     end
 end
@@ -119,9 +161,9 @@ end
 
 # test that the materializer works for dataframes
 @testset "materializer" begin
-    X, y = generate_imbalanced_data(1000, 2; probs=[0.2, 0.6, 0.2], type="DF", rng=121)
-    Xover, yover = smote(X, y; ratios=Dict(0=>1.0, 1=>1.2, 2=>0.9), rng=121)
+    X, y =
+        generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "DF", rng = 121)
+    Xover, yover = smote(X, y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame
 end
-
