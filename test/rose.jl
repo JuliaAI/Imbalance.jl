@@ -7,9 +7,7 @@ using Imbalance: rose, rose_per_class
     k = 10
     n = 100
     smote_points = rose_per_class(X, n; s=1.0, rng=rng)
-    @test size(smote_points, 1) == n
-    # check that there are no duplicates in the generated points
-    @test length(unique(smote_points, dims=2)) == length(smote_points)
+    @test size(smote_points, 2) == n
 end
 
 

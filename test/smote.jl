@@ -10,23 +10,23 @@ end
 
 # Test that a random neighbor is indeed one of the nearest neighbors
 @testset "get_random_neighbor" begin
-    X = [100.0 100.0; 200.0 200.0; 3.5 3.5; 4.0 4.0; 500.0 500.0]
-    tree = KDTree(X')
+    X = [100.0 100.0; 200.0 200.0; 3.5 3.5; 4.0 4.0; 500.0 500.0]'
+    tree = KDTree(X)
     x = [3.4, 3.4]
     k = 2                   # wil become three in the function
     random_neighbor = get_random_neighbor(X, tree, x; k, rng)
-    @test random_neighbor in [X[3, :], X[4, :], X[1, :]]
+    @test random_neighbor in [X[:, 3], X[:, 4], X[:, 1]]
 end
 
 
 # Test that generated smote point is collinear with some pair of points
 @testset "generate_new_smote_point" begin
-    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]
-    tree = KDTree(X')
+    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]'
+    tree = KDTree(X)
     k = 2
     new_point = vec(generate_new_smote_point(X, tree; k, rng))
-    @test any(is_in_between(new_point, X[i, :], X[j, :])
-    for i in 1:size(X, 1), j in 1:size(X, 1) if i != j)
+    @test any(is_in_between(new_point, X[:, i], X[:, j])
+    for i in 1:size(X, 2), j in 1:size(X, 2) if i != j)
 end
 
 # Test that it indeed generates n new points
@@ -35,8 +35,9 @@ end
     k = 10
     n = 100
     smote_points = smote_per_class(X, n; k, rng)
-    @test size(smote_points, 1) == n
+    @test size(smote_points, 2) == n
 end
+
 
 # Test that SMOTE adds the right number of points per class and that the input and output types are as expected
 @testset "SMOTE Algorithm" begin
@@ -70,18 +71,18 @@ end
 # Test RNG for generate_new_smote_point, get_random_neighbor, get_collinear_point
 @testset "RNG for Basic Functions" begin
     # check for consistency of results
-    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]
-    tree = KDTree(X')
+    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]'
+    tree = KDTree(X)
     k = 2
     rng = StableRNG(1234)
-    random_neighbor1 = get_random_neighbor(X, tree, X[1, :]; k, rng)
+    random_neighbor1 = get_random_neighbor(X, tree, X[:, 1]; k, rng)
     rng = StableRNG(1234)
-    random_neighbor2 = get_random_neighbor(X, tree, X[1, :]; k, rng)
+    random_neighbor2 = get_random_neighbor(X, tree, X[:, 1]; k, rng)
     @test random_neighbor1 == random_neighbor2
     rng = StableRNG(1234)
-    collinear1 = vec(get_collinear_point(X[1, :], X[2, :]; rng))
+    collinear1 = vec(get_collinear_point(X[:, 1], X[:, 2]; rng))
     rng = StableRNG(1234)
-    collinear2 = vec(get_collinear_point(X[1, :], X[2, :]; rng))
+    collinear2 = vec(get_collinear_point(X[:, 1], X[:, 2]; rng))
     @test collinear1 == collinear2
     rng = StableRNG(1234)
     new_point1 = vec(generate_new_smote_point(X, tree; k, rng))
@@ -123,3 +124,4 @@ end
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame
 end
+

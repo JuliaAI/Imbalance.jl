@@ -1,5 +1,5 @@
 # this tests the utils file. check test_utils for utility functions used in testing
-using Imbalance: tablify, get_class_counts, group_lengths, group_inds, randrows, rng_handler, ERR_MISSING_CLASS, ERR_INVALID_RATIO, WRN_UNDERSAMPLE, ERR_TABLE_TYPE
+using Imbalance: tablify, get_class_counts, group_lengths, group_inds, randcols, rng_handler, ERR_MISSING_CLASS, ERR_INVALID_RATIO, WRN_UNDERSAMPLE, ERR_TABLE_TYPE
 
 @testset "tablify throws error" begin
     @test_throws ERR_TABLE_TYPE("Int64") begin
@@ -57,18 +57,18 @@ end
 end
 
 
-@testset "randrows" begin
+@testset "randcols" begin
     rng = StableRNG(1234)     
     X = [1 2; 3 4; 5 6] # create a 3x2 matrix
-    @test randrows(rng, X) in [[1, 2], [3, 4], [5, 6]] 
+    @test randcols(rng, X) in [[1, 3, 5], [2, 4, 6]] 
 end
 
 
-@testset "randrows" begin
+@testset "randcols" begin
     rng = StableRNG(1234) 
-    X = [1 2; 3 4; 5 6] 
-    @test randrows(rng, X, 2)[1, :] in [[1, 2], [3, 4], [5, 6]] 
-    @test randrows(rng, X, 2)[2, :] in [[1, 2], [3, 4], [5, 6]] 
+    X = [1 2; 3 4; 5 6]
+    @test randcols(rng, X, 2)[:, 1] in [[1, 3, 5], [2, 4, 6]] 
+    @test randcols(rng, X, 2)[:, 2] in [[1, 3, 5], [2, 4, 6]] 
 end
 
 

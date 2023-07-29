@@ -37,13 +37,13 @@ matrix `X` represented by a k-d tree
 - `AbstractVector`: A random observation from the k-nearest neighbors of x
 """
 function get_random_neighbor(
-    X::AbstractMatrix{<:AbstractFloat}, tree, x::AbstractVector;
+    X::AbstractMatrix{<:AbstractFloat}, tree, x;
     k::Int=5, rng::AbstractRNG=default_rng()
 )
     inds, _ = knn(tree, x, k + 1, true)
     # Need to deal with that the first neighbor is the point itself; hence, the k+1 and the 2:end
-    random_neighbor_index = randrows(rng, inds[2:end])[1]
-    random_neighbor = X[random_neighbor_index, :]
+    random_neighbor_index = randcols(rng, inds[2:end])[1]
+    random_neighbor = X[:, random_neighbor_index]
     return random_neighbor
 end
 
@@ -64,7 +64,7 @@ function generate_new_smote_point(
     X::AbstractMatrix{<:AbstractFloat}, tree;
     k::Int, rng::AbstractRNG
 )
-    random_point = randrows(rng, X)
+    random_point = randcols(rng, X)
     random_neighbor = get_random_neighbor(X, tree, random_point; k, rng)
     new_point = get_collinear_point(random_point, random_neighbor; rng)
     return new_point
@@ -89,13 +89,13 @@ function smote_per_class(
     X::AbstractMatrix{<:AbstractFloat}, n::Int; 
     k::Int=5, rng::AbstractRNG=default_rng()
 )   
-    if  size(X, 1) == 1
+    if  size(X, 2) == 1
         @warn "one of the classes has a single observation and will be ignored"
         return X
     end
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
-    tree = KDTree(X')
-    return hcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)'    
+    tree = KDTree(X)
+    return hcat([generate_new_smote_point(X, tree; k, rng) for i in 1:n]...)
 end
 
 
