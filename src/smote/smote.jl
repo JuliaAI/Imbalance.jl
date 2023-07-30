@@ -1,55 +1,5 @@
 # Disclaimer: This implementation is inspired by that of Resample.jl
 
-"""
-Generate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
-
-# Arguments
-- `x₁::AbstractVector`: First observation 
-- `x₂::AbstractVector`: Second observation 
-- `rng::AbstractRNG`: Random number generator
-
-# Returns
-- `AbstractMatrix`: New observation `x` as a row vector that satisfies `x = (x₂ - x₁) * r + x₁`
-    where `r`` is a random number between `0` and `1`
-"""
-function get_collinear_point(
-    x₁::AbstractVector,
-    x₂::AbstractVector;
-    rng::AbstractRNG = default_rng(),
-)
-    r = rand(rng)
-    # Equivalent to (x₂  .- x₁ ) .* r .+ x₁  but avoids allocating a new vector
-    return @. (1 - r) * x₁ + r * x₂
-end
-
-
-"""
-Randomly return one of the k-nearest neighbor of a given observation `x` from an observations 
-matrix `X` represented by a k-d tree
-
-# Arguments
-- `X::AbstractMatrix`: A matrix where each row is an observation
-- `tree`: A k-d tree representation of the observations matrix `X`
-- `x::AbstractVector`: An observation
-- `k::Int`: Number of nearest neighbors to consider
-- `rng::AbstractRNG`: Random number generator
-
-# Returns
-- `AbstractVector`: A random observation from the k-nearest neighbors of x
-"""
-function get_random_neighbor(
-    X::AbstractMatrix{<:AbstractFloat},
-    tree,
-    x;
-    k::Int = 5,
-    rng::AbstractRNG = default_rng(),
-)
-    inds, _ = knn(tree, x, k + 1, true)
-    # Need to deal with that the first neighbor is the point itself; hence, the k+1 and the 2:end
-    random_neighbor_index = randcols(rng, inds[2:end])[1]
-    random_neighbor = X[:, random_neighbor_index]
-    return random_neighbor
-end
 
 """
 Choose a random point from the given observations matrix `X` and generate a new point that 
@@ -70,10 +20,10 @@ function generate_new_smote_point(
     k::Int,
     rng::AbstractRNG,
 )
-    random_point = randcols(rng, X)
-    random_neighbor = get_random_neighbor(X, tree, random_point; k, rng)
-    new_point = get_collinear_point(random_point, random_neighbor; rng)
-    return new_point
+    x_rand = randcols(rng, X)
+    x_randneigh = get_random_neighbor(X, tree, x_rand; k, rng)
+    x_new = get_collinear_point(x_rand , x_randneigh; rng)
+    return x_new
 end
 
 
@@ -97,10 +47,7 @@ function smote_per_class(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
-    if size(X, 2) == 1
-        @warn "one of the classes has a single observation and will be ignored"
-        return X
-    end
+    size(X, 2) == 1 && (warn("class with a single observation will be ignored"); return X)
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
     tree = KDTree(X)
     return hcat([generate_new_smote_point(X, tree; k, rng) for i = 1:n]...)

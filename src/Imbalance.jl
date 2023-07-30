@@ -1,14 +1,15 @@
 module Imbalance
 
-using Random: AbstractRNG, default_rng
+using Random: AbstractRNG, default_rng, shuffle
 using StableRNGs: StableRNG
 using Statistics
+using StatsBase: mode
 using LinearAlgebra
-using NearestNeighbors
+using NearestNeighbors, Distances
 using Tables
 using MLJModelInterface
 using OrderedCollections
-using Parameters
+
 const MMI = MLJModelInterface
 
 include("commondocs.jl")
@@ -25,9 +26,14 @@ include("rose/rose.jl")
 include("rose/interfaces.jl")
 export rose
 
+include("common_smote.jl")
 include("smote/smote.jl")
 include("smote/interfaces.jl")
 export smote
+
+include("smotenc/smotenc.jl")
+include("smotenc/interfaces.jl")
+export smotenc
 
 
 include("mlj_interface.jl")
