@@ -25,7 +25,6 @@ function rose_per_class(
     end
     # compute the standard deviation column-wise
     σs = vec(std(Xnew, dims = 2))
-    print(σs)
     d = size(Xnew, 1)
     N = size(Xnew, 2)
     h = (4 / ((d + 2) * N))^(1 / (d + 4))
