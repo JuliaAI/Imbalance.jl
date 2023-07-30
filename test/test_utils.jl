@@ -8,6 +8,7 @@ each class and the given type of data structure.
 # Arguments
 - `num_rows::Int`: Number of observations to generate
 - `num_features::Int`: Number of features to generate
+- `extra_cat_feats::AbstractVector`: A vector of number of levels of each extra categorical feature,
 - `probs::AbstractVector`: A vector of probabilities of each class
 - `type::String`: Type of data structure to generate. Valid values are "DF", 
     "Matrix", "RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"
@@ -20,31 +21,33 @@ each class and the given type of data structure.
 """
 function generate_imbalanced_data(
     num_rows,
-    num_features;
+    num_cont_feats;
+    extra_cat_feats=[],
     probs = [0.5, 0.5],
     type = "DF",
     rng = Random.default_rng(),
 )
     rng = rng_handler(rng)
+    Xc = rand(rng, Float64, num_rows, num_cont_feats)
+    for num_levels in extra_cat_feats
+        Xc = hcat(Xc, rand(rng, 1:num_levels, num_rows))
+    end
+    DXc = DataFrame(Xc, :auto)
+
     if type == "DF"
-        X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
+        X = DXc
     elseif type == "Matrix"
-        X = rand(rng, Float64, num_rows, num_features)
+        X = Xc
     elseif type == "RowTable"
-        X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
-        X = Tables.rowtable(X)
+        X = Tables.rowtable(DXc)
     elseif type == "ColTable"
-        X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
-        X = Tables.columntable(X)
+        X = Tables.columntable(DXc)
     elseif type == "MatrixTable"
-        X = rand(rng, Float64, num_rows, num_features)
-        X = Tables.table(X)
+        X = Tables.table(Xc)
     elseif type == "DictRowTable"
-        X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
-        X = Tables.dictrowtable(X)
+        X = Tables.dictrowtable(DXc)
     elseif type == "DictColTable"
-        X = DataFrame(rand(rng, Float64, num_rows, num_features), :auto)
-        X = Tables.dictcolumntable(X)
+        X = Tables.dictcolumntable(DXc)
     else
         error("Invalid type")
     end
@@ -54,6 +57,7 @@ function generate_imbalanced_data(
     y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
     return X, y
 end
+
 
 
 """
