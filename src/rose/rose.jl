@@ -24,7 +24,8 @@ function rose_per_class(
         return Xnew
     end
     # compute the standard deviation column-wise
-    σs = vec(std(Xnew, dims = 1))
+    σs = vec(std(Xnew, dims = 2))
+    print(σs)
     d = size(Xnew, 1)
     N = size(Xnew, 2)
     h = (4 / ((d + 2) * N))^(1 / (d + 4))
@@ -33,7 +34,7 @@ function rose_per_class(
     # generate standard normal samples of same dimension of Xnew
     XSnew = randn(rng, size(Xnew))
     # matrix multiply the diagonal matrix by XSnew
-    XSnew = XSnew * H
+    XSnew = H * XSnew 
     # add Xnew and XSnew
     Xnew += XSnew
     # return the result
