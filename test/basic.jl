@@ -9,7 +9,7 @@ using Imbalance: random_oversample
         type = "Matrix",
         rng = 121,
     )
-    counts_per_class = group_lengths(y)
+    counts_per_class = countmap(y)
     majority_count = maximum(values(counts_per_class))
     Xover, yover =
         random_oversample(X, y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)

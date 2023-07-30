@@ -3,7 +3,7 @@ module Imbalance
 using Random: AbstractRNG, default_rng, shuffle
 using StableRNGs: StableRNG
 using Statistics
-using StatsBase: mode
+using StatsBase: mode, countmap
 using LinearAlgebra
 using NearestNeighbors, Distances
 using Tables

@@ -31,7 +31,7 @@ end
                 type = tables[i],
                 rng = rng,
             )
-            counts_per_class = group_lengths(y)
+            counts_per_class = countmap(y)
             majority_count = maximum(values(counts_per_class))
             Xover, yover =
                 rose(X, y; s = 1.0, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = rng)

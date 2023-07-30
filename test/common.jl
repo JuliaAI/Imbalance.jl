@@ -2,7 +2,6 @@
 using Imbalance:
     tablify,
     get_class_counts,
-    group_lengths,
     group_inds,
     randcols,
     rng_handler,
@@ -87,11 +86,6 @@ end
     @test group_inds(categorical_array) == Dict("a" => [1, 3], "b" => [2, 5], "c" => [4])
 end
 
-
-@testset "group_lengths" begin
-    categorical_array = ["a", "b", "a", "c", "b"]
-    @test group_lengths(categorical_array) == Dict("a" => 2, "b" => 2, "c" => 1)
-end
 
 
 # compare rng_handler(rng::Integer) = StableRNG(rng) with rng_handler(rng::AbstractRNG) = rng

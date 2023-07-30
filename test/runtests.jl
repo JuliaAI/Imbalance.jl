@@ -3,6 +3,7 @@ using CategoricalArrays
 using DataFrames
 using Random
 using Statistics
+using StatsBase: countmap
 using NearestNeighbors, Distances
 using MLJBase: machine, transform
 using StableRNGs: StableRNG

@@ -22,18 +22,3 @@ function group_inds(categorical_array::AbstractVector{T}) where {T}
     return result
 end
 
-
-"""
-Return a dictionary mapping each unique value in an abstract vector to the number of times that value occurs.
-"""
-function group_lengths(categorical_array::AbstractVector{T}) where {T}
-    result = LittleDict{T,Int}()
-    freeze(result)
-    for v in categorical_array
-        if !haskey(result, v)
-            result[v] = 0
-        end
-        result[v] += 1
-    end
-    return result
-end

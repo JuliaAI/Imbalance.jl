@@ -22,7 +22,7 @@ const WRN_UNDERSAMPLE(new_ratio, label, less_counts, old_ratio) =
      Will skip oversampling for this class."
 # Method for handling ratios as a dictionary
 function get_class_counts(y::AbstractVector, ratios::Dict{T,<:AbstractFloat}) where {T}
-    label_counts = group_lengths(y)
+    label_counts = countmap(y)
     majority_count = maximum(values(label_counts))
     extra_counts = OrderedDict{T,Int}()
 
@@ -38,7 +38,7 @@ end
 
 # Method for handling ratios as AbstractFloat
 function get_class_counts(y::AbstractVector{T}, ratio::AbstractFloat) where {T}
-    label_counts = group_lengths(y)
+    label_counts = countmap(y)
     majority_count = maximum(values(label_counts))
     extra_counts = OrderedDict{T,Int}()
 
