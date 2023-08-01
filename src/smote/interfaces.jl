@@ -24,20 +24,23 @@ Journal of artificial intelligence research, 321-357, 2002.
 # Training data
 
 In MLJ or MLJBase, wrap the model in a machine by
+
     mach = machine(model)
 
-there is no need to provide any data here because the model is a static transformer.
+There is no need to provide any data here because the model is a static transformer.
 
 Likewise, there is no need to `fit!(mach)`.
 
 For default values of the hyper-parameters, model can be constructed by
+
     model = SMOTE()
 
 
 # Hyper-parameters
 
-- `k=5`: Number of nearest neighbors to consider in the SMOTE algorithm.
-    Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
+- `k=5`: Number of nearest neighbors to consider in the SMOTE algorithm.  Should be within
+    the range `[1, n - 1]`, where `n` is the number of observations; otherwise set to the
+    nearest of these two values.
 
 $(DOCS_COMMON_HYPERPARAMETERS)
 
@@ -52,43 +55,44 @@ $(DOCS_COMMON_OUTPUTS)
 
 # Operations
 
-- `transform(mach, X, y)`: resample the data `X` and `y` using SMOTE.
-
-
-# Fitted parameters
-
-There are no fitted parameters for this model.
+- `transform(mach, X, y)`: resample the data `X` and `y` using SMOTE, returning both the
+  new and original observations
 
 
 # Example
 
 ```
-using MLJBase
-using Imbalance
+using MLJ
+import Random.seed!
 using MLUtils
-using Random
-using StableRNGs: StableRNG
+import StatsBase.countmap
 
-X, y = MLJBase.@load_iris
-# Take an imbalanced subset of the data
-rand_inds = rand(StableRNG(10), 1:150, 30)
+seed!(12345)
+
+# Generate some imbalanced data:
+X, y = @load_iris # a table and a vector
+rand_inds = rand(1:150, 30)
 X, y = getobs(X, rand_inds), y[rand_inds]
-group_counts(y)
->> Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 5
-  "versicolor" => 15
-  "setosa"     => 10
 
-# Oversample the minority classes to  sizes relative to the majority class
-S = SMOTE(k=10, ratios=Dict("setosa"=>0.9, "versicolor"=> 1.0, "virginica"=>0.7), rng=42)
-mach = machine(S)
+julia> countmap(y)
+Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
+  "virginica"  => 12
+  "versicolor" => 5
+  "setosa"     => 13
+
+# load SMOTE model type:
+SMOTE = @load SMOTE pkg=Imbalance
+
+# Oversample the minority classes to  sizes relative to the majority class:
+smote = SMOTE(k=10, ratios=Dict("setosa"=>1.0, "versicolor"=> 0.8, "virginica"=>1.0), rng=42)
+mach = machine(smote)
 Xover, yover = transform(mach, X, y)
-group_counts(yover)
->> Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 10
-  "versicolor" => 15
-  "setosa"     => 14
 
+julia> countmap(yover)
+Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
+  "virginica"  => 13
+  "versicolor" => 10
+  "setosa"     => 13
 ```
 
 """
