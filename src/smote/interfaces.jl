@@ -1,4 +1,3 @@
-
 ### SMOTE
 @mlj_model mutable struct SMOTE <: Static
     # TODO: add check for k > 0 and others
@@ -16,9 +15,9 @@ end
 """
 $(MMI.doc_header(SMOTE))
 
-`SMOTE` implements the SMOTE algorithm to correct for class imbalance as in 
-N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer, 
-“SMOTE: synthetic minority over-sampling technique,” 
+`SMOTE` implements the SMOTE algorithm to correct for class imbalance as in
+N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer,
+“SMOTE: synthetic minority over-sampling technique,”
 Journal of artificial intelligence research, 321-357, 2002.
 
 
@@ -29,7 +28,7 @@ In MLJ or MLJBase, wrap the model in a machine by
 
 there is no need to provide any data here because the model is a static transformer.
 
-Likewise, there is no need to `fit!(mach)`. 
+Likewise, there is no need to `fit!(mach)`.
 
 For default values of the hyper-parameters, model can be constructed by
     model = SMOTE()
@@ -37,7 +36,7 @@ For default values of the hyper-parameters, model can be constructed by
 
 # Hyper-parameters
 
-- `k=5`: Number of nearest neighbors to consider in the SMOTE algorithm. 
+- `k=5`: Number of nearest neighbors to consider in the SMOTE algorithm.
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
 
 $(DOCS_COMMON_HYPERPARAMETERS)
