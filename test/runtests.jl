@@ -2,6 +2,7 @@ using Test
 using CategoricalArrays
 using DataFrames
 using Random
+using MLJTestInterface
 using Statistics
 using StatsBase: countmap
 using NearestNeighbors, Distances
