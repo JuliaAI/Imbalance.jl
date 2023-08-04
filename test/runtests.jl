@@ -16,6 +16,10 @@ include("test_utils.jl")
     include("common.jl")
 end
 
+@testset "wrappers" begin
+    include("wrappers.jl")
+end
+
 @testset "MLJ Interface" begin
     include("mlj_interface.jl")
 end

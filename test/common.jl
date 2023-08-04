@@ -1,21 +1,12 @@
 # this tests the utils file. check test_utils for utility functions used in testing
 using Imbalance:
-    tablify,
     get_class_counts,
     group_inds,
     randcols,
     rng_handler,
     ERR_MISSING_CLASS,
     ERR_INVALID_RATIO,
-    WRN_UNDERSAMPLE,
-    ERR_TABLE_TYPE
-
-@testset "tablify throws error" begin
-    @test_throws ERR_TABLE_TYPE("Int64") begin
-        f(x) = x
-        tablify(f, 1, [1, 2, 3])
-    end
-end
+    WRN_UNDERSAMPLE
 
 
 @testset "get_class_counts" begin
