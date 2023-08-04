@@ -7,10 +7,17 @@
 Oversample a dataset given by a matrix or table of observations X and an abstract vector of 
 labels y using random oversampling (repeating existing observations with replacement).
 
-$DOC_MAIN_ARGUMENTS
+# Arguments
+
+$DOC_COMMON_INPUTS
+
 $DOC_RATIOS_ARGUMENT
+
 $DOC_RNG_ARGUMENT
-$DOC_RETURNS
+
+# Returns
+
+$DOC_COMMON_OUTPUTS
 """
 function random_oversample(
     X,

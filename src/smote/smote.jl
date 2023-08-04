@@ -62,12 +62,20 @@ end
 
 Oversample a dataset given by a matrix or table of observations `X` and an abstract vector of labels y using SMOTE.
 
-$DOC_MAIN_ARGUMENTS
+# Arguments
+
+$DOC_COMMON_INPUTS
+
 - `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
+
 $DOC_RATIOS_ARGUMENT
+
 $DOC_RNG_ARGUMENT
-$DOC_RETURNS
+
+# Returns
+
+$DOC_COMMON_OUTPUTS
 """
 function smote(
     X::AbstractMatrix{<:AbstractFloat},

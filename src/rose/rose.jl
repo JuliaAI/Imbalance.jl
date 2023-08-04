@@ -49,12 +49,19 @@ end
 Oversample a dataset given by a matrix or table of observations X and an abstract
 vector of labels y using ROSE.
 
-$DOC_MAIN_ARGUMENTS
+# Arguments
+
+$DOC_COMMON_INPUTS
+
 - `s::float`: A parameter that proportionally controls the bandwidth of the Gaussian kernel
+
 $DOC_RATIOS_ARGUMENT
+
 $DOC_RNG_ARGUMENT
 
-$DOC_RETURNS
+# Returns
+
+$DOC_COMMON_OUTPUTS
 """
 function rose(
     X::AbstractMatrix{<:AbstractFloat},

@@ -42,16 +42,17 @@ For default values of the hyper-parameters, model can be constructed by
     the range `[1, n - 1]`, where `n` is the number of observations; otherwise set to the
     nearest of these two values.
 
-$(DOCS_COMMON_HYPERPARAMETERS)
+$(DOC_RATIOS_ARGUMENT)
 
+$(DOC_RNG_ARGUMENT)
 
 # Transform Inputs
 
-$(DOCS_COMMON_INPUTS)
+$(DOC_COMMON_INPUTS)
 
 # Transform Outputs
 
-$(DOCS_COMMON_OUTPUTS)
+$(DOC_COMMON_OUTPUTS)
 
 # Operations
 
