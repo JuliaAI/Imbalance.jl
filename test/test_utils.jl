@@ -12,6 +12,7 @@ each class and the given type of data structure.
 - `probs::AbstractVector`: A vector of probabilities of each class
 - `type::String`: Type of data structure to generate. Valid values are "DF", 
     "Matrix", "RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"
+- `insert_y::Int`: If not nothing, insert the class label at the given index
 - `rng::AbstractRNG`: Random number generator
 
 # Returns
@@ -19,19 +20,32 @@ each class and the given type of data structure.
 - `y::CategoricalArray`: An abstract vector of class labels with classes 0, 1, 2, ..., k-1
     where k is determined by the length of the probs vector
 """
+
 function generate_imbalanced_data(
     num_rows,
     num_cont_feats;
     extra_cat_feats=[],
     probs = [0.5, 0.5],
     type = "DF",
+    insert_y=nothing,
     rng = Random.default_rng(),
 )
     rng = rng_handler(rng)
+    # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
+    cum_probs = cumsum(probs)
+    rands = rand(rng, num_rows)
+    y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
+
+    rng = Imbalance.rng_handler(rng)
     Xc = rand(rng, Float64, num_rows, num_cont_feats)
     for num_levels in extra_cat_feats
         Xc = hcat(Xc, rand(rng, 1:num_levels, num_rows))
     end
+
+    if !isnothing(insert_y)
+        Xc = hcat(Xc[:, 1:insert_y - 1], y, Xc[:, insert_y:end])
+    end
+
     DXc = DataFrame(Xc, :auto)
 
     if type == "DF"
@@ -51,11 +65,8 @@ function generate_imbalanced_data(
     else
         error("Invalid type")
     end
-    # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
-    cum_probs = cumsum(probs)
-    rands = rand(rng, num_rows)
-    y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
-    return X, y
+    
+    return X, y 
 end
 
 
