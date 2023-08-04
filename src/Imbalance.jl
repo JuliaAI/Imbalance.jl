@@ -13,7 +13,7 @@ using OrderedCollections
 const MMI = MLJModelInterface
 
 include("commondocs.jl")
-include("common.jl")
+include("wrappers.jl")
 include("utils.jl")
 
 include("class_counts.jl")

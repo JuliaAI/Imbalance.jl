@@ -24,3 +24,8 @@ docs/site/
 Manifest.toml
 
 .DS_Store
+SMOTE.pdf
+examples/meh.ipynb
+meh.ipynb
+Transforms.ipynb
+dataset.csv
