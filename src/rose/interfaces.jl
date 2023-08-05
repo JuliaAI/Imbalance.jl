@@ -83,11 +83,30 @@ TransformsBase.reapply(r::ROSE_t, Xy, cache) = TransformsBase.apply(r, Xy)
 
 ### ROSE MLJ Interface
 
-@mlj_model mutable struct ROSE <: Static
-    s::AbstractFloat = 1.0::(_ > 0)
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} where {T} = nothing
-    rng::Union{Integer,AbstractRNG} = default_rng()
+mutable struct ROSE{T} <: Static
+    s::AbstractFloat 
+    ratios::T
+    rng::Union{Integer,AbstractRNG}
 end;
+
+function MMI.clean!(r::ROSE)
+  message = ""
+    if r.s < 0
+        message = "s for ROSE must be at least 0.0 but found $(r.s). Setting s = 0.0"
+        r.s = 1
+    end
+    return message
+end
+
+function ROSE(; s::AbstractFloat = 1.0, 
+        ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
+        rng::Union{Integer,AbstractRNG} = default_rng()
+) where {T}
+    model = ROSE(s, ratios, rng)
+    message = MMI.clean!(model)
+    isempty(message) || @warn message
+    return model
+end
 
 function MMI.transform(r::ROSE, _, X, y)
     rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng)

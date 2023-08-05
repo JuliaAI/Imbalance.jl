@@ -72,10 +72,18 @@ TransformsBase.reapply(r::RandomOversampler_t, Xy, cache) = TransformsBase.apply
 
 
 ### RandomOversampler with MLJ Interface
-@mlj_model mutable struct RandomOversampler <: Static
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} where {T} = nothing
-    rng::Union{Integer,AbstractRNG} = default_rng()
+mutable struct RandomOversampler{T} <: Static
+    ratios::T
+    rng::Union{Integer,AbstractRNG}
 end;
+
+
+function RandomOversampler(;ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
+  rng::Union{Integer,AbstractRNG} = default_rng()
+) where {T}
+model = RandomOversampler(ratios, rng)
+return model
+end
 
 function MMI.transform(r::RandomOversampler, _, X, y)
     random_oversample(X, y; ratios = r.ratios, rng = r.rng)
@@ -149,7 +157,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
 SMOTE = @load SMOTE pkg=Imbalance
 
 # Oversample the minority classes to  sizes relative to the majority class:
-random_oversampler = RandomOversampler(s=0.3, ratios=Dict("setosa"=>0.9, "versicolor"=> 1.0, "virginica"=>0.7), rng=42)
+random_oversampler = RandomOversampler(ratios=Dict("setosa"=>0.9, "versicolor"=> 1.0, "virginica"=>0.7), rng=42)
 mach = machine(random_oversampler)
 Xover, yover = transform(mach, X, y)
 

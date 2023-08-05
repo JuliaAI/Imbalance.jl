@@ -79,12 +79,31 @@ TransformsBase.reapply(s::SMOTE_t, Xy, cache) = TransformsBase.apply(s, Xy)
 
 ### SMOTE with MLJ Interface
 
-@mlj_model mutable struct SMOTE <: Static
-    # TODO: add check for k > 0 and others
-    k::Integer = 5::(_ > 0)
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} where {T} = nothing
-    rng::Union{Integer,AbstractRNG} = default_rng()
+mutable struct SMOTE{T} <: Static
+    k::Integer 
+    ratios::T
+    rng::Union{Integer,AbstractRNG}
 end;
+
+function MMI.clean!(s::SMOTE)
+  message = ""
+    if s.k < 1
+        message = "k for SMOTE must be at least 1 but found $(s.k). Setting k = 1."
+        s.k = 1
+    end
+    return message
+end
+
+function SMOTE(; k::Integer = 5, 
+        ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
+        rng::Union{Integer,AbstractRNG} = default_rng()
+) where {T}
+    model = SMOTE(k, ratios, rng)
+    message = MMI.clean!(model)
+    isempty(message) || @warn message
+    return model
+end
+
 
 function MMI.transform(s::SMOTE, _, X, y)
     smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
