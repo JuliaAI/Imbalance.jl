@@ -6,7 +6,7 @@ get_cat_part(X::AbstractMatrix, split_ind::Int) = @view X[split_ind:end, :]
 
 
 # SMOTE-NC uses KNN with a modified distance metric
-struct EuclideanWithPenalty <: Metric 
+struct EuclideanWithPenalty <: Metric
     split_ind::Int
     penalty::Float64
 end
@@ -23,13 +23,10 @@ continuous features of the observations and return that as the penalty.
 - `Float64`: The penalty term that modifies the distance metric
 
 """
-function get_penalty(
-    X::AbstractMatrix{<:AbstractFloat},
-    split_ind::Int
-)
+function get_penalty(X::AbstractMatrix{<:AbstractFloat}, split_ind::Int)
     Xcont = get_cont_part(X, split_ind)
     σs = vec(std(Xcont, dims = 2))
-    σₘ  = median(σs)
+    σₘ = median(σs)
     return σₘ
 end
 
@@ -54,7 +51,7 @@ function Distances.evaluate(d::EuclideanWithPenalty, x₁, x₂)
     x₁_cat = get_cat_part(x₁, d.split_ind)
     x₂_cat = get_cat_part(x₂, d.split_ind)
     h = hamming(x₁_cat, x₂_cat)
-    return e + d.penalty * h   
+    return e + d.penalty * h
 end
 
 
@@ -89,7 +86,7 @@ function generate_new_smotenc_point(
     x_new_cont = get_collinear_point(x_rand_cont, x_randneigh_cont; rng = rng)
     # find the categorical part
     Xneighs_cat = get_cat_part(Xneighs, split_ind)
-    x_new_cat= get_neighbors_mode(Xneighs_cat, rng)
+    x_new_cat = get_neighbors_mode(Xneighs_cat, rng)
     return vcat(x_new_cont, x_new_cat)
 end
 
@@ -119,7 +116,7 @@ function smotenc_per_class(
 )
     size(X, 2) == 1 && (warn("class with a single observation will be ignored"); return X)
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
-    σₘ  = get_penalty(X, split_ind)
+    σₘ = get_penalty(X, split_ind)
     metric = EuclideanWithPenalty(split_ind, σₘ)
     tree = BallTree(X, metric)
     return hcat([generate_new_smotenc_point(X, tree, split_ind; k, rng) for i = 1:n]...)
@@ -160,7 +157,8 @@ function smotenc(
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     rng = rng_handler(rng)
-    Xover, yover = generic_oversample(X, y, smotenc_per_class, split_ind::Int; ratios, k, rng)
+    Xover, yover =
+        generic_oversample(X, y, smotenc_per_class, split_ind::Int; ratios, k, rng)
     return Xover, yover
 end
 

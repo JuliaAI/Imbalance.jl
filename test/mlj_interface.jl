@@ -3,33 +3,33 @@ using Imbalance: SMOTE, ROSE, RandomOversampler, smote, rose, random_oversample,
 
 @testset "Random Oversampler MLJ" begin
     failures, summary = MLJTestInterface.test(
-        [RandomOversampler,],
+        [RandomOversampler],
         MLJTestInterface.make_multiclass()...;
-        verbosity=1,
-        throw=true,
-        mod=@__MODULE__,
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
     )
     @test isempty(failures)
 end
 
 @testset "ROSE MLJ" begin
     failures, summary = MLJTestInterface.test(
-        [ROSE,],
+        [ROSE],
         MLJTestInterface.make_multiclass()...;
-        verbosity=1,
-        throw=true,
-        mod=@__MODULE__,
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
     )
     @test isempty(failures)
 end
 
 @testset "SMOTE MLJ" begin
     failures, summary = MLJTestInterface.test(
-        [SMOTE,],
+        [SMOTE],
         MLJTestInterface.make_multiclass()...;
-        verbosity=1,
-        throw=true,
-        mod=@__MODULE__,
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
     )
     @test isempty(failures)
 end

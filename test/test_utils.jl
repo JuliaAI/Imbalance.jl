@@ -24,10 +24,10 @@ each class and the given type of data structure.
 function generate_imbalanced_data(
     num_rows,
     num_cont_feats;
-    extra_cat_feats=[],
+    extra_cat_feats = [],
     probs = [0.5, 0.5],
     type = "DF",
-    insert_y=nothing,
+    insert_y = nothing,
     rng = Random.default_rng(),
 )
     rng = rng_handler(rng)
@@ -42,7 +42,7 @@ function generate_imbalanced_data(
     end
 
     if !isnothing(insert_y)
-        Xc = hcat(Xc[:, 1:insert_y - 1], y, Xc[:, insert_y:end])
+        Xc = hcat(Xc[:, 1:insert_y-1], y, Xc[:, insert_y:end])
     end
 
     DXc = DataFrame(Xc, :auto)
@@ -64,8 +64,8 @@ function generate_imbalanced_data(
     else
         error("Invalid type")
     end
-    
-    return X, y 
+
+    return X, y
 end
 
 

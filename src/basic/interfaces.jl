@@ -1,9 +1,9 @@
 ### Random Oversample TableTransforms Interface
 
 struct RandomOversampler_t{T} <: Transform
-  y_ind::Integer
-  ratios::T
-  rng::Union{Integer, AbstractRNG}
+    y_ind::Integer
+    ratios::T
+    rng::Union{Integer,AbstractRNG}
 end
 
 """
@@ -19,9 +19,11 @@ $(DOC_RNG_ARGUMENT)
 
 - `model::RandomOversampler_t`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
 """
-RandomOversampler_t(y_ind::Integer;
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}}=nothing, 
-    rng::Union{Integer,AbstractRNG}=123) where T = RandomOversampler_t(y_ind, ratios, rng)
+RandomOversampler_t(
+    y_ind::Integer;
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing,
+    rng::Union{Integer,AbstractRNG} = 123,
+) where {T} = RandomOversampler_t(y_ind, ratios, rng)
 
 
 TransformsBase.isrevertible(::Type{RandomOversampler_t}) = true
@@ -44,7 +46,7 @@ Apply the RandomOversampler transform to a table Xy
 function TransformsBase.apply(r::RandomOversampler_t, Xy)
     Xyover = random_oversample(Xy, r.y_ind; ratios = r.ratios, rng = r.rng)
     cache = rowcount(Xy)
-  return Xyover, cache
+    return Xyover, cache
 end
 
 """
@@ -59,7 +61,8 @@ Revert the oversampling done by RandomOversampler by removing the new observatio
 
 - `Xy::AbstractTable`: A table with only the original observations
 """
-TransformsBase.revert(::RandomOversampler_t, Xyover, cache) = revert_oversampling(Xyover, cache)
+TransformsBase.revert(::RandomOversampler_t, Xyover, cache) =
+    revert_oversampling(Xyover, cache)
 
 """
 Equivalent to `apply(r, Xy)`

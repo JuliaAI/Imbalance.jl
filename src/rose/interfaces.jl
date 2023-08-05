@@ -1,10 +1,10 @@
 ### ROSE TableTransforms Interface
 
-struct ROSE_t{T} <: TransformsBase.Transform 
+struct ROSE_t{T} <: TransformsBase.Transform
     y_ind::Integer
     s::AbstractFloat
-    ratios::T 
-    rng::Union{Integer,AbstractRNG} 
+    ratios::T
+    rng::Union{Integer,AbstractRNG}
 end
 
 
@@ -22,18 +22,20 @@ $(DOC_RNG_ARGUMENT)
 
 - `model::ROSE_t`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
 """
-ROSE_t(y_ind::Integer;
-    s::AbstractFloat=1.0,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}}=nothing, 
-    rng::Union{Integer,AbstractRNG}=123) where T = ROSE_t(y_ind, s, ratios, rng)
+ROSE_t(
+    y_ind::Integer;
+    s::AbstractFloat = 1.0,
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing,
+    rng::Union{Integer,AbstractRNG} = 123,
+) where {T} = ROSE_t(y_ind, s, ratios, rng)
 
 
 TransformsBase.isrevertible(::Type{ROSE_t}) = true
 
 TransformsBase.isinvertible(::Type{ROSE_t}) = false
 
-TransformsBase.assertions(::Type{ROSE_t}) = 
-  [ rose -> @assert rose.s >= 0.0 "s parameter in ROSE must be non-negative" ]
+TransformsBase.assertions(::Type{ROSE_t}) =
+    [rose -> @assert rose.s >= 0.0 "s parameter in ROSE must be non-negative"]
 
 
 """
@@ -56,7 +58,7 @@ function TransformsBase.apply(r::ROSE_t, Xy)
     end
     Xyover = rose(Xy, r.y_ind; s = r.s, ratios = r.ratios, rng = r.rng)
     cache = rowcount(Xy)
-  return Xyover, cache
+    return Xyover, cache
 end
 
 """

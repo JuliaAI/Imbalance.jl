@@ -22,7 +22,7 @@ function generate_new_smote_point(
 )
     x_rand = randcols(rng, X)
     x_randneigh = get_random_neighbor(X, tree, x_rand; k, rng)
-    x_new = get_collinear_point(x_rand , x_randneigh; rng)
+    x_new = get_collinear_point(x_rand, x_randneigh; rng)
     return x_new
 end
 

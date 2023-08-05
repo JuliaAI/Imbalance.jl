@@ -33,7 +33,7 @@ function rose_per_class(
     # generate standard normal samples of same dimension of Xnew
     XSnew = randn(rng, size(Xnew))
     # matrix multiply the diagonal matrix by XSnew
-    XSnew = H * XSnew 
+    XSnew = H * XSnew
     # add Xnew and XSnew
     Xnew += XSnew
     # return the result

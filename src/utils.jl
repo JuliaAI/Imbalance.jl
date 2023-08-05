@@ -37,4 +37,3 @@ function group_inds(categorical_array::AbstractVector{T}) where {T}
     end
     return result
 end
-

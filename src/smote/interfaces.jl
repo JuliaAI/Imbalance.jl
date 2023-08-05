@@ -1,10 +1,10 @@
 ### SMOTE TableTransforms Interface
 
-struct SMOTE_t{T} <: TransformsBase.Transform 
-  y_ind::Integer
-  k::Integer 
-  ratios::T
-  rng::Union{Integer,AbstractRNG} 
+struct SMOTE_t{T} <: TransformsBase.Transform
+    y_ind::Integer
+    k::Integer
+    ratios::T
+    rng::Union{Integer,AbstractRNG}
 end
 
 TransformsBase.isrevertible(::Type{SMOTE_t}) = true
@@ -26,10 +26,12 @@ $(DOC_RNG_ARGUMENT)
 - `model::SMOTE_t`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
 
 """
-SMOTE_t(y_ind::Integer;
-    k::Integer=5,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}}=nothing, 
-    rng::Union{Integer,AbstractRNG}=123) where T = SMOTE_t(y_ind, k, ratios, rng)
+SMOTE_t(
+    y_ind::Integer;
+    k::Integer = 5,
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing,
+    rng::Union{Integer,AbstractRNG} = 123,
+) where {T} = SMOTE_t(y_ind, k, ratios, rng)
 
 
 """
@@ -49,7 +51,7 @@ Apply the SMOTE transform to a table Xy
 function TransformsBase.apply(s::SMOTE_t, Xy)
     Xyover = smote(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng)
     cache = rowcount(Xy)
-  return Xyover, cache
+    return Xyover, cache
 end
 
 
