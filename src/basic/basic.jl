@@ -29,3 +29,16 @@ function random_oversample(
     Xover, yover = rose(X, y; s = 0.0, ratios = ratios, rng = rng)
     return Xover, yover
 end
+
+
+# dispatch for table inputs where y is one of the columns
+function random_oversample(
+    Xy,
+    y_ind::Integer;
+    ratios = nothing,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
+)
+    # ROSE with s=0 is equivalent to random_oversample
+    Xyover = rose(Xy, y_ind; s = 0.0, ratios = ratios, rng = rng)
+    return Xyover
+end

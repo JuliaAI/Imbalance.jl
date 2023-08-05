@@ -47,8 +47,8 @@ function smote_per_class(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
-    size(X, 2) == 1 && (warn("class with a single observation will be ignored"); return X)
-    k = (k > 0) ? min(k, size(X, 1) - 1) : 1
+    size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
+    k = (k > 0) ? min(k, size(X, 2) - 1) : 1
     tree = KDTree(X)
     return hcat([generate_new_smote_point(X, tree; k, rng) for i = 1:n]...)
 end
@@ -89,14 +89,28 @@ function smote(
     return Xover, yover
 end
 
-
+# dispatch for table inputs
 function smote(
     X,
     y::AbstractVector;
     k::Int = 5,
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    materialize::Bool = true,
 )
-    Xover, yover = tablify(smote, X, y; k, ratios, rng)
+    Xover, yover = tablify(smote, X, y; materialize, k, ratios, rng)
     return Xover, yover
+end
+
+# dispatch for table inputs where y is one of the columns
+function smote(
+    Xy,
+    y_ind::Integer;
+    k::Int = 5,
+    ratios = nothing,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
+    materialize::Bool = true,
+)
+    Xyover = tablify(smote, Xy, y_ind; materialize, k, ratios, rng)
+    return Xyover
 end

@@ -7,6 +7,22 @@ rng_handler(rng::AbstractRNG) = rng
 
 
 """
+Get the number of rows of a table. This implementations comes from Tables.jl as used internally there.
+
+# Arguments
+- `X`: A table
+
+# Returns
+- `Int`: Number of rows of the table
+"""
+function rowcount(X)
+    cols = Tables.columns(X)
+    names = Tables.columnnames(cols)
+    isempty(names) && return 0
+    return length(Tables.getcolumn(cols, names[1]))
+end
+
+"""
 Return a dictionary mapping each unique value in an abstract vector to the indices of the array
 where that value occurs.
 """

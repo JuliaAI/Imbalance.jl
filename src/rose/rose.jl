@@ -66,7 +66,7 @@ $DOC_COMMON_OUTPUTS
 function rose(
     X::AbstractMatrix{<:AbstractFloat},
     y::AbstractVector;
-    s::AbstractFloat = 0.1,
+    s::AbstractFloat = 1.0,
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
@@ -75,13 +75,26 @@ function rose(
     return Xover, yover
 end
 
+# dispatch for table inputs
 function rose(
     X,
     y::AbstractVector;
-    s::AbstractFloat = 0.1,
+    s::AbstractFloat = 1.0,
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     Xover, yover = tablify(rose, X, y; s, ratios, rng)
     return Xover, yover
+end
+
+# dispatch for table inputs where y is one of the columns
+function rose(
+    Xy,
+    y_ind::Integer;
+    s::AbstractFloat = 1.0,
+    ratios = nothing,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
+    materialize::Bool = true,
+)
+    return tablify(rose, Xy, y_ind; materialize, s, ratios, rng)
 end

@@ -120,5 +120,13 @@ function tablify(matrix_func::Function, Xy, y_ind::Int; materialize::Bool=true, 
         to_table = Tables.materializer(Xy)
         Xyover = to_table(Xyover)
     end
+
     return Xyover
+end
+
+
+
+function revert_oversampling(Xyover, length)
+    Xy = Tables.subset(Xyover, 1:length)
+    return Xy
 end
