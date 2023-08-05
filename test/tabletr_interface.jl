@@ -9,7 +9,6 @@ using Test
 end
 
 
-# Test that RNG can be int or StableRNG of int in SMOTE
 @testset "TableTransforms" begin
     y_ind = 3
     smote_t = SMOTE_t(y_ind; k = 5, rng = 42)

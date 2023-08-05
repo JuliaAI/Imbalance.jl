@@ -79,7 +79,7 @@ end
 
 
 
-# compare rng_handler(rng::Integer) = StableRNG(rng) with rng_handler(rng::AbstractRNG) = rng
+# compare rng_handler(rng::Integer) = Random.Xoshiro(Integer) with rng_handler(rng::AbstractRNG) = rng
 @testset "rng_handler" begin
-    @test rng_handler(1234) == rng_handler(StableRNG(1234))
+    @test rng_handler(1234) == rng_handler(Random.Xoshiro(1234))
 end

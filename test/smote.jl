@@ -126,8 +126,6 @@ end
     ]
     for i in eachindex(tables)
         @testset "SMOTE with $tables[i] type" begin
-            rng = StableRNG(1234)
-            rng_int = 1234
             X, y = generate_imbalanced_data(
                 100,
                 2;
@@ -135,15 +133,14 @@ end
                 type = tables[i],
                 rng = rng,
             )
-            rng = StableRNG(1234)
             Xover1, yover1 =
-                smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = rng)
+                smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = Random.Xoshiro(1234))
             Xover2, yover2 = smote(
                 X,
                 y;
                 k = 5,
                 ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9),
-                rng = rng_int,
+                rng = 1234,
             )
             Xover3, yover3 =
                 smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 99)

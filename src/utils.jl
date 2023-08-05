@@ -2,7 +2,7 @@
 
 randcols(rng::AbstractRNG, X) = X[:, rand(rng, 1:size(X, 2))]
 randcols(rng::AbstractRNG, X, n) = X[:, rand(rng, 1:size(X, 2), n)]
-rng_handler(rng::Integer) = StableRNG(rng)
+rng_handler(rng::Integer) = Xoshiro(rng)
 rng_handler(rng::AbstractRNG) = rng
 
 

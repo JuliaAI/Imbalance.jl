@@ -9,7 +9,7 @@ const DOC_RATIOS_ARGUMENT = """
 
 const DOC_RNG_ARGUMENT = """
                          - `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` 
-                             seed to be used with `StableRNG`.\n
+                             seed to be used with `Xoshiro`.\n
                          """
 
 

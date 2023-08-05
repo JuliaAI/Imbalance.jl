@@ -1,7 +1,6 @@
 module Imbalance
 
-using Random: AbstractRNG, default_rng, shuffle
-using StableRNGs: StableRNG
+using Random: AbstractRNG, default_rng, shuffle, Xoshiro
 using Statistics
 using StatsBase: mode, countmap
 using TransformsBase

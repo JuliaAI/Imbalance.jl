@@ -62,7 +62,7 @@ end
 
 
 
-# Test that RNG can be int or StableRNG of int in ROSE
+# Test that RNG can be int or Xoshiro of int in ROSE
 @testset "RNG in SMOTE Algorithm" begin
     tables = [
         "DF",
@@ -76,7 +76,7 @@ end
     ]
     for i in eachindex(tables)
         @testset "ROSE with $tables[i] type" begin
-            rng = StableRNG(1234)
+            rng = Random.Xoshiro(1234)
             rng_int = 1234
             X, y = generate_imbalanced_data(
                 100,
@@ -85,7 +85,7 @@ end
                 type = tables[i],
                 rng = rng,
             )
-            rng = StableRNG(1234)
+            rng = Random.Xoshiro(1234)
             Xover1, yover1 =
                 rose(X, y; s = 0.03, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = rng)
             Xover2, yover2 = rose(
