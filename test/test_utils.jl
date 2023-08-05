@@ -36,7 +36,6 @@ function generate_imbalanced_data(
     rands = rand(rng, num_rows)
     y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
 
-    rng = Imbalance.rng_handler(rng)
     Xc = rand(rng, Float64, num_rows, num_cont_feats)
     for num_levels in extra_cat_feats
         Xc = hcat(Xc, rand(rng, 1:num_levels, num_rows))

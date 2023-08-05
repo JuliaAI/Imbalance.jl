@@ -27,12 +27,12 @@ function generate_imbalanced_data(
     insert_y=nothing,
     rng = Random.default_rng(),
 )
+    rng = Imbalance.rng_handler(rng)
     # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
     cum_probs = cumsum(probs)
     rands = rand(rng, num_rows)
     y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
 
-    rng = Imbalance.rng_handler(rng)
     Xc = rand(rng, Float64, num_rows, num_cont_feats)
     for num_levels in extra_cat_feats
         Xc = hcat(Xc, rand(rng, 1:num_levels, num_rows))

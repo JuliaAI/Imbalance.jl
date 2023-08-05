@@ -8,7 +8,7 @@ using StatsBase: countmap
 using NearestNeighbors, Distances
 using MLJBase: machine, transform
 using StableRNGs: StableRNG
-
+using TableTransforms
 
 include("test_utils.jl")
 
@@ -18,6 +18,10 @@ end
 
 @testset "wrappers" begin
     include("wrappers.jl")
+end
+
+@testset "tabletransforms" begin
+    include("tabletr_interface.jl")
 end
 
 @testset "MLJ Interface" begin
