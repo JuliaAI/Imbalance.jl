@@ -23,7 +23,7 @@ function generate_imbalanced_data(
     num_cont_feats;
     extra_cat_feats = [],
     probs = [0.5, 0.5],
-    type = "DF",
+    type = "DF",                # make it maybe a column table (and use DataFrame if you like later)
     insert_y = nothing,
     rng = Random.default_rng(),
 )
@@ -33,7 +33,12 @@ function generate_imbalanced_data(
     rands = rand(rng, num_rows)
     y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
 
-    Xc = rand(rng, Float64, num_rows, num_cont_feats)
+    if num_cont_feats > 0
+        Xc = rand(rng, Float64, num_rows, num_cont_feats)
+    else
+        Xc = Matrix{Int64}(undef, num_rows, 0)
+    end
+    
     for num_levels in extra_cat_feats
         Xc = hcat(Xc, rand(rng, 1:num_levels, num_rows))
     end
