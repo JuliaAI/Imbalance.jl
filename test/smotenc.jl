@@ -9,8 +9,6 @@ using Imbalance:
     get_cont_part,
     get_cat_part
 
-
-
 @testset "Testing get_cont_part" begin
     # Test for vectors
     @test get_cont_part([1.0, 2.0, 3.0, "A", "B", "C"], 4) == [1.0, 2.0, 3.0]
@@ -92,13 +90,14 @@ end
     ]'
     tree = BallTree(X)
     x = [3.5, 3.5]
-    k = 2                   # wil become three in the function and
+    k = 2                   # wil become three in the function
     random_neighbor, all_neighbors = get_random_neighbor(X, tree, x; k, return_all = true)
     @test random_neighbor in [X[:, 4], X[:, 5]]
     @test all_neighbors == X[:, [4, 5]]
 end
 
-# Test that generated smote point is collinear with some pair of points
+# Test that generated smote point is collinear with some pair of points 
+# for the continuous part and is the mode for the categorical part
 @testset "generate_new_smote_point" begin
     X = [
         1.0 1.0 9.7 3.3

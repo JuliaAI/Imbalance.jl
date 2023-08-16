@@ -118,7 +118,7 @@ function smotenc_per_class(
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
     σₘ = get_penalty(X, split_ind)
     metric = EuclideanWithPenalty(split_ind, σₘ)
-    tree = BallTree(X, metric)
+    tree = BallTree(X, metric)                      # May need to become BruteTree
     return hcat([generate_new_smotenc_point(X, tree, split_ind; k, rng) for i = 1:n]...)
 end
 
@@ -135,7 +135,8 @@ Oversample a dataset given by a matrix or table of observations `X` and an abstr
 
 $DOC_COMMON_INPUTS
 
-- `split_ind::Int`: The index of the first categorical variable
+- `split_ind::Int`: The index of the first categorical variable. Only provided if `X` is a matrix with
+    label-encoded categorical columns.
 
 - `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
@@ -163,7 +164,7 @@ function smotenc(
 end
 
 
-### To be revisited!
+
 function smotenc(
     X,
     y::AbstractVector;
@@ -171,6 +172,69 @@ function smotenc(
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
-    Xover, yover = tablify(smote, X, y; k, ratios, rng)
+    Xover, yover = tablify_nc(smotenc, X, y; k, ratios, rng)
+    return Xover, yover
+end
+
+# A custom wrapper for SMOTE-NC
+function tablify_nc(
+    matrix_func::Function,
+    X,
+    y::AbstractVector;
+    materialize::Bool = true,
+    kwargs...,
+)
+    # find the categorical and continuous columns
+    types = ScientificTypes.schema(X).scitypes
+    cat_inds = findall( x -> x <: Multiclass, types)
+    cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)      # add ordered factor (have to document)
+    ### Assertion that these are only the types in the input
+
+    # setup the decode transform for categotical columns
+    encode_dict = Dict{Int, Function}()
+    decode_dict = Dict{Int, Function}()
+
+    columns = Tables.columns(X)
+    for c in cat_inds
+        column = collect(Tables.getcolumn(columns, c))
+        decode_dict[c] = x -> CategoricalDistributions.decoder(column)(round(Int, x))
+        encode_dict[c] = x -> CategoricalDistributions.int(x)
+    end
+    # avoid converting floats to integers
+    
+    # Encode the data
+    Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable        
+    # TODO: Remove Tables.columntable once https://github.com/JuliaData/TableOperations.jl/issues/32 is resolved
+
+    # Matrixify the table
+    Xm, names = matrixify(Xenc)             # Matrix floats       
+
+    # reorder columns so that continuous ones appear first
+    Xcont = Xm[:, cont_inds]
+    Xcat = Xm[:, cat_inds]
+    split_ind = size(Xcont, 2) + 1
+    Xm = hcat(Xcont, Xcat)
+
+
+    # construct an inverse mapping for the column reordering
+    cols_map = vcat(cont_inds, cat_inds)
+    inv_map = [findfirst(cols_map .== i) for i in 1:length(cols_map)]
+    #Xm[:, inv_map] => Xm  (invperm Base)
+
+    # apply the algorithm logic on the matrix
+    Xover, yover = matrix_func(Xm, y, split_ind; kwargs...)
+
+    # reorder the columns to their initial ordering
+    Xover = Xover[:, inv_map]
+
+    # decode the categorical variables back to categories
+    Xover = Tables.table(Xover, header = names) 
+    Xover = Xover |> TableOperations.transform(decode_dict)
+
+    # also maintain a way to convert it back to a table
+    if materialize
+        to_table = Tables.materializer(X)
+        Xover = to_table(Xover)
+    end
     return Xover, yover
 end
