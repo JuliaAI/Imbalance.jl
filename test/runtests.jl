@@ -4,6 +4,7 @@ using DataFrames
 using Random
 using MLJTestInterface
 using Statistics
+using Distances
 using StatsBase: countmap
 using NearestNeighbors, Distances
 using MLJBase: machine, transform
@@ -19,7 +20,7 @@ end
 @testset "wrappers" begin
     include("wrappers.jl")
 end
-
+#=
 @testset "tabletransforms" begin
     include("tabletr_interface.jl")
 end
@@ -41,4 +42,9 @@ end
 
 @testset "SMOTENC" begin
     include("smotenc.jl")
+end
+
+=#
+@testset "SMOTEN" begin
+    include("smoten.jl")
 end

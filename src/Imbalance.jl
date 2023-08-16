@@ -5,8 +5,11 @@ using Statistics
 using StatsBase: mode, countmap
 using TransformsBase
 using LinearAlgebra
+using ScientificTypes
 using Parameters
 using NearestNeighbors, Distances
+using CategoricalDistributions
+using TableOperations
 using Tables
 using MLJModelInterface
 using OrderedCollections
@@ -35,6 +38,10 @@ export smote, SMOTE, SMOTE_t
 include("smotenc/smotenc.jl")
 include("smotenc/interfaces.jl")
 export smotenc
+
+include("smoten/smoten.jl")
+include("smoten/interfaces.jl")
+export smoten
 
 
 include("mlj_interface.jl")
