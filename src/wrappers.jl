@@ -79,6 +79,12 @@ applies the function, then converts the matrix back to a table.
     and returns a matrix of oversampled observations and a vector of oversampled labels
 - `X::AbstractMatrix`: A table where each row is an observation of floats
 - `y::AbstractVector`: An abstract vector of class labels
+- `materialize::Bool`: Whether to convert the output back to the original table type
+- `encode_func::Function`: A function that takes the table and performs discrete encoding on it
+    then returns the encoded table, a dictionary to decode it, and the indices of the categorical
+    columns.
+- `decode_func::Function`: A function that takes the encoded table and the dictionary to decode it
+    and returns the decoded table.
 
 # Returns
 - `Xover`: A table of the same type of X if possible (else a columntable) that 
@@ -92,18 +98,28 @@ function tablify(
     X,
     y::AbstractVector;
     materialize::Bool = true,
+    encode_func::Function = X -> (X, nothing, nothing),
+    decode_func::Function = (X, d) -> (X),
     kwargs...,
 )
-    Xm, names = matrixify(X)
+    # 1. Encode if needed
+    Xenc, decode_dict, inds = encode_func(X)
 
-    Xover, yover = matrix_func(Xm, y; kwargs...)
+    # 2. Matrixify the table
+    Xm, names = matrixify(Xenc)
+
+    # 3. apply the algorithm logic on the matrix
+    Xover, yover = isnothing(inds) ? matrix_func(Xm, y; kwargs...) : matrix_func(Xm, y, inds; kwargs...)
+
+    # 4. Transform back to table
     Xover = Tables.table(Xover; header = names)
 
-    # also maintain a way to convert it back to a table
-    if materialize
-        to_table = Tables.materializer(X)
-        Xover = to_table(Xover)
-    end
+    # 5. Decode if needed
+    Xover = decode_func(Xover, decode_dict)
+
+    # 6. Maintain original table type if needed
+    materialize && (Xover = Tables.materializer(X)(Xover))
+
     return Xover, yover
 end
 
@@ -111,28 +127,54 @@ end
 """
 Overloads `tablify` to work with inputs where the label is one of the table columns.
 """
-function tablify(matrix_func::Function, Xy, y_ind::Int; materialize::Bool = true, kwargs...)
-    Xym, names = matrixify(Xy)
+function tablify(
+    matrix_func::Function, 
+    Xy, 
+    y_ind::Int; 
+    materialize::Bool = true, 
+    encode_func::Function = X -> (X, nothing, nothing),
+    decode_func::Function = (X, d) -> (X),
+    kwargs...
+)
+    # 1. Encode if needed
+    Xyenc, decode_dict, inds = encode_func(Xy)
 
-    # before proceeding as usual, split the matrix into X and y and merge them back after
+    # 2. Matrixify the table
+    Xym, names = matrixify(Xyenc)
+
+    # 3. Before proceeding as usual, split the matrix into X and y
     Xm = @view Xym[:, 1:end.!=y_ind]
     y = @view Xym[:, y_ind]
-    Xover, yover = matrix_func(Xm, y; kwargs...)
+
+    # 3.1 Fix inds after removing y_ind
+    if !isnothing(inds)
+        inds = inds[1:end.!=y_ind]              # It's not one of the categorical columns anymore
+        inds = inds .- (inds .> y_ind)          # Increment the indices of the columns after y_ind
+    end
+
+    # 4. Apply the algorithm logic on the matrix
+    Xover, yover = isnothing(inds) ? matrix_func(Xm, y; kwargs...) : matrix_func(Xm, y, inds; kwargs...)
+
+    # 5. Merge back to Xy form
     Xyover = hcat(Xover[:, 1:y_ind-1], yover, Xover[:, y_ind:end])
+
+    # 6. Transform back to table
     Xyover = Tables.table(Xyover; header = names)
 
-    # also maintain a way to convert it back to a table
-    if materialize
-        to_table = Tables.materializer(Xy)
-        Xyover = to_table(Xyover)
-    end
+    # 7. Decode if needed
+    Xyover = decode_func(Xyover, decode_dict)
+
+    # 8. Maintain original table type if needed
+    materialize && (Xyover = Tables.materializer(Xy)(Xyover))
 
     return Xyover
 end
 # materialize => try_perserve_type (will think again)
 
-
-
+"""
+A function to revert oversampling by simply removing the synthetic examples. Used
+with TableTransforms.
+"""
 function revert_oversampling(Xyover, length)
     Xy = Tables.subset(Xyover, 1:length)
     return Xy

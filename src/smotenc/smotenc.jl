@@ -1,14 +1,8 @@
-# functions to extract the continuous and categorical parts of a vector or matrix
-get_cont_part(x::AbstractVector, split_ind::Int) = @view x[1:split_ind-1]
-get_cat_part(x::AbstractVector, split_ind::Int) = @view x[split_ind:end]
-get_cont_part(X::AbstractMatrix, split_ind::Int) = @view X[1:split_ind-1, :]
-get_cat_part(X::AbstractMatrix, split_ind::Int) = @view X[split_ind:end, :]
-
-
 # SMOTE-NC uses KNN with a modified distance metric
 struct EuclideanWithPenalty <: Metric
-    split_ind::Int
     penalty::Float64
+    cont_inds::AbstractVector{<:Int}
+    cat_inds::AbstractVector{<:Int}
 end
 
 """
@@ -17,14 +11,14 @@ continuous features of the observations and return that as the penalty.
 
 # Arguments
 - `X::AbstractMatrix`: A matrix where each row is an observation
-- `split_ind::Int`: The index of the first categorical variable
+- `cont_inds::AbstractVector{<:Int}`: A vector of indices of the continuous features
 
 # Returns
 - `Float64`: The penalty term that modifies the distance metric
 
 """
-function get_penalty(X::AbstractMatrix{<:AbstractFloat}, split_ind::Int)
-    Xcont = get_cont_part(X, split_ind)
+function get_penalty(X::AbstractMatrix{<:AbstractFloat}, cont_inds::AbstractVector{<:Int})
+    Xcont = @view X[cont_inds, :]
     σs = vec(std(Xcont, dims = 2))
     σₘ = median(σs)
     return σₘ
@@ -45,11 +39,9 @@ variables that are not equal.
 - `Float64`: The distance between `x₁` and `x₂` using the modified distance metric
 """
 function Distances.evaluate(d::EuclideanWithPenalty, x₁, x₂)
-    x₁_cont = get_cont_part(x₁, d.split_ind)
-    x₂_cont = get_cont_part(x₂, d.split_ind)
+    x₁_cont, x₁_cat = x₁[d.cont_inds], x₁[d.cat_inds]
+    x₂_cont, x₂_cat  = x₂[d.cont_inds], x₂[d.cat_inds]
     e = euclidean(x₁_cont, x₂_cont)
-    x₁_cat = get_cat_part(x₁, d.split_ind)
-    x₂_cat = get_cat_part(x₂, d.split_ind)
     h = hamming(x₁_cat, x₂_cat)
     return e + d.penalty * h
 end
@@ -64,7 +56,8 @@ has the mode of the categorical part of the k-nearest neighbors of the random po
 # Arguments
 - `X::AbstractMatrix`: A matrix where each row is an observation
 - `tree`: A k-d tree representation of the observations matrix X
-- `split_ind::Int`: The index of the first categorical variable
+- `cont_inds::AbstractVector{<:Int}`: A vector of indices of the continuous features
+- `cat_inds::AbstractVector{<:Int}`: A vector of indices of the categorical features
 - `k::Int`: Number of nearest neighbors to consider
 - `rng::AbstractRNG`: Random number generator
 
@@ -74,20 +67,29 @@ has the mode of the categorical part of the k-nearest neighbors of the random po
 function generate_new_smotenc_point(
     X::AbstractMatrix{<:AbstractFloat},
     tree,
-    split_ind::Int;
+    cont_inds::AbstractVector{<:Int},
+    cat_inds::AbstractVector{<:Int};
     k::Int,
     rng::AbstractRNG,
 )
     x_rand = randcols(rng, X)
     x_randneigh, Xneighs = get_random_neighbor(X, tree, x_rand; k, rng, return_all = true)
+
     # find the continuous part
-    x_rand_cont = get_cont_part(x_rand, split_ind)
-    x_randneigh_cont = get_cont_part(x_randneigh, split_ind)
+    x_rand_cont = @view x_rand[cont_inds]
+    x_randneigh_cont = @view x_randneigh[cont_inds]
     x_new_cont = get_collinear_point(x_rand_cont, x_randneigh_cont; rng = rng)
+
     # find the categorical part
-    Xneighs_cat = get_cat_part(Xneighs, split_ind)
+    Xneighs_cat = @view Xneighs[cat_inds, :]
     x_new_cat = get_neighbors_mode(Xneighs_cat, rng)
-    return vcat(x_new_cont, x_new_cat)
+
+    # make the final vector
+    x_new = fill(0.0, size(X, 1))
+    x_new[cont_inds] = x_new_cont
+    x_new[cat_inds] = x_new_cat
+
+    return x_new
 end
 
 
@@ -101,7 +103,8 @@ use SMOTE-NC to generate `n` new observations for that class.
 - `X::AbstractMatrix`: A matrix where each row is an observation
 - `n::Int`: Number of new observations to generate
 - `k::Int`: Number of nearest neighbors to consider.
-- `split_ind::Int`: The index of the first categorical variable
+- `cont_inds::AbstractVector{<:Int}`: A vector of indices of the continuous features
+- `cat_inds::AbstractVector{<:Int}`: A vector of indices of the categorical features
 - `rng::AbstractRNG`: Random number generator
 
 # Returns
@@ -110,16 +113,17 @@ use SMOTE-NC to generate `n` new observations for that class.
 function smotenc_per_class(
     X::AbstractMatrix{<:AbstractFloat},
     n::Int,
-    split_ind::Int;
+    cont_inds::AbstractVector{<:Int},
+    cat_inds::AbstractVector{<:Int};
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
-    size(X, 2) == 1 && (warn("class with a single observation will be ignored"); return X)
+    size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
-    σₘ = get_penalty(X, split_ind)
-    metric = EuclideanWithPenalty(split_ind, σₘ)
+    σₘ = get_penalty(X, cont_inds)
+    metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
     tree = BallTree(X, metric)                      # May need to become BruteTree
-    return hcat([generate_new_smotenc_point(X, tree, split_ind; k, rng) for i = 1:n]...)
+    return hcat([generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng) for i = 1:n]...)
 end
 
 
@@ -135,8 +139,8 @@ Oversample a dataset given by a matrix or table of observations `X` and an abstr
 
 $DOC_COMMON_INPUTS
 
-- `split_ind::Int`: The index of the first categorical variable. Only provided if `X` is a matrix with
-    label-encoded categorical columns.
+- `cat_inds::AbstractVector{<:Int}`: A vector of indices of the categorical features. Needed only if `X` is a matrix.
+    If `X` is a table, the categorical features are automatically detected as the multiclass scitypes.
 
 - `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
@@ -152,17 +156,17 @@ $DOC_COMMON_OUTPUTS
 function smotenc(
     X::AbstractMatrix{<:AbstractFloat},
     y::AbstractVector,
-    split_ind::Int;
+    cat_inds::AbstractVector{<:Int};
     k::Int = 5,
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     rng = rng_handler(rng)
+    cont_inds = setdiff(1:size(X, 2), cat_inds)
     Xover, yover =
-        generic_oversample(X, y, smotenc_per_class, split_ind::Int; ratios, k, rng)
+        generic_oversample(X, y, smotenc_per_class, cont_inds, cat_inds; ratios, k, rng)
     return Xover, yover
 end
-
 
 
 function smotenc(
@@ -172,18 +176,36 @@ function smotenc(
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
-    Xover, yover = tablify_nc(smotenc, X, y; k, ratios, rng)
+    Xover, yover = tablify(smotenc, X, y; encode_func=smotenc_encoder, decode_func=smotenc_decoder, materialize=true, k, ratios, rng)
     return Xover, yover
 end
 
-# A custom wrapper for SMOTE-NC
-function tablify_nc(
-    matrix_func::Function,
-    X,
-    y::AbstractVector;
-    materialize::Bool = true,
-    kwargs...,
+function smotenc(
+    Xy,
+    y_ind::Int;
+    k::Int = 5,
+    ratios = nothing,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
 )
+    Xyover = tablify(smotenc, Xy, y_ind; encode_func=smotenc_encoder, decode_func=smotenc_decoder, materialize=true, k, ratios, rng)
+    return Xyover
+end
+
+"""
+Apply label encoding to the categorical columns of a table. A categorical column is defined
+as any column with the scitype `Multiclass`.
+
+# Arguments
+- `X`: A table where each row is an observation which has some categorical columns
+- `nominal_only::Bool`: If true, the function asserts there are only categorical columns and does
+    not return their indices
+
+# Returns
+- `Xenc`: A column table where the categorical columns have been replaced by their label encoded
+    versions
+
+"""
+function smotenc_encoder(X; nominal_only=false)
     # find the categorical and continuous columns
     types = ScientificTypes.schema(X).scitypes
     cat_inds = findall( x -> x <: Multiclass, types)
@@ -199,42 +221,28 @@ function tablify_nc(
         column = collect(Tables.getcolumn(columns, c))
         decode_dict[c] = x -> CategoricalDistributions.decoder(column)(round(Int, x))
         encode_dict[c] = x -> CategoricalDistributions.int(x)
-    end
-    # avoid converting floats to integers
-    
+    end 
+
     # Encode the data
     Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable        
     # TODO: Remove Tables.columntable once https://github.com/JuliaData/TableOperations.jl/issues/32 is resolved
+    
+    nominal_only && return Xenc, decode_dict, nothing       # SMOTE-N encoder need not pass cat_inds to tablify
+    return Xenc, decode_dict, cat_inds
+end
 
-    # Matrixify the table
-    Xm, names = matrixify(Xenc)             # Matrix floats       
+"""
+Decode the label encoded categorical columns of a table.
 
-    # reorder columns so that continuous ones appear first
-    Xcont = Xm[:, cont_inds]
-    Xcat = Xm[:, cat_inds]
-    split_ind = size(Xcont, 2) + 1
-    Xm = hcat(Xcont, Xcat)
+# Arguments
+- `Xover`: A table where each row is an observation which has some label-encoded categorical columns
+- `decode_dict`: A dictionary of functions to decode the label-encoded categorical columns
 
+# Returns
+- `Xover`: A column table where the categorical columns is decoded back to their original values
+"""
 
-    # construct an inverse mapping for the column reordering
-    cols_map = vcat(cont_inds, cat_inds)
-    inv_map = [findfirst(cols_map .== i) for i in 1:length(cols_map)]
-    #Xm[:, inv_map] => Xm  (invperm Base)
-
-    # apply the algorithm logic on the matrix
-    Xover, yover = matrix_func(Xm, y, split_ind; kwargs...)
-
-    # reorder the columns to their initial ordering
-    Xover = Xover[:, inv_map]
-
-    # decode the categorical variables back to categories
-    Xover = Tables.table(Xover, header = names) 
+function smotenc_decoder(Xover, decode_dict)
     Xover = Xover |> TableOperations.transform(decode_dict)
-
-    # also maintain a way to convert it back to a table
-    if materialize
-        to_table = Tables.materializer(X)
-        Xover = to_table(Xover)
-    end
-    return Xover, yover
+    return Xover
 end

@@ -108,7 +108,7 @@ function smoten_per_class(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
-    size(X, 2) == 1 && (warn("class with a single observation will be ignored"); return X)
+    size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
     metric = ValueDifference(all_pairwise_vdm)
     tree = BruteTree(X, metric)
@@ -159,55 +159,20 @@ function smoten(
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
-    Xover, yover = tablify_n(smoten, X, y; k, ratios, rng)
+    Xover, yover = tablify(smoten, X, y; encode_func=smoten_encoder, decode_func=smoten_decoder, materialize=true, k, ratios, rng)
     return Xover, yover
 end
 
-
-# X and y
-function tablify_n(
-    matrix_func::Function,
-    X,
-    y::AbstractVector;
-    materialize::Bool = true,
-    kwargs...,
+function smoten(
+    Xy,
+    y_ind::Int;
+    k::Int = 5,
+    ratios = nothing,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
 )
-    # find the categorical and continuous columns
-    types = ScientificTypes.schema(X).scitypes
-    cat_inds = findall( x -> x <: Multiclass, types)
-    
-    ### Assert that multiclass is the only type
-
-    # setup the decode transform for categotical columns
-    encode_dict = Dict{Int, Function}()
-    decode_dict = Dict{Int, Function}()
-    
-    columns = Tables.columns(X)
-    for c in cat_inds
-        column = collect(Tables.getcolumn(columns, c))
-        decode_dict[c] = x -> CategoricalDistributions.decoder(column)(round(Int, x))
-        encode_dict[c] = x -> CategoricalDistributions.int(x)
-    end
-    
-    # setup the encode transform for categotical columns and apply it (more julian if you type dispatch)
-    Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable        
-    # TODO: Remove Tables.columntable once https://github.com/JuliaData/TableOperations.jl/issues/32 is resolved
-
-    # Matrixify the table
-    Xm, names = matrixify(Xenc)             # Matrix floats       
-
-    # apply the algorithm logic on the matrix
-    Xover, yover = matrix_func(Xm, y; kwargs...)
-
-    # decode the categorical variables back to categories
-    Xover = Tables.table(Xover, header = names) 
-    Xover = Xover |> TableOperations.transform(decode_dict)
-
-    # also maintain a way to convert it back to a table
-    if materialize
-        to_table = Tables.materializer(X)
-        Xover = to_table(Xover)
-    end
-
-    return Xover, yover
+    Xyover = tablify(smoten, Xy, y_ind; encode_func=smoten_encoder, decode_func=smoten_decoder, materialize=true, k, ratios, rng)
+    return Xyover
 end
+
+smoten_encoder(X) = smotenc_encoder(X; nominal_only=true)
+smoten_decoder(X, d) = smotenc_decoder(X, d)
