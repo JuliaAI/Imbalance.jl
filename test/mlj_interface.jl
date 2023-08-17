@@ -1,4 +1,4 @@
-using Imbalance: SMOTE, ROSE, RandomOversampler, smote, rose, random_oversample, MMI
+using Imbalance: SMOTE, ROSE, RandomOversampler, smote, rose, random_oversample, MMI, SMOTENC, smotenc
 
 
 @testset "Random Oversampler MLJ" begin
@@ -26,6 +26,18 @@ end
 @testset "SMOTE MLJ" begin
     failures, summary = MLJTestInterface.test(
         [SMOTE],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
+end
+
+
+@testset "SMOTENC MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [SMOTENC],
         MLJTestInterface.make_multiclass()...;
         verbosity = 1,
         throw = true,

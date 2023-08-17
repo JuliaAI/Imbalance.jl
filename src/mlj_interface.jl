@@ -23,3 +23,4 @@ for model_name in [:SMOTE, :ROSE, :RandomOversampler, :SMOTENC]
         end
     end |> eval
 end
+

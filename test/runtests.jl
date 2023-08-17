@@ -20,7 +20,7 @@ end
 @testset "wrappers" begin
     include("wrappers.jl")
 end
-#=
+
 @testset "tabletransforms" begin
     include("tabletr_interface.jl")
 end
@@ -36,6 +36,7 @@ end
 @testset "Basic Random Oversampler" begin
     include("basic.jl")
 end
+
 @testset "SMOTE" begin
     include("smote.jl")
 end
@@ -44,7 +45,6 @@ end
     include("smotenc.jl")
 end
 
-=#
 @testset "SMOTEN" begin
     include("smoten.jl")
 end
