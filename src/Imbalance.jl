@@ -46,7 +46,7 @@ export smotenc, SMOTENC, SMOTENC_t
 include("smoten/smoten.jl")
 include("smoten/interface_mlj.jl")
 include("smoten/interface_tables.jl")
-export smoten
+export smoten, SMOTEN, SMOTEN_t
 
 
 include("mlj_interface.jl")

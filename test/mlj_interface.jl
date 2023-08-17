@@ -1,4 +1,4 @@
-using Imbalance: SMOTE, ROSE, RandomOversampler, smote, rose, random_oversample, MMI, SMOTENC, smotenc
+using Imbalance: SMOTE, ROSE, RandomOversampler, smote, rose, random_oversample, MMI, SMOTENC, smotenc, SMOTEN, smoten
 
 
 @testset "Random Oversampler MLJ" begin
@@ -45,3 +45,5 @@ end
     )
     @test isempty(failures)
 end
+
+# For SMOTEN, need dataset with categorical variables
