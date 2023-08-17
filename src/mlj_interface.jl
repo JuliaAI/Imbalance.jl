@@ -1,4 +1,4 @@
-for model_name in [:SMOTE, :ROSE, :RandomOversampler]
+for model_name in [:SMOTE, :ROSE, :RandomOversampler, :SMOTENC]
     quote
         MMI.metadata_pkg(
             $model_name,

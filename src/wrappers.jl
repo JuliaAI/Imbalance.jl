@@ -148,8 +148,8 @@ function tablify(
 
     # 3.1 Fix inds after removing y_ind
     if !isnothing(inds)
-        inds = inds[1:end.!=y_ind]              # It's not one of the categorical columns anymore
-        inds = inds .- (inds .> y_ind)          # Increment the indices of the columns after y_ind
+        inds = filter(ind -> ind != y_ind, inds)    # y_ind is no longer a categorical variable
+        inds = inds .- (inds .> y_ind)              # Increment the indices of the columns after y_ind
     end
 
     # 4. Apply the algorithm logic on the matrix
