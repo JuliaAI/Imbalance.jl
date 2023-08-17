@@ -22,25 +22,30 @@ include("utils.jl")
 
 include("class_counts.jl")
 
-include("basic/basic.jl")
-include("basic/interfaces.jl")
+include("random_oversample/random_oversample.jl")
+include("random_oversample/interface_mlj.jl")
+include("random_oversample/interface_tables.jl")
 export random_oversample, RandomOversampler, RandomOversampler_t
 
 include("rose/rose.jl")
-include("rose/interfaces.jl")
-export rose, ROSE, ROSE_t
+include("rose/interface_mlj.jl")
+include("rose/interface_tables.jl")
+export rose, ROSE, TableTransforms
 
 include("common_smote.jl")
 include("smote/smote.jl")
-include("smote/interfaces.jl")
+include("smote/interface_mlj.jl")
+include("smote/interface_tables.jl")
 export smote, SMOTE, SMOTE_t
 
 include("smotenc/smotenc.jl")
-include("smotenc/interfaces.jl")
+include("smotenc/interface_mlj.jl")
+include("smotenc/interface_tables.jl")
 export smotenc
 
 include("smoten/smoten.jl")
-include("smoten/interfaces.jl")
+include("smoten/interface_mlj.jl")
+include("smoten/interface_tables.jl")
 export smoten
 
 
