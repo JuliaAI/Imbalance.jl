@@ -1,4 +1,10 @@
 """
+This file defines the `tablify` method which is used by all the oversampling methods
+to convert functions that operate on matrices to functions that operate on tables.
+"""
+
+
+"""
 Takes a table and returns a matrix and the column names of the table.
 
 # Arguments

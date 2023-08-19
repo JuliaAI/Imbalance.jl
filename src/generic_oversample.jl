@@ -1,6 +1,10 @@
 """
+This files defines the `generic_oversample` function which is used by all the oversampling methods.
+"""
+
+"""
 This function is a generic implementation of oversampling methods that apply oversampling
-logic independently to each class. 
+logic independently to each class.
 
 # Arguments
 - `X::AbstractMatrix`: A matrix or table where each row is an observation of floats

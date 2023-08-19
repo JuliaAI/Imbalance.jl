@@ -1,3 +1,7 @@
+"""
+Entry points to the package.
+"""
+
 module Imbalance
 
 using Random: AbstractRNG, default_rng, shuffle, Xoshiro

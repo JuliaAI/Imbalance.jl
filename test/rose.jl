@@ -1,4 +1,4 @@
-using Imbalance: rose, rose_per_class
+using Imbalance: rose, rose_per_class, ERR_NEG_S
 
 
 # Test that it indeed generates n new points
@@ -10,6 +10,14 @@ using Imbalance: rose, rose_per_class
     @test size(smote_points, 2) == n
 end
 
+@testset "throws s error" begin
+    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]
+    y = [0, 0, 0, 0, 0]
+    k = 10
+    n = 100
+    s=-1.0
+    @test_throws ERR_NEG_S(s) rose(X, y; s=s)
+end
 
 # Test that ROSE adds the right number of points per class and that the input and output types are as expected
 @testset "ROSE Algorithm" begin
@@ -63,7 +71,7 @@ end
 
 
 # Test that RNG can be int or Xoshiro of int in ROSE
-@testset "RNG in SMOTE Algorithm" begin
+@testset "RNG in ROSE Algorithm" begin
     tables = [
         "DF",
         "RowTable",
@@ -110,7 +118,7 @@ end
 
 
 # test that the materializer works for dataframes
-@testset "materializer" begin
+@testset "materializer with rose" begin
     X, y =
         generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "DF", rng = 121)
     Xover, yover = rose(X, y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)

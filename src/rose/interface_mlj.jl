@@ -10,10 +10,9 @@ end;
 Check whether the given model hyperparameters are valid and clean them if necessary. 
 """
 function MMI.clean!(r::ROSE)
-  message = ""
+    message = ""
     if r.s < 0
-        message = "s for ROSE must be at least 0.0 but found $(r.s). Setting s = 0.0"
-        r.s = 1
+        throw(ERR_NONNEG_S(r.s))
     end
     return message
 end
@@ -26,8 +25,7 @@ function ROSE(; s::AbstractFloat = 1.0,
         rng::Union{Integer,AbstractRNG} = default_rng()
 ) where {T}
     model = ROSE(s, ratios, rng)
-    message = MMI.clean!(model)
-    isempty(message) || @warn message
+    MMI.clean!(model)
     return model
 end
 

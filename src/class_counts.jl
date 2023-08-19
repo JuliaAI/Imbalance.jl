@@ -1,4 +1,7 @@
-
+"""
+This file has the `get_class_counts` methods which is used by `generic_oversample` and hence, 
+all the oversampling methods.
+"""
 
 """
 Given a categorical array of discrete labels and a dictionary of ratios, return a dictionary

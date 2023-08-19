@@ -1,3 +1,7 @@
+"""
+This file contains utility functions used by the oversampling methods.
+"""
+
 
 # randomly sample one column of a matrix
 randcols(rng::AbstractRNG, X) = X[:, rand(rng, 1:size(X, 2))]

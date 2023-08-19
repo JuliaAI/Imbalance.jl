@@ -10,6 +10,7 @@ using NearestNeighbors, Distances
 using MLJBase: machine, transform
 using StableRNGs: StableRNG
 using TableTransforms
+using ScientificTypes
 
 include("test_utils.jl")
 

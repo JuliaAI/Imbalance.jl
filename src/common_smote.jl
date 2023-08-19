@@ -1,8 +1,8 @@
 """
-This file contains any function used by two or more of the SMOTE variants. 
+This file contains any function used by two or more of the `SMOTE` variants. 
 """
 
-
+# Used by SMOTE and SMOTENC
 """
 Generate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
 
@@ -26,6 +26,7 @@ function get_collinear_point(
 end
 
 
+# Used by SMOTE, SMOTENC and SMOTEN
 """
 Randomly return one of the k-nearest neighbor of a given observation `x` from an observations 
 matrix `X` represented by a k-d tree
@@ -64,9 +65,32 @@ function get_random_neighbor(
     return random_neighbor
 end
 
+# Used by SMOTE, SMOTENC and SMOTEN
+"""
+This function is only called when n>1 and checks whether 0<k<n or not. If k<0, it throws an error.
+and if k>=n, it warns the user and sets k=n-1.
+
+# Arguments
+- `k::Int`: Number of nearest neighbors to consider
+- `n::Int`: Number of observations
+
+# Returns
+- `Int`: Number of nearest neighbors to consider
+
+"""
+function check_k(k, n_class)
+    if k < 1
+        throw(ERR_NONPOS_K(k))
+    end
+    if k >= n_class
+        @warn WRN_K_TOO_BIG(k, n_class)
+        k = n_class - 1
+    end
+    return k
+end
 
 
-
+# Used by SMOTENC and SMOTEN
 """
 Find the mode of each row in a matrix and return the result as a vector. If multiple ⊧
 exist, choose one of them randomly.
@@ -86,3 +110,32 @@ function get_neighbors_mode(
     # shuffle to avoid bias when breaking ties
     return [mode(shuffle(rng, row)) for row in eachrow(Xneighs)]
 end
+
+
+
+"""
+Check that all columns are either categorical or continuous. If not, throw an error.
+
+# Arguments
+- `ncols::Int`: Number of columns
+- `cat_inds::AbstractVector`: Indices of categorical columns
+- `cont_inds::AbstractVector`: Indices of continuous columns
+- `types::AbstractVector`: Types of each column
+
+
+"""
+function check_scitypes_smoten_nc(ncols, cat_inds, cont_inds, types, nominal_only=false) 
+    # SMOTEN
+    if nominal_only
+        bad_cols = setdiff(1:ncols, cat_inds)
+        if !isempty(bad_cols)
+            throw(ArgumentError(ERR_BAD_NOM_COL_TYPES(bad_cols, types[bad_cols])))
+        end
+        return
+    end
+    # SMOTENC
+    bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))
+    if !isempty(bad_cols) 
+        throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
+    end
+end   

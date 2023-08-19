@@ -1,4 +1,7 @@
-# For each model specify packahe metadata (e.g., name) and model metadata (e.g., IO types)
+"""
+This file specifies model and package metadata for each oversampling method that
+supports the `MLJ` interface.
+"""
 
 ### SMOTEN
 MMI.metadata_pkg(

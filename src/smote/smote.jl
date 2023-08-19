@@ -51,9 +51,10 @@ function smote_per_class(
     rng::AbstractRNG = default_rng(),
 )
     # Can't draw lines if there are no neighbors
-    size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
+    n_class = size(X, 2)
+    n_class == 1 && (@warn WRN_SINGLE_OBS; return X)
     # Automatically fix k if needed
-    k = (k > 0) ? min(k, size(X, 2) - 1) : 1
+    k = check_k(k, n_class)
     # Build KDTree for KNN
     tree = KDTree(X)
     # Generate n new observations

@@ -35,9 +35,6 @@ TransformsBase.isrevertible(::Type{ROSE_t}) = true
 
 TransformsBase.isinvertible(::Type{ROSE_t}) = false
 
-TransformsBase.assertions(::Type{ROSE_t}) =
-    [rose -> @assert rose.s >= 0.0 "s parameter in ROSE must be non-negative"]
-# for consistency, may use throw error (or warn and set 0)
 
 """
 Apply the ROSE transform to a table Xy
@@ -54,9 +51,6 @@ Apply the ROSE transform to a table Xy
 """
 
 function TransformsBase.apply(r::ROSE_t, Xy)
-    for assertion in TransformsBase.assertions(ROSE_t)
-        assertion(r)
-    end
     Xyover = rose(Xy, r.y_ind; s = r.s, ratios = r.ratios, rng = r.rng)
     cache = rowcount(Xy)
     return Xyover, cache

@@ -41,7 +41,7 @@ function rose_per_class(
     Xnew += XSnew
     # This is equivalent to sampling from a multivariate normal
     # centered at each point in Xnew with covariance matrix H
-    
+
     # return the result
     return Xnew
 end
@@ -76,6 +76,9 @@ function rose(
     ratios = nothing,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
+    if s < 0.0
+        throw(ERR_NEG_S(s))
+    end
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, rose_per_class; s, ratios, rng)
     return Xover, yover

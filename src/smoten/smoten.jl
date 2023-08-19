@@ -130,7 +130,8 @@ function smoten_per_class(
     rng::AbstractRNG = default_rng(),
 )
     # Automatically set k to the nearest of 1 and size(X, 1) - 1
-    k = (k > 0) ? min(k, size(X, 1) - 1) : 1
+    n_class = size(X, 2)
+    k = check_k(k, n_class)
     # Build KNN tree with modified distance metric
     metric = ValueDifference(all_pairwise_vdm)
     tree = BruteTree(X, metric)

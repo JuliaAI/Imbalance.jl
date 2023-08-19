@@ -3,7 +3,10 @@ using Imbalance:
     smote_per_class,
     generate_new_smote_point,
     get_random_neighbor,
-    get_collinear_point
+    get_collinear_point,
+    ERR_NONPOS_K,
+    WRN_K_TOO_BIG
+
 # Test that a point is indeed collinear
 @testset "get_collinear_point" begin
     x₁ = [1.0, 2.0, 3.0]
@@ -37,12 +40,35 @@ end
 
 # Test that it indeed generates n new points
 @testset "smote_per_class" begin
-    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]'
-    k = 10
+    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]
+    k = 1
     n = 100
     smote_points = smote_per_class(X, n; k, rng)
     @test size(smote_points, 2) == n
 end
+
+# Test that it throws negative K error when needed
+@testset "throws negative k error" begin
+    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]
+    y = [1, 2, 3, 4, 5]
+    k = -1
+    n = 100
+    @test_throws ERR_NONPOS_K(k) begin
+        smote_per_class(X', n; k=k, rng)
+    end
+end
+
+# Test that it throws k too big warning when needed
+@testset "throws k too big warning" begin
+    X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]
+    y = [1, 1, 1, 1, 1]
+    k = 10
+    n = 100
+    @test_logs (:warn, WRN_K_TOO_BIG(k, 5)) begin
+        smote_per_class(X', n; k=k, rng)
+    end 
+end
+
 
 
 # Test that SMOTE adds the right number of points per class and that the input and output types are as expected

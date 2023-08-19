@@ -1,4 +1,5 @@
 
+# The following two functions are used in tablify
 """
 Apply label encoding to the categorical columns of a table. A categorical column is defined
 as any column with the scitype `Multiclass`. 
@@ -18,7 +19,7 @@ function smotenc_encoder(X; nominal_only=false)
     types = ScientificTypes.schema(X).scitypes
     cat_inds = findall( x -> x <: Multiclass, types)
     cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
-    ### Assertion that these are only the types in the input
+    check_scitypes_smoten_nc(length(types), cat_inds, cont_inds, types, nominal_only)
 
     # 2. Setup the encode and decode transforms for categotical columns
     encode_dict = Dict{Int, Function}()
@@ -39,6 +40,7 @@ function smotenc_encoder(X; nominal_only=false)
     nominal_only && return Xenc, decode_dict, nothing      
     return Xenc, decode_dict, cat_inds
 end
+ 
 
 """
 Decode the label encoded categorical columns of a table.
@@ -177,11 +179,12 @@ function smotenc_per_class(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
-    # class with one observation has no neighbors to draw lines to
-    size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
-    # automatically fix k if needed
-    k = (k > 0) ? min(k, size(X, 1) - 1) : 1
-    # build a KNN tree with the modified distance metric
+    # Can't draw lines if there are no neighbors
+    n_class = size(X, 2)
+    n_class == 1 && (@warn WRN_SINGLE_OBS; return X)
+    # Automatically fix k if needed
+    k = check_k(k, n_class)
+    # Build a KNN tree with the modified distance metric
     σₘ = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
     tree = BallTree(X, metric)          # May need to become BruteTree for accuracy

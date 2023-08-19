@@ -10,10 +10,9 @@ end;
 Check whether the given model hyperparameters are valid and clean them if necessary. 
 """
 function MMI.clean!(s::SMOTENC)
-  message = ""
+    message = ""
     if s.k < 1
-        message = "k for SMOTENC must be at least 1 but found $(s.k). Setting k = 1."
-        s.k = 1
+      throw(ERR_NONPOS_K(s.k))
     end
     return message
 end
@@ -26,8 +25,7 @@ function SMOTENC(; k::Integer = 5,
         rng::Union{Integer,AbstractRNG} = default_rng()
 ) where {T}
     model = SMOTENC(k, ratios, rng)
-    message = MMI.clean!(model)
-    isempty(message) || @warn message
+    MMI.clean!(model)
     return model
 end
 
