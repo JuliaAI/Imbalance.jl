@@ -41,10 +41,13 @@ end
     include("smote.jl")
 end
 
+
 @testset "SMOTENC" begin
     include("smotenc.jl")
 end
 
+
 @testset "SMOTEN" begin
     include("smoten.jl")
 end
+

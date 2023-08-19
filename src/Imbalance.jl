@@ -17,7 +17,9 @@ using OrderedCollections
 const MMI = MLJModelInterface
 
 include("commondocs.jl")
-include("wrappers.jl")
+include("errors.jl")
+include("table_wrappers.jl")
+include("generic_oversample.jl")
 include("utils.jl")
 
 include("class_counts.jl")

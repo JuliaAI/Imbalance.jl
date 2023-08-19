@@ -1,5 +1,5 @@
 ### Random Oversample TableTransforms Interface
-
+# interface struct
 struct RandomOversampler_t{T} <: Transform
     y_ind::Integer
     ratios::T
@@ -45,6 +45,7 @@ Apply the RandomOversampler transform to a table Xy
 """
 function TransformsBase.apply(r::RandomOversampler_t, Xy)
     Xyover = random_oversample(Xy, r.y_ind; ratios = r.ratios, rng = r.rng)
+    # so that we can revert later by removing the new observations:
     cache = rowcount(Xy)
     return Xyover, cache
 end

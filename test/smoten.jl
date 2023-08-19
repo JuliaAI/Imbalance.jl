@@ -47,9 +47,9 @@ using Imbalance:
     all_pairwise_vdm = precompute_pairwise_value_difference(X, y)
 
     dist = Cityblock()
-    @test all_pairwise_vdm[1] == pairwise(dist, res[1], res[1])
-    @test all_pairwise_vdm[2] == pairwise(dist, res[2], res[2])
-    @test all_pairwise_vdm[3] == pairwise(dist, res[3], res[3])
+    @test all_pairwise_vdm[1] == pairwise(dist, res[1], res[1], dims=2)
+    @test all_pairwise_vdm[2] == pairwise(dist, res[2], res[2], dims=2)
+    @test all_pairwise_vdm[3] == pairwise(dist, res[3], res[3], dims=2)
 
     ValueDiff = ValueDifference(all_pairwise_vdm)
 

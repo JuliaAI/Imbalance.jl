@@ -7,6 +7,9 @@ mutable struct SMOTEN{T} <: Static
     rng::Union{Integer,AbstractRNG}
 end;
 
+"""
+Check whether the given model hyperparameters are valid and clean them if necessary. 
+"""
 function MMI.clean!(s::SMOTEN)
   message = ""
     if s.k < 1
@@ -16,6 +19,9 @@ function MMI.clean!(s::SMOTEN)
     return message
 end
 
+"""
+Initiate a SMOTEN model with the given hyper-parameters.
+"""
 function SMOTEN(; k::Integer = 5, 
         ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
         rng::Union{Integer,AbstractRNG} = default_rng()
@@ -26,7 +32,9 @@ function SMOTEN(; k::Integer = 5,
     return model
 end
 
-
+"""
+Oversample data X, y using SMOTEN
+"""
 function MMI.transform(s::SMOTEN, _, X, y)
     smoten(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
 end

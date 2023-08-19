@@ -53,11 +53,14 @@ function get_random_neighbor(
     return_all_self::Bool = false
 )
     inds, _ = knn(tree, x, k + 1, true)
-    # Need to deal with that the first neighbor is the point itself; hence, the k+1 and the 2:end
-    random_neighbor_index = randcols(rng, inds[2:end])[1]
+    random_neighbor_index = randcols(rng, inds[2:end])[1]       
+    # the k+1 and the 2:end to exclude point itself
     random_neighbor = X[:, random_neighbor_index]
+    # SMOTENC will further need to vote between neighbors for nominals
     return_all && return random_neighbor, X[:, inds[2:end]]
+    # SMOTEN will only need to vote between neighbors for nominals
     return_all_self && return X[:, inds]
+    # Base case is for SMOTE, no voting needed
     return random_neighbor
 end
 
@@ -79,5 +82,7 @@ function get_neighbors_mode(
     Xneighs::AbstractMatrix{<:Real},
     rng::AbstractRNG = default_rng(),
 )
+    # fair voting by taking the mode over each nominal variable (row)
+    # shuffle to avoid bias when breaking ties
     return [mode(shuffle(rng, row)) for row in eachrow(Xneighs)]
 end

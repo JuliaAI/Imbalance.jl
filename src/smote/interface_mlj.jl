@@ -7,6 +7,9 @@ mutable struct SMOTE{T} <: Static
     rng::Union{Integer,AbstractRNG}
 end;
 
+"""
+Check whether the given model hyperparameters are valid and clean them if necessary. 
+"""
 function MMI.clean!(s::SMOTE)
   message = ""
     if s.k < 1
@@ -16,6 +19,9 @@ function MMI.clean!(s::SMOTE)
     return message
 end
 
+"""
+Initiate a SMOTE model with the given hyper-parameters.
+"""
 function SMOTE(; k::Integer = 5, 
         ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
         rng::Union{Integer,AbstractRNG} = default_rng()
@@ -26,7 +32,9 @@ function SMOTE(; k::Integer = 5,
     return model
 end
 
-
+"""
+Oversample data X, y using SMOTE
+"""
 function MMI.transform(s::SMOTE, _, X, y)
     smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
 end

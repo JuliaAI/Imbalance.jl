@@ -20,8 +20,11 @@ function generate_new_smote_point(
     k::Int,
     rng::AbstractRNG,
 )
+    # 1. Choose a random point from X
     x_rand = randcols(rng, X)
+    # 2. Choose a random point from the k-nearest neighbors of x_rand
     x_randneigh = get_random_neighbor(X, tree, x_rand; k, rng)
+    # 3. Generate a new point that randomly lies in the line between them
     x_new = get_collinear_point(x_rand, x_randneigh; rng)
     return x_new
 end
@@ -47,9 +50,13 @@ function smote_per_class(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
+    # Can't draw lines if there are no neighbors
     size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
+    # Automatically fix k if needed
     k = (k > 0) ? min(k, size(X, 2) - 1) : 1
+    # Build KDTree for KNN
     tree = KDTree(X)
+    # Generate n new observations
     return hcat([generate_new_smote_point(X, tree; k, rng) for i = 1:n]...)
 end
 

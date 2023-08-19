@@ -13,17 +13,12 @@ $DOC_RATIOS_ARGUMENT
 - `Dict`: A dictionary mapping each class to the number of extra samples needed for
     that class to achieve the given ratio relative to the majority class.
 """
-const ERR_MISSING_CLASS(c) = "Error: found class $c in y that is not in ratios."
-const ERR_INVALID_RATIO(c) = "Error: ratio for class $c must be greater than 0."
-const WRN_UNDERSAMPLE(new_ratio, label, less_counts, old_ratio) =
-    "ratio $new_ratio for class $label implies that the class \
-     should have $less_counts less samples because it is already $old_ratio \
-     of the majority class but SMOTE cannot undersample.
-     Will skip oversampling for this class."
 # Method for handling ratios as a dictionary
 function get_class_counts(y::AbstractVector, ratios::Dict{T,<:AbstractFloat}) where {T}
     label_counts = countmap(y)
     majority_count = maximum(values(label_counts))
+    # extra_counts shall map each class to the number of extra samples needed
+    # for the class to satisfy ratios
     extra_counts = OrderedDict{T,Int}()
 
     # each class needs to be the size specified in `ratios`
@@ -50,7 +45,7 @@ function get_class_counts(y::AbstractVector{T}, ratio::AbstractFloat) where {T}
     return extra_counts
 end
 
-# Default method for when ratios is nothing
+# Default methods for when ratios is nothing or not given
 function get_class_counts(y::AbstractVector)
     get_class_counts(y, 1.0)
 end
@@ -59,7 +54,9 @@ function get_class_counts(y::AbstractVector, ratio::Nothing)
 end
 
 """
-Helper function for calculating the number of extra samples needed for a class given a ratio, its count and majoiry count.
+Helper function for calculating the number of extra samples needed for a class given a ratio, 
+its count and majoiry count.
+It assumes that if ratio is `a` and the majority count is `N` then the class should have `aN` samples.
 """
 function calculate_extra_counts(
     ratio::AbstractFloat,

@@ -1,7 +1,9 @@
 
-
+# randomly sample one column of a matrix
 randcols(rng::AbstractRNG, X) = X[:, rand(rng, 1:size(X, 2))]
+# randomly sample n columns of a matrix
 randcols(rng::AbstractRNG, X, n) = X[:, rand(rng, 1:size(X, 2), n)]
+# to enable algorithms to accept either an integer or an RNG object
 rng_handler(rng::Integer) = Xoshiro(rng)
 rng_handler(rng::AbstractRNG) = rng
 
@@ -30,9 +32,11 @@ function group_inds(categorical_array::AbstractVector{T}) where {T}
     result = LittleDict{T,AbstractVector{Int}}()
     freeze(result)
     for (i, v) in enumerate(categorical_array)
+        # Make a new entry in the dict if it doesn't exist
         if !haskey(result, v)
             result[v] = []
         end
+        # It exists, so push the index belonging to the class
         push!(result[v], i)
     end
     return result

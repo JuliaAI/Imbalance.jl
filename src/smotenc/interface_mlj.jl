@@ -6,6 +6,9 @@ mutable struct SMOTENC{T} <: Static
     rng::Union{Integer,AbstractRNG}
 end;
 
+"""
+Check whether the given model hyperparameters are valid and clean them if necessary. 
+"""
 function MMI.clean!(s::SMOTENC)
   message = ""
     if s.k < 1
@@ -15,6 +18,9 @@ function MMI.clean!(s::SMOTENC)
     return message
 end
 
+"""
+Initiate a SMOTENC model with the given hyper-parameters.
+"""
 function SMOTENC(; k::Integer = 5, 
         ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
         rng::Union{Integer,AbstractRNG} = default_rng()
@@ -25,7 +31,9 @@ function SMOTENC(; k::Integer = 5,
     return model
 end
 
-
+"""
+Oversample data X, y using SMOTENC
+"""
 function MMI.transform(s::SMOTENC, _, X, y)
     smotenc(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
 end

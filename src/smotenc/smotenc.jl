@@ -1,4 +1,62 @@
-# SMOTE-NC uses KNN with a modified distance metric
+
+"""
+Apply label encoding to the categorical columns of a table. A categorical column is defined
+as any column with the scitype `Multiclass`. 
+
+# Arguments
+- `X`: A table where each row is an observation which has some categorical columns
+- `nominal_only::Bool`: If true, the function asserts there are only categorical columns and does
+    not return their indices
+
+# Returns
+- `Xenc`: A column table where the categorical columns have been replaced by their label encoded
+    versions
+
+"""
+function smotenc_encoder(X; nominal_only=false)
+    # 1. Find the categorical and continuous columns
+    types = ScientificTypes.schema(X).scitypes
+    cat_inds = findall( x -> x <: Multiclass, types)
+    cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
+    ### Assertion that these are only the types in the input
+
+    # 2. Setup the encode and decode transforms for categotical columns
+    encode_dict = Dict{Int, Function}()
+    decode_dict = Dict{Int, Function}()
+
+    columns = Tables.columns(X)
+    for c in cat_inds
+        column = collect(Tables.getcolumn(columns, c))
+        decode_dict[c] = x -> CategoricalDistributions.decoder(column)(round(Int, x))
+        encode_dict[c] = x -> CategoricalDistributions.int(x)
+    end 
+
+    # 3. Encode the data
+    Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable        
+    # TODO: Remove Tables.columntable once https://github.com/JuliaData/TableOperations.jl/issues/32 is resolved
+    
+    # 4. SMOTE-N encoder need not pass cat_inds to tablify
+    nominal_only && return Xenc, decode_dict, nothing      
+    return Xenc, decode_dict, cat_inds
+end
+
+"""
+Decode the label encoded categorical columns of a table.
+
+# Arguments
+- `Xover`: A table where each row is an observation which has some label-encoded categorical columns
+- `decode_dict`: A dictionary of functions to decode the label-encoded categorical columns
+
+# Returns
+- `Xover`: A column table where the categorical columns is decoded back to their original values
+"""
+function smotenc_decoder(Xover, decode_dict)
+    Xover = Xover |> TableOperations.transform(decode_dict)
+    return Xover
+end
+
+# SMOTE-NC uses KNN with a modified distance metric. Refer to 
+# "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
 struct EuclideanWithPenalty <: Metric
     penalty::Float64
     cont_inds::AbstractVector{<:Int}
@@ -18,6 +76,7 @@ continuous features of the observations and return that as the penalty.
 
 """
 function get_penalty(X::AbstractMatrix{<:AbstractFloat}, cont_inds::AbstractVector{<:Int})
+    # simply compute the penalty as described
     Xcont = @view X[cont_inds, :]
     σs = vec(std(Xcont, dims = 2))
     σₘ = median(σs)
@@ -43,6 +102,7 @@ function Distances.evaluate(d::EuclideanWithPenalty, x₁, x₂)
     x₂_cont, x₂_cat  = x₂[d.cont_inds], x₂[d.cat_inds]
     e = euclidean(x₁_cont, x₂_cont)
     h = hamming(x₁_cat, x₂_cat)
+    # distance computed as described above
     return e + d.penalty * h
 end
 
@@ -72,15 +132,16 @@ function generate_new_smotenc_point(
     k::Int,
     rng::AbstractRNG,
 )
+    # find a random point
     x_rand = randcols(rng, X)
     x_randneigh, Xneighs = get_random_neighbor(X, tree, x_rand; k, rng, return_all = true)
 
-    # find the continuous part
+    # find the continuous part of new point (by choosing a random point along the line)
     x_rand_cont = @view x_rand[cont_inds]
     x_randneigh_cont = @view x_randneigh[cont_inds]
     x_new_cont = get_collinear_point(x_rand_cont, x_randneigh_cont; rng = rng)
 
-    # find the categorical part
+    # find the categorical part of new point (by voting among all neighbors)
     Xneighs_cat = @view Xneighs[cat_inds, :]
     x_new_cat = get_neighbors_mode(Xneighs_cat, rng)
 
@@ -91,8 +152,6 @@ function generate_new_smotenc_point(
 
     return x_new
 end
-
-
 
 
 """
@@ -118,11 +177,15 @@ function smotenc_per_class(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
+    # class with one observation has no neighbors to draw lines to
     size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
+    # automatically fix k if needed
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
+    # build a KNN tree with the modified distance metric
     σₘ = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
-    tree = BallTree(X, metric)                      # May need to become BruteTree
+    tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
+    # Generate n new observations
     return hcat([generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng) for i = 1:n]...)
 end
 
@@ -162,13 +225,14 @@ function smotenc(
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     rng = rng_handler(rng)
+    # implictly infer the continuous indices
     cont_inds = setdiff(1:size(X, 2), cat_inds)
     Xover, yover =
         generic_oversample(X, y, smotenc_per_class, cont_inds, cat_inds; ratios, k, rng)
     return Xover, yover
 end
 
-
+# dispatch for when X is a table
 function smotenc(
     X,
     y::AbstractVector;
@@ -180,6 +244,7 @@ function smotenc(
     return Xover, yover
 end
 
+# dispatch for when X is a table and y is one of its columns
 function smotenc(
     Xy,
     y_ind::Int;
@@ -189,60 +254,4 @@ function smotenc(
 )
     Xyover = tablify(smotenc, Xy, y_ind; encode_func=smotenc_encoder, decode_func=smotenc_decoder, materialize=true, k, ratios, rng)
     return Xyover
-end
-
-"""
-Apply label encoding to the categorical columns of a table. A categorical column is defined
-as any column with the scitype `Multiclass`.
-
-# Arguments
-- `X`: A table where each row is an observation which has some categorical columns
-- `nominal_only::Bool`: If true, the function asserts there are only categorical columns and does
-    not return their indices
-
-# Returns
-- `Xenc`: A column table where the categorical columns have been replaced by their label encoded
-    versions
-
-"""
-function smotenc_encoder(X; nominal_only=false)
-    # find the categorical and continuous columns
-    types = ScientificTypes.schema(X).scitypes
-    cat_inds = findall( x -> x <: Multiclass, types)
-    cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)      # add ordered factor (have to document)
-    ### Assertion that these are only the types in the input
-
-    # setup the decode transform for categotical columns
-    encode_dict = Dict{Int, Function}()
-    decode_dict = Dict{Int, Function}()
-
-    columns = Tables.columns(X)
-    for c in cat_inds
-        column = collect(Tables.getcolumn(columns, c))
-        decode_dict[c] = x -> CategoricalDistributions.decoder(column)(round(Int, x))
-        encode_dict[c] = x -> CategoricalDistributions.int(x)
-    end 
-
-    # Encode the data
-    Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable        
-    # TODO: Remove Tables.columntable once https://github.com/JuliaData/TableOperations.jl/issues/32 is resolved
-    
-    nominal_only && return Xenc, decode_dict, nothing       # SMOTE-N encoder need not pass cat_inds to tablify
-    return Xenc, decode_dict, cat_inds
-end
-
-"""
-Decode the label encoded categorical columns of a table.
-
-# Arguments
-- `Xover`: A table where each row is an observation which has some label-encoded categorical columns
-- `decode_dict`: A dictionary of functions to decode the label-encoded categorical columns
-
-# Returns
-- `Xover`: A column table where the categorical columns is decoded back to their original values
-"""
-
-function smotenc_decoder(Xover, decode_dict)
-    Xover = Xover |> TableOperations.transform(decode_dict)
-    return Xover
 end

@@ -1,11 +1,14 @@
 
 ### RandomOversampler with MLJ Interface
+# interface struct
 mutable struct RandomOversampler{T} <: Static
     ratios::T
     rng::Union{Integer,AbstractRNG}
 end;
 
-
+"""
+Initiate a random oversampling model with the given hyper-parameters.
+"""
 function RandomOversampler(;ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
   rng::Union{Integer,AbstractRNG} = default_rng()
 ) where {T}
@@ -13,6 +16,9 @@ model = RandomOversampler(ratios, rng)
 return model
 end
 
+"""
+Oversample data X, y using ROSE
+"""
 function MMI.transform(r::RandomOversampler, _, X, y)
     random_oversample(X, y; ratios = r.ratios, rng = r.rng)
 end

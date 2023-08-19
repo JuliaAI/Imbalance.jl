@@ -1,11 +1,25 @@
+
+"""
+Labele encode each column in a given table X
+"""
+smoten_encoder(X) = smotenc_encoder(X; nominal_only=true)
+"""
+Label decode each column in a given table X
+"""
+smoten_decoder(X, d) = smotenc_decoder(X, d)
+
 # SMOTE-N uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
 
 struct ValueDifference <: Metric
+    # for each categorical variables with n categories, this has a nxn matrix of
+    # pairwise value difference distances
     all_pairwise_vdm::AbstractVector{<:AbstractArray{<:AbstractFloat}}
 end
 
 function Distances.evaluate(d::ValueDifference, x₁, x₂)
+    # Distance between two categorical vectors is the magnitude of the vector where 
+    # each element is the value difference of two categories of the categorical variable
     return sum(d.all_pairwise_vdm[col][i, j]^2 for (col, (i, j)) in enumerate(zip(x₁, x₂)))
 end
 
@@ -29,29 +43,32 @@ Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351.
 function precompute_pairwise_value_difference(X::AbstractMatrix{<:Integer}, y::AbstractVector)
     classes = unique(y)
     num_classes = length(classes)
-    categories_per_col = [length(unique(X[:, col])) for col in 1:size(X, 2)]
+    num_categories_per_col = [length(unique(X[:, col])) for col in 1:size(X, 2)]
     num_cols = size(X, 2)
+    # function to convert a dictionary of counts to a vector of counts
     dict_to_vector = (dict, num_cats) -> [get(dict, k, 0) for k in 1:num_cats]
 
     # a list that maps each categorical variable (col) to a matrix that associates
     # each categorical value (per class) to its count
     all_pairwise_vdm = [Array{Float64}(undef, (num_classes, num_categories)) 
-                  for num_categories in categories_per_col]
+                  for num_categories in num_categories_per_col]
 
     for col in 1:num_cols
         for (label_ind, label) in enumerate(classes)
-            all_pairwise_vdm[col][label_ind, :] = dict_to_vector(countmap(X[y .== label, col]), categories_per_col[col])
+            # count how many times each value appeared for the specific class
+            all_pairwise_vdm[col][label_ind, :] = dict_to_vector(countmap(X[y .== label, col]), num_categories_per_col[col])
         end
 
         for category_ind in 1:size(all_pairwise_vdm[col], 2)
-            all_pairwise_vdm[col][:, category_ind] ./= sum(all_pairwise_vdm[col][:, category_ind])
+            # normalize that by the total number of times over all classes        
+            normalizer = sum(all_pairwise_vdm[col][:, category_ind])    
+            normalizer == 0 && (all_pairwise_vdm[col][:, category_ind] .= 0; continue)
+            all_pairwise_vdm[col][:, category_ind] ./= normalizer
         end
 
-        # 0/0 may be possible
-        all_pairwise_vdm[col][isnan.(all_pairwise_vdm[col])] .= 0
-
+        # compute the value difference metric for all pairs of values using manhattan distance
         dist = Cityblock()
-        all_pairwise_vdm[col] = pairwise(dist, all_pairwise_vdm[col], all_pairwise_vdm[col])
+        all_pairwise_vdm[col] = pairwise(dist, all_pairwise_vdm[col], all_pairwise_vdm[col], dims=2)
     end
         return all_pairwise_vdm
 end
@@ -77,9 +94,13 @@ function generate_new_smoten_point(
     k::Int,
     rng::AbstractRNG,
 )
+    # 1. Choose a random point
     x_rand = randcols(rng, X)
+    # 2. Find its k nearest neighbors (including itself)
     Xneighs = get_random_neighbor(X, tree, x_rand; k, rng, return_all_self = true)
+    # 3. Find the mode of each categorical variable over the neighbors
     x_new_cat = get_neighbors_mode(Xneighs, rng)
+    # 4. Return the new point
     return x_new_cat
 end
 
@@ -108,10 +129,12 @@ function smoten_per_class(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
-    size(X, 2) == 1 && (@warn "class with a single observation will be ignored"; return X)
+    # Automatically set k to the nearest of 1 and size(X, 1) - 1
     k = (k > 0) ? min(k, size(X, 1) - 1) : 1
+    # Build KNN tree with modified distance metric
     metric = ValueDifference(all_pairwise_vdm)
     tree = BruteTree(X, metric)
+    # Generate n new observations
     return hcat([generate_new_smoten_point(X, tree; k, rng) for i = 1:n]...)
 end
 
@@ -152,6 +175,7 @@ function smoten(
     return Xover, yover
 end
 
+# dispatch for when X is a table
 function smoten(
     X,
     y::AbstractVector;
@@ -163,6 +187,7 @@ function smoten(
     return Xover, yover
 end
 
+# dispatch for when X is a table and y is one of the columns
 function smoten(
     Xy,
     y_ind::Int;
@@ -173,6 +198,3 @@ function smoten(
     Xyover = tablify(smoten, Xy, y_ind; encode_func=smoten_encoder, decode_func=smoten_decoder, materialize=true, k, ratios, rng)
     return Xyover
 end
-
-smoten_encoder(X) = smotenc_encoder(X; nominal_only=true)
-smoten_decoder(X, d) = smotenc_decoder(X, d)

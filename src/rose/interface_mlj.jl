@@ -1,5 +1,5 @@
 ### ROSE MLJ Interface
-
+# interface struct
 mutable struct ROSE{T} <: MMI.Static
     s::AbstractFloat 
     ratios::T

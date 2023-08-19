@@ -23,19 +23,25 @@ function rose_per_class(
     if s == 0.0
         return Xnew
     end
-    # compute the standard deviation column-wise
+
+    # compute the standard deviation feature-wise
     σs = vec(std(Xnew, dims = 2))
+    # compute h and then H as in the paper
     d = size(Xnew, 1)
     N = size(Xnew, 2)
     h = (4 / ((d + 2) * N))^(1 / (d + 4))
     # make a diagonal matrix of the result
     H = Diagonal(σs * s * h)
+
     # generate standard normal samples of same dimension of Xnew
     XSnew = randn(rng, size(Xnew))
     # matrix multiply the diagonal matrix by XSnew
     XSnew = H * XSnew
     # add Xnew and XSnew
     Xnew += XSnew
+    # This is equivalent to sampling from a multivariate normal
+    # centered at each point in Xnew with covariance matrix H
+    
     # return the result
     return Xnew
 end
