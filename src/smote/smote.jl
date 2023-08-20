@@ -123,7 +123,7 @@ julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 ent
 
 # MLJ Model Interface
 
-Simply pass the keyword arguments while initiating the `ROSE` model and pass the 
+Simply pass the keyword arguments while initiating the `SMOTEN` model and pass the 
     positional arguments to the `transform` method. 
 
 ```julia

@@ -278,7 +278,7 @@ Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
 ```
 # MLJ Model Interface
 
-Simply pass the keyword arguments while initiating the `SMOTEN` model and pass the 
+Simply pass the keyword arguments while initiating the `SMOTENC` model and pass the 
     positional arguments (excluding `cat_inds`) to the `transform` method. 
 
 ```julia
