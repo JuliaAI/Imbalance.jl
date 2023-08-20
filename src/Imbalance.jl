@@ -18,6 +18,7 @@ using Tables
 using MLJModelInterface
 using OrderedCollections
 using CategoricalArrays
+using DocumenterTools
 
 const MMI = MLJModelInterface
 

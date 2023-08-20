@@ -73,9 +73,9 @@ function generate_imbalanced_data(
     probs = [0.5, 0.5],
     type = "ColTable",                
     insert_y = nothing,
-    rng = Random.default_rng(),
+    rng = default_rng(),
 )
-    rng = Imbalance.rng_handler(rng)
+    rng = rng_handler(rng)
     # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
     cum_probs = cumsum(probs)
     rands = rand(rng, num_rows)
