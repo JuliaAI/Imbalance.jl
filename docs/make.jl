@@ -1,21 +1,33 @@
 using Documenter
+using DocumenterTools: Themes
 using Imbalance
 
 
-# Copy the README to the home page in docs, to avoid duplication.
-readme = readlines(joinpath(@__DIR__, "..", "README.md"))
+Themes.compile(
+  joinpath(@__DIR__, "src/assets/light.scss"),
+  joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
+)
 
-open(joinpath(@__DIR__, "src/index.md"), "w") do f
-    for l in readme
-        println(f, l)
-    end
-end
 
 makedocs(
     sitename = "Imbalance.jl",
-    format = Documenter.HTML(),
+    authors = "Essam Wisam, mentored by Dr. Anthony Blaom",
+    repo="https://github.com/JuliaAI/TableTransforms.jl/",
+    format = Documenter.HTML(;
+    assets=[
+        "assets/favicon.ico",
+        asset("https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&display=swap", class=:css)
+      ]
+    ),
     modules = [Imbalance],
-    pages = ["Home" => "index.md", "API" => "api.md"],
+    pages = ["🚀 Introduction" => "index.md",
+              "📕 User Guide" => "user_guide.md",
+              "📚 Algorithms" => "algorithms.md",
+              "✍🏼 Theory" => "theory.md",
+              "🧑🏻‍💻 Examples" => "examples.md",
+              "💁🏻‍♀️ Contributing" => "contributing.md",
+              "🏮 About" => "about.md"]
+              
 )
 
 

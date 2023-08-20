@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+$family-sans-serif: 'Montserrat', sans-serif;
+$family-monospace: 'Source Code Pro', monospace;
+$themename: "documenter-light"; // CSS file must be called `$(themename).css`
+
+@import "documenter-light";
+
+
+#documenter .content p { // Justify text in paragraphs
+  text-align: justify;
+}
+
+.docstring {
+  border-radius: 15px !important;
+  header {
+    border-radius: 15px 15px 0 0 !important;
+  }
+  pre {
+    border-radius: 10px;
+    padding: 4px;
+  }
+
+  section {
+    padding: 20px;
+
+ 
+  }
+
+}
+
+.docs-package-name {
+  display: none;
+}
+
+.admonition {
+  border-radius: 15px !important;
+}

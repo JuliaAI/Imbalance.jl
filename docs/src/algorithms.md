@@ -1,6 +1,6 @@
-# API Reference
+# Imbalance Algorithms
 
-## Index
+## List of Algorithms Implemented
 
 ```@index
 Order = [:type, :function]
@@ -26,7 +26,17 @@ rose
 smote
 ```
 
+## SMOTE-N
 
+```@docs
+smoten
+```
+
+## SMOTE-NC
+    
+```@docs
+smotenc
+```
 
 
 
