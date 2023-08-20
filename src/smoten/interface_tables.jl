@@ -5,6 +5,7 @@ struct SMOTEN_t{T} <: TransformsBase.Transform
     k::Integer
     ratios::T
     rng::Union{Integer,AbstractRNG}
+    try_perserve_type::Bool
 end
 
 TransformsBase.isrevertible(::Type{SMOTEN_t}) = true
@@ -29,9 +30,9 @@ $(DOC_RNG_ARGUMENT)
 SMOTEN_t(
     y_ind::Integer;
     k::Integer = 5,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing,
-    rng::Union{Integer,AbstractRNG} = 123,
-) where {T} = SMOTEN_t(y_ind, k, ratios, rng)
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    rng::Union{Integer,AbstractRNG} = 123, try_perserve_type::Bool=true
+) where {T} = SMOTEN_t(y_ind, k, ratios, rng, try_perserve_type)
 
 
 """
@@ -49,7 +50,8 @@ Apply the SMOTE transform to a table Xy
 - `cache`: A cache that can be used to revert the oversampling
 """
 function TransformsBase.apply(s::SMOTEN_t, Xy)
-    Xyover = smoten(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng)
+    Xyover = smoten(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng, 
+                    try_perserve_type = s.try_perserve_type)
     cache = rowcount(Xy)
     return Xyover, cache
 end
@@ -74,5 +76,3 @@ TransformsBase.revert(::SMOTEN_t, Xyover, cache) = revert_oversampling(Xyover, c
 Equivalent to `apply(s, Xy)`
 """
 TransformsBase.reapply(s::SMOTEN_t, Xy, cache) = TransformsBase.apply(s, Xy)
-
-

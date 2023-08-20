@@ -2,9 +2,10 @@
 ### SMOTE with MLJ Interface
 
 mutable struct SMOTE{T} <: Static
-    k::Integer 
+    k::Integer
     ratios::T
     rng::Union{Integer,AbstractRNG}
+    try_perserve_type::Bool
 end;
 
 """
@@ -13,21 +14,23 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::SMOTE)
     message = ""
     if s.k < 1
-      throw(ERR_NONPOS_K(s.k))
+        throw(ERR_NONPOS_K(s.k))
     end
     return message
 end
 
 
 
+
 """
 Initiate a SMOTE model with the given hyper-parameters.
 """
-function SMOTE(; k::Integer = 5, 
-        ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
-        rng::Union{Integer,AbstractRNG} = default_rng()
+function SMOTE(;
+    k::Integer = 5,
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool=true
 ) where {T}
-    model = SMOTE(k, ratios, rng)
+    model = SMOTE(k, ratios, rng, try_perserve_type)
     MMI.clean!(model)
     return model
 end
@@ -36,7 +39,8 @@ end
 Oversample data X, y using SMOTE
 """
 function MMI.transform(s::SMOTE, _, X, y)
-    smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
+    smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng, 
+        try_perserve_type = s.try_perserve_type)
 end
 
 
@@ -65,7 +69,7 @@ For default values of the hyper-parameters, model can be constructed by
     model = SMOTE()
 
 
-# Hyper-parameters
+# Hyperparameters
 
 - `k=5`: Number of nearest neighbors to consider in the SMOTE algorithm.  Should be within
     the range `[1, n - 1]`, where `n` is the number of observations; otherwise set to the

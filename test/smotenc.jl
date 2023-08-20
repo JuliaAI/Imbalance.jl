@@ -7,7 +7,7 @@ using Imbalance:
     get_penalty,
     EuclideanWithPenalty,
     ERR_BAD_MIXED_COL_TYPES
-    
+
 
 
 
@@ -104,14 +104,13 @@ end
 
 # Test that it indeed generates n new points
 @testset "smote_per_class" begin
-    X =
-        [
-            1.0 1.0 9.7 3.3
-            2.0 2.0 9.7 5.0
-            3.0 3.0 1.2 5.0
-            4.0 4.0 3.3 5.5
-            5.0 5.0 1.2 1.2
-        ]'
+    X = [
+        1.0 1.0 9.7 3.3
+        2.0 2.0 9.7 5.0
+        3.0 3.0 1.2 5.0
+        4.0 4.0 3.3 5.5
+        5.0 5.0 1.2 1.2
+    ]'
     k = 3
     n = 100
     cat_inds = [1, 2]

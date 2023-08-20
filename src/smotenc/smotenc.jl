@@ -2,7 +2,7 @@
 # The following two functions are used in tablify
 """
 Apply label encoding to the categorical columns of a table. A categorical column is defined
-as any column with the scitype `Multiclass`. 
+as any column with the scitype `Multiclass` or `OrderedFactor`.
 
 # Arguments
 - `X`: A table where each row is an observation which has some categorical columns
@@ -14,33 +14,33 @@ as any column with the scitype `Multiclass`.
     versions
 
 """
-function smotenc_encoder(X; nominal_only=false)
+function smotenc_encoder(X; nominal_only = false)
     # 1. Find the categorical and continuous columns
     types = ScientificTypes.schema(X).scitypes
-    cat_inds = findall( x -> x <: Multiclass, types)
-    cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
+    cat_inds = findall(x -> x <: Finite, types)
+    cont_inds = findall(x -> x <: Infinite, types)
     check_scitypes_smoten_nc(length(types), cat_inds, cont_inds, types, nominal_only)
 
     # 2. Setup the encode and decode transforms for categotical columns
-    encode_dict = Dict{Int, Function}()
-    decode_dict = Dict{Int, Function}()
+    encode_dict = Dict{Int,Function}()
+    decode_dict = Dict{Int,Function}()
 
     columns = Tables.columns(X)
     for c in cat_inds
         column = collect(Tables.getcolumn(columns, c))
         decode_dict[c] = x -> CategoricalDistributions.decoder(column)(round(Int, x))
         encode_dict[c] = x -> CategoricalDistributions.int(x)
-    end 
+    end
 
     # 3. Encode the data
-    Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable        
+    Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable
     # TODO: Remove Tables.columntable once https://github.com/JuliaData/TableOperations.jl/issues/32 is resolved
-    
+
     # 4. SMOTE-N encoder need not pass cat_inds to tablify
-    nominal_only && return Xenc, decode_dict, nothing      
+    nominal_only && return Xenc, decode_dict, nothing
     return Xenc, decode_dict, cat_inds
 end
- 
+
 
 """
 Decode the label encoded categorical columns of a table.
@@ -101,7 +101,7 @@ variables that are not equal.
 """
 function Distances.evaluate(d::EuclideanWithPenalty, x₁, x₂)
     x₁_cont, x₁_cat = x₁[d.cont_inds], x₁[d.cat_inds]
-    x₂_cont, x₂_cat  = x₂[d.cont_inds], x₂[d.cat_inds]
+    x₂_cont, x₂_cat = x₂[d.cont_inds], x₂[d.cat_inds]
     e = euclidean(x₁_cont, x₂_cont)
     h = hamming(x₁_cat, x₂_cat)
     # distance computed as described above
@@ -189,42 +189,152 @@ function smotenc_per_class(
     metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
     tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
     # Generate n new observations
-    return hcat([generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng) for i = 1:n]...)
+    return hcat(
+        [generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng) for i = 1:n]...,
+    )
 end
 
 
 """
     function smotenc(
         X, y::AbstractVector, split_ind::Int;
-        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
+        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
+        try_perserve_type=true
     )
 
-Oversample a dataset given by a matrix or table of observations `X` and an abstract vector of labels y using SMOTE.
+# Description
 
-# Arguments
+Oversamples a dataset using `SMOTE-NC` (Synthetic Minority Oversampling Techniques-Nominal Continuous) 
+    algorithm to correct for class imbalance as presented in [1]. This is a variant of `SMOTE` 
+    to deal with datasets with both nominal and continuous features. 
 
-$DOC_COMMON_INPUTS
+!!! warning "SMOTE-NC Assumes Continuous Features Exist"
+    SMOTE-NC will not work if the dataset is purely nominal. In that case, refer to [SMOTE-N](@ref) instead.
+        Meanwhile, if the dataset is purely continuous then it's equivalent to the standard [SMOTE`](@ref).
 
-- `cat_inds::AbstractVector{<:Int}`: A vector of indices of the categorical features. Needed only if `X` is a matrix.
-    If `X` is a table, the categorical features are automatically detected as the multiclass scitypes.
+# Positional Arguments
 
-- `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
-    Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
+- `X`: A matrix of floats or a table with scitypes that subtype `Union{Finite, Infinite}`. 
+     Nominal columns should subtype `Finite` (i.e., `OrderedFactor` and `Multiclass`) and
+     continuous columns should subtype `Infinite` (i.e., `Count` and `Continuous`).
+
+- `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
+
+- `cat_inds::AbstractVector{<:Int}`: A vector of the indices of the nominal features. Supplied only if `X` is a matrix.
+        Otherwise, they are inferred from the table's scitypes.
+
+
+# Keyword Arguments
+
+$DOC_COMMON_K
 
 $DOC_RATIOS_ARGUMENT
 
 $DOC_RNG_ARGUMENT
 
+$DOC_TRY_PERSERVE_ARGUMENT
+
 # Returns
 
 $DOC_COMMON_OUTPUTS
+
+# Example
+```@repl
+using Imbalance
+using StatsBase
+
+# set probability of each class
+probs = [0.5, 0.2, 0.3]                         
+num_rows = 100
+num_cont_feats = 3
+# want two categorical features with three and two possible values respectively
+cat_feats_num_vals = [3, 2]
+
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
+                                probs, cat_feats_num_vals, rng=42)                      
+StatsBase.countmap(y)
+
+julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 33
+1 => 19
+
+ScientificTypes.schema(X).scitypes
+
+julia> (Continuous, Continuous, Continuous, Continuous, Continuous)
+
+# coerce nominal columns to a finite scitype (multiclass or ordered factor)
+X = coerce(X, :Column4=>Multiclass, :Column5=>Multiclass)
+
+# apply SMOTE-NC
+Xover, yover = smotenc(X, y; k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
+StatsBase.countmap(yover)
+
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 33
+1 => 19
+```
+# MLJ Model Interface
+
+Simply pass the keyword arguments while initiating the `SMOTEN` model and pass the 
+    positional arguments (excluding `cat_inds`) to the `transform` method. 
+
+```julia
+using MLJ
+SMOTEN = @load SMOTEN pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = SMOTENC(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)
+```
+The `MLJ` interface is only supported for table inputs. Read more about the interface [here]().
+
+# TableTransforms Interface
+
+This interface assumes that the input is one table `Xy` and that `y` is one of the columns. Hence, an integer `y_ind`
+    must be specified to the constructor to specify which column `y` is followed by other keyword arguments. 
+    Only `Xy` is provided while applying the transform.
+
+```julia
+using Imbalance
+using ScientificTypes
+using TableTransforms
+
+# Generate imbalanced data
+num_rows = 100
+num_cont_feats = 3
+y_ind = 2
+# generate a table and categorical vector accordingly
+Xy, _ = generate_imbalanced_data(num_rows, num_cont_feats; insert_y=y_ind,
+                                probs= [0.5, 0.2, 0.3], cat_feats_num_vals=[3, 2],
+                                 rng=42)  
+
+# Table must have only finite or continuous scitypes                                
+Xy = coerce(Xy, :Column2=>Multiclass, :Column5=>Multiclass, :Column6=>Multiclass)
+
+# Initiate Random Oversampler model
+oversampler = SMOTENC_t(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
+Xyover = Xy |> oversampler                               
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
+```
+
+# References
+[1] N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer,
+“SMOTE: synthetic minority over-sampling technique,”
+Journal of artificial intelligence research, 321-357, 2002.
+
 """
 function smotenc(
     X::AbstractMatrix{<:AbstractFloat},
     y::AbstractVector,
     cat_inds::AbstractVector{<:Int};
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     rng = rng_handler(rng)
@@ -240,10 +350,21 @@ function smotenc(
     X,
     y::AbstractVector;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-    Xover, yover = tablify(smotenc, X, y; encode_func=smotenc_encoder, decode_func=smotenc_decoder, materialize=true, k, ratios, rng)
+    Xover, yover = tablify(
+        smotenc,
+        X,
+        y;
+        try_perserve_type=try_perserve_type,
+        encode_func = smotenc_encoder,
+        decode_func = smotenc_decoder,
+        k,
+        ratios,
+        rng,
+    )
     return Xover, yover
 end
 
@@ -252,9 +373,20 @@ function smotenc(
     Xy,
     y_ind::Int;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-    Xyover = tablify(smotenc, Xy, y_ind; encode_func=smotenc_encoder, decode_func=smotenc_decoder, materialize=true, k, ratios, rng)
+    Xyover = tablify(
+        smotenc,
+        Xy,
+        y_ind;
+        try_perserve_type=try_perserve_type,
+        encode_func = smotenc_encoder,
+        decode_func = smotenc_decoder,
+        k,
+        ratios,
+        rng,
+    )
     return Xyover
 end

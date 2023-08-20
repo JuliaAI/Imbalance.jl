@@ -14,14 +14,14 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     SMOTEN,
-    input_scitype = Union{Table(Multiclass),AbstractMatrix{Multiclass}},
-    output_scitype = Union{Table(Multiclass),AbstractMatrix{Multiclass}},
+    input_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
+    output_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
     load_path = "Imbalance.SMOTEN",
 )
 
 function MMI.transform_scitype(s::SMOTEN)
     return Tuple{
-        Union{Table(Multiclass),AbstractMatrix{Multiclass}},
+        Union{Table(Finite),AbstractMatrix{Finite}},
         AbstractVector{<:Finite},
     }
 end
@@ -38,16 +38,23 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     SMOTENC,
-    input_scitype = Union{Table(Union{Infinite, OrderedFactor, Multiclass}),
-    AbstractMatrix{Union{Infinite, OrderedFactor, Multiclass}}},
-    output_scitype = Union{Table(Union{Infinite, OrderedFactor, Multiclass}),
-    AbstractMatrix{Union{Infinite, OrderedFactor, Multiclass}}},
+    input_scitype = Union{
+        Table(Union{Infinite, Finite}),
+        AbstractMatrix{Union{Infinite, Finite}},
+    },
+    output_scitype = Union{
+        Table(Union{Infinite, Finite}),
+        AbstractMatrix{Union{Infinite, Finite}},
+    },
     load_path = "Imbalance.SMOTEN",
 )
 
 function MMI.transform_scitype(s::SMOTENC)
     return Tuple{
-        Union{Table(Union{Infinite, OrderedFactor, Multiclass}),AbstractMatrix{Union{Infinite, OrderedFactor, Multiclass}}},
+        Union{
+            Table(Union{Infinite,OrderedFactor,Multiclass}),
+            AbstractMatrix{Union{Infinite,OrderedFactor,Multiclass}},
+        },
         AbstractVector{<:Finite},
     }
 end

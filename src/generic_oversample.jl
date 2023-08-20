@@ -26,7 +26,7 @@ function generic_oversample(
     y::AbstractVector,
     oversample_per_class,
     args...;
-    ratios = nothing,
+    ratios = 1.0,
     kwargs...,
 )
     # Transposing for performance (hcat) and as assumed by NearestNeighbors

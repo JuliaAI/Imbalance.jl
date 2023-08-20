@@ -2,7 +2,7 @@
 """
 Labele encode each column in a given table X
 """
-smoten_encoder(X) = smotenc_encoder(X; nominal_only=true)
+smoten_encoder(X) = smotenc_encoder(X; nominal_only = true)
 """
 Label decode each column in a given table X
 """
@@ -40,37 +40,44 @@ Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351.
     of `X`
 - `AbstractVector`: A vector of the number of categories for each column of `X`
 """
-function precompute_pairwise_value_difference(X::AbstractMatrix{<:Integer}, y::AbstractVector)
+function precompute_pairwise_value_difference(
+    X::AbstractMatrix{<:Integer},
+    y::AbstractVector,
+)
     classes = unique(y)
     num_classes = length(classes)
-    num_categories_per_col = [length(unique(X[:, col])) for col in 1:size(X, 2)]
+    num_categories_per_col = [length(unique(X[:, col])) for col = 1:size(X, 2)]
     num_cols = size(X, 2)
     # function to convert a dictionary of counts to a vector of counts
-    dict_to_vector = (dict, num_cats) -> [get(dict, k, 0) for k in 1:num_cats]
+    dict_to_vector = (dict, num_cats) -> [get(dict, k, 0) for k = 1:num_cats]
 
     # a list that maps each categorical variable (col) to a matrix that associates
     # each categorical value (per class) to its count
-    all_pairwise_vdm = [Array{Float64}(undef, (num_classes, num_categories)) 
-                  for num_categories in num_categories_per_col]
+    all_pairwise_vdm = [
+        Array{Float64}(undef, (num_classes, num_categories)) for
+        num_categories in num_categories_per_col
+    ]
 
-    for col in 1:num_cols
+    for col = 1:num_cols
         for (label_ind, label) in enumerate(classes)
             # count how many times each value appeared for the specific class
-            all_pairwise_vdm[col][label_ind, :] = dict_to_vector(countmap(X[y .== label, col]), num_categories_per_col[col])
+            all_pairwise_vdm[col][label_ind, :] =
+                dict_to_vector(countmap(X[y.==label, col]), num_categories_per_col[col])
         end
 
-        for category_ind in 1:size(all_pairwise_vdm[col], 2)
+        for category_ind = 1:size(all_pairwise_vdm[col], 2)
             # normalize that by the total number of times over all classes        
-            normalizer = sum(all_pairwise_vdm[col][:, category_ind])    
+            normalizer = sum(all_pairwise_vdm[col][:, category_ind])
             normalizer == 0 && (all_pairwise_vdm[col][:, category_ind] .= 0; continue)
             all_pairwise_vdm[col][:, category_ind] ./= normalizer
         end
 
         # compute the value difference metric for all pairs of values using manhattan distance
         dist = Cityblock()
-        all_pairwise_vdm[col] = pairwise(dist, all_pairwise_vdm[col], all_pairwise_vdm[col], dims=2)
+        all_pairwise_vdm[col] =
+            pairwise(dist, all_pairwise_vdm[col], all_pairwise_vdm[col], dims = 2)
     end
-        return all_pairwise_vdm
+    return all_pairwise_vdm
 end
 
 
@@ -140,39 +147,146 @@ function smoten_per_class(
 end
 
 """
-function smoten(
-    X, y::AbstractVector;
-    k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
-)
+    function smoten(
+        X, y::AbstractVector;
+        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
+        try_perserve_type=true
+    )
 
-Oversample a dataset given by a matrix or table of observations `X` and an abstract vector of labels y using SMOTE-N.
+# Description
+Oversamples a dataset using `SMOTE-N` (Synthetic Minority Oversampling Techniques-Nominal) algorithm to 
+    correct for class imbalance as presented in [1]. This is a variant of `SMOTE` to deal with datasets 
+    where all the features are nominal.
 
-# Arguments
 
-$DOC_COMMON_INPUTS
+# Positional Arguments
 
-- `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
-Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
+- `X`: A matrix of integers or a table with scitypes that subtype `Finite`. 
+     That is, for table inputs each columns should have either `OrderedFactor` or `Multiclass` as scitype.
+
+- `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
+
+# Keyword Arguments
+
+$DOC_COMMON_K
 
 $DOC_RATIOS_ARGUMENT
 
 $DOC_RNG_ARGUMENT
 
+$DOC_TRY_PERSERVE_ARGUMENT
+
 # Returns
 
 $DOC_COMMON_OUTPUTS
+
+# Example
+
+```@repl
+using Imbalance
+using StatsBase
+
+# set probability of each class
+probs = [0.5, 0.2, 0.3]                         
+num_rows = 100
+num_cont_feats = 0
+# want two categorical features with three and two possible values respectively
+cat_feats_num_vals = [3, 2]
+
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
+                                probs, cat_feats_num_vals, rng=42)                      
+StatsBase.countmap(y)
+
+julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 33
+1 => 19
+
+ScientificTypes.schema(X).scitypes
+
+julia> (Count, Count)
+
+# coerce to a finite scitype (multiclass or ordered factor)
+X = coerce(X, autotype(X, :few_to_finite))
+
+# apply SMOTEN
+Xover, yover = smoten(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+StatsBase.countmap(yover)
+
+
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 33
+1 => 19
+```
+
+# MLJ Model Interface
+
+Simply pass the keyword arguments while initiating the `SMOTEN` model and pass the 
+    positional arguments to the `transform` method. 
+
+```julia
+using MLJ
+SMOTEN = @load SMOTEN pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = SMOTEN(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)
+```
+The `MLJ` interface is only supported for table inputs. Read more about the interface [here]().
+
+# TableTransforms Interface
+
+This interface assumes that the input is one table `Xy` and that `y` is one of the columns. Hence, an integer `y_ind`
+    must be specified to the constructor to specify which column `y` is followed by other keyword arguments. 
+    Only `Xy` is provided while applying the transform.
+
+```julia
+using Imbalance
+using ScientificTypes
+using TableTransforms
+
+# Generate imbalanced data
+num_rows = 100
+num_cont_feats = 0
+y_ind = 2
+# generate a table and categorical vector accordingly
+Xy, _ = generate_imbalanced_data(num_rows, num_cont_feats; insert_y=y_ind,
+                                probs= [0.5, 0.2, 0.3], cat_feats_num_vals=[3, 2],
+                                 rng=42)  
+
+# Table must have only finite scitypes                                
+Xy = coerce(Xy, :Column1=>Multiclass, :Column2=>Multiclass, :Column3=>Multiclass)
+
+# Initiate Random Oversampler model
+oversampler = SMOTEN_t(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
+Xyover = Xy |> oversampler                               
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
+```
+The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)`
+reverts the transform by removing the oversampled observations from the table.
+
+
+# References
+[1] N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer,
+“SMOTE: synthetic minority over-sampling technique,”
+Journal of artificial intelligence research, 321-357, 2002.
 """
 function smoten(
     X::AbstractMatrix{<:Integer},
     y::AbstractVector;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     all_pairwise_vdm = precompute_pairwise_value_difference(X, y)
     rng = rng_handler(rng)
     Xover, yover =
-        generic_oversample(X, y, smoten_per_class, all_pairwise_vdm; ratios, k, rng )
+        generic_oversample(X, y, smoten_per_class, all_pairwise_vdm; ratios, k, rng)
     return Xover, yover
 end
 
@@ -181,10 +295,21 @@ function smoten(
     X,
     y::AbstractVector;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-    Xover, yover = tablify(smoten, X, y; encode_func=smoten_encoder, decode_func=smoten_decoder, materialize=true, k, ratios, rng)
+    Xover, yover = tablify(
+        smoten,
+        X,
+        y;
+        try_perserve_type=try_perserve_type,
+        encode_func = smoten_encoder,
+        decode_func = smoten_decoder,
+        k,
+        ratios,
+        rng,
+    )
     return Xover, yover
 end
 
@@ -193,9 +318,20 @@ function smoten(
     Xy,
     y_ind::Int;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-    Xyover = tablify(smoten, Xy, y_ind; encode_func=smoten_encoder, decode_func=smoten_decoder, materialize=true, k, ratios, rng)
+    Xyover = tablify(
+        smoten,
+        Xy,
+        y_ind;
+        try_perserve_type=try_perserve_type,
+        encode_func = smoten_encoder,
+        decode_func = smoten_decoder,
+        k,
+        ratios,
+        rng,
+    )
     return Xyover
 end

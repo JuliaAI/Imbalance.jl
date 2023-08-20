@@ -1,9 +1,10 @@
 ### ROSE MLJ Interface
 # interface struct
 mutable struct ROSE{T} <: MMI.Static
-    s::AbstractFloat 
+    s::AbstractFloat
     ratios::T
-    rng::Union{Integer, AbstractRNG}
+    rng::Union{Integer,AbstractRNG}
+    try_perserve_type::Bool
 end;
 
 """
@@ -20,11 +21,12 @@ end
 """
 Initiate a ROSE model with the given hyper-parameters.
 """
-function ROSE(; s::AbstractFloat = 1.0, 
-        ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
-        rng::Union{Integer,AbstractRNG} = default_rng()
+function ROSE(;
+    s::AbstractFloat = 1.0,
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool = true,
 ) where {T}
-    model = ROSE(s, ratios, rng)
+    model = ROSE(s, ratios, rng, try_perserve_type)
     MMI.clean!(model)
     return model
 end
@@ -33,7 +35,8 @@ end
 Oversample data X, y using ROSE
 """
 function MMI.transform(r::ROSE, _, X, y)
-    rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng)
+    rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng, 
+        try_perserve_type = r.try_perserve_type)
 end
 
 
@@ -41,9 +44,9 @@ end
 $(MMI.doc_header(ROSE))
 
 `ROSE` implements the ROSE (Random Oversampling Examples) algorithm to 
-correct for class imbalance as in G Menardi, N. Torelli, “Training and assessing 
-classification rules with imbalanced data,” 
-Data Mining and Knowledge Discovery, 28(1), pp.92-122, 2014.
+    correct for class imbalance as in G Menardi, N. Torelli, “Training and assessing 
+    classification rules with imbalanced data,” 
+    Data Mining and Knowledge Discovery, 28(1), pp.92-122, 2014.
 
 
 # Training data
@@ -59,7 +62,7 @@ For default values of the hyper-parameters, model can be constructed by
     model = ROSE()
 
 
-# Hyper-parameters
+# Hyperparameters
 
 - `s::float`: A parameter that proportionally controls the bandwidth of the Gaussian kernel
 
@@ -82,7 +85,7 @@ $(DOC_COMMON_OUTPUTS)
 
 # Example
 
-```
+```julia
 using MLJ
 import Random.seed!
 using MLUtils
@@ -102,7 +105,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
   "setosa"     => 13
 
 # load SMOTE model type:
-SMOTE = @load SMOTE pkg=Imbalance
+ROSE = @load ROSE pkg=Imbalance
 
 # Oversample the minority classes to  sizes relative to the majority class:
 rose = ROSE(s=0.3, ratios=Dict("setosa"=>0.9, "versicolor"=> 1.0, "virginica"=>0.7), rng=42)

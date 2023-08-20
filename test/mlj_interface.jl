@@ -1,4 +1,15 @@
-using Imbalance: SMOTE, ROSE, RandomOversampler, smote, rose, random_oversample, MMI, SMOTENC, smotenc, SMOTEN, smoten
+using Imbalance:
+    SMOTE,
+    ROSE,
+    RandomOversampler,
+    smote,
+    rose,
+    random_oversample,
+    MMI,
+    SMOTENC,
+    smotenc,
+    SMOTEN,
+    smoten
 
 
 @testset "Random Oversampler MLJ" begin

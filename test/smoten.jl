@@ -8,53 +8,65 @@ using Imbalance:
 
 @testset "Precompute Pairwise VDM" begin
 
-    X = 
-        [ 1  2  1
-        2  3  4
-        3  2  1
-        1  1  4
-        1  4  5
-        2  3  3
-        3  2  2 ]
+    X = [
+        1 2 1
+        2 3 4
+        3 2 1
+        1 1 4
+        1 4 5
+        2 3 3
+        3 2 2
+    ]
 
-    y = [1 
-        2 
-        3 
-        3 
-        4 
-        4 
-        1]
+    y = [
+        1
+        2
+        3
+        3
+        4
+        4
+        1
+    ]
 
 
-    res = 
-    [
-    [0.3333333333333333 0.0 0.5
-    0.0 0.5 0.0
-    0.3333333333333333 0.0 0.5
-    0.3333333333333333 0.5 0.0],
-
-    [0.0 0.6666666666666666 0.0 0.0
-    0.0 0.0 0.5 0.0
-    1.0 0.3333333333333333 0.0 0.0
-    0.0 0.0 0.5 1.0],
-    
-    [0.5  1.0  0.0  0.0  0.0
-    0.0  0.0  0.0  0.5  0.0
-    0.5  0.0  0.0  0.5  0.0
-    0.0  0.0  1.0  0.0  1.0]
+    res = [
+        [
+            0.3333333333333333 0.0 0.5
+            0.0 0.5 0.0
+            0.3333333333333333 0.0 0.5
+            0.3333333333333333 0.5 0.0
+        ],
+        [
+            0.0 0.6666666666666666 0.0 0.0
+            0.0 0.0 0.5 0.0
+            1.0 0.3333333333333333 0.0 0.0
+            0.0 0.0 0.5 1.0
+        ],
+        [
+            0.5 1.0 0.0 0.0 0.0
+            0.0 0.0 0.0 0.5 0.0
+            0.5 0.0 0.0 0.5 0.0
+            0.0 0.0 1.0 0.0 1.0
+        ],
     ]
 
     all_pairwise_vdm = precompute_pairwise_value_difference(X, y)
 
     dist = Cityblock()
-    @test all_pairwise_vdm[1] == pairwise(dist, res[1], res[1], dims=2)
-    @test all_pairwise_vdm[2] == pairwise(dist, res[2], res[2], dims=2)
-    @test all_pairwise_vdm[3] == pairwise(dist, res[3], res[3], dims=2)
+    @test all_pairwise_vdm[1] == pairwise(dist, res[1], res[1], dims = 2)
+    @test all_pairwise_vdm[2] == pairwise(dist, res[2], res[2], dims = 2)
+    @test all_pairwise_vdm[3] == pairwise(dist, res[3], res[3], dims = 2)
 
     ValueDiff = ValueDifference(all_pairwise_vdm)
 
-    @test Distances.evaluate(ValueDiff, [1, 2, 3], [3, 4, 5]) == all_pairwise_vdm[1][1, 3]^2 + all_pairwise_vdm[2][2, 4]^2 + all_pairwise_vdm[3][3, 5]^2
-    @test Distances.evaluate(ValueDiff, [1, 2, 3], [3, 4, 5]) == all_pairwise_vdm[1][3, 1]^2 + all_pairwise_vdm[2][4, 2]^2 + all_pairwise_vdm[3][5, 3]^2
+    @test Distances.evaluate(ValueDiff, [1, 2, 3], [3, 4, 5]) ==
+          all_pairwise_vdm[1][1, 3]^2 +
+          all_pairwise_vdm[2][2, 4]^2 +
+          all_pairwise_vdm[3][3, 5]^2
+    @test Distances.evaluate(ValueDiff, [1, 2, 3], [3, 4, 5]) ==
+          all_pairwise_vdm[1][3, 1]^2 +
+          all_pairwise_vdm[2][4, 2]^2 +
+          all_pairwise_vdm[3][5, 3]^2
 
 end
 
@@ -72,7 +84,7 @@ end
     # ideally, we would have transformed X before testing.
     tree = BruteTree(X)
     x = [1, 3, 2]
-    k = 2                   
+    k = 2
     all_neighbors = get_random_neighbor(X, tree, x; k, return_all_self = true)
     @test all_neighbors == X[:, [6, 5, 4]]
 end

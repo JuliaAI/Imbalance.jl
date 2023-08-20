@@ -51,4 +51,3 @@ end
 @testset "SMOTEN" begin
     include("smoten.jl")
 end
-

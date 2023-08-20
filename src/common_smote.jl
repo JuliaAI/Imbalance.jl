@@ -51,10 +51,10 @@ function get_random_neighbor(
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
     return_all::Bool = false,
-    return_all_self::Bool = false
+    return_all_self::Bool = false,
 )
     inds, _ = knn(tree, x, k + 1, true)
-    random_neighbor_index = randcols(rng, inds[2:end])[1]       
+    random_neighbor_index = randcols(rng, inds[2:end])[1]
     # the k+1 and the 2:end to exclude point itself
     random_neighbor = X[:, random_neighbor_index]
     # SMOTENC will further need to vote between neighbors for nominals
@@ -124,7 +124,7 @@ Check that all columns are either categorical or continuous. If not, throw an er
 
 
 """
-function check_scitypes_smoten_nc(ncols, cat_inds, cont_inds, types, nominal_only=false) 
+function check_scitypes_smoten_nc(ncols, cat_inds, cont_inds, types, nominal_only = false)
     # SMOTEN
     if nominal_only
         bad_cols = setdiff(1:ncols, cat_inds)
@@ -135,7 +135,7 @@ function check_scitypes_smoten_nc(ncols, cat_inds, cont_inds, types, nominal_onl
     end
     # SMOTENC
     bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))
-    if !isempty(bad_cols) 
+    if !isempty(bad_cols)
         throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
     end
-end   
+end

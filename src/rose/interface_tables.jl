@@ -6,6 +6,7 @@ struct ROSE_t{T} <: TransformsBase.Transform
     s::AbstractFloat
     ratios::T
     rng::Union{Integer,AbstractRNG}
+    try_perserve_type::Bool
 end
 
 
@@ -26,9 +27,10 @@ $(DOC_RNG_ARGUMENT)
 ROSE_t(
     y_ind::Integer;
     s::AbstractFloat = 1.0,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing,
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     rng::Union{Integer,AbstractRNG} = 123,
-) where {T} = ROSE_t(y_ind, s, ratios, rng)
+    try_perserve_type::Bool = true
+) where {T} = ROSE_t(y_ind, s, ratios, rng, try_perserve_type)
 
 
 TransformsBase.isrevertible(::Type{ROSE_t}) = true
@@ -51,7 +53,8 @@ Apply the ROSE transform to a table Xy
 """
 
 function TransformsBase.apply(r::ROSE_t, Xy)
-    Xyover = rose(Xy, r.y_ind; s = r.s, ratios = r.ratios, rng = r.rng)
+    Xyover = rose(Xy, r.y_ind; s = r.s, ratios = r.ratios, rng = r.rng, 
+                  try_perserve_type = r.try_perserve_type)
     cache = rowcount(Xy)
     return Xyover, cache
 end
@@ -74,4 +77,3 @@ TransformsBase.revert(::ROSE_t, Xyover, cache) = revert_oversampling(Xyover, cac
 Equivalent to calling `apply` but takes an extra unused argument `cache`
 """
 TransformsBase.reapply(r::ROSE_t, Xy, cache) = TransformsBase.apply(r, Xy)
-

@@ -65,31 +65,117 @@ end
 """
     function smote(
         X, y::AbstractVector;
-        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng()
+        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
+        try_perserve_type=true
     )
 
-Oversample a dataset given by a matrix or table of observations `X` and an abstract vector of labels y using SMOTE.
+# Description
+Oversamples a dataset using `SMOTE` (Synthetic Minority Oversampling Techniques) algorithm to 
+    correct for class imbalance as presented in [1]
 
-# Arguments
+# Positional Arguments
 
 $DOC_COMMON_INPUTS
 
-- `k::Int`: Number of nearest neighbors to consider in the SMOTE algorithm. 
-    Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
+# Keyword Arguments
+
+$DOC_COMMON_K
 
 $DOC_RATIOS_ARGUMENT
 
 $DOC_RNG_ARGUMENT
 
+$DOC_TRY_PERSERVE_ARGUMENT
+
 # Returns
 
 $DOC_COMMON_OUTPUTS
+
+
+# Example
+
+```@repl
+using Imbalance
+using StatsBase
+
+# set probability of each class
+probs = [0.5, 0.2, 0.3]                         
+num_rows, num_cont_feats = 100, 5
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
+                                probs, rng=42)                       
+StatsBase.countmap(y)
+
+julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 33
+1 => 19
+
+# apply SMOTE
+Xover, yover = smote(X, y; k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
+StatsBase.countmap(yover)
+
+julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 38
+1 => 43
+```
+
+# MLJ Model Interface
+
+Simply pass the keyword arguments while initiating the `ROSE` model and pass the 
+    positional arguments to the `transform` method. 
+
+```julia
+using MLJ
+SMOTE = @load SMOTE pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = SMOTE(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)
+```
+The `MLJ` interface is only supported for table inputs. Read more about the interface [here]().
+
+# TableTransforms Interface
+
+This interface assumes that the input is one table `Xy` and that `y` is one of the columns. Hence, an integer `y_ind`
+    must be specified to the constructor to specify which column `y` is followed by other keyword arguments. 
+    Only `Xy` is provided while applying the transform.
+
+```julia
+using Imbalance
+using TableTransforms
+
+# Generate imbalanced data
+num_rows = 200
+num_features = 5
+y_ind = 3
+Xy, _ = generate_imbalanced_data(num_rows, num_features; 
+                                 probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+
+# Initiate Random Oversampler model
+oversampler = SMOTE_t(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+Xyover = Xy |> oversampler                              
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
+```
+The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)`
+reverts the transform by removing the oversampled observations from the table.
+
+
+# References
+[1] N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer,
+“SMOTE: synthetic minority over-sampling technique,”
+Journal of artificial intelligence research, 321-357, 2002.
+
 """
 function smote(
     X::AbstractMatrix{<:AbstractFloat},
     y::AbstractVector;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     rng = rng_handler(rng)
@@ -102,11 +188,11 @@ function smote(
     X,
     y::AbstractVector;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    materialize::Bool = true,
+    try_perserve_type::Bool = true,
 )
-    Xover, yover = tablify(smote, X, y; materialize, k, ratios, rng)
+    Xover, yover = tablify(smote, X, y;try_perserve_type=try_perserve_type,  k, ratios, rng)
     return Xover, yover
 end
 
@@ -115,10 +201,10 @@ function smote(
     Xy,
     y_ind::Integer;
     k::Int = 5,
-    ratios = nothing,
+    ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    materialize::Bool = true,
+    try_perserve_type::Bool = true,
 )
-    Xyover = tablify(smote, Xy, y_ind; materialize, k, ratios, rng)
+    Xyover = tablify(smote, Xy, y_ind; try_perserve_type=try_perserve_type, k, ratios, rng)
     return Xyover
 end

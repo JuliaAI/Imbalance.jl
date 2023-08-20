@@ -15,8 +15,8 @@ end
     y = [0, 0, 0, 0, 0]
     k = 10
     n = 100
-    s=-1.0
-    @test_throws ERR_NEG_S(s) rose(X, y; s=s)
+    s = -1.0
+    @test_throws ERR_NEG_S(s) rose(X, y; s = s)
 end
 
 # Test that ROSE adds the right number of points per class and that the input and output types are as expected

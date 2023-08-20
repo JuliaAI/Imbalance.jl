@@ -17,12 +17,14 @@ const ERR_NEG_S(s) = "Error: s must be >= 0 but got $s."
 ### SMOTE
 const WRN_SINGLE_OBS = "Warning: class with a single will be ignored; point has no neighbors"
 const ERR_NONPOS_K(k) = "Error: k must be greater than 0 but got $k."
-const WRN_K_TOO_BIG(k, n) = "Warning: k=$k is larger than the number of samples for the class which is ($n). Will set k=$n-1"
+const WRN_K_TOO_BIG(k, n) =
+    "Warning: k=$k is larger than the number of samples for the class which is ($n). Will set k=$n-1"
 
 ### SMOTENC
-const ERR_BAD_MIXED_COL_TYPES(bad_cols, bad_types) = "Columns at indices $(bad_cols) are neither categorical nor continuous.\n Categorical columns must have scitype Multiclass and continuous columns must have scitype Union{Infinite, OrderedFactor}.\n However, said columns have scitypes $(bad_types)."
+const ERR_BAD_MIXED_COL_TYPES(bad_cols, bad_types) =
+    "Columns at indices $(bad_cols) are neither categorical nor continuous.\n Categorical columns must have scitype Multiclass or OrderedFactor and continuous columns must have scitype Count or Continuous.\n However, said columns have scitypes $(bad_types)."
 # May need to do similar checks for matrices but they are just numbers
 
 ### SMOTEN
-const ERR_BAD_NOM_COL_TYPES(bad_cols, bad_types) = "Columns at indices $(bad_cols) are not categorical.\n Categorical columns must have scitype Multiclass.\n However, said columns have scitypes $(bad_types)."
-
+const ERR_BAD_NOM_COL_TYPES(bad_cols, bad_types) =
+    "Columns at indices $(bad_cols) are not categorical.\n Categorical columns must have scitype Multiclass or OrderedFactor.\n However, said columns have scitypes $(bad_types)."

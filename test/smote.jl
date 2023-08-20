@@ -54,7 +54,7 @@ end
     k = -1
     n = 100
     @test_throws ERR_NONPOS_K(k) begin
-        smote_per_class(X', n; k=k, rng)
+        smote_per_class(X', n; k = k, rng)
     end
 end
 
@@ -65,8 +65,8 @@ end
     k = 10
     n = 100
     @test_logs (:warn, WRN_K_TOO_BIG(k, 5)) begin
-        smote_per_class(X', n; k=k, rng)
-    end 
+        smote_per_class(X', n; k = k, rng)
+    end
 end
 
 
@@ -159,15 +159,15 @@ end
                 type = tables[i],
                 rng = rng,
             )
-            Xover1, yover1 =
-                smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = Random.Xoshiro(1234))
-            Xover2, yover2 = smote(
+            Xover1, yover1 = smote(
                 X,
                 y;
                 k = 5,
                 ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9),
-                rng = 1234,
+                rng = Random.Xoshiro(1234),
             )
+            Xover2, yover2 =
+                smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 1234)
             Xover3, yover3 =
                 smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 99)
             if Tables.istable(X)

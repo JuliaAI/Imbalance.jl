@@ -4,6 +4,7 @@ struct RandomOversampler_t{T} <: Transform
     y_ind::Integer
     ratios::T
     rng::Union{Integer,AbstractRNG}
+    try_perserve_type::Bool
 end
 
 """
@@ -21,9 +22,10 @@ $(DOC_RNG_ARGUMENT)
 """
 RandomOversampler_t(
     y_ind::Integer;
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing,
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     rng::Union{Integer,AbstractRNG} = 123,
-) where {T} = RandomOversampler_t(y_ind, ratios, rng)
+    try_perserve_type::Bool = true,
+) where {T} = RandomOversampler_t(y_ind, ratios, rng, try_perserve_type)
 
 
 TransformsBase.isrevertible(::Type{RandomOversampler_t}) = true
@@ -44,7 +46,8 @@ Apply the RandomOversampler transform to a table Xy
 - `cache`: A cache that can be used to revert the oversampling
 """
 function TransformsBase.apply(r::RandomOversampler_t, Xy)
-    Xyover = random_oversample(Xy, r.y_ind; ratios = r.ratios, rng = r.rng)
+    Xyover = random_oversample(Xy, r.y_ind; ratios = r.ratios, rng = r.rng,
+                               try_perserve_type = r.try_perserve_type)
     # so that we can revert later by removing the new observations:
     cache = rowcount(Xy)
     return Xyover, cache
@@ -69,5 +72,3 @@ TransformsBase.revert(::RandomOversampler_t, Xyover, cache) =
 Equivalent to `apply(r, Xy)`
 """
 TransformsBase.reapply(r::RandomOversampler_t, Xy, cache) = TransformsBase.apply(r, Xy)
-
-

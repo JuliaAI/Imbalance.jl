@@ -17,6 +17,7 @@ using TableOperations
 using Tables
 using MLJModelInterface
 using OrderedCollections
+using CategoricalArrays
 
 const MMI = MLJModelInterface
 
@@ -25,6 +26,7 @@ include("errors.jl")
 include("table_wrappers.jl")
 include("generic_oversample.jl")
 include("utils.jl")
+export generate_imbalanced_data
 
 include("class_counts.jl")
 

@@ -4,23 +4,26 @@
 mutable struct RandomOversampler{T} <: Static
     ratios::T
     rng::Union{Integer,AbstractRNG}
+    try_perserve_type::Bool
 end;
 
 """
 Initiate a random oversampling model with the given hyper-parameters.
 """
-function RandomOversampler(;ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = nothing, 
-  rng::Union{Integer,AbstractRNG} = default_rng()
+function RandomOversampler(;
+    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool = true
 ) where {T}
-model = RandomOversampler(ratios, rng)
-return model
+    model = RandomOversampler(ratios, rng, try_perserve_type)
+    return model
 end
 
 """
 Oversample data X, y using ROSE
 """
 function MMI.transform(r::RandomOversampler, _, X, y)
-    random_oversample(X, y; ratios = r.ratios, rng = r.rng)
+    random_oversample(X, y; ratios = r.ratios, rng = r.rng, 
+                      try_perserve_type = r.try_perserve_type)
 end
 
 
@@ -46,7 +49,7 @@ For default values of the hyper-parameters, model can be constructed by
     model = RandomOverSampler()
     
 
-# Hyper-parameters
+# Hyperparameters
 
 $(DOC_RATIOS_ARGUMENT)
 
@@ -88,7 +91,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
   "setosa"     => 13
 
 # load SMOTE model type:
-SMOTE = @load SMOTE pkg=Imbalance
+RandomOversampler = @load RandomOversampler pkg=Imbalance
 
 # Oversample the minority classes to  sizes relative to the majority class:
 random_oversampler = RandomOversampler(ratios=Dict("setosa"=>0.9, "versicolor"=> 1.0, "virginica"=>0.7), rng=42)
