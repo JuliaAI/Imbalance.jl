@@ -16,7 +16,7 @@ where an underlying assumption is that minimizing this empirical risk correspond
 
 In a multi-class setting, one can write
 
-$$ \hat{\theta} = \arg\min_{\theta} \left( \frac{1}{N_1} \sum_{i \in \mathcal{C}_1} L(f_{\theta}(x_i), y_i) + \frac{1}{N_2} \sum_{i \in \mathcal{C}_2} L(f_{\theta}(x_i), y_i) + \ldots + \frac{1}{N_C} \sum_{i \in \mathcal{C}_C} L(f_{\theta}(x_i), y_i) \right)$$
+$$\hat{\theta} = \arg\min_{\theta} \left( \frac{1}{N_1} \sum_{i \in \mathcal{C}_1} L(f_{\theta}(x_i), y_i) + \frac{1}{N_2} \sum_{i \in \mathcal{C}_2} L(f_{\theta}(x_i), y_i) + \ldots + \frac{1}{N_C} \sum_{i \in \mathcal{C}_C} L(f_{\theta}(x_i), y_i) \right)$$
 
 Class imbalance occurs when some classes have much fewer examples than other classes. In this case, the corresponding terms contribute minimally to the sum which makes it easier for any learning algorithm to find an approximate solution to the empirical risk that mostly only minimizes the over the significant sums. This yields a hypothesis $f_\theta$ that may be very different from the true target $f$ with respect to the minority classes which may be the most important for the application in question.
 
@@ -98,7 +98,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
 
 # Initiate SMOTE model
 oversampler = SMOTE_t(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-Xyover = Xy |> oversampler                                # can chain with other table transforms                  
+Xyover = Xy |> oversampler       # can chain with other table transforms                  
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)` reverts the transform by removing the oversampled observations from the table.
