@@ -16,6 +16,7 @@ MMI.metadata_model(
     SMOTEN,
     input_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
     output_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
+    target_scitype = AbstractVector,
     load_path = "Imbalance.SMOTEN",
 )
 
@@ -46,6 +47,7 @@ MMI.metadata_model(
         Table(Union{Infinite, Finite}),
         AbstractMatrix{Union{Infinite, Finite}},
     },
+    target_scitype = AbstractVector,
     load_path = "Imbalance.SMOTEN",
 )
 
@@ -75,6 +77,7 @@ for model_name in [:SMOTE, :ROSE, :RandomOversampler]
             $model_name,
             input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
             output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
+            target_scitype = AbstractVector,
             load_path = "Imbalance." * string($model_name),
         )
         function MMI.transform_scitype(s::$model_name)
