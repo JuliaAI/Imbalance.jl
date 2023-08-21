@@ -1,12 +1,15 @@
 using Documenter
 using DocumenterTools: Themes
 using Imbalance
+using Unicode
+
 
 
 Themes.compile(
   joinpath(@__DIR__, "src/assets/light.scss"),
   joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
 )
+
 
 
 makedocs(

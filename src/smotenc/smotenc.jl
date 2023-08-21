@@ -214,14 +214,14 @@ Oversamples a dataset using `SMOTE-NC` (Synthetic Minority Oversampling Techniqu
 
 # Positional Arguments
 
-- `X`: A matrix of floats or a table with scitypes that subtype `Union{Finite, Infinite}`. 
-     Nominal columns should subtype `Finite` (i.e., `OrderedFactor` and `Multiclass`) and
-     continuous columns should subtype `Infinite` (i.e., `Count` and `Continuous`).
+- `X`: A matrix of floats or a table with [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Union{Finite, Infinite}`. 
+     Elements in nominal columns should subtype `Finite` (i.e., have [scitype](https://juliaai.github.io/ScientificTypes.jl/) `OrderedFactor` or `Multiclass`) and
+     elements in continuous columns should subtype `Infinite` (i.e., have [scitype](https://juliaai.github.io/ScientificTypes.jl/) `Count` or `Continuous`).
 
 - `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
 
 - `cat_inds::AbstractVector{<:Int}`: A vector of the indices of the nominal features. Supplied only if `X` is a matrix.
-        Otherwise, they are inferred from the table's scitypes.
+        Otherwise, they are inferred from the table's [scitypes](https://juliaai.github.io/ScientificTypes.jl/).
 
 
 # Keyword Arguments

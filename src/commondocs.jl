@@ -19,9 +19,9 @@ const DOC_COMMON_K = """
                      """
 
 const DOC_TRY_PERSERVE_ARGUMENT = """
-                                 - `try_preserve_type::Bool=true`: Defaults to true and means that the function will try to perserve the type of the 
+                                 - `try_preserve_type::Bool=true`: Defaults to true and means that the function will try to perserve the type of the input 
                                         table (e.g., `DataFrame`). However, for some tables this may not succeed and in this case the table returned will
-                                        be a `Columntable` (named-tuple of vectors). 
+                                        be a column table (named-tuple of vectors) or a MatrixTable if this set to false.
                                  """
 
 const DOC_COMMON_INPUTS = """

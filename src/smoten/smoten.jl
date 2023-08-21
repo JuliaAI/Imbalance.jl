@@ -161,8 +161,8 @@ Oversamples a dataset using `SMOTE-N` (Synthetic Minority Oversampling Technique
 
 # Positional Arguments
 
-- `X`: A matrix of integers or a table with scitypes that subtype `Finite`. 
-     That is, for table inputs each columns should have either `OrderedFactor` or `Multiclass` as scitype.
+- `X`: A matrix of integers or a table with [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Finite`. 
+     That is, for table inputs each column should have either `OrderedFactor` or `Multiclass` as the element [scitype](https://juliaai.github.io/ScientificTypes.jl/).
 
 - `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
 

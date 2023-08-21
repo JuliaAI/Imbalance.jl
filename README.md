@@ -1,53 +1,18 @@
 # Imbalance.jl
 
-![Imbalance](docs/src/assets/logos.png)
+![Imbalance](https://i.imgur.com/C34ilSZ.png)
+
 A Julia package with resampling methods to correct for class imbalance in a wide variety of classification settings.
 
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://essamwisam.github.io/Imbalance.jl/dev/)
 [![Tests](https://github.com/EssamWisam/Imbalance.jl/actions/workflows/Runtests.yml/badge.svg)](https://github.com/EssamWisam/Imbalance.jl/actions/workflows/Runtests.yml)
-
-
-
-## 🌇 Motivation
-Most if not all machine learning algorithms can be viewed as a form of empirical risk minimization where the object is to find the parameters $\theta$ that for some loss function $L$ minimize 
-
-$$\hat{\theta} = \arg\min_{\theta} \frac{1}{N} \sum_{i=1}^{N} L(f_{\theta}(x_i), y_i)$$
-
-where an underlying assumption is that minimizing this empirical risk corresponds to approximately minimizing the true risk which considers all examples in the populations which would imply that $f_\theta$ is approximately the true target function $f$.
-
-In a multi-class setting with $K$ classes, one can write
-
-$$\hat{\theta} = \arg\min_{\theta} \left( \frac{1}{N_1} \sum_{i \in C_1} L(f_{\theta}(x_i), y_i) + \frac{1}{N_2} \sum_{i \in C_2} L(f_{\theta}(x_i), y_i) + \ldots + \frac{1}{N_K} \sum_{i \in C_K} L(f_{\theta}(x_i), y_i) \right)$$
-
-Class imbalance occurs when some classes have much fewer examples than other classes. In this case, the corresponding terms contribute minimally to the sum which makes it easier for any learning algorithm to find an approximate solution to the empirical risk that mostly only minimizes the over the significant sums. This yields a hypothesis $f_\theta$ that may be very different from the true target $f$ with respect to the minority classes which may be the most important for the application in question.
-
-One obvious possible remedy is to weight the smaller sums so that a learning algorithm can avoid approximate solutions that exploit their insignificance. This can be shown to be equivalent (on average) to repeating examples by naive random oversampling of the observations in such classes which is offered by this package along with other more advanced oversampling methods.
-
-To our knowledge, there are no existing maintained Julia packages that implement oversampling algorithms for multi-class classification problems or that handle both nominal and continuous features. This has served as a primary motivation for the creation of this package.
-
-## 📝 Methods
-
-The package so far provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
-
-* Basic Random Oversampling 
-* Random Sampling Examples (ROSE)
-* Synthetic Minority Oversampling Technique (SMOTE)
-* SMOTE-Nominal (SMOTE-N)
-* SMOTE-Nominal Categorical (SMOTE-NC)
-
-## 🎨 Features
-- Provides some of the most sought oversampling algorithms in machine learning and is still under development
-- Supports multi-class classification and both nominal and continuous features
-- Generic by supporting table input/output formats as well as matrices
-- Integrates seamlessly with other JuliaAI or JuliaML packages such as `MLJ` and `TableTransforms` by implementing their respective interfaces
-- Supports tables regardless to whether `y` is a separate column or one of the columns
-- Supports automatic encoding and decoding of nominal features
 
 ## ⏬ Installation
 ```julia
 import Pkg;
 Pkg.add("Imbalance")
 ```
+
 
 ## 🚀 Quick Start
 We will illustrate this with `SMOTE` but all other methods follow the same pattern.
@@ -65,6 +30,7 @@ X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, rng=42)
 Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 
 ```
+
 ### 🤖 MLJ Interface
 All methods support the `MLJ` interface over tables where instead of directly calling the method, one instantiates a model for the method while passing any necessary keyword parameters, wraps the model in a machine and then calls transform on the machine and data.
 ```julia
@@ -103,6 +69,43 @@ Xyover = Xy |> oversampler       # can chain with other table transforms
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)` reverts the transform by removing the oversampled observations from the table.
+
+
+## 📝 Methods
+
+The package so far provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
+
+* Basic Random Oversampling 
+* Random Sampling Examples (ROSE)
+* Synthetic Minority Oversampling Technique (SMOTE)
+* SMOTE-Nominal (SMOTE-N)
+* SMOTE-Nominal Categorical (SMOTE-NC)
+
+## 🎨 Features
+- Provides some of the most sought oversampling algorithms in machine learning and is still under development
+- Supports multi-class classification and both nominal and continuous features
+- Generic by supporting table input/output formats as well as matrices
+- Provides `MLJ` and `TableTransforms` interfaces aside from the default pure functional interface
+- Supports tables regardless to whether the target is a separate column or one of the columns
+- Supports automatic encoding and decoding of nominal features
+
+
+## 🌇 Motivation
+Most if not all machine learning algorithms can be viewed as a form of empirical risk minimization where the object is to find the parameters $\theta$ that for some loss function $L$ minimize 
+
+$$\hat{\theta} = \arg\min_{\theta} \frac{1}{N} \sum_{i=1}^{N} L(f_{\theta}(x_i), y_i)$$
+
+where an underlying assumption is that minimizing this empirical risk corresponds to approximately minimizing the true risk which considers all examples in the populations which would imply that $f_\theta$ is approximately the true target function $f$.
+
+In a multi-class setting with $K$ classes, one can write
+
+$$\hat{\theta} = \arg\min_{\theta} \left( \frac{1}{N_1} \sum_{i \in C_1} L(f_{\theta}(x_i), y_i) + \frac{1}{N_2} \sum_{i \in C_2} L(f_{\theta}(x_i), y_i) + \ldots + \frac{1}{N_K} \sum_{i \in C_K} L(f_{\theta}(x_i), y_i) \right)$$
+
+Class imbalance occurs when some classes have much fewer examples than other classes. In this case, the corresponding terms contribute minimally to the sum which makes it easier for any learning algorithm to find an approximate solution to the empirical risk that mostly only minimizes the over the significant sums. This yields a hypothesis $f_\theta$ that may be very different from the true target $f$ with respect to the minority classes which may be the most important for the application in question.
+
+One obvious possible remedy is to weight the smaller sums so that a learning algorithm can avoid approximate solutions that exploit their insignificance. This can be shown to be equivalent (on average) to repeating examples by naive random oversampling of the observations in such classes which is offered by this package along with other more advanced oversampling methods.
+
+To our knowledge, there are no existing maintained Julia packages that implement oversampling algorithms for multi-class classification problems or that handle both nominal and continuous features. This has served as a primary motivation for the creation of this package.
 
 ## 👥 Credits
 This package was created by [Essam Wisam](https://github.com/EssamWisam) under supervision and expert guidance from his mentor [Dr. Anthony Blaom](https://github.com/ablaom). The binary `SMOTE` implementation by [Dr. Rik Huijzer](https://github.com/rikhuijzer) in `Resample.jl` has also been ultimately helpful while starting this project.
