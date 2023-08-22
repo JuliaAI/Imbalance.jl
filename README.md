@@ -51,7 +51,7 @@ Xover, yover = transform(mach, X, y)
 All methods are considered static transforms and hence, no `fit` is required. 
 
 ### 🏓 Table Transforms Interface
-This interface operates on single tables. It thereby assumes that `y` is one of the columns involved. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed is only one table `Xy`.
+This interface operates on single tables. It thereby assumes that the target `y` is one of the columns involved. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed is only one table `Xy`.
 ```julia
 using Imbalance
 using TableTransforms
