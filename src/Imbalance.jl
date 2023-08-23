@@ -19,6 +19,7 @@ using MLJModelInterface
 using OrderedCollections
 using CategoricalArrays
 using DocumenterTools
+using ProgressMeter
 
 const MMI = MLJModelInterface
 

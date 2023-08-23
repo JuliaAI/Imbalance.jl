@@ -82,7 +82,7 @@ function get_penalty(X::AbstractMatrix{<:AbstractFloat}, cont_inds::AbstractVect
     Xcont = @view X[cont_inds, :]
     σs = vec(std(Xcont, dims = 2))
     σₘ = median(σs)
-    return σₘ
+    return σₘ^2
 end
 
 
@@ -102,7 +102,7 @@ variables that are not equal.
 function Distances.evaluate(d::EuclideanWithPenalty, x₁, x₂)
     x₁_cont, x₁_cat = x₁[d.cont_inds], x₁[d.cat_inds]
     x₂_cont, x₂_cat = x₂[d.cont_inds], x₂[d.cat_inds]
-    e = euclidean(x₁_cont, x₂_cont)
+    e = sqeuclidean(x₁_cont, x₂_cont)
     h = hamming(x₁_cat, x₂_cat)
     # distance computed as described above
     return e + d.penalty * h
@@ -189,9 +189,13 @@ function smotenc_per_class(
     metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
     tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
     # Generate n new observations
-    return hcat(
-        [generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng) for i = 1:n]...,
-    )
+    Xnew = zeros(Float32, size(X, 1), n)
+    p = Progress(n)
+    for i=1:n
+        Xnew[:, i] = generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng)
+        next!(p)
+    end
+    return Xnew
 end
 
 
