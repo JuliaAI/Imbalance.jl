@@ -39,25 +39,6 @@ using Imbalance:
 end
 
 
-
-# Test that a random neighbor is indeed one of the nearest neighbors
-@testset "get_random_neighbor" begin
-    X = [
-        3 2 1
-        2 2 1
-        3 4 1
-        2 2 2
-        1 2 2
-        1 3 2
-    ]'
-    # ideally, we would have transformed X before testing.
-    tree = BruteTree(X)
-    x = [1, 3, 2]
-    k = 2
-    all_neighbors = get_random_neighbor(X, tree, x; k, return_all_self = true)
-    @test all_neighbors == X[:, [6, 5, 4]]
-end
-
 # Test that generated smote point is collinear with some pair of points
 @testset "generate_new_smote_point" begin
     X = [
@@ -69,13 +50,14 @@ end
     ]
 
     y = [2, 1, 1, 1, 1]
+    k = 4
     mvdm_encoder, num_categories_per_col = precompute_value_encodings(X, y)
     all_pairwise_vdm = precompute_mvdm_distances(mvdm_encoder, num_categories_per_col)
     metric = ValueDifference(all_pairwise_vdm)
     tree = BruteTree(X', metric)
-    k = 4
+    knn_matrix, _ = knn(tree, X', k + 1)
 
-    new_point = generate_new_smoten_point(X', tree; k, rng)
+    new_point = generate_new_smoten_point(X', knn_matrix; k, rng)
 
     @test new_point == [4, 3, 1, 2]
 end
