@@ -22,6 +22,7 @@ function Distances.evaluate(d::ValueDifference, x₁, x₂)
     # each element is the value difference of two categories of the categorical variable
     return sum(d.all_pairwise_mvdm[col][i, j]^2 for (col, (i, j)) in enumerate(zip(x₁, x₂)))
 end
+@inline (d::ValueDifference)(x₁, x₂) = Distances.evaluate(d, x₁, x₂)
 
 
 """
@@ -106,9 +107,9 @@ function precompute_mvdm_distances(
     ]
     for col = 1:num_cols
         dist = Cityblock()
-        all_pairwise_mvdm[col] = pairwise(dist, mvdm_encoder[col],  dims = 2)
+        all_pairwise_mvdm[col] = pairwise(dist, mvdm_encoder[col],  dims = 2).^2
     end
-    return all_pairwise_mvdm.^2
+    return all_pairwise_mvdm
 end
 
 

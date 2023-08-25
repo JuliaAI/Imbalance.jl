@@ -6,71 +6,39 @@ using Imbalance:
     precompute_value_encodings,
     precompute_mvdm_distances,
     ValueDifference
-#=
-@testset "Precompute Pairwise VDM" begin
-
-    X = [
-        1 2 1
-        2 3 4
-        3 2 1
-        1 1 4
-        1 4 5
-        2 3 3
-        3 2 2
-    ]
-
-    y = [
-        1
-        2
-        3
-        3
-        4
-        4
-        1
-    ]
 
 
-    res = [
-        [
-            0.3333333333333333 0.0 0.5
-            0.0 0.5 0.0
-            0.3333333333333333 0.0 0.5
-            0.3333333333333333 0.5 0.0
-        ],
-        [
-            0.0 0.6666666666666666 0.0 0.0
-            0.0 0.0 0.5 0.0
-            1.0 0.3333333333333333 0.0 0.0
-            0.0 0.0 0.5 1.0
-        ],
-        [
-            0.5 1.0 0.0 0.0 0.0
-            0.0 0.0 0.0 0.5 0.0
-            0.5 0.0 0.0 0.5 0.0
-            0.0 0.0 1.0 0.0 1.0
-        ],
-    ]
+@testset "MVDM Encoding and Distance" begin
+    pyimport_conda("imblearn", "imbalanced-learn")
 
-    all_pairwise_vdm = precompute_pairwise_value_difference(X, y)
+    # Import numpy and other libraries
+    np = pyimport("numpy")
+    imblearn = pyimport("imblearn")
+    fromsklearn = pyimport("sklearn.preprocessing")
 
-    dist = Cityblock()
-    @test all_pairwise_vdm[1] == pairwise(dist, res[1], res[1], dims = 2)
-    @test all_pairwise_vdm[2] == pairwise(dist, res[2], res[2], dims = 2)
-    @test all_pairwise_vdm[3] == pairwise(dist, res[3], res[3], dims = 2)
+    # Set the dimensions of the matrix
+    rows = 50
+    cols = 8
 
-    ValueDiff = ValueDifference(all_pairwise_vdm)
+    # Generate a random matrix X and vector y in Python
+    X = np.random.randint(1, 11, size=(rows, cols))
+    y = np.random.randint(1, 6, size=rows)
 
-    @test Distances.evaluate(ValueDiff, [1, 2, 3], [3, 4, 5]) ==
-          all_pairwise_vdm[1][1, 3]^2 +
-          all_pairwise_vdm[2][2, 4]^2 +
-          all_pairwise_vdm[3][3, 5]^2
-    @test Distances.evaluate(ValueDiff, [1, 2, 3], [3, 4, 5]) ==
-          all_pairwise_vdm[1][3, 1]^2 +
-          all_pairwise_vdm[2][4, 2]^2 +
-          all_pairwise_vdm[3][5, 3]^2
+    mvdm_encoder_python = imblearn.metrics.pairwise.ValueDifferenceMetric().fit(X, y)
 
+    mvdm_encoder, num_cats_per_column = precompute_value_encodings(X, y)
+    for i ∈ 1:8
+        @test mvdm_encoder_python.proba_per_class_[i][2:end,:] ≈ mvdm_encoder[i]'
+    end
+
+    all_pairwise_mvdm = precompute_mvdm_distances(mvdm_encoder, num_cats_per_column)
+
+    V = ValueDifference(all_pairwise_mvdm)
+    D = pairwise(V, X, X, dims=1)
+    @test sum(pairwise(V, X, X, dims=1)) ≈ sum(D)
 end
-=#
+
+
 
 # Test that a random neighbor is indeed one of the nearest neighbors
 @testset "get_random_neighbor" begin
