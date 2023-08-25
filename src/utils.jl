@@ -46,6 +46,20 @@ function group_inds(categorical_array::AbstractVector{T}) where {T}
     return result
 end
 
+"""
+Show the output of countmap(y) in a visually friendly way.
+"""
+function checkbalance(y) 
+    counts = StatsBase.countmap(y)
+    total_count = sum(values(counts))
+    
+    for (key, count) in counts
+        percentage = round(Int, 100 * count / total_count)
+        bar_length = round(Int, count * 50 / total_count)
+        bar = "▇" ^ bar_length
+        println("$key: $count ($percentage%) $bar")
+    end
+end
 
 
 
