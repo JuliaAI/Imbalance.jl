@@ -25,7 +25,7 @@ using Imbalance:
     # get the median of the stds
     median_std = median(stds)
 
-    @test get_penalty(X, cont_inds) ≈ median_std
+    @test get_penalty(X, cont_inds) ≈ median_std^2
 end
 
 @testset "Testing Distances.evaluate" begin
@@ -38,7 +38,7 @@ end
 
     d = EuclideanWithPenalty(penalty, cont_inds, cat_inds)
 
-    @test Distances.evaluate(d, x₁, x₂) == sqrt(3^2 + 3^2 + 3^2) + penalty * 1
+    @test Distances.evaluate(d, x₁, x₂) == 3^2 + 3^2 + 3^2 + penalty * 1
 end
 
 
