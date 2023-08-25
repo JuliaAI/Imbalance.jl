@@ -45,4 +45,4 @@ TableTransforms = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "DataFrames", "CategoricalArrays", "MLJBase", "TableTransforms", "StableRNGs", "PyCall"]
+test = ["Test", "DataFrames", "MLJBase", "TableTransforms", "StableRNGs", "PyCall"]
