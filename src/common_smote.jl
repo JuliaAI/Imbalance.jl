@@ -25,6 +25,22 @@ function get_collinear_point(
     return @. (1 - r) * x₁ + r * x₂
 end
 
+"""
+Apply KNN and return the indices of the k-nearest neighbors of a given observation `x` from an observations. 
+
+# Arguments
+- `tree::KDTree`: KDTree of observations
+- `x::AbstractVector`: Observation
+- `k::Integer`: Number of neighbors to consider
+
+# Returns
+- `inds::AbstractVector`: Indices of the k-nearest neighbors of `x`. This is expected to include `x` itself.
+"""
+@memoize function memoized_knn(tree, x, k)
+    # k+1 because the point is in X and will surely be a neighbor of itself
+    inds, _ = knn(tree, x, k + 1, true)
+    return inds
+end
 
 # Used by SMOTE, SMOTENC and SMOTEN
 """
@@ -53,7 +69,7 @@ function get_random_neighbor(
     return_all::Bool = false,
     return_all_self::Bool = false,
 )
-    inds, _ = knn(tree, x, k + 1, true)
+    inds = memoized_knn(tree, x, k)
     random_neighbor_index = randcols(rng, inds[2:end])[1]
     # the k+1 and the 2:end to exclude point itself
     random_neighbor = X[:, random_neighbor_index]
