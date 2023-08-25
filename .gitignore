@@ -30,3 +30,5 @@ meh.ipynb
 Transforms.ipynb
 dataset.csv
 1.8/Project.toml
+.CondaPkg
+examples/*ipynb

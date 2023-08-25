@@ -139,11 +139,19 @@ function smoten_per_class(
     # Automatically set k to the nearest of 1 and size(X, 1) - 1
     n_class = size(X, 2)
     k = check_k(k, n_class)
+    
     # Build KNN tree with modified distance metric
     metric = ValueDifference(all_pairwise_vdm)
     tree = BruteTree(X, metric)
+
     # Generate n new observations
-    return hcat([generate_new_smoten_point(X, tree; k, rng) for i = 1:n]...)
+     Xnew = zeros(Float32, size(X, 1), n)
+     p = Progress(n)
+     for i=1:n
+         Xnew[:, i] = generate_new_smoten_point(X, tree; k, rng)
+         next!(p)
+     end
+    return Xnew
 end
 
 """

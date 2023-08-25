@@ -35,6 +35,7 @@ function generic_oversample(
     label_inds = group_inds(y)
     extra_counts = get_class_counts(y, ratios)
     # Apply oversample per class on each set of points belonging to the same class
+    p = Progress(length(label_inds))
     for (label, inds) in label_inds
         # Get points belonging to class
         X_label = @view X[:, inds]
@@ -47,6 +48,7 @@ function generic_oversample(
         ynew = fill(label, size(Xnew, 2))
         X = hcat(X, Xnew)
         y = vcat(y, ynew)
+        next!(p; showvalues = [(:class, label)])
     end
     Xover = transpose(X)
     yover = y

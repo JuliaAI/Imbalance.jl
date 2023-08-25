@@ -58,7 +58,13 @@ function smote_per_class(
     # Build KDTree for KNN
     tree = KDTree(X)
     # Generate n new observations
-    return hcat([generate_new_smote_point(X, tree; k, rng) for i = 1:n]...)
+    Xnew = zeros(Float32, size(X, 1), n)
+    p = Progress(n)
+    for i=1:n
+        Xnew[:, i] = generate_new_smote_point(X, tree; k, rng)
+        next!(p)
+    end
+    return Xnew
 end
 
 
