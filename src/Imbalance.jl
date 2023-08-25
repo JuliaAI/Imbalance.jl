@@ -29,7 +29,7 @@ include("errors.jl")
 include("table_wrappers.jl")
 include("generic_oversample.jl")
 include("utils.jl")
-export generate_imbalanced_data
+export generate_imbalanced_data, checkbalance
 
 include("class_counts.jl")
 

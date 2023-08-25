@@ -23,13 +23,13 @@ makedocs(
       ]
     ),
     modules = [Imbalance],
-    pages = ["🚀 Introduction" => "index.md",
-              "📕 User Guide" => "user_guide.md",
-              "📚 Algorithms" => "algorithms.md",
-              "✍🏼 Theory" => "theory.md",
-              "🧑🏻‍💻 Examples" => "examples.md",
-              "💁🏻‍♀️ Contributing" => "contributing.md",
-              "🏮 About" => "about.md"]
+    pages = ["Introduction" => "index.md",
+              "User Guide" => "user_guide.md",
+              "Algorithms" => "algorithms.md",
+              "Theory" => "theory.md",
+              "Examples" => "examples.md",
+              "Contributing" => "contributing.md",
+              "About" => "about.md"]
               
 )
 
