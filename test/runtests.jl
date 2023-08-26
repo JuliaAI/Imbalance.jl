@@ -12,7 +12,8 @@ using StableRNGs: StableRNG
 using TableTransforms
 using ScientificTypes
 import Pkg; Pkg.build("PyCall")
-using PyCall                        
+using PyCall       
+using Conda                 
 
 
 

@@ -8,9 +8,10 @@ using Imbalance:
     ValueDifference
 
 
+# TODO: make test work with Github actions
 @testset "MVDM Encoding and Distance" begin
+    Conda.add("imbalanced-learn")
     pyimport_conda("imblearn", "imbalanced-learn")
-
     # Import numpy and other libraries
     np = pyimport("numpy")
     imblearn = pyimport("imblearn")
