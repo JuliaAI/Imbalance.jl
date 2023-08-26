@@ -58,7 +58,7 @@ function checkbalance(y)
     total_count = sum(values(counts))
     
     for (key, count) in counts
-        percentage = round(Int, 100 * count / total_count)
+        percentage = round(100 * count / total_count, digits=1)
         bar_length = round(Int, count * 50 / total_count)
         bar = "▇" ^ bar_length
         println("$key: $count ($percentage%) $bar")

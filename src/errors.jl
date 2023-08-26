@@ -1,5 +1,4 @@
 ### class_counts
-const ERR_MISSING_CLASS(c) = "Error: found class $c in y that is not in ratios."
 const ERR_INVALID_RATIO(c) = "Error: ratio for class $c must be greater than 0."
 const WRN_UNDERSAMPLE(new_ratio, label, less_counts, old_ratio) =
     "Warning: ratio $new_ratio for class $label implies that the class \

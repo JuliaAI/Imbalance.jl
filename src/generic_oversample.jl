@@ -37,6 +37,7 @@ function generic_oversample(
     # Apply oversample per class on each set of points belonging to the same class
     p = Progress(length(label_inds))
     for (label, inds) in label_inds
+        !(label in keys(extra_counts)) && continue
         # Get points belonging to class
         X_label = @view X[:, inds]
         # How many points does it need?

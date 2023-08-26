@@ -5,8 +5,8 @@ all the oversampling methods.
 
 """
 Given a categorical array of discrete labels and a dictionary of ratios, return a dictionary
-of the number of extra samples needed for each class to achieve the given ratio 
-relative to the majority class.
+of the number of extra samples needed for each class included in the input dictionary to achieve 
+the given ratio relative to the majority class. 
 
 # Arguments
 - `y::AbstractVector`: An abstract vector of class labels
@@ -26,7 +26,7 @@ function get_class_counts(y::AbstractVector, ratios::Dict{T,<:AbstractFloat}) wh
 
     # each class needs to be the size specified in `ratios`
     for (label, count) in label_counts
-        (label in keys(ratios)) || throw(ERR_MISSING_CLASS(label))
+        (label in keys(ratios)) || continue
         ratios[label] > 0 || throw(ERR_INVALID_RATIO(label))
         extra_counts[label] =
             calculate_extra_counts(ratios[label], majority_count, count, label)

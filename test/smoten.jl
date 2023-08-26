@@ -11,6 +11,8 @@ using Imbalance:
 # TODO: make test work with Github actions
 @testset "MVDM Encoding and Distance" begin
     Conda.add("imbalanced-learn")
+    Conda.add("numpy")
+    Conda.add("scikit-learn")
     #pyimport_conda("imblearn", "imbalanced-learn")
     # Import numpy and other libraries
     np = pyimport("numpy")
