@@ -162,12 +162,14 @@ use SMOTE-NC to generate `n` new observations for that class.
 - `AbstractMatrix`: A matrix where each row is a new observation
 """
 function smoten_per_class(
-    X::AbstractMatrix{<:Integer},
+    X::AbstractMatrix{<:Real},
     n::Int,
     all_pairwise_mvdm::AbstractVector{<:AbstractArray{<:AbstractFloat}};
     k::Int = 5,
     rng::AbstractRNG = default_rng(),
 )
+    X = Int32.(X)               # temporary workaround for an unexepcted types bug
+
     # Automatically set k to the nearest of 1 and size(X, 1) - 1
     n_class = size(X, 2)
     k = check_k(k, n_class)
@@ -176,6 +178,7 @@ function smoten_per_class(
     metric = ValueDifference(all_pairwise_mvdm)
     tree = BruteTree(X, metric)
     knn_matrix, _ = knn(tree, X, k + 1)
+
     # Generate n new observations
      Xnew = zeros(Float32, size(X, 1), n)
      p = Progress(n)
