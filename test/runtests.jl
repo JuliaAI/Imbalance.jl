@@ -11,7 +11,8 @@ using MLJBase: machine, transform
 using StableRNGs: StableRNG
 using TableTransforms
 using ScientificTypes
-using PyCall                        #import Pkg; Pkg.build("PyCall")
+import Pkg; Pkg.build("PyCall")
+using PyCall                        
 
 
 
