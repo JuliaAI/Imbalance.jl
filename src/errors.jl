@@ -1,3 +1,8 @@
+"""
+This file contains any warning or error used in any function in this package.
+"""
+
+
 ### class_counts
 const ERR_INVALID_RATIO(c) = "Error: ratio for class $c must be greater than 0."
 const WRN_UNDERSAMPLE(new_ratio, label, less_counts, old_ratio) =

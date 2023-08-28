@@ -1,3 +1,7 @@
+"""
+This file contains some docs that are used by multiple oversampling methods.
+"""
+
 
 const DOC_RATIOS_ARGUMENT = """
                             - `ratios=1.0`: A parameter that controls the amount of oversampling to be done for each class

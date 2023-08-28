@@ -1,6 +1,6 @@
 """
-This file has the `get_class_counts` methods which is used by `generic_oversample` and hence, 
-all the oversampling methods.
+This file has the `get_class_counts` method which is used by `generic_oversample` and hence, 
+all the oversampling methods. It computes the number of points to oversample for each class.
 """
 
 """
@@ -77,3 +77,4 @@ function calculate_extra_counts(
     end
     return extra_count
 end
+
