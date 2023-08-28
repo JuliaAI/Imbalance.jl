@@ -36,3 +36,8 @@ $themename: "documenter-light"; // CSS file must be called `$(themename).css`
 .admonition {
   border-radius: 15px !important;
 }
+
+
+code.nohighlight.hljs {
+  background-color: white !important;
+}
