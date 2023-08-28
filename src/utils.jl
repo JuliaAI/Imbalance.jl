@@ -46,43 +46,33 @@ function group_inds(categorical_array::AbstractVector{T}) where {T}
     return result
 end
 
+
 """
-A visual version of `StatsBase.countmap` that returns nothing. It shows how 
-    many observations in the dataset belong to each class and at what proportion.
+    generate_imbalanced_data(num_rows, num_cont_feats; 
+                             cat_feats_num_vals=[], 
+                             probs=[0.5, 0.5], 
+                             insrt_y=nothing, 
+                             rng=frgault_rng()
+                             )
+
+Generate `num_rows` observations with the given probabilities `probs` of 
+each class. Supports generating continuous and categorical features.
 
 # Arguments
-- `y::AbstractVector`: A vector of categorical values to test for imbalance
-"""
-function checkbalance(y) 
-    counts = countmap(y)
-    total_count = sum(values(counts))
-    
-    for (key, count) in counts
-        percentage = round(100 * count / total_count, digits=1)
-        bar_length = round(Int, count * 50 / total_count)
-        bar = "▇" ^ bar_length
-        println("$key: $count ($percentage%) $bar")
-    end
-end
-
-
-
-"""
-Generate num_rows observations of num_features features with the given probabilities of 
-each class and the given type of data structure.
-
-# Arguments
-- `num_rows::Int`: Number of observations to generate
-- `num_features::Int`: Number of features to generate
-- `extra_cat_feats::AbstractVector`: A vector of number of levels of each extra categorical feature,
-- `probs::AbstractVector`: A vector of probabilities of each class
-- `insert_y::Int`: If not nothing, insert the class label at the given index
-- `rng::AbstractRNG`: Random number generator
+    - `num_rows::Int`: Number of observations to generate
+    - `num_cont_feats::Int`: Number of features to generate
+    - `cat_feats_num_vals::AbstractVector`: A vector of number of levels of each extra categorical feature.
+        the number of categorical features is inferred from this.
+    - `probs::AbstractVector`: A vector of probabilities of each class. The number of classes is inferred
+        from this vector.
+    - `insert_y::Int`: If not nothing, insert the class labels column at the given index in the table
+    - `rng::AbstractRNG`: Random number generator
 
 # Returns
-- `X:`: A table or matrix where each row is an observation of floats
+- `X:`: A column table with generated imbalanced data with `num_rows` rows and 
 - `y::CategoricalArray`: An abstract vector of class labels with classes 0, 1, 2, ..., k-1
     where k is determined by the length of the probs vector
+
 """
 function generate_imbalanced_data(
     num_rows,
@@ -134,4 +124,31 @@ function generate_imbalanced_data(
     return X, y
 end
 
+
+
+"""
+    checkbalance(y)
+
+A visual version of `StatsBase.countmap` that returns nothing. It prints how 
+    many observations in the dataset belong to each class and their percentage
+    relative to the majority class.
+
+# Arguments
+- `y::AbstractVector`: A vector of categorical values to test for imbalance
+"""
+function checkbalance(y)
+    counts = countmap(y)
+    sorted_counts = sort(collect(counts), by=x->x[2])
+    majority_class_count = maximum(values(counts))
+    
+    longest_label_length = maximum(length.(string.(keys(counts))))
+    
+    for (key, count) in sorted_counts
+        percentage = round(100 * count / majority_class_count, digits=1)
+        bar_length = round(Int, count * 50 / majority_class_count)
+        bar = "▇" ^ bar_length
+        padding = " " ^ (longest_label_length - length(string.(key)))
+        println("$key:$padding $bar $count ($percentage%) ")
+    end
+end
 
