@@ -1,61 +1,12 @@
 
-# The following two functions are used in tablify
 """
-Apply label encoding to the categorical columns of a table. A categorical column is defined
-as any column with the scitype `Multiclass` or `OrderedFactor`.
-
-# Arguments
-- `X`: A table where each row is an observation which has some categorical columns
-- `nominal_only::Bool`: If true, the function asserts there are only categorical columns and does
-    not return their indices
-
-# Returns
-- `Xenc`: A column table where the categorical columns have been replaced by their label encoded
-    versions
-
+Label encode each column in a given table X
 """
-function smotenc_encoder(X; nominal_only = false)
-    # 1. Find the categorical and continuous columns
-    types = ScientificTypes.schema(X).scitypes
-    cat_inds = findall(x -> x <: Finite, types)
-    cont_inds = findall(x -> x <: Infinite, types)
-    check_scitypes_smoten_nc(length(types), cat_inds, cont_inds, types, nominal_only)
-
-    # 2. Setup the encode and decode transforms for categotical columns
-    encode_dict = Dict{Int,Function}()
-    decode_dict = Dict{Int,Function}()
-
-    columns = Tables.columns(X)
-    for c in cat_inds
-        column = collect(Tables.getcolumn(columns, c))
-        decode_dict[c] = x -> CategoricalDistributions.decoder(column)(round(Int, x))
-        encode_dict[c] = x -> CategoricalDistributions.int(x)
-    end
-
-    # 3. Encode the data
-    Xenc = X |> TableOperations.transform(encode_dict) |> Tables.columntable
-    # TODO: Remove Tables.columntable once https://github.com/JuliaData/TableOperations.jl/issues/32 is resolved
-
-    # 4. SMOTE-N encoder need not pass cat_inds to tablify
-    nominal_only && return Xenc, decode_dict, nothing
-    return Xenc, decode_dict, cat_inds
-end
-
-
+smotenc_encoder(X) = generic_encoder(X; error_checker=check_scitypes_smotenc,  return_cat_inds = true)
 """
-Decode the label encoded categorical columns of a table.
-
-# Arguments
-- `Xover`: A table where each row is an observation which has some label-encoded categorical columns
-- `decode_dict`: A dictionary of functions to decode the label-encoded categorical columns
-
-# Returns
-- `Xover`: A column table where the categorical columns is decoded back to their original values
+Label decode each column in a given table X
 """
-function smotenc_decoder(Xover, decode_dict)
-    Xover = Xover |> TableOperations.transform(decode_dict)
-    return Xover
-end
+smotenc_decoder(X, d) = generic_decoder(X, d)
 
 # SMOTE-NC uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 

@@ -138,18 +138,16 @@ Check that all columns are either categorical or continuous. If not, throw an er
 - `cont_inds::AbstractVector`: Indices of continuous columns
 - `types::AbstractVector`: Types of each column
 
-
 """
-function check_scitypes_smoten_nc(ncols, cat_inds, cont_inds, types, nominal_only = false)
-    # SMOTEN
-    if nominal_only
-        bad_cols = setdiff(1:ncols, cat_inds)
-        if !isempty(bad_cols)
-            throw(ArgumentError(ERR_BAD_NOM_COL_TYPES(bad_cols, types[bad_cols])))
-        end
-        return
+function check_scitypes_smoten(ncols, cat_inds, cont_inds, types)
+    bad_cols = setdiff(1:ncols, cat_inds)
+    if !isempty(bad_cols)
+        throw(ArgumentError(ERR_BAD_NOM_COL_TYPES(bad_cols, types[bad_cols])))
     end
-    # SMOTENC
+    return
+end
+
+function check_scitypes_smotenc(ncols, cat_inds, cont_inds, types)
     bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))
     if !isempty(bad_cols)
         throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))

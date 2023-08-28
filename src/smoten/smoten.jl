@@ -1,12 +1,12 @@
 
 """
-Labele encode each column in a given table X
+Label encode each column in a given table X
 """
-smoten_encoder(X) = smotenc_encoder(X; nominal_only = true)
+smoten_encoder(X) = generic_encoder(X; error_checker=check_scitypes_smoten)
 """
 Label decode each column in a given table X
 """
-smoten_decoder(X, d) = smotenc_decoder(X, d)
+smoten_decoder(X, d) = generic_decoder(X, d)
 
 # SMOTE-N uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 

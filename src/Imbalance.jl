@@ -28,15 +28,11 @@ include("commondocs.jl")
 include("errors.jl")
 include("table_wrappers.jl")
 include("generic_oversample.jl")
+include("generic_encoding.jl")
 include("utils.jl")
 export generate_imbalanced_data, checkbalance
 
 include("class_counts.jl")
-
-include("random_oversample/random_oversample.jl")
-include("random_oversample/interface_mlj.jl")
-include("random_oversample/interface_tables.jl")
-export random_oversample, RandomOversampler, RandomOversampler_t
 
 include("rose/rose.jl")
 include("rose/interface_mlj.jl")
@@ -53,6 +49,13 @@ include("smotenc/smotenc.jl")
 include("smotenc/interface_mlj.jl")
 include("smotenc/interface_tables.jl")
 export smotenc, SMOTENC, SMOTENC_t
+
+
+include("random_oversample/random_oversample.jl")
+include("random_oversample/interface_mlj.jl")
+include("random_oversample/interface_tables.jl")
+export random_oversample, RandomOversampler, RandomOversampler_t
+
 
 include("smoten/smoten.jl")
 include("smoten/interface_mlj.jl")
