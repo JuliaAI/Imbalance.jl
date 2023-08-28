@@ -11,6 +11,7 @@ using MLJBase: machine, transform
 using StableRNGs: StableRNG
 using TableTransforms
 using ScientificTypes
+ENV["PYTHON"]=""
 import Pkg; Pkg.build("PyCall")
 using PyCall       
 using Conda                 

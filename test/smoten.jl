@@ -13,6 +13,9 @@ using Imbalance:
     Conda.add("imbalanced-learn")
     Conda.add("numpy")
     Conda.add("scikit-learn")
+    pyimport_conda("imblearn", "imbalanced-learn")
+    pyimport_conda("numpy", "numpy")
+    pyimport_conda("sklearn", "scikit-learn")
     #pyimport_conda("imblearn", "imbalanced-learn")
     # Import numpy and other libraries
     np = pyimport("numpy")

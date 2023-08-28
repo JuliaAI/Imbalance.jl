@@ -86,7 +86,7 @@ The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls
 The package so far provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
 
 * Basic Random Oversampling 
-* Random Sampling Examples (ROSE)
+* Random Oversampling Examples (ROSE)
 * Synthetic Minority Oversampling Technique (SMOTE)
 * SMOTE-Nominal (SMOTE-N)
 * SMOTE-Nominal Categorical (SMOTE-NC)
