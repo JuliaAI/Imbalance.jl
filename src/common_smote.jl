@@ -12,7 +12,7 @@ Generate a new random observation that lies in the line joining the two observat
 - `rng::AbstractRNG`: Random number generator
 
 # Returns
-- `AbstractMatrix`: New observation `x` as a row vector that satisfies `x = (x₂ - x₁) * r + x₁`
+- `AbstractVector`: New observation `x` as a vector that satisfies `x = (x₂ - x₁) * r + x₁`
     where `r`` is a random number between `0` and `1`
 """
 function get_collinear_point(
