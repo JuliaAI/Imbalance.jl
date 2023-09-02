@@ -38,7 +38,7 @@ applies the function, then converts the matrix back to a table.
 # Arguments
 - `matrix_func::Function`: A function that takes a matrix of observations and a vector of labels 
     and returns a matrix of oversampled observations and a vector of oversampled labels
-- `X::AbstractMatrix`: A table where each row is an observation of floats
+- `X`: A table where each row is an observation of floats
 - `y::AbstractVector`: An abstract vector of class labels
 - `try_perserve_type`::Bool`: Whether to convert the output back to the original table type
 - `encode_func::Function`: A function that takes the table and performs discrete encoding on it
