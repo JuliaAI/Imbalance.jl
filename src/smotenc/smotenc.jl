@@ -151,7 +151,7 @@ end
 
 
 """
-    function smotenc(
+    smotenc(
         X, y::AbstractVector, split_ind::Int;
         k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
         try_perserve_type=true
