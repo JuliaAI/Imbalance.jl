@@ -8,7 +8,7 @@ to convert functions that operate on matrices to functions that operate on table
 Takes a table and returns a matrix and the column names of the table.
 
 # Arguments
-- `X::AbstractMatrix`: A matrix or table where each row is an observation of floats
+- `X`: A table to be converted to a matrix via `Tables.matrix`
 
 # Returns
 - `X::AbstractMatrix`: A matrix where each row is an observation of floats
