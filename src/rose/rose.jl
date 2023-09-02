@@ -20,7 +20,7 @@ function rose_per_class(
     # sample n rows from X
     Xnew = randcols(rng, X, n)
     # For s == 0 this is just random oversampling
-    if s == 0.0
+    if s ≈ 0.0
         return Xnew
     end
 

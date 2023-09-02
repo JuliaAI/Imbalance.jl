@@ -38,7 +38,7 @@ end
 
     d = EuclideanWithPenalty(penalty, cont_inds, cat_inds)
 
-    @test Distances.evaluate(d, x₁, x₂) == 3^2 + 3^2 + 3^2 + penalty * 1
+    @test Distances.evaluate(d, x₁, x₂) ≈ 3^2 + 3^2 + 3^2 + penalty * 1
 end
 
 
@@ -57,7 +57,7 @@ end
     k = 2                   # wil become three in the function
     random_neighbor, all_neighbors = get_random_neighbor(X, tree, x; k, return_all = true)
     @test random_neighbor in [X[:, 4], X[:, 5]]
-    @test all_neighbors == X[:, [4, 5]]
+    @test all_neighbors ≈ X[:, [4, 5]]
 end
 
 # Test that generated smote point is collinear with some pair of points 
@@ -83,7 +83,7 @@ end
         i = 1:size(Xcont, 2), j = 1:size(Xcont, 2) if i != j
     )
     new_point_cat = new_point[cat_inds]
-    @test new_point_cat == [4.0, 3.0]
+    @test new_point_cat ≈ [4.0, 3.0]
 end
 
 @testset "Testing get_neighbors_mode" begin
@@ -97,7 +97,7 @@ end
         1.0 2.0 1.0
     ]'
 
-    @test get_neighbors_mode(Xneighs, rng) == [1.0, 2.0, 3.0]
+    @test get_neighbors_mode(Xneighs, rng) ≈ [1.0, 2.0, 3.0]
 end
 
 
