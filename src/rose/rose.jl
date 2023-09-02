@@ -91,18 +91,16 @@ num_rows, num_cont_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
                                 probs, rng=42)                       
-StatsBase.countmap(y)
-
-julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+julia> StatsBase.countmap(y)
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
 0 => 48
 2 => 33
 1 => 19
 
 # apply ROSE
 Xover, yover = rose(X, y; s=0.3, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-StatsBase.countmap(yover)
-
-julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+julia> StatsBase.countmap(yover)
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
 0 => 48
 2 => 38
 1 => 43

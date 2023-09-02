@@ -239,25 +239,21 @@ cat_feats_num_vals = [3, 2]
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
                                 probs, cat_feats_num_vals, rng=42)                      
-StatsBase.countmap(y)
-
-julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+julia> StatsBase.countmap(y)
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
 0 => 48
 2 => 33
 1 => 19
 
-ScientificTypes.schema(X).scitypes
-
-julia> (Count, Count)
+julia> ScientificTypes.schema(X).scitypes
+(Count, Count)
 
 # coerce to a finite scitype (multiclass or ordered factor)
 X = coerce(X, autotype(X, :few_to_finite))
 
 # apply SMOTEN
 Xover, yover = smoten(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-StatsBase.countmap(yover)
-
-
+julia> StatsBase.countmap(yover)
 Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
 0 => 48
 2 => 33
