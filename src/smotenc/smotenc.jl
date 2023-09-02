@@ -201,12 +201,12 @@ using StatsBase
 # set probability of each class
 probs = [0.5, 0.2, 0.3]                         
 num_rows = 100
-num_cont_feats = 3
+num_continuous_feats = 3
 # want two categorical features with three and two possible values respectively
 cat_feats_num_vals = [3, 2]
 
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 probs, cat_feats_num_vals, rng=42)                      
 julia> StatsBase.countmap(y)
 Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
@@ -258,10 +258,10 @@ using TableTransforms
 
 # Generate imbalanced data
 num_rows = 100
-num_cont_feats = 3
+num_continuous_feats = 3
 y_ind = 2
 # generate a table and categorical vector accordingly
-Xy, _ = generate_imbalanced_data(num_rows, num_cont_feats; insert_y=y_ind,
+Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
                                 probs= [0.5, 0.2, 0.3], cat_feats_num_vals=[3, 2],
                                  rng=42)  
 

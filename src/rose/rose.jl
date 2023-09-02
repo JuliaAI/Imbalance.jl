@@ -87,9 +87,9 @@ using StatsBase
 
 # set probability of each class
 probs = [0.5, 0.2, 0.3]                         
-num_rows, num_cont_feats = 100, 5
+num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 probs, rng=42)                       
 julia> StatsBase.countmap(y)
 Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:

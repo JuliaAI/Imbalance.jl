@@ -27,12 +27,12 @@ Let's start by generating some random imbalanced data. Here we generate data whe
 rng = Random.default_rng()
 
 num_rows = 100
-num_cont_feats = 4
+num_continuous_feats = 4
 probs = [0.5, 0.2, 0.3]
 
 cat_feats_num_vals = [3, 4, 2, 5]
 
-X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, cat_feats_num_vals)
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; probs, cat_feats_num_vals)
 X = DataFrame(X)
 ```
 

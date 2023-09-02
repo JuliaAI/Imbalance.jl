@@ -22,8 +22,8 @@ using Imbalance
 
 # Set dataset properties then generate imbalanced data
 probs = [0.5, 0.2, 0.3]                  # probability of each class      
-num_rows, num_cont_feats = 100, 5
-X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, rng=42)      
+num_rows, num_continuous_feats = 100, 5
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; probs, rng=42)      
 
 # Apply SMOTE to oversample the classes
 Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
