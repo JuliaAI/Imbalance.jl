@@ -1,9 +1,9 @@
 
 ### RandomOversampler with MLJ Interface
 # interface struct
-mutable struct RandomOversampler{T} <: Static
+mutable struct RandomOversampler{T,R<:Union{Integer,AbstractRNG}} <: Static
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end;
 

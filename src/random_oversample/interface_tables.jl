@@ -1,9 +1,9 @@
 ### Random Oversample TableTransforms Interface
 # interface struct
-struct RandomOversampler_t{T} <: Transform
+struct RandomOversampler_t{T,R<:Union{Integer,AbstractRNG}} <: Transform
     y_ind::Integer
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end
 

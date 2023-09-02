@@ -1,12 +1,14 @@
 
 ### SMOTE with MLJ Interface
 
-mutable struct SMOTE{T} <: Static
+mutable struct SMOTE{T,R<:Union{Integer,AbstractRNG}} <: Static
     k::Integer
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end;
+
+
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 

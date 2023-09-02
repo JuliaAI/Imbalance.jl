@@ -1,12 +1,14 @@
 
 ### SMOTEN with MLJ Interface
 
-mutable struct SMOTEN{T} <: Static
+mutable struct SMOTEN{T,R<:Union{Integer,AbstractRNG}} <: Static
     k::Integer
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end;
+
+
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 

@@ -1,13 +1,15 @@
 ### ROSE TableTransforms Interface
 ## Wrap all of this in a TableTransforms module and then can use ROSE 
 
-struct ROSE_t{T} <: TransformsBase.Transform
+struct ROSE_t{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
     y_ind::Integer
     s::AbstractFloat
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end
+
+
 
 
 """

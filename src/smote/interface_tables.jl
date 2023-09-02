@@ -1,12 +1,13 @@
 ### SMOTE TableTransforms Interface
 
-struct SMOTE_t{T} <: TransformsBase.Transform
+struct SMOTE_t{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
     y_ind::Integer
     k::Integer
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end
+
 
 TransformsBase.isrevertible(::Type{SMOTE_t}) = true
 TransformsBase.isinvertible(::Type{SMOTE_t}) = false

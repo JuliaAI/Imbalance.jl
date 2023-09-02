@@ -11,10 +11,10 @@ smoten_decoder(X, d) = generic_decoder(X, d)
 # SMOTE-N uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
 
-struct ValueDifference <: Metric
+struct ValueDifference{T<:AbstractVector{<:AbstractArray{<:AbstractFloat}}} <: Metric
     # for each categorical variables with n categories, this has a nxn matrix of
     # pairwise value difference distances
-    all_pairwise_mvdm::AbstractVector{<:AbstractArray{<:AbstractFloat}}
+    all_pairwise_mvdm::T
 end
 
 function Distances.evaluate(d::ValueDifference, x₁, x₂)
