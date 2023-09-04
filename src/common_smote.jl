@@ -25,60 +25,35 @@ function get_collinear_point(
     return @. (1 - r) * x₁ + r * x₂
 end
 
-"""
-Apply KNN and return the indices of the k-nearest neighbors of a given observation `x` from an observations. 
 
-# Arguments
-- `tree`: KDTree of observations
-- `x`: Observation
-- `k`: Number of neighbors to consider
 
-# Returns
-- `inds`: Indices of the k-nearest neighbors of `x`. This is expected to include `x` itself.
-"""
-@memoize function memoized_knn(tree, x, k)
-    # k+1 because the point is in X and will surely be a neighbor of itself
-    inds, _ = knn(tree, x, k + 1, true)
-    return inds
-end
-
-# Used by SMOTE, SMOTENC and SMOTEN
+# Used by SMOTE, SMOTENC
 """
 Randomly return one of the k-nearest neighbor of a given observation `x` from an observations 
-matrix `X` represented by a k-d tree
+matrix `X`
 
 # Arguments
-- `X`: A matrix where each row is an observation
-- `tree`: A k-d tree representation of the observations matrix `X`
-- `x`: An observation
-- `k::`: Number of nearest neighbors to consider
+- `X`: A matrix where each column is an observation
+- `ind`: index of point for which we need random neighbor
+- `knn_map`: A vector of vectors mapping each element in X by index to its nearest neighbors' indices
 - `rng`: Random number generator
-- `return_all`: If true, return the random neighbor and all the k-nearest neighbors of `x`
-- `return_all_self`: If true (and return_all is false), return all the k-nearest neighbors of `x` 
-    including `x` itself
 
 # Returns
-- `random_neighbor`: A random observation from the k-nearest neighbors of x
+- `x_randneigh`: A random observation from the k-nearest neighbors of x
 """
 function get_random_neighbor(
     X::AbstractMatrix{<:Real},
-    tree,
-    x;
-    k::Integer = 5,
+    ind::Integer,
+    knn_map;
     rng::AbstractRNG = default_rng(),
-    return_all::Bool = false,
-    return_all_self::Bool = false,
 )
-    inds = memoized_knn(tree, x, k)
-    random_neighbor_index = randcols(rng, inds[2:end])[1]
-    # the k+1 and the 2:end to exclude point itself
-    random_neighbor = X[:, random_neighbor_index]
-    # SMOTENC will further need to vote between neighbors for nominals
-    return_all && return random_neighbor, X[:, inds[2:end]]
-    # SMOTEN will only need to vote between neighbors for nominals
-    return_all_self && return X[:, inds]
-    # Base case is for SMOTE, no voting needed
-    return random_neighbor
+    # 1. extract the neighbors inds vector and exclude point itself
+    ind_neighs = knn_map[ind][2:end]
+    # 2. choose a random neighbor index
+    ind_rand_neigh = ind_neighs[rand(rng, 1:length(ind_neighs))]
+    # 3. return the corresponding point
+    x_randneigh = X[:, ind_rand_neigh]
+    return x_randneigh
 end
 
 # Used by SMOTE, SMOTENC and SMOTEN
@@ -147,6 +122,17 @@ function check_scitypes_smoten(ncols, cat_inds, cont_inds, types)
     return
 end
 
+
+"""
+Check that all columns are categorical . If not, throw an error.
+
+# Arguments
+- `ncols`: Number of columns
+- `cat_inds`: Indices of categorical columns
+- `cont_inds`: Indices of continuous columns
+- `types`: Types of each column
+
+"""
 function check_scitypes_smotenc(ncols, cat_inds, cont_inds, types)
     bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))
     if !isempty(bad_cols)

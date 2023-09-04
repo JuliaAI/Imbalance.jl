@@ -1,14 +1,11 @@
-# Disclaimer: This implementation is inspired by that of Resample.jl
-
 
 """
 Choose a random point from the given observations matrix `X` and generate a new point that 
 randomly lies in the line joining the random point and randomly one of its k-nearest neighbors. 
 
 # Arguments
-- `X`: A matrix where each row is an observation
-- `tree`: A k-d tree representation of the observations matrix X
-- `k`: Number of nearest neighbors to consider
+- `X`: A matrix where each column is an observation
+- `knn_map`: A vector of vectors mapping each element in X by index to its nearest neighbors' indices
 - `rng`: Random number generator
 
 # Returns
@@ -16,16 +13,16 @@ randomly lies in the line joining the random point and randomly one of its k-nea
 """
 function generate_new_smote_point(
     X::AbstractMatrix{<:AbstractFloat},
-    tree;
-    k::Integer,
+    knn_map;
     rng::AbstractRNG,
 )
-    # 1. Choose a random point from X
-    x_rand = randcols(rng, X)
-    # 2. Choose a random point from the k-nearest neighbors of x_rand
-    x_randneigh = get_random_neighbor(X, tree, x_rand; k, rng)
+    # 1. Choose a random point from X (by index)
+    ind = rand(rng, 1:size(X, 2))
+    x_rand = X[:, ind]
+    # 2. Choose a random point from its k-nearest neighbors 
+    x_rand_neigh = get_random_neighbor(X, ind, knn_map; rng)
     # 3. Generate a new point that randomly lies in the line between them
-    x_new = get_collinear_point(x_rand, x_randneigh; rng)
+    x_new = get_collinear_point(x_rand, x_rand_neigh; rng)
     return x_new
 end
 
@@ -53,15 +50,19 @@ function smote_per_class(
     # Can't draw lines if there are no neighbors
     n_class = size(X, 2)
     n_class == 1 && (@warn WRN_SINGLE_OBS; return X)
+
     # Automatically fix k if needed
     k = check_k(k, n_class)
+
     # Build KDTree for KNN
     tree = KDTree(X)
+    knn_map, _ = knn(tree, X, k + 1, true)
+
     # Generate n new observations
     Xnew = zeros(Float32, size(X, 1), n)
     p = Progress(n)
     for i=1:n
-        Xnew[:, i] = generate_new_smote_point(X, tree; k, rng)
+        Xnew[:, i] = generate_new_smote_point(X, knn_map; rng)
         next!(p)
     end
     return Xnew

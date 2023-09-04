@@ -80,15 +80,15 @@ has the mode of the categorical part of the k-nearest neighbors of the random po
 """
 function generate_new_smotenc_point(
     X::AbstractMatrix{<:AbstractFloat},
-    tree,
     cont_inds::AbstractVector{<:Int},
-    cat_inds::AbstractVector{<:Int};
-    k::Integer,
+    cat_inds::AbstractVector{<:Int},
+    knn_map;
     rng::AbstractRNG,
 )
-    # find a random point
-    x_rand = randcols(rng, X)
-    x_randneigh, Xneighs = get_random_neighbor(X, tree, x_rand; k, rng, return_all = true)
+    # 1. Choose a random point from X (by index)
+    ind = rand(rng, 1:size(X, 2))
+    x_rand = X[:, ind]
+    x_randneigh = get_random_neighbor(X, ind, knn_map; rng)
 
     # find the continuous part of new point (by choosing a random point along the line)
     x_rand_cont = @view x_rand[cont_inds]
@@ -96,6 +96,7 @@ function generate_new_smotenc_point(
     x_new_cont = get_collinear_point(x_rand_cont, x_randneigh_cont; rng = rng)
 
     # find the categorical part of new point (by voting among all neighbors)
+    Xneighs = X[:, knn_map[ind][2:end]]
     Xneighs_cat = @view Xneighs[cat_inds, :]
     x_new_cat = get_neighbors_mode(Xneighs_cat, rng)
 
@@ -106,6 +107,7 @@ function generate_new_smotenc_point(
 
     return x_new
 end
+
 
 
 """
@@ -134,17 +136,21 @@ function smotenc_per_class(
     # Can't draw lines if there are no neighbors
     n_class = size(X, 2)
     n_class == 1 && (@warn WRN_SINGLE_OBS; return X)
+
     # Automatically fix k if needed
     k = check_k(k, n_class)
+
     # Build a KNN tree with the modified distance metric
     σₘ = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
     tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
+    knn_map, _ = knn(tree, X, k + 1, true)
+
     # Generate n new observations
     Xnew = zeros(Float32, size(X, 1), n)
     p = Progress(n)
     for i=1:n
-        Xnew[:, i] = generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng)
+        Xnew[:, i] = generate_new_smotenc_point(X, cont_inds, cat_inds, knn_map; rng)
         next!(p)
     end
     return Xnew

@@ -42,23 +42,6 @@ end
 end
 
 
-# Test that a random neighbor is indeed one of the nearest neighbors
-@testset "get_random_neighbor" begin
-    X = [
-        100.0 100.0
-        200.0 200.0
-        3.5 3.5
-        3.6 3.5
-        4.0 4.0
-        500.0 500.0
-    ]'
-    tree = BallTree(X)
-    x = [3.5, 3.5]
-    k = 2                   # wil become three in the function
-    random_neighbor, all_neighbors = get_random_neighbor(X, tree, x; k, return_all = true)
-    @test random_neighbor in [X[:, 4], X[:, 5]]
-    @test all_neighbors ≈ X[:, [4, 5]]
-end
 
 # Test that generated smote point is collinear with some pair of points 
 # for the continuous part and is the mode for the categorical part
@@ -72,9 +55,10 @@ end
     ]'
     tree = BallTree(X)
     k = 3
+    knn_map, _ = knn(tree, X, k + 1, true)
     cat_inds = [1, 2]
     cont_inds = [3, 4]
-    new_point = vec(generate_new_smotenc_point(X, tree, cont_inds, cat_inds; k, rng))
+    new_point = vec(generate_new_smotenc_point(X, cont_inds, cat_inds, knn_map; rng))
 
     new_point_cont = new_point[cont_inds]
     Xcont = X[cont_inds, :]

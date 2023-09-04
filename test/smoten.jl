@@ -8,7 +8,6 @@ using Imbalance:
     ValueDifference
 
 
-# TODO: make test work with Github actions
 @testset "MVDM Encoding and Distance" begin
     Conda.add("imbalanced-learn")
     Conda.add("numpy")
@@ -61,9 +60,9 @@ end
     all_pairwise_vdm = precompute_mvdm_distances(mvdm_encoder, num_categories_per_col)
     metric = ValueDifference(all_pairwise_vdm)
     tree = BruteTree(X', metric)
-    knn_matrix, _ = knn(tree, X', k + 1)
+    knn_map, _ = knn(tree, X', k + 1)
 
-    new_point = generate_new_smoten_point(X', knn_matrix; k, rng)
+    new_point = generate_new_smoten_point(X', knn_map; rng)
 
     @test new_point == [4, 3, 1, 2]
 end

@@ -19,10 +19,11 @@ end
 @testset "get_random_neighbor" begin
     X = [100.0 100.0; 200.0 200.0; 3.5 3.5; 4.0 4.0; 500.0 500.0]'
     tree = KDTree(X)
-    x = [3.4, 3.4]
     k = 2                   # wil become three in the function
-    random_neighbor = get_random_neighbor(X, tree, x; k, rng)
-    @test random_neighbor in [X[:, 3], X[:, 4], X[:, 1]]
+    knn_map, _ = knn(tree, X, k + 1, true)
+    ind = 3
+    random_neighbor = get_random_neighbor(X, ind, knn_map; rng)
+    @test random_neighbor in [X[:, 1], X[:, 4]]
 end
 
 
@@ -31,7 +32,8 @@ end
     X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]'
     tree = KDTree(X)
     k = 2
-    new_point = vec(generate_new_smote_point(X, tree; k, rng))
+    knn_map, _ = knn(tree, X, k + 1, true)
+    new_point = vec(generate_new_smote_point(X, knn_map; rng))
     @test any(
         is_in_between(new_point, X[:, i], X[:, j]) for
         i = 1:size(X, 2), j = 1:size(X, 2) if i != j
@@ -121,10 +123,11 @@ end
     X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]'
     tree = KDTree(X)
     k = 2
+    knn_map, _ = knn(tree, X, k + 1, true)
     rng = StableRNG(1234)
-    random_neighbor1 = get_random_neighbor(X, tree, X[:, 1]; k, rng)
+    random_neighbor1 = get_random_neighbor(X, 1, knn_map; rng)
     rng = StableRNG(1234)
-    random_neighbor2 = get_random_neighbor(X, tree, X[:, 1]; k, rng)
+    random_neighbor2 = get_random_neighbor(X, 1, knn_map; rng)
     @test random_neighbor1 == random_neighbor2
     rng = StableRNG(1234)
     collinear1 = vec(get_collinear_point(X[:, 1], X[:, 2]; rng))
@@ -132,9 +135,9 @@ end
     collinear2 = vec(get_collinear_point(X[:, 1], X[:, 2]; rng))
     @test collinear1 == collinear2
     rng = StableRNG(1234)
-    new_point1 = vec(generate_new_smote_point(X, tree; k, rng))
+    new_point1 = vec(generate_new_smote_point(X, knn_map; rng))
     rng = StableRNG(1234)
-    new_point2 = vec(generate_new_smote_point(X, tree; k, rng))
+    new_point2 = vec(generate_new_smote_point(X, knn_map; rng))
     @test new_point1 == new_point2
 end
 

@@ -129,14 +129,13 @@ by taking the mode of each categorical variable over `x` and its `k` nearest nei
 """
 function generate_new_smoten_point(
     X::AbstractMatrix{<:Integer},
-    knn_matrix;
-    k::Integer,
+    knn_map;
     rng::AbstractRNG,
 )
     # 1. Choose a random point (by index)
     ind = rand(rng, 1:size(X, 2))
     # 2. Find its k nearest neighbors (including itself)
-    Xneighs = X[:, knn_matrix[ind]]
+    Xneighs = X[:, knn_map[ind]]
     # 3. Find the mode of each categorical variable over the neighbors
     x_new_cat = get_neighbors_mode(Xneighs, rng)
     # 4. Return the new point
@@ -177,13 +176,13 @@ function smoten_per_class(
     # Build KNN tree with modified distance metric
     metric = ValueDifference(all_pairwise_mvdm)
     tree = BruteTree(X, metric)
-    knn_matrix, _ = knn(tree, X, k + 1)
+    knn_map, _ = knn(tree, X, k + 1)
 
     # Generate n new observations
      Xnew = zeros(Float32, size(X, 1), n)
      p = Progress(n)
      for i=1:n
-         Xnew[:, i] = generate_new_smoten_point(X, knn_matrix; k, rng)
+         Xnew[:, i] = generate_new_smoten_point(X, knn_map; rng)
          next!(p)
      end
     return Xnew
