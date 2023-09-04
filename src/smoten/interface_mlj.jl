@@ -51,6 +51,7 @@ MMI.metadata_pkg(
     is_pure_julia = true,
 )
 
+
 MMI.metadata_model(
     SMOTEN,
     input_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
