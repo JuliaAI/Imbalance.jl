@@ -75,7 +75,7 @@ function tablify(
         matrix_func(Xm, y, inds; kwargs...)
 
     # 4. Transform back to table
-    Xover = Tables.table(Xover; header = names)
+    Xover =  (; zip(names, eachcol(Xover))...)
 
     # 5. Decode if needed
     Xover = decode_func(Xover, decode_dict)
@@ -124,7 +124,7 @@ function tablify(
     Xyover = hcat(Xover[:, 1:y_ind-1], yover, Xover[:, y_ind:end])
 
     # 6. Transform back to table
-    Xyover = Tables.table(Xyover; header = names)
+    Xyover =  (; zip(names, eachcol(Xyover))...)
 
     # 7. Decode if needed
     Xyover = decode_func(Xyover, decode_dict)

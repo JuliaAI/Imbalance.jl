@@ -40,7 +40,7 @@ const COMMON_DOCS = Dict(
     "TRY_PERSERVE_TYPE" => """
     - `try_preserve_type::Bool=true`: Defaults to true and means that the function will try to preserve the type of the input 
         table (e.g., `DataFrame`). However, for some tables this may not succeed and in this case the table returned will
-        be a column table (named-tuple of vectors) or a MatrixTable if this set to false.
+        be a column table (named-tuple of vectors).
     """,
 
 )
