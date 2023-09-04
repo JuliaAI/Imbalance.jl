@@ -1,6 +1,6 @@
 ### SMOTENC TableTransforms Interface
 
-struct SMOTENC_t{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
+struct SMOTENC{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
     y_ind::Integer
     k::Integer
     ratios::T
@@ -9,8 +9,8 @@ struct SMOTENC_t{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
 end
 
 
-TransformsBase.isrevertible(::Type{SMOTENC_t}) = true
-TransformsBase.isinvertible(::Type{SMOTENC_t}) = false
+TransformsBase.isrevertible(::Type{SMOTENC}) = true
+TransformsBase.isinvertible(::Type{SMOTENC}) = false
 
 """
 Instantiate a SMOTENC table transform
@@ -20,21 +20,21 @@ Instantiate a SMOTENC table transform
 - `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
 - `k::Integer`: Number of nearest neighbors to consider in the SMOTENC algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-$(DOC_RATIOS_ARGUMENT)
-$(DOC_RNG_ARGUMENT)
+$((COMMON_DOCS["RATIOS"]))
+$((COMMON_DOCS["RNG"]))
 
 # Returns
 
-- `model::SMOTENC_t`: A SMOTENC table transform that can be used like other transforms in TableTransforms.jl
+- `model::SMOTENC`: A SMOTENC table transform that can be used like other transforms in TableTransforms.jl
 
 """
-SMOTENC_t(
+SMOTENC(
     y_ind::Integer;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     rng::Union{Integer,AbstractRNG} = 123,
     try_perserve_type::Bool=true
-) where {T} = SMOTENC_t(y_ind, k, ratios, rng, try_perserve_type)
+) where {T} = SMOTENC(y_ind, k, ratios, rng, try_perserve_type)
 
 
 """
@@ -42,7 +42,7 @@ Apply the SMOTENC transform to a table Xy
 
 # Arguments
 
-- `s::SMOTENC_t`: A SMOTENC table transform
+- `s::SMOTENC`: A SMOTENC table transform
 
 - `Xy::AbstractTable`: A table where each row is an observation
 
@@ -51,7 +51,7 @@ Apply the SMOTENC transform to a table Xy
 - `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTENC
 - `cache`: A cache that can be used to revert the oversampling
 """
-function TransformsBase.apply(s::SMOTENC_t, Xy)
+function TransformsBase.apply(s::SMOTENC, Xy)
     Xyover = smotenc(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng,
                         try_perserve_type = s.try_perserve_type)
     cache = rowcount(Xy)
@@ -64,7 +64,7 @@ Revert the oversampling done by SMOTENC by removing the new observations
 
 # Arguments
 
-- `s::SMOTENC_t`: A SMOTENC table transform
+- `s::SMOTENC`: A SMOTENC table transform
 - `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTENC
 - `cache`: cache returned from `apply`
 
@@ -72,9 +72,9 @@ Revert the oversampling done by SMOTENC by removing the new observations
 
 - `Xy::AbstractTable`: A table with the original observations only
 """
-TransformsBase.revert(::SMOTENC_t, Xyover, cache) = revert_oversampling(Xyover, cache)
+TransformsBase.revert(::SMOTENC, Xyover, cache) = revert_oversampling(Xyover, cache)
 
 """
 Equivalent to `apply(s, Xy)`
 """
-TransformsBase.reapply(s::SMOTENC_t, Xy, cache) = TransformsBase.apply(s, Xy)
+TransformsBase.reapply(s::SMOTENC, Xy, cache) = TransformsBase.apply(s, Xy)

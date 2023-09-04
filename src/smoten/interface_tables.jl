@@ -1,6 +1,6 @@
-### SMOTE TableTransforms Interface
+### SMOTEN TableTransforms Interface
 
-struct SMOTEN_t{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
+struct SMOTEN{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
     y_ind::Integer
     k::Integer
     ratios::T
@@ -10,49 +10,49 @@ end
 
 
 
-TransformsBase.isrevertible(::Type{SMOTEN_t}) = true
-TransformsBase.isinvertible(::Type{SMOTEN_t}) = false
+TransformsBase.isrevertible(::Type{SMOTEN}) = true
+TransformsBase.isinvertible(::Type{SMOTEN}) = false
 
 """
-Instantiate a SMOTE table transform
+Instantiate a SMOTEN table transform
 
 # Arguments
 
 - `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-- `k::Integer`: Number of nearest neighbors to consider in the SMOTE algorithm. 
+- `k::Integer`: Number of nearest neighbors to consider in the SMOTEN algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-$(DOC_RATIOS_ARGUMENT)
-$(DOC_RNG_ARGUMENT)
+$((COMMON_DOCS["RATIOS"]))
+$((COMMON_DOCS["RNG"]))
 
 # Returns
 
-- `model::SMOTEN_t`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
+- `model::SMOTEN`: A SMOTEN table transform that can be used like other transforms in TableTransforms.jl
 
 """
-SMOTEN_t(
+SMOTEN(
     y_ind::Integer;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     rng::Union{Integer,AbstractRNG} = 123, try_perserve_type::Bool=true
-) where {T} = SMOTEN_t(y_ind, k, ratios, rng, try_perserve_type)
+) where {T} = SMOTEN(y_ind, k, ratios, rng, try_perserve_type)
 
 
 """
-Apply the SMOTE transform to a table Xy
+Apply the SMOTEN transform to a table Xy
 
 # Arguments
 
-- `s::SMOTEN_t`: A SMOTE table transform
+- `s::SMOTEN`: A SMOTEN table transform
 
 - `Xy::AbstractTable`: A table where each row is an observation
 
 # Returns
 
-- `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTE
+- `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTEN
 - `cache`: A cache that can be used to revert the oversampling
 """
-function TransformsBase.apply(s::SMOTEN_t, Xy)
-    Xyover = smoten(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng, 
+function TransformsBase.apply(s::SMOTEN, Xy)
+    Xyover = SMOTENn(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng, 
                     try_perserve_type = s.try_perserve_type)
     cache = rowcount(Xy)
     return Xyover, cache
@@ -60,21 +60,21 @@ end
 
 
 """
-Revert the oversampling done by SMOTE by removing the new observations
+Revert the oversampling done by SMOTEN by removing the new observations
 
 # Arguments
 
-- `s::SMOTEN_t`: A SMOTE table transform
-- `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTE
+- `s::SMOTEN`: A SMOTEN table transform
+- `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTEN
 - `cache`: cache returned from `apply`
 
 # Returns
 
 - `Xy::AbstractTable`: A table with the original observations only
 """
-TransformsBase.revert(::SMOTEN_t, Xyover, cache) = revert_oversampling(Xyover, cache)
+TransformsBase.revert(::SMOTEN, Xyover, cache) = revert_oversampling(Xyover, cache)
 
 """
 Equivalent to `apply(s, Xy)`
 """
-TransformsBase.reapply(s::SMOTEN_t, Xy, cache) = TransformsBase.apply(s, Xy)
+TransformsBase.reapply(s::SMOTEN, Xy, cache) = TransformsBase.apply(s, Xy)

@@ -1,6 +1,6 @@
 ### SMOTE TableTransforms Interface
 
-struct SMOTE_t{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
+struct SMOTE{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
     y_ind::Integer
     k::Integer
     ratios::T
@@ -9,8 +9,8 @@ struct SMOTE_t{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
 end
 
 
-TransformsBase.isrevertible(::Type{SMOTE_t}) = true
-TransformsBase.isinvertible(::Type{SMOTE_t}) = false
+TransformsBase.isrevertible(::Type{SMOTE}) = true
+TransformsBase.isinvertible(::Type{SMOTE}) = false
 
 """
 Instantiate a SMOTE table transform
@@ -20,20 +20,20 @@ Instantiate a SMOTE table transform
 - `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
 - `k::Integer`: Number of nearest neighbors to consider in the SMOTE algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-$(DOC_RATIOS_ARGUMENT)
-$(DOC_RNG_ARGUMENT)
+$((COMMON_DOCS["RATIOS"]))
+$((COMMON_DOCS["RNG"]))
 
 # Returns
 
-- `model::SMOTE_t`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
+- `model::SMOTE`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
 
 """
-SMOTE_t(
+SMOTE(
     y_ind::Integer;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     rng::Union{Integer,AbstractRNG} = 123, try_perserve_type::Bool=true
-) where {T} = SMOTE_t(y_ind, k, ratios, rng, try_perserve_type)
+) where {T} = SMOTE(y_ind, k, ratios, rng, try_perserve_type)
 
 
 """
@@ -41,7 +41,7 @@ Apply the SMOTE transform to a table Xy
 
 # Arguments
 
-- `s::SMOTE_t`: A SMOTE table transform
+- `s::SMOTE`: A SMOTE table transform
 
 - `Xy::AbstractTable`: A table where each row is an observation
 
@@ -50,7 +50,7 @@ Apply the SMOTE transform to a table Xy
 - `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTE
 - `cache`: A cache that can be used to revert the oversampling
 """
-function TransformsBase.apply(s::SMOTE_t, Xy)
+function TransformsBase.apply(s::SMOTE, Xy)
     Xyover = smote(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng, 
                    try_perserve_type = s.try_perserve_type)
     cache = rowcount(Xy)
@@ -63,7 +63,7 @@ Revert the oversampling done by SMOTE by removing the new observations
 
 # Arguments
 
-- `s::SMOTE_t`: A SMOTE table transform
+- `s::SMOTE`: A SMOTE table transform
 - `Xyover::AbstractTable`: A table with both the original and new observations due to SMOTE
 - `cache`: cache returned from `apply`
 
@@ -71,9 +71,9 @@ Revert the oversampling done by SMOTE by removing the new observations
 
 - `Xy::AbstractTable`: A table with the original observations only
 """
-TransformsBase.revert(::SMOTE_t, Xyover, cache) = revert_oversampling(Xyover, cache)
+TransformsBase.revert(::SMOTE, Xyover, cache) = revert_oversampling(Xyover, cache)
 
 """
 Equivalent to `apply(s, Xy)`
 """
-TransformsBase.reapply(s::SMOTE_t, Xy, cache) = TransformsBase.apply(s, Xy)
+TransformsBase.reapply(s::SMOTE, Xy, cache) = TransformsBase.apply(s, Xy)

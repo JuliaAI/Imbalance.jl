@@ -181,17 +181,17 @@ Oversamples a dataset using `SMOTE-NC` (Synthetic Minority Oversampling Techniqu
 
 # Keyword Arguments
 
-$DOC_COMMON_K
+$(COMMON_DOCS["K"])
 
-$DOC_RATIOS_ARGUMENT
+$(COMMON_DOCS["RATIOS"])
 
-$DOC_RNG_ARGUMENT
+$(COMMON_DOCS["RNG"])
 
-$DOC_TRY_PERSERVE_ARGUMENT
+$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
 
-$DOC_COMMON_OUTPUTS
+$(COMMON_DOCS["OUTPUTS"])
 
 # Example
 ```@repl
@@ -254,7 +254,7 @@ This interface assumes that the input is one table `Xy` and that `y` is one of t
 ```julia
 using Imbalance
 using ScientificTypes
-using TableTransforms
+using Imbalance.TableTransforms
 
 # Generate imbalanced data
 num_rows = 100
@@ -269,7 +269,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
 Xy = coerce(Xy, :Column2=>Multiclass, :Column5=>Multiclass, :Column6=>Multiclass)
 
 # Initiate Random Oversampler model
-oversampler = SMOTENC_t(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
+oversampler = SMOTENC(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
 Xyover = Xy |> oversampler                               
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```

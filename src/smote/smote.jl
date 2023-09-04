@@ -81,21 +81,21 @@ Oversamples a dataset using `SMOTE` (Synthetic Minority Oversampling Techniques)
 
 # Positional Arguments
 
-$DOC_COMMON_INPUTS
+$(COMMON_DOCS["INPUTS"])
 
 # Keyword Arguments
 
-$DOC_COMMON_K
+$(COMMON_DOCS["K"])
 
-$DOC_RATIOS_ARGUMENT
+$(COMMON_DOCS["RATIOS"])
 
-$DOC_RNG_ARGUMENT
+$(COMMON_DOCS["RNG"])
 
-$DOC_TRY_PERSERVE_ARGUMENT
+$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
 
-$DOC_COMMON_OUTPUTS
+$(COMMON_DOCS["OUTPUTS"])
 
 
 # Example
@@ -151,7 +151,7 @@ This interface assumes that the input is one table `Xy` and that `y` is one of t
 
 ```julia
 using Imbalance
-using TableTransforms
+using Imbalance.TableTransforms
 
 # Generate imbalanced data
 num_rows = 200
@@ -161,7 +161,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate Random Oversampler model
-oversampler = SMOTE_t(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+oversampler = SMOTE(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xyover = Xy |> oversampler                              
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```

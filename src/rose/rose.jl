@@ -62,22 +62,22 @@ Oversamples a dataset using `ROSE` (Random Oversampling Examples) algorithm to
 # Positional Arguments
 
 
-$DOC_COMMON_INPUTS
+$(COMMON_DOCS["INPUTS"])
 
 # Keyword Arguments
 
 - `s::float`: A parameter that proportionally controls the bandwidth of the Gaussian kernel
 
-$DOC_RATIOS_ARGUMENT
+$(COMMON_DOCS["RATIOS"])
 
-$DOC_RNG_ARGUMENT
+$(COMMON_DOCS["RNG"])
 
-$DOC_TRY_PERSERVE_ARGUMENT
+$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 
 # Returns
 
-$DOC_COMMON_OUTPUTS
+$(COMMON_DOCS["OUTPUTS"])
 
 # Example
 
@@ -132,7 +132,7 @@ This interface assumes that the input is one table `Xy` and that `y` is one of t
 
 ```julia
 using Imbalance
-using TableTransforms
+using Imbalance.TableTransforms
 
 # Generate imbalanced data
 num_rows = 200
@@ -142,7 +142,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate Random Oversampler model
-oversampler = ROSE_t(y_ind; s=0.3, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+oversampler = ROSE(y_ind; s=0.3, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xyover = Xy |> oversampler                              
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
