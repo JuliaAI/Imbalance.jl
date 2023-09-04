@@ -110,4 +110,4 @@ One obvious possible remedy is to weight the smaller sums so that a learning alg
 To our knowledge, there are no existing maintained Julia packages that implement oversampling algorithms for multi-class classification problems or that handle both nominal and continuous features. This has served as a primary motivation for the creation of this package.
 
 ## 👥 Credits
-This package was created by [Essam Wisam](https://github.com/EssamWisam) under supervision and expert guidance from his mentor [Dr. Anthony Blaom](https://github.com/ablaom). Additionally, [Dr. Rik Huijzer](https://github.com/rikhuijzer) and his binary `SMOTE` implementation in `Resample.jl` have also been helpful while starting this project.
+This package was created by [Essam Wisam](https://github.com/EssamWisam) as a Google Summer of Code project, under the mentorship of [Anthony Blaom](https://ablaom.github.io). Additionally, [Rik Huijzer](https://github.com/rikhuijzer) and his binary `SMOTE` implementation in `Resample.jl` have also been helpful.
