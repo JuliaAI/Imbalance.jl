@@ -32,14 +32,14 @@ for each class. This is computed as described in the paper "SMOTE: Synthetic
 Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
 
 # Arguments
-- `X::AbstractMatrix{<:Integer}`: A matrix of label-encoded categorical columns 
+- `X`: A matrix of label-encoded categorical columns 
     where each row is an observation
-- `y::AbstractVector`: A vector of labels
+- `y`: A vector of labels
 
 # Returns
-- `:AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector of the value frequency per class matrices 
+- `mvdm_encoder`: A vector of the value frequency per class matrices 
     (one for each column of `X`)
-- `AbstractVector`: A vector of the number of categories for each column of `X`
+- `num_categories_per_col`: A vector of the number of categories for each column of `X`
 """
 function precompute_value_encodings(
     X::AbstractMatrix{<:Integer},
@@ -85,14 +85,14 @@ of categories as described in "SMOTE: Synthetic Minority Over-sampling Technique
 by Chawla et al. (2002), pg. 351. 
 
 # Arguments
-- `mvdm_encoder::AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector 
+- `mvdm_encoder`: A vector 
     of matrices that associates each categorical value to its frequency for every
     class.
-- `num_categories_per_col::AbstractVector{<:Integer}`: A vector of integers
+- `num_categories_per_col`: A vector of integers
     representing the number of categories per column.
 
 # Returns
-- `mvdm_distances::AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector
+- `mvdm_distances`: A vector
     of matrices that associates with each column in X a matrix that stores the
     mvdm distance component between any two categories.
 """
@@ -118,14 +118,14 @@ Choose a random point from the given observations matrix `X` and generate a new 
 by taking the mode of each categorical variable over `x` and its `k` nearest neighbors.
 
 # Arguments
-- `X::AbstractMatrix{<:Integer}`: A matrix of label-encoded categorical columns 
+- `X`: A matrix of label-encoded categorical columns 
     where each row is an observation
 - `tree`: A brute tree of `X` with a distance metric that is a `ValueDifference` object
-- `k::Int`: The number of nearest neighbors to consider
-- `rng::AbstractRNG`: A random number generator
+- `k`: The number of nearest neighbors to consider
+- `rng`: A random number generator
 
 # Returns
-- `AbstractVector`: A vector of the mode of each categorical variable over `x` and its `k` nearest neighbors
+- `x_new_cat`: A vector of the mode of each categorical variable over `x` and its `k` nearest neighbors
 """
 function generate_new_smoten_point(
     X::AbstractMatrix{<:Integer},
@@ -149,17 +149,17 @@ Assuming that all the observations in the observation matrix X belong to the sam
 use SMOTE-NC to generate `n` new observations for that class.
 
 # Arguments
-- `X::AbstractMatrix{<:Integer}`: A matrix of label-encoded categorical columns 
+- `X`: A matrix of label-encoded categorical columns 
     where each row is an observation
-- `y::AbstractVector`: A vector of labels
-- `n::Int`: The number of new observations to generate
-- `k::Int`: The number of nearest neighbors to consider
-- `rng::AbstractRNG`: A random number generator
-- `all_pairwise_mvdm::AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector of pairwise value 
+- `y`: A vector of labels
+- `n`: The number of new observations to generate
+- `k`: The number of nearest neighbors to consider
+- `rng`: A random number generator
+- `all_pairwise_mvdm`: A vector of pairwise value 
    difference metric matrix for each column of `X`
 
 # Returns
-- `AbstractMatrix`: A matrix where each row is a new observation
+- `Xnew`: A matrix where each row is a new observation
 """
 function smoten_per_class(
     X::AbstractMatrix{<:Real},

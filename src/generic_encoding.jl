@@ -19,7 +19,7 @@ as any column with the scitype `Multiclass` or `OrderedFactor`.
 - `cat_inds`: A vector with the indices of the categorical columns
 
 """
-function generic_encoder(X; error_checker=(args...)->nothing, return_cat_inds = false)
+function generic_encoder(X; error_checker=(args...)->nothing, return_cat_inds::Bool = false)
     # 1. Find the categorical and continuous columns
     types = ScientificTypes.schema(X).scitypes
     cat_inds = findall(x -> x <: Finite, types)

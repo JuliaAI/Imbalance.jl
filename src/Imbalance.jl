@@ -15,7 +15,6 @@ using TableOperations
 using Tables
 using OrderedCollections
 using CategoricalArrays
-using DocumenterTools
 using ProgressMeter
 using Memoization
 
@@ -26,7 +25,6 @@ include("table_wrappers.jl")
 include("generic_oversample.jl")
 include("generic_encoding.jl")
 include("common_smote.jl")
-include("mlj_interface.jl")
 include("utils.jl")
 export generate_imbalanced_data, checkbalance
 
