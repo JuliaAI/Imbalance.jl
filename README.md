@@ -4,7 +4,7 @@
 
 A Julia package with resampling methods to correct for class imbalance in a wide variety of classification settings.
 
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://essamwisam.github.io/Imbalance.jl/dev/)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)]([https://essamwisam.github.io/Imbalance.jl/dev/](https://juliaai.github.io/Imbalance.jl/dev/))
 [![Tests](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml)
 
 ## ⏬ Installation
