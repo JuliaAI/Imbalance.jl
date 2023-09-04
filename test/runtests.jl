@@ -1,4 +1,5 @@
 using Test
+using Imbalance
 using CategoricalArrays
 using DataFrames
 using Random
@@ -19,22 +20,21 @@ using Conda
 
 
 include("test_utils.jl")
-
 @testset "common" begin
     include("common.jl")
 end
 
 @testset "wrappers" begin
-    include("wrappers.jl")
+    include("table_wrappers.jl")
 end
 
 @testset "tabletransforms" begin
     include("tabletr_interface.jl")
 end
-
 @testset "MLJ Interface" begin
     include("mlj_interface.jl")
 end
+
 
 @testset "ROSE" begin
     include("rose.jl")

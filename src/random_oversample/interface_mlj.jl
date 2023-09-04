@@ -1,9 +1,9 @@
 
 ### RandomOversampler with MLJ Interface
 # interface struct
-mutable struct RandomOversampler{T} <: Static
+mutable struct RandomOversampler{T,R<:Union{Integer,AbstractRNG}} <: Static
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end;
 
@@ -27,6 +27,27 @@ function MMI.transform(r::RandomOversampler, _, X, y)
 end
 
 
+MMI.metadata_pkg(
+  RandomOversampler,
+  name = "Imbalance",
+  package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+  package_url = "https://github.com/JuliaAI/Imbalance.jl",
+  is_pure_julia = true,
+)
+
+MMI.metadata_model(
+  RandomOversampler,
+  input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
+  output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
+  target_scitype = AbstractVector,
+  load_path = "Imbalance." * string(RandomOversampler),
+)
+function MMI.transform_scitype(s::RandomOversampler)
+  return Tuple{
+      Union{Table(Continuous),AbstractMatrix{Continuous}},
+      AbstractVector{<:Finite},
+  }
+end
 
 
 """
@@ -51,17 +72,17 @@ For default values of the hyper-parameters, model can be constructed by
 
 # Hyperparameters
 
-$(DOC_RATIOS_ARGUMENT)
+$((COMMON_DOCS["RATIOS"]))
 
-$(DOC_RNG_ARGUMENT)
+$((COMMON_DOCS["RNG"]))
 
 # Transform Inputs
 
-$(DOC_COMMON_INPUTS)
+$((COMMON_DOCS["INPUTS"]))
 
 # Transform Outputs
 
-$(DOC_COMMON_OUTPUTS)
+$((COMMON_DOCS["OUTPUTS"]))
 
 # Operations
 

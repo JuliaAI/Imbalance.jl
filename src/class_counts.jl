@@ -10,10 +10,10 @@ the given ratio relative to the majority class.
 
 # Arguments
 - `y::AbstractVector`: An abstract vector of class labels
-$DOC_RATIOS_ARGUMENT
+$(COMMON_DOCS["RATIOS"])
 
 # Returns
-- `Dict`: A dictionary mapping each class to the number of extra samples needed for
+- `extra_counts`: A dictionary mapping each class to the number of extra samples needed for
     that class to achieve the given ratio relative to the majority class.
 """
 # Method for handling ratios as a dictionary

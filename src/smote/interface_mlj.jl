@@ -1,12 +1,14 @@
 
 ### SMOTE with MLJ Interface
 
-mutable struct SMOTE{T} <: Static
+mutable struct SMOTE{T,R<:Union{Integer,AbstractRNG}} <: Static
     k::Integer
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end;
+
+
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 
@@ -44,6 +46,29 @@ function MMI.transform(s::SMOTE, _, X, y)
 end
 
 
+MMI.metadata_pkg(
+    SMOTE,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
+)
+
+MMI.metadata_model(
+    SMOTE,
+    input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
+    output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
+    target_scitype = AbstractVector,
+    load_path = "Imbalance." * string(SMOTE),
+)
+function MMI.transform_scitype(s::SMOTE)
+    return Tuple{
+        Union{Table(Continuous),AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
+end
+
+
 
 """
 $(MMI.doc_header(SMOTE))
@@ -75,17 +100,17 @@ For default values of the hyper-parameters, model can be constructed by
     the range `[1, n - 1]`, where `n` is the number of observations; otherwise set to the
     nearest of these two values.
 
-$(DOC_RATIOS_ARGUMENT)
+$((COMMON_DOCS["RATIOS"]))
 
-$(DOC_RNG_ARGUMENT)
+$((COMMON_DOCS["RNG"]))
 
 # Transform Inputs
 
-$(DOC_COMMON_INPUTS)
+$((COMMON_DOCS["INPUTS"]))
 
 # Transform Outputs
 
-$(DOC_COMMON_OUTPUTS)
+$((COMMON_DOCS["OUTPUTS"]))
 
 # Operations
 

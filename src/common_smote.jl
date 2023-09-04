@@ -7,12 +7,12 @@ This file contains any function used by two or more of the `SMOTE` variants.
 Generate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
 
 # Arguments
-- `x₁::AbstractVector`: First observation 
-- `x₂::AbstractVector`: Second observation 
-- `rng::AbstractRNG`: Random number generator
+- `x₁`: First observation 
+- `x₂`: Second observation 
+- `rng`: Random number generator
 
 # Returns
-- `AbstractMatrix`: New observation `x` as a row vector that satisfies `x = (x₂ - x₁) * r + x₁`
+-  New observation `x` as a vector that satisfies `x = (x₂ - x₁) * r + x₁`
     where `r`` is a random number between `0` and `1`
 """
 function get_collinear_point(
@@ -29,12 +29,12 @@ end
 Apply KNN and return the indices of the k-nearest neighbors of a given observation `x` from an observations. 
 
 # Arguments
-- `tree::KDTree`: KDTree of observations
-- `x::AbstractVector`: Observation
-- `k::Integer`: Number of neighbors to consider
+- `tree`: KDTree of observations
+- `x`: Observation
+- `k`: Number of neighbors to consider
 
 # Returns
-- `inds::AbstractVector`: Indices of the k-nearest neighbors of `x`. This is expected to include `x` itself.
+- `inds`: Indices of the k-nearest neighbors of `x`. This is expected to include `x` itself.
 """
 @memoize function memoized_knn(tree, x, k)
     # k+1 because the point is in X and will surely be a neighbor of itself
@@ -48,23 +48,23 @@ Randomly return one of the k-nearest neighbor of a given observation `x` from an
 matrix `X` represented by a k-d tree
 
 # Arguments
-- `X::AbstractMatrix`: A matrix where each row is an observation
+- `X`: A matrix where each row is an observation
 - `tree`: A k-d tree representation of the observations matrix `X`
-- `x::AbstractVector`: An observation
-- `k::Int`: Number of nearest neighbors to consider
-- `rng::AbstractRNG`: Random number generator
-- `return_all::Bool`: If true, return the random neighbor and all the k-nearest neighbors of `x`
-- `return_all_self::Bool`: If true (and return_all is false), return all the k-nearest neighbors of `x` 
+- `x`: An observation
+- `k::`: Number of nearest neighbors to consider
+- `rng`: Random number generator
+- `return_all`: If true, return the random neighbor and all the k-nearest neighbors of `x`
+- `return_all_self`: If true (and return_all is false), return all the k-nearest neighbors of `x` 
     including `x` itself
 
 # Returns
-- `AbstractVector`: A random observation from the k-nearest neighbors of x
+- `random_neighbor`: A random observation from the k-nearest neighbors of x
 """
 function get_random_neighbor(
     X::AbstractMatrix{<:Real},
     tree,
     x;
-    k::Int = 5,
+    k::Integer = 5,
     rng::AbstractRNG = default_rng(),
     return_all::Bool = false,
     return_all_self::Bool = false,
@@ -87,11 +87,11 @@ This function is only called when n>1 and checks whether 0<k<n or not. If k<0, i
 and if k>=n, it warns the user and sets k=n-1.
 
 # Arguments
-- `k::Int`: Number of nearest neighbors to consider
-- `n::Int`: Number of observations
+- `k`: Number of nearest neighbors to consider
+- `n`: Number of observations
 
 # Returns
-- `Int`: Number of nearest neighbors to consider
+-  Number of nearest neighbors to consider
 
 """
 function check_k(k, n_class)
@@ -112,11 +112,11 @@ Find the mode of each row in a matrix and return the result as a vector. If mult
 exist, choose one of them randomly.
 
 # Arguments
-- `A::AbstractMatrix`: A matrix where each row is an observation of real numbers
-- `rng::AbstractRNG`: Random number generator
+- `Xneights`: A matrix where each row is an observation of real numbers
+- `rng`: Random number generator
 
 # Returns
-- `AbstractVector`: A vector where each element is the mode of the corresponding row in `A`
+-  A vector where each element is the mode of the corresponding row in `A`
 """
 function get_neighbors_mode(
     Xneighs::AbstractMatrix{<:Real},
@@ -133,10 +133,10 @@ end
 Check that all columns are either categorical or continuous. If not, throw an error.
 
 # Arguments
-- `ncols::Int`: Number of columns
-- `cat_inds::AbstractVector`: Indices of categorical columns
-- `cont_inds::AbstractVector`: Indices of continuous columns
-- `types::AbstractVector`: Types of each column
+- `ncols`: Number of columns
+- `cat_inds`: Indices of categorical columns
+- `cont_inds`: Indices of continuous columns
+- `types`: Types of each column
 
 """
 function check_scitypes_smoten(ncols, cat_inds, cont_inds, types)

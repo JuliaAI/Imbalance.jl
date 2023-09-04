@@ -6,20 +6,13 @@ version = "0.1.0"
 [deps]
 CategoricalArrays = "324d7699-5711-5eae-9e2f-1d82baa6b597"
 CategoricalDistributions = "af321ab8-2d2e-40a6-b165-3d674595d28e"
-Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
-DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Distances = "b4f34e82-e78d-54a5-968a-f98e89d6e8f7"
-DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
-JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MLJModelInterface = "e80e1ace-859a-464e-9ed9-23947d8ae3ea"
 MLJTestInterface = "72560011-54dd-4dc2-94f3-c5de45b75ecd"
 Memoization = "6fafb56a-5788-4b4e-91ca-c0cea6611c73"
 NearestNeighbors = "b8a86587-4115-5ab1-83bc-aa920d37bbce"
-OneRule = "90484964-6d6a-4979-af09-8657dbed84ff"
 OrderedCollections = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
-Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 ScientificTypes = "321657f4-b219-11e9-178b-2701a2544e81"
@@ -46,6 +39,9 @@ PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 StableRNGs = "860ef19b-820b-49d6-a774-d7a799459cd3"
 TableTransforms = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
+Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
+
 
 [targets]
-test = ["Test", "DataFrames", "MLJBase", "TableTransforms", "StableRNGs", "PyCall"]
+test = ["Test", "DataFrames", "MLJBase", "TableTransforms", "StableRNGs", "PyCall", "Pkg", "Conda"]

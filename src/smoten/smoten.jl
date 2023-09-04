@@ -11,10 +11,10 @@ smoten_decoder(X, d) = generic_decoder(X, d)
 # SMOTE-N uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
 
-struct ValueDifference <: Metric
+struct ValueDifference{T<:AbstractVector{<:AbstractArray{<:AbstractFloat}}} <: Metric
     # for each categorical variables with n categories, this has a nxn matrix of
     # pairwise value difference distances
-    all_pairwise_mvdm::AbstractVector{<:AbstractArray{<:AbstractFloat}}
+    all_pairwise_mvdm::T
 end
 
 function Distances.evaluate(d::ValueDifference, x₁, x₂)
@@ -32,14 +32,14 @@ for each class. This is computed as described in the paper "SMOTE: Synthetic
 Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
 
 # Arguments
-- `X::AbstractMatrix{<:Integer}`: A matrix of label-encoded categorical columns 
+- `X`: A matrix of label-encoded categorical columns 
     where each row is an observation
-- `y::AbstractVector`: A vector of labels
+- `y`: A vector of labels
 
 # Returns
-- `:AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector of the value frequency per class matrices 
+- `mvdm_encoder`: A vector of the value frequency per class matrices 
     (one for each column of `X`)
-- `AbstractVector`: A vector of the number of categories for each column of `X`
+- `num_categories_per_col`: A vector of the number of categories for each column of `X`
 """
 function precompute_value_encodings(
     X::AbstractMatrix{<:Integer},
@@ -85,14 +85,14 @@ of categories as described in "SMOTE: Synthetic Minority Over-sampling Technique
 by Chawla et al. (2002), pg. 351. 
 
 # Arguments
-- `mvdm_encoder::AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector 
+- `mvdm_encoder`: A vector 
     of matrices that associates each categorical value to its frequency for every
     class.
-- `num_categories_per_col::AbstractVector{<:Integer}`: A vector of integers
+- `num_categories_per_col`: A vector of integers
     representing the number of categories per column.
 
 # Returns
-- `mvdm_distances::AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector
+- `mvdm_distances`: A vector
     of matrices that associates with each column in X a matrix that stores the
     mvdm distance component between any two categories.
 """
@@ -118,19 +118,19 @@ Choose a random point from the given observations matrix `X` and generate a new 
 by taking the mode of each categorical variable over `x` and its `k` nearest neighbors.
 
 # Arguments
-- `X::AbstractMatrix{<:Integer}`: A matrix of label-encoded categorical columns 
+- `X`: A matrix of label-encoded categorical columns 
     where each row is an observation
 - `tree`: A brute tree of `X` with a distance metric that is a `ValueDifference` object
-- `k::Int`: The number of nearest neighbors to consider
-- `rng::AbstractRNG`: A random number generator
+- `k`: The number of nearest neighbors to consider
+- `rng`: A random number generator
 
 # Returns
-- `AbstractVector`: A vector of the mode of each categorical variable over `x` and its `k` nearest neighbors
+- `x_new_cat`: A vector of the mode of each categorical variable over `x` and its `k` nearest neighbors
 """
 function generate_new_smoten_point(
     X::AbstractMatrix{<:Integer},
     knn_matrix;
-    k::Int,
+    k::Integer,
     rng::AbstractRNG,
 )
     # 1. Choose a random point (by index)
@@ -149,23 +149,23 @@ Assuming that all the observations in the observation matrix X belong to the sam
 use SMOTE-NC to generate `n` new observations for that class.
 
 # Arguments
-- `X::AbstractMatrix{<:Integer}`: A matrix of label-encoded categorical columns 
+- `X`: A matrix of label-encoded categorical columns 
     where each row is an observation
-- `y::AbstractVector`: A vector of labels
-- `n::Int`: The number of new observations to generate
-- `k::Int`: The number of nearest neighbors to consider
-- `rng::AbstractRNG`: A random number generator
-- `all_pairwise_mvdm::AbstractVector{<:AbstractArray{<:AbstractFloat}}`: A vector of pairwise value 
+- `y`: A vector of labels
+- `n`: The number of new observations to generate
+- `k`: The number of nearest neighbors to consider
+- `rng`: A random number generator
+- `all_pairwise_mvdm`: A vector of pairwise value 
    difference metric matrix for each column of `X`
 
 # Returns
-- `AbstractMatrix`: A matrix where each row is a new observation
+- `Xnew`: A matrix where each row is a new observation
 """
 function smoten_per_class(
     X::AbstractMatrix{<:Real},
-    n::Int,
+    n::Integer,
     all_pairwise_mvdm::AbstractVector{<:AbstractArray{<:AbstractFloat}};
-    k::Int = 5,
+    k::Integer = 5,
     rng::AbstractRNG = default_rng(),
 )
     X = Int32.(X)               # temporary workaround for an unexepcted types bug
@@ -190,9 +190,9 @@ function smoten_per_class(
 end
 
 """
-    function smoten(
-        X, y::AbstractVector;
-        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
+    smoten(
+        X, y;
+        k, ratios=nothing, rng=default_rng(),
         try_perserve_type=true
     )
 
@@ -204,24 +204,24 @@ Oversamples a dataset using `SMOTE-N` (Synthetic Minority Oversampling Technique
 
 # Positional Arguments
 
-- `X`: A matrix of integers or a table with [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Finite`. 
+- `X`: A matrix of integers or a table with element[scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Finite`. 
      That is, for table inputs each column should have either `OrderedFactor` or `Multiclass` as the element [scitype](https://juliaai.github.io/ScientificTypes.jl/).
 
 - `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
 
 # Keyword Arguments
 
-$DOC_COMMON_K
+$(COMMON_DOCS["K"])
 
-$DOC_RATIOS_ARGUMENT
+$(COMMON_DOCS["RATIOS"])
 
-$DOC_RNG_ARGUMENT
+$(COMMON_DOCS["RNG"])
 
-$DOC_TRY_PERSERVE_ARGUMENT
+$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
 
-$DOC_COMMON_OUTPUTS
+$(COMMON_DOCS["OUTPUTS"])
 
 # Example
 
@@ -232,32 +232,28 @@ using StatsBase
 # set probability of each class
 probs = [0.5, 0.2, 0.3]                         
 num_rows = 100
-num_cont_feats = 0
+num_continuous_feats = 0
 # want two categorical features with three and two possible values respectively
 cat_feats_num_vals = [3, 2]
 
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_cont_feats; 
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 probs, cat_feats_num_vals, rng=42)                      
-StatsBase.countmap(y)
-
-julia> Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+julia> StatsBase.countmap(y)
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
 0 => 48
 2 => 33
 1 => 19
 
-ScientificTypes.schema(X).scitypes
-
-julia> (Count, Count)
+julia> ScientificTypes.schema(X).scitypes
+(Count, Count)
 
 # coerce to a finite scitype (multiclass or ordered factor)
 X = coerce(X, autotype(X, :few_to_finite))
 
 # apply SMOTEN
 Xover, yover = smoten(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-StatsBase.countmap(yover)
-
-
+julia> StatsBase.countmap(yover)
 Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
 0 => 48
 2 => 33
@@ -291,14 +287,14 @@ This interface assumes that the input is one table `Xy` and that `y` is one of t
 ```julia
 using Imbalance
 using ScientificTypes
-using TableTransforms
+using Imbalance.TableTransforms
 
 # Generate imbalanced data
 num_rows = 100
-num_cont_feats = 0
+num_continuous_feats = 0
 y_ind = 2
 # generate a table and categorical vector accordingly
-Xy, _ = generate_imbalanced_data(num_rows, num_cont_feats; insert_y=y_ind,
+Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
                                 probs= [0.5, 0.2, 0.3], cat_feats_num_vals=[3, 2],
                                  rng=42)  
 
@@ -306,7 +302,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_cont_feats; insert_y=y_ind,
 Xy = coerce(Xy, :Column1=>Multiclass, :Column2=>Multiclass, :Column3=>Multiclass)
 
 # Initiate Random Oversampler model
-oversampler = SMOTEN_t(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
+oversampler = SMOTEN(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
 Xyover = Xy |> oversampler                               
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
@@ -322,7 +318,7 @@ Journal of artificial intelligence research, 321-357, 2002.
 function smoten(
     X::AbstractMatrix{<:Integer},
     y::AbstractVector;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
@@ -338,7 +334,7 @@ end
 function smoten(
     X,
     y::AbstractVector;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
@@ -360,8 +356,8 @@ end
 # dispatch for when X is a table and y is one of the columns
 function smoten(
     Xy,
-    y_ind::Int;
-    k::Int = 5,
+    y_ind::Integer;
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,

@@ -48,7 +48,7 @@ end
 
 
 """
-    generate_imbalanced_data(num_rows, num_cont_feats; 
+    generate_imbalanced_data(num_rows, num_continuous_feats; 
                              cat_feats_num_vals=[], 
                              probs=[0.5, 0.5], 
                              insrt_y=nothing, 
@@ -59,13 +59,13 @@ Generate `num_rows` observations with the given probabilities `probs` of
 each class. Supports generating continuous and categorical features.
 
 # Arguments
-    - `num_rows::Int`: Number of observations to generate
-    - `num_cont_feats::Int`: Number of features to generate
+    - `num_rows::Integer`: Number of observations to generate
+    - `num_continuous_feats::Integer`: Number of features to generate
     - `cat_feats_num_vals::AbstractVector`: A vector of number of levels of each extra categorical feature.
         the number of categorical features is inferred from this.
     - `probs::AbstractVector`: A vector of probabilities of each class. The number of classes is inferred
         from this vector.
-    - `insert_y::Int`: If not nothing, insert the class labels column at the given index in the table
+    - `insert_y::Integer`: If not nothing, insert the class labels column at the given index in the table
     - `rng::AbstractRNG`: Random number generator
 
 # Returns
@@ -76,7 +76,7 @@ each class. Supports generating continuous and categorical features.
 """
 function generate_imbalanced_data(
     num_rows,
-    num_cont_feats;
+    num_continuous_feats;
     cat_feats_num_vals = [],
     probs = [0.5, 0.5],
     type = "ColTable",                
@@ -89,8 +89,8 @@ function generate_imbalanced_data(
     rands = rand(rng, num_rows)
     y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
 
-    if num_cont_feats > 0
-        Xc = rand(rng, Float64, num_rows, num_cont_feats)
+    if num_continuous_feats > 0
+        Xc = rand(rng, Float64, num_rows, num_continuous_feats)
     else
         Xc = Matrix{Int64}(undef, num_rows, 0)
     end

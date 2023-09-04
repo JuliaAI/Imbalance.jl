@@ -4,8 +4,8 @@
 
 A Julia package with resampling methods to correct for class imbalance in a wide variety of classification settings.
 
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://essamwisam.github.io/Imbalance.jl/dev/)
-[![Tests](https://github.com/EssamWisam/Imbalance.jl/actions/workflows/Runtests.yml/badge.svg)](https://github.com/EssamWisam/Imbalance.jl/actions/workflows/Runtests.yml)
+[![](https://img.shields.io/badge/docs-dev-blue.svg)]([https://essamwisam.github.io/Imbalance.jl/dev/](https://juliaai.github.io/Imbalance.jl/dev/))
+[![Tests](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml)
 
 ## ⏬ Installation
 ```julia
@@ -24,8 +24,8 @@ using Imbalance
 
 # Set dataset properties then generate imbalanced data
 probs = [0.5, 0.2, 0.3]                  # probability of each class      
-num_rows, num_cont_feats = 100, 5
-X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, rng=42)      
+num_rows, num_continuous_feats = 100, 5
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; probs, rng=42)      
 
 # Apply SMOTE to oversample the classes
 Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
@@ -55,7 +55,7 @@ All implemented oversampling methods are considered static transforms and hence,
 This interface operates on single tables; it assumes that `y` is one of the columns of the given table. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed via `apply` is only one table `Xy`.
 ```julia
 using Imbalance
-using TableTransforms
+using Imbalance.TableTransforms
 
 # Generate imbalanced data
 num_rows = 200
@@ -65,7 +65,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate SMOTE model
-oversampler = SMOTE_t(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+oversampler = SMOTE(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xyover = Xy |> oversampler       # can chain with other table transforms                  
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
@@ -110,4 +110,4 @@ One obvious possible remedy is to weight the smaller sums so that a learning alg
 To our knowledge, there are no existing maintained Julia packages that implement oversampling algorithms for multi-class classification problems or that handle both nominal and continuous features. This has served as a primary motivation for the creation of this package.
 
 ## 👥 Credits
-This package was created by [Essam Wisam](https://github.com/EssamWisam) under supervision and expert guidance from his mentor [Dr. Anthony Blaom](https://github.com/ablaom). The binary `SMOTE` implementation by [Dr. Rik Huijzer](https://github.com/rikhuijzer) in `Resample.jl` has also been ultimately helpful while starting this project.
+This package was created by [Essam Wisam](https://github.com/JuliaAI) as a Google Summer of Code project, under the mentorship of [Anthony Blaom](https://ablaom.github.io). Additionally, [Rik Huijzer](https://github.com/rikhuijzer) and his binary `SMOTE` implementation in `Resample.jl` have also been helpful.

@@ -1,20 +1,14 @@
 using Imbalance:
-    SMOTE,
-    ROSE,
-    RandomOversampler,
     smote,
     rose,
     random_oversample,
-    MMI,
-    SMOTENC,
     smotenc,
-    SMOTEN,
     smoten
 
 
 @testset "Random Oversampler MLJ" begin
     failures, summary = MLJTestInterface.test(
-        [RandomOversampler],
+        [Imbalance.MLJ.RandomOversampler],
         MLJTestInterface.make_multiclass()...;
         verbosity = 1,
         throw = true,
@@ -25,7 +19,7 @@ end
 
 @testset "ROSE MLJ" begin
     failures, summary = MLJTestInterface.test(
-        [ROSE],
+        [Imbalance.MLJ.ROSE],
         MLJTestInterface.make_multiclass()...;
         verbosity = 1,
         throw = true,
@@ -36,7 +30,7 @@ end
 
 @testset "SMOTE MLJ" begin
     failures, summary = MLJTestInterface.test(
-        [SMOTE],
+        [Imbalance.MLJ.SMOTE],
         MLJTestInterface.make_multiclass()...;
         verbosity = 1,
         throw = true,
@@ -48,7 +42,7 @@ end
 
 @testset "SMOTENC MLJ" begin
     failures, summary = MLJTestInterface.test(
-        [SMOTENC],
+        [Imbalance.MLJ.SMOTENC],
         MLJTestInterface.make_multiclass()...;
         verbosity = 1,
         throw = true,

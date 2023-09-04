@@ -1,11 +1,14 @@
 ### SMOTENC with MLJ Interface
 
-mutable struct SMOTENC{T} <: Static
+
+
+mutable struct SMOTENC{T,R<:Union{Integer,AbstractRNG}} <: Static
     k::Integer
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
-end;
+end
+
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 
@@ -17,6 +20,7 @@ function MMI.clean!(s::SMOTENC)
     end
     return message
 end
+
 
 """
 Initiate a SMOTENC model with the given hyper-parameters.
@@ -32,11 +36,50 @@ function SMOTENC(;
     return model
 end
 
+
+
+
 """
 Oversample data X, y using SMOTENC
 """
 function MMI.transform(s::SMOTENC, _, X, y)
     smotenc(X, y; k = s.k, ratios = s.ratios, rng = s.rng, try_perserve_type=s.try_perserve_type)
+end
+
+
+
+
+MMI.metadata_pkg(
+    SMOTENC,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
+)
+
+MMI.metadata_model(
+    SMOTENC,
+    input_scitype = Union{
+        Table(Union{Infinite, Finite}),
+        AbstractMatrix{Union{Infinite, Finite}},
+    },
+    output_scitype = Union{
+        Table(Union{Infinite, Finite}),
+        AbstractMatrix{Union{Infinite, Finite}},
+    },
+    target_scitype = AbstractVector,
+    load_path = "Imbalance." * string(SMOTENC),
+)
+
+
+function MMI.transform_scitype(s::SMOTENC)
+    return Tuple{
+        Union{
+            Table(Union{Infinite,OrderedFactor,Multiclass}),
+            AbstractMatrix{Union{Infinite,OrderedFactor,Multiclass}},
+        },
+        AbstractVector{<:Finite},
+    }
 end
 
 
@@ -71,17 +114,17 @@ For default values of the hyper-parameters, model can be constructed by
     the range `[1, n - 1]`, where `n` is the number of observations; otherwise set to the
     nearest of these two values.
 
-$(DOC_RATIOS_ARGUMENT)
+$((COMMON_DOCS["RATIOS"]))
 
-$(DOC_RNG_ARGUMENT)
+$((COMMON_DOCS["RNG"]))
 
 # Transform Inputs
 
-$(DOC_COMMON_INPUTS)
+$((COMMON_DOCS["INPUTS"]))
 
 # Transform Outputs
 
-$(DOC_COMMON_OUTPUTS)
+$((COMMON_DOCS["OUTPUTS"]))
 
 # Operations
 
@@ -114,8 +157,8 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
 SMOTENC = @load SMOTENC pkg=Imbalance
 
 # Oversample the minority classes to  sizes relative to the majority class:
-smote = SMOTENC(k=10, ratios=Dict("setosa"=>1.0, "versicolor"=> 0.8, "virginica"=>1.0), rng=42)
-mach = machine(smote)
+smotenc = SMOTENC(k=10, ratios=Dict("setosa"=>1.0, "versicolor"=> 0.8, "virginica"=>1.0), rng=42)
+mach = machine(smotenc)
 Xover, yover = transform(mach, X, y)
 
 julia> countmap(yover)
@@ -127,3 +170,4 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
 
 """
 SMOTENC
+

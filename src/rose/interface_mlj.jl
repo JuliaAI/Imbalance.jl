@@ -1,11 +1,13 @@
 ### ROSE MLJ Interface
 # interface struct
-mutable struct ROSE{T} <: MMI.Static
+mutable struct ROSE{T,R<:Union{Integer,AbstractRNG}} <: MMI.Static
     s::AbstractFloat
     ratios::T
-    rng::Union{Integer,AbstractRNG}
+    rng::R
     try_perserve_type::Bool
 end;
+
+
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 
@@ -39,6 +41,28 @@ function MMI.transform(r::ROSE, _, X, y)
         try_perserve_type = r.try_perserve_type)
 end
 
+MMI.metadata_pkg(
+    ROSE,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
+)
+
+MMI.metadata_model(
+    ROSE,
+    input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
+    output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
+    target_scitype = AbstractVector,
+    load_path = "Imbalance." * string(ROSE),
+)
+function MMI.transform_scitype(s::ROSE)
+    return Tuple{
+        Union{Table(Continuous),AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
+end
+
 
 """
 $(MMI.doc_header(ROSE))
@@ -66,17 +90,17 @@ For default values of the hyper-parameters, model can be constructed by
 
 - `s::float`: A parameter that proportionally controls the bandwidth of the Gaussian kernel
 
-$(DOC_RATIOS_ARGUMENT)
+$((COMMON_DOCS["RATIOS"]))
 
-$(DOC_RNG_ARGUMENT)
+$((COMMON_DOCS["RNG"]))
 
 # Transform Inputs
 
-$(DOC_COMMON_INPUTS)
+$((COMMON_DOCS["INPUTS"]))
 
 # Transform Outputs
 
-$(DOC_COMMON_OUTPUTS)
+$((COMMON_DOCS["OUTPUTS"]))
 
 # Operations
 
