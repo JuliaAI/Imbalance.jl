@@ -59,13 +59,13 @@ Generate `num_rows` observations with the given probabilities `probs` of
 each class. Supports generating continuous and categorical features.
 
 # Arguments
-    - `num_rows::Int`: Number of observations to generate
-    - `num_continuous_feats::Int`: Number of features to generate
+    - `num_rows::Integer`: Number of observations to generate
+    - `num_continuous_feats::Integer`: Number of features to generate
     - `cat_feats_num_vals::AbstractVector`: A vector of number of levels of each extra categorical feature.
         the number of categorical features is inferred from this.
     - `probs::AbstractVector`: A vector of probabilities of each class. The number of classes is inferred
         from this vector.
-    - `insert_y::Int`: If not nothing, insert the class labels column at the given index in the table
+    - `insert_y::Integer`: If not nothing, insert the class labels column at the given index in the table
     - `rng::AbstractRNG`: Random number generator
 
 # Returns

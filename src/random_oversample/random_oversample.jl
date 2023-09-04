@@ -11,7 +11,7 @@ generate n new observations for that class using random oversampling
 """
 function random_oversample_per_class(
     X::AbstractMatrix{<:Real},
-    n::Int;
+    n::Integer;
     rng::AbstractRNG = default_rng(),
 )
     # sample n rows from X

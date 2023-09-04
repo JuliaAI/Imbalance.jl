@@ -13,7 +13,7 @@ generate n new observations for that class using ROSE.
 """
 function rose_per_class(
     X::AbstractMatrix{<:AbstractFloat},
-    n::Int;
+    n::Integer;
     s::AbstractFloat = 1.0,
     rng::AbstractRNG = default_rng(),
 )
@@ -49,7 +49,7 @@ end
 """
     rose(
         X, y; 
-        s::AbstractFloat=0.1, ratios=nothing, rng::AbstractRNG=default_rng(),
+        s=0.1, ratios=nothing, rng=default_rng(),
         try_perserve_type=true
     )
 

@@ -64,7 +64,7 @@ function get_random_neighbor(
     X::AbstractMatrix{<:Real},
     tree,
     x;
-    k::Int = 5,
+    k::Integer = 5,
     rng::AbstractRNG = default_rng(),
     return_all::Bool = false,
     return_all_self::Bool = false,

@@ -17,7 +17,7 @@ randomly lies in the line joining the random point and randomly one of its k-nea
 function generate_new_smote_point(
     X::AbstractMatrix{<:AbstractFloat},
     tree;
-    k::Int,
+    k::Integer,
     rng::AbstractRNG,
 )
     # 1. Choose a random point from X
@@ -46,8 +46,8 @@ use SMOTE to generate `n` new observations for that class.
 """
 function smote_per_class(
     X::AbstractMatrix{<:AbstractFloat},
-    n::Int;
-    k::Int = 5,
+    n::Integer;
+    k::Integer = 5,
     rng::AbstractRNG = default_rng(),
 )
     # Can't draw lines if there are no neighbors
@@ -70,8 +70,8 @@ end
 
 """
     smote(
-        X, y::AbstractVector;
-        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
+        X, y;
+        k=5, ratios=nothing, rng=default_rng(),
         try_perserve_type=true
     )
 
@@ -178,7 +178,7 @@ Journal of artificial intelligence research, 321-357, 2002.
 function smote(
     X::AbstractMatrix{<:AbstractFloat},
     y::AbstractVector;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
@@ -191,7 +191,7 @@ end
 function smote(
     X,
     y::AbstractVector;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
@@ -204,7 +204,7 @@ end
 function smote(
     Xy,
     y_ind::Integer;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,

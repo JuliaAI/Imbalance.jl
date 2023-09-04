@@ -130,7 +130,7 @@ by taking the mode of each categorical variable over `x` and its `k` nearest nei
 function generate_new_smoten_point(
     X::AbstractMatrix{<:Integer},
     knn_matrix;
-    k::Int,
+    k::Integer,
     rng::AbstractRNG,
 )
     # 1. Choose a random point (by index)
@@ -163,9 +163,9 @@ use SMOTE-NC to generate `n` new observations for that class.
 """
 function smoten_per_class(
     X::AbstractMatrix{<:Real},
-    n::Int,
+    n::Integer,
     all_pairwise_mvdm::AbstractVector{<:AbstractArray{<:AbstractFloat}};
-    k::Int = 5,
+    k::Integer = 5,
     rng::AbstractRNG = default_rng(),
 )
     X = Int32.(X)               # temporary workaround for an unexepcted types bug
@@ -191,8 +191,8 @@ end
 
 """
     smoten(
-        X, y::AbstractVector;
-        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
+        X, y;
+        k, ratios=nothing, rng=default_rng(),
         try_perserve_type=true
     )
 
@@ -318,7 +318,7 @@ Journal of artificial intelligence research, 321-357, 2002.
 function smoten(
     X::AbstractMatrix{<:Integer},
     y::AbstractVector;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
@@ -334,7 +334,7 @@ end
 function smoten(
     X,
     y::AbstractVector;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
@@ -356,8 +356,8 @@ end
 # dispatch for when X is a table and y is one of the columns
 function smoten(
     Xy,
-    y_ind::Int;
-    k::Int = 5,
+    y_ind::Integer;
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,

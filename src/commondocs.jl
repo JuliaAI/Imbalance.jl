@@ -32,7 +32,7 @@ const COMMON_DOCS = Dict(
     """,
 
     "K" => """
-    - `k::Int=5`: Number of nearest neighbors to consider in the SMOTE algorithm. Should be within the range \
+    - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE algorithm. Should be within the range \
         `0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to \
         `n-1` for any class where `n ≤ k`.
     """,

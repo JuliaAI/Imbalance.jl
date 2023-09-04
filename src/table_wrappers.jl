@@ -93,7 +93,7 @@ Overloads `tablify` to work with inputs where the label is one of the table colu
 function tablify(
     matrix_func,
     Xy,
-    y_ind::Int;
+    y_ind::Integer;
     try_perserve_type::Bool = true,
     encode_func = X -> (X, nothing, nothing),
     decode_func = (X, d) -> (X),

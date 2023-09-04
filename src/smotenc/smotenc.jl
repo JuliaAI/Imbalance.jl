@@ -83,7 +83,7 @@ function generate_new_smotenc_point(
     tree,
     cont_inds::AbstractVector{<:Int},
     cat_inds::AbstractVector{<:Int};
-    k::Int,
+    k::Integer,
     rng::AbstractRNG,
 )
     # find a random point
@@ -125,10 +125,10 @@ use SMOTE-NC to generate `n` new observations for that class.
 """
 function smotenc_per_class(
     X::AbstractMatrix{<:AbstractFloat},
-    n::Int,
+    n::Integer,
     cont_inds::AbstractVector{<:Int},
     cat_inds::AbstractVector{<:Int};
-    k::Int = 5,
+    k::Integer = 5,
     rng::AbstractRNG = default_rng(),
 )
     # Can't draw lines if there are no neighbors
@@ -153,8 +153,8 @@ end
 
 """
     smotenc(
-        X, y::AbstractVector, split_ind::Int;
-        k::Int=5, ratios=nothing, rng::Union{AbstractRNG, Integer}=default_rng(),
+        X, y, split_ind;
+        k=5, ratios=nothing, rng=default_rng(),
         try_perserve_type=true
     )
 
@@ -285,7 +285,7 @@ function smotenc(
     X::AbstractMatrix{<:AbstractFloat},
     y::AbstractVector,
     cat_inds::AbstractVector{<:Int};
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
@@ -301,7 +301,7 @@ end
 function smotenc(
     X,
     y::AbstractVector;
-    k::Int = 5,
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
@@ -323,8 +323,8 @@ end
 # dispatch for when X is a table and y is one of its columns
 function smotenc(
     Xy,
-    y_ind::Int;
-    k::Int = 5,
+    y_ind::Integer;
+    k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
