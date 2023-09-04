@@ -9,8 +9,6 @@ using Imbalance:
     ERR_BAD_MIXED_COL_TYPES
 
 
-
-
 @testset "Testing get_penalty" begin
     X = [
         1.0 2.0 3.0 4.0
@@ -27,21 +25,6 @@ using Imbalance:
 
     @test get_penalty(X, cont_inds) ≈ median_std^2
 end
-
-@testset "Testing Distances.evaluate" begin
-
-    x₁ = [1.0, 2.0, 3.0, 2, 3, 4]
-    x₂ = [4.0, 5.0, 6.0, 2, 5, 4]
-    cont_inds = [1, 2, 3]
-    cat_inds = [4, 5, 6]
-    penalty = 0.5
-
-    d = EuclideanWithPenalty(penalty, cont_inds, cat_inds)
-
-    @test Distances.evaluate(d, x₁, x₂) ≈ 3^2 + 3^2 + 3^2 + penalty * 1
-end
-
-
 
 # Test that generated smote point is collinear with some pair of points 
 # for the continuous part and is the mode for the categorical part
@@ -104,8 +87,7 @@ end
 end
 
 
-#= Test bad column types error
-# Needs a revisit. 
+# Test bad column types error
 @testset "smotenc throws error if column types are not supported" begin
     X = (Column1=[1, 2, 3, 4, 5],
          Column2=["a", "b", "c", "d", "e"],
@@ -116,12 +98,11 @@ end
     X = Tables.columntable(X)
     # coerce first column to multiclass and last column to continuous
     # second and third column to text
-    X = coerce(X, :Column1=>Multiclass, :Column2=>Textual, :Column3=>Textual, :Column4=>Continuous)
+    X = coerce(X, :Column1=>Multiclass, :Column4=>Continuous)
     types = ScientificTypes.schema(X).scitypes
     cat_inds = findall( x -> x <: Multiclass, types)
     cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
-    #@test_throws ERR_BAD_MIXED_COL_TYPES([2,3], types[[2,3]]) begin
+    @test_throws ERR_BAD_MIXED_COL_TYPES([2,3], types[[2,3]]) begin
     smotenc(X, y)
-    #end
+    end
 end
-=#
