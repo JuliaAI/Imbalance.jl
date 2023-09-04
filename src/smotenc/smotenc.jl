@@ -108,6 +108,8 @@ use SMOTE-NC to generate `n` new observations for that class.
 - `k`: Number of nearest neighbors to consider.
 - `cont_inds`: A vector of indices of the continuous features
 - `cat_inds`: A vector of indices of the categorical features
+- `knn_tree`: Decides the tree used in KNN computations. Either "Brute" or "Ball".
+    BallTree is much faster but may lead to innacurate results.
 - `rng`: Random number generator
 
 # Returns
@@ -119,6 +121,7 @@ function smotenc_per_class(
     cont_inds::AbstractVector{<:Int},
     cat_inds::AbstractVector{<:Int};
     k::Integer = 5,
+    knn_tree::AbstractString = "Brute",
     rng::AbstractRNG = default_rng(),
 )
     # Can't draw lines if there are no neighbors
@@ -131,7 +134,8 @@ function smotenc_per_class(
     # Build a KNN tree with the modified distance metric
     p = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(p, cont_inds, cat_inds)
-    tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
+    (knn_tree ∈ ["Ball", "Brute"]) || throw(ERR_WRNG_TREE(knn_tree))
+    tree = (knn_tree == "Brute") ? BruteTree(X, metric) : BallTree(X, metric)
     knn_map, _ = knn(tree, X, k + 1, true)
 
     # Generate n new observations
@@ -180,6 +184,8 @@ $(COMMON_DOCS["K"])
 
 $(COMMON_DOCS["RATIOS"])
 
+- `knn_tree`: Decides the tree used in KNN computations. Either "Brute" or "Ball".
+    BallTree can be much faster but may lead to innacurate results.
 $(COMMON_DOCS["RNG"])
 
 $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
@@ -281,13 +287,14 @@ function smotenc(
     cat_inds::AbstractVector{<:Int};
     k::Integer = 5,
     ratios = 1.0,
+    knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     rng = rng_handler(rng)
     # implictly infer the continuous indices
     cont_inds = setdiff(1:size(X, 2), cat_inds)
     Xover, yover =
-        generic_oversample(X, y, smotenc_per_class, cont_inds, cat_inds; ratios, k, rng)
+        generic_oversample(X, y, smotenc_per_class, cont_inds, cat_inds; ratios, k, knn_tree, rng)
     return Xover, yover
 end
 
@@ -297,6 +304,7 @@ function smotenc(
     y::AbstractVector;
     k::Integer = 5,
     ratios = 1.0,
+    knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
@@ -309,6 +317,7 @@ function smotenc(
         decode_func = smotenc_decoder,
         k,
         ratios,
+        knn_tree,
         rng,
     )
     return Xover, yover
@@ -320,6 +329,7 @@ function smotenc(
     y_ind::Integer;
     k::Integer = 5,
     ratios = 1.0,
+    knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
@@ -332,6 +342,7 @@ function smotenc(
         decode_func = smotenc_decoder,
         k,
         ratios,
+        knn_tree,
         rng,
     )
     return Xyover

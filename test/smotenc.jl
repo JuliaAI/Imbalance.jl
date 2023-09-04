@@ -6,7 +6,9 @@ using Imbalance:
     get_neighbors_mode,
     get_penalty,
     EuclideanWithPenalty,
-    ERR_BAD_MIXED_COL_TYPES
+    ERR_BAD_MIXED_COL_TYPES,
+    ERR_WRNG_TREE
+
 
 
 @testset "Testing get_penalty" begin
@@ -94,7 +96,7 @@ end
          Column3=["a", "b", "c", "d", "e"],
          Column4=[1.0, 2.0, 3.0, 4.0, 5.0]
     )
-    y = [1, 2, 3, 4, 5]
+    y = [1, 1, 1, 2, 2]
     X = Tables.columntable(X)
     # coerce first column to multiclass and last column to continuous
     # second and third column to text
@@ -103,6 +105,10 @@ end
     cat_inds = findall( x -> x <: Multiclass, types)
     cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
     @test_throws ERR_BAD_MIXED_COL_TYPES([2,3], types[[2,3]]) begin
-    smotenc(X, y)
+        smotenc(X, y)
+    end
+    @test_throws ERR_WRNG_TREE("KD") begin
+        X = coerce(X, :Column1=>Multiclass, :Column2=>Multiclass, :Column3=>Multiclass, :Column4=>Continuous)
+        smotenc(X, y; knn_tree="KD")
     end
 end

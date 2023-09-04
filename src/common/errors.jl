@@ -28,6 +28,7 @@ const WRN_K_TOO_BIG(k, n) =
 const ERR_BAD_MIXED_COL_TYPES(bad_cols, bad_types) =
     "Columns at indices $(bad_cols) are neither categorical nor continuous.\n Categorical columns must have scitype Multiclass or OrderedFactor and continuous columns must have scitype Count or Continuous.\n However, said columns have scitypes $(bad_types)."
 # May need to do similar checks for matrices but they are just numbers
+const ERR_WRNG_TREE(knn_tree) = "Expected KNN tree to be either 'BruteTree' or 'BallTree' but given is '$knn_tree'" 
 
 ### SMOTEN
 const ERR_BAD_NOM_COL_TYPES(bad_cols, bad_types) =

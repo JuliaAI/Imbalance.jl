@@ -20,6 +20,7 @@ using Conda
 
 
 include("test_utils.jl")
+
 @testset "common_utils" begin
     include("common_utils.jl")
 end
@@ -35,6 +36,9 @@ end
     include("mlj_interface.jl")
 end
 
+@testset "distance metrics"
+    include("distance_metrics.jl")
+end
 
 @testset "ROSE" begin
     include("rose.jl")
@@ -47,7 +51,6 @@ end
 @testset "SMOTE" begin
     include("smote.jl")
 end
-
 
 @testset "SMOTENC" begin
     include("smotenc.jl")

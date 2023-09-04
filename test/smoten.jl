@@ -11,7 +11,6 @@ using Imbalance:
 
 
 
-
 # Test that generated smote point is collinear with some pair of points
 @testset "generate_new_smote_point" begin
     X = [
@@ -69,7 +68,8 @@ end
     types = ScientificTypes.schema(X).scitypes
     cat_inds = findall( x -> x <: Multiclass, types)
     cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
+
     @test_throws ERR_BAD_NOM_COL_TYPES([2,3,4], types[[2,3,4]]) begin
-    smoten(X, y)
+        smoten(X, y)
     end
 end
