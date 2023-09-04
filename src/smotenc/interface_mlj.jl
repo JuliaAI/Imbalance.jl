@@ -53,7 +53,7 @@ MMI.metadata_pkg(
     SMOTENC,
     name = "Imbalance",
     package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-    package_url = "https://github.com/EssamWisam/Imbalance.jl",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
     is_pure_julia = true,
 )
 

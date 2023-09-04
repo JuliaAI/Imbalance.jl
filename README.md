@@ -5,7 +5,7 @@
 A Julia package with resampling methods to correct for class imbalance in a wide variety of classification settings.
 
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://essamwisam.github.io/Imbalance.jl/dev/)
-[![Tests](https://github.com/EssamWisam/Imbalance.jl/actions/workflows/Runtests.yml/badge.svg)](https://github.com/EssamWisam/Imbalance.jl/actions/workflows/Runtests.yml)
+[![Tests](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml)
 
 ## ⏬ Installation
 ```julia
@@ -110,4 +110,4 @@ One obvious possible remedy is to weight the smaller sums so that a learning alg
 To our knowledge, there are no existing maintained Julia packages that implement oversampling algorithms for multi-class classification problems or that handle both nominal and continuous features. This has served as a primary motivation for the creation of this package.
 
 ## 👥 Credits
-This package was created by [Essam Wisam](https://github.com/EssamWisam) as a Google Summer of Code project, under the mentorship of [Anthony Blaom](https://ablaom.github.io). Additionally, [Rik Huijzer](https://github.com/rikhuijzer) and his binary `SMOTE` implementation in `Resample.jl` have also been helpful.
+This package was created by [Essam Wisam](https://github.com/JuliaAI) as a Google Summer of Code project, under the mentorship of [Anthony Blaom](https://ablaom.github.io). Additionally, [Rik Huijzer](https://github.com/rikhuijzer) and his binary `SMOTE` implementation in `Resample.jl` have also been helpful.

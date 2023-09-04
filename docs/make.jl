@@ -15,7 +15,7 @@ Themes.compile(
 makedocs(
     sitename = "Imbalance.jl",
     authors = "Essam Wisam, mentored by Dr. Anthony Blaom",
-    repo="https://github.com/JuliaAI/TableTransforms.jl/",
+    repo="https://github.com/JuliaAI/Imbalance.jl/",
     format = Documenter.HTML(;
     assets=[
         "assets/favicon.ico",
@@ -37,4 +37,4 @@ makedocs(
 # Documenter can also automatically deploy documentation to gh-pages.
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
-deploydocs(repo = "github.com/EssamWisam/Imbalance.jl.git")
+deploydocs(repo = "github.com/JuliaAI/Imbalance.jl.git")
