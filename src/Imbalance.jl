@@ -7,61 +7,64 @@ module Imbalance
 using Random: AbstractRNG, default_rng, shuffle, Xoshiro
 using Statistics
 using StatsBase: mode, countmap
-using TransformsBase
 using LinearAlgebra
 using ScientificTypes
-using Parameters
 using NearestNeighbors, Distances
 using CategoricalDistributions
 using TableOperations
 using Tables
-using MLJModelInterface
 using OrderedCollections
 using CategoricalArrays
 using DocumenterTools
 using ProgressMeter
 using Memoization
 
-const MMI = MLJModelInterface
 
 include("commondocs.jl")
 include("errors.jl")
 include("table_wrappers.jl")
 include("generic_oversample.jl")
 include("generic_encoding.jl")
+include("common_smote.jl")
+include("mlj_interface.jl")
 include("utils.jl")
 export generate_imbalanced_data, checkbalance
 
 include("class_counts.jl")
-
-include("rose/rose.jl")
-include("rose/interface_mlj.jl")
-include("rose/interface_tables.jl")
-export rose, ROSE, TableTransforms
-
-include("common_smote.jl")
-include("smote/smote.jl")
-include("smote/interface_mlj.jl")
-include("smote/interface_tables.jl")
-export smote, SMOTE, SMOTE_t
-
-include("smotenc/smotenc.jl")
-include("smotenc/interface_mlj.jl")
-include("smotenc/interface_tables.jl")
-export smotenc, SMOTENC, SMOTENC_t
-
-
 include("random_oversample/random_oversample.jl")
-include("random_oversample/interface_mlj.jl")
-include("random_oversample/interface_tables.jl")
-export random_oversample, RandomOversampler, RandomOversampler_t
-
-
+include("rose/rose.jl")
+include("smote/smote.jl")
 include("smoten/smoten.jl")
-include("smoten/interface_mlj.jl")
-include("smoten/interface_tables.jl")
-export smoten, SMOTEN, SMOTEN_t
+include("smotenc/smotenc.jl")
+export random_oversample, rose, smote, smoten, smotenc
 
 
-include("mlj_interface.jl")
+module MLJ
+	using Random: AbstractRNG, default_rng
+	using MLJModelInterface
+	const MMI = MLJModelInterface
+	using ..Imbalance: random_oversample, rose, smote, smoten, 
+                       smotenc, COMMON_DOCS
+	include("random_oversample/interface_mlj.jl")
+	include("rose/interface_mlj.jl")
+	include("smote/interface_mlj.jl")
+	include("smotenc/interface_mlj.jl")
+	include("smoten/interface_mlj.jl")
+	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC
+end
+
+module TableTransforms
+	using Random: AbstractRNG, default_rng
+	using TransformsBase
+	using ..Imbalance: random_oversample, rose, smote, smoten, 
+                       smotenc, COMMON_DOCS, rowcount, revert_oversampling
+	include("random_oversample/interface_tables.jl")
+	include("rose/interface_tables.jl")
+	include("smote/interface_tables.jl")
+	include("smotenc/interface_tables.jl")
+	include("smoten/interface_tables.jl")
+	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC
+end
+
+
 end

@@ -1,22 +1,27 @@
-using Imbalance: ROSE_t, SMOTE_t, RandomOversampler_t, rose, smote, random_oversample
+using Imbalance: rose, smote, random_oversample
 
 using Test
 
+RandomOversampler = Imbalance.TableTransforms.RandomOversampler
+SMOTE = Imbalance.TableTransforms.SMOTE
+ROSE = Imbalance.TableTransforms.ROSE
 
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
-    @test isrevertible(SMOTE_t) == true
+    @test isrevertible(ROSE) == true
+    @test isrevertible(SMOTE) == true
+    @test isrevertible(RandomOversampler) == true
 end
 
 
 @testset "TableTransforms" begin
     y_ind = 3
-    smote_t = SMOTE_t(y_ind; k = 5, rng = 42)
-    rose_t = ROSE_t(y_ind; s = 1.0, rng = 42)
-    random_oversample_t = RandomOversampler_t(y_ind; rng = 42)
-    oversample_funs = [random_oversample, rose, random_oversample]
-    oversample_ts = [random_oversample_t, rose_t, random_oversample_t]
-    tables = ["DF", "RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"]
+    smote_t = SMOTE(y_ind; k = 5, rng = 42)
+    rose_t = ROSE(y_ind; s = 1.0, rng = 42)
+    random_oversample_t = RandomOversampler(y_ind; rng = 42)
+    oversample_funs = [random_oversample, rose, smote]
+    oversample_ts = [random_oversample_t, rose_t, smote_t]
+    tables = ["RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"]
 
     for i in eachindex(tables)
         for (oversample_fun, oversample_t) in zip(oversample_funs, oversample_ts)

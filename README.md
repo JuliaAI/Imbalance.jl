@@ -55,7 +55,7 @@ All implemented oversampling methods are considered static transforms and hence,
 This interface operates on single tables; it assumes that `y` is one of the columns of the given table. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed via `apply` is only one table `Xy`.
 ```julia
 using Imbalance
-using TableTransforms
+using Imbalance.TableTransforms
 
 # Generate imbalanced data
 num_rows = 200
@@ -65,7 +65,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate SMOTE model
-oversampler = SMOTE_t(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+oversampler = SMOTE(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xyover = Xy |> oversampler       # can chain with other table transforms                  
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```

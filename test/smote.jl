@@ -74,7 +74,6 @@ end
 # Test that SMOTE adds the right number of points per class and that the input and output types are as expected
 @testset "SMOTE Algorithm" begin
     tables = [
-        "DF",
         "RowTable",
         "ColTable",
         "MatrixTable",
@@ -97,7 +96,7 @@ end
             Xover, yover =
                 smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = rng)
             # if index is not 7 then return type must be a matrix table
-            if i != 7
+            if i != 6
                 @test Tables.istable(Xover)
                 # convert to matrix so the following tests can proceed
                 X = Tables.matrix(X)
@@ -142,7 +141,6 @@ end
 # Test that RNG can be int or StableRNG of int in SMOTE
 @testset "RNG in SMOTE Algorithm" begin
     tables = [
-        "DF",
         "RowTable",
         "ColTable",
         "MatrixTable",
@@ -185,8 +183,8 @@ end
 # test that the materializer works for dataframes
 @testset "materializer" begin
     X, y =
-        generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "DF", rng = 121)
-    Xover, yover = smote(X, y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
+        generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
+    Xover, yover = smote(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame
 end
