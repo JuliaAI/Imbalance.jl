@@ -36,7 +36,7 @@ end
     include("mlj_interface.jl")
 end
 
-@testset "distance metrics"
+@testset "distance metrics" begin
     include("distance_metrics.jl")
 end
 
