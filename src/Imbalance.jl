@@ -19,13 +19,15 @@ using ProgressMeter
 using Memoization
 
 
-include("commondocs.jl")
-include("errors.jl")
+include("common/docs.jl")
+include("common/errors.jl")
+include("common/utils.jl")
+
 include("table_wrappers.jl")
 include("generic_oversample.jl")
 include("generic_encoding.jl")
-include("common_smote.jl")
-include("utils.jl")
+
+include("extras.jl")
 export generate_imbalanced_data, checkbalance
 
 include("class_counts.jl")

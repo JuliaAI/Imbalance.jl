@@ -20,11 +20,11 @@ using Conda
 
 
 include("test_utils.jl")
-@testset "common" begin
-    include("common.jl")
+@testset "common_utils" begin
+    include("common_utils.jl")
 end
 
-@testset "wrappers" begin
+@testset "table_wrappers" begin
     include("table_wrappers.jl")
 end
 
@@ -41,7 +41,7 @@ end
 end
 
 @testset "Basic Random Oversampler" begin
-    include("basic.jl")
+    include("random_oversample.jl")
 end
 
 @testset "SMOTE" begin

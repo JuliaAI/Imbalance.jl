@@ -1,20 +1,31 @@
 
-"""
-Label encode each column in a given table X
-"""
-smotenc_encoder(X) = generic_encoder(X; error_checker=check_scitypes_smotenc,  return_cat_inds = true)
-"""
-Label decode each column in a given table X
-"""
-smotenc_decoder(X, d) = generic_decoder(X, d)
-
 # SMOTE-NC uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
-struct EuclideanWithPenalty <: Metric
-    penalty::Float64
-    cont_inds::AbstractVector{<:Int}
-    cat_inds::AbstractVector{<:Int}
+include("../distance_metrics/penalized_euclidean.jl")
+
+"""
+Label encode and decode each column in a given table X
+"""
+smotenc_encoder(X) = generic_encoder(X; error_checker=check_scitypes_smotenc,  return_cat_inds = true)
+smotenc_decoder(X, d) = generic_decoder(X, d)
+
+"""
+Check that all columns are categorical . If not, throw an error.
+
+# Arguments
+- `ncols`: Number of columns
+- `cat_inds`: Indices of categorical columns
+- `cont_inds`: Indices of continuous columns
+- `types`: Types of each column
+
+"""
+function check_scitypes_smotenc(ncols, cat_inds, cont_inds, types)
+    bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))
+    if !isempty(bad_cols)
+        throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
+    end
 end
+
 
 """
 Given a matrix of observations `X`, find the median of the standard deviations of the
@@ -36,29 +47,6 @@ function get_penalty(X::AbstractMatrix{<:AbstractFloat}, cont_inds::AbstractVect
     return σₘ^2
 end
 
-
-"""
-This overloads the `evaluate` function of the `Metric` struct to use the modified
-distance metric which adds a penalty for each pair of corresponding categorical
-variables that are not equal.
-
-# Arguments
-- `d`: The modified distance metric
-- `x₁`: First observation
-- `x₂`: Second observation
-
-# Returns
-- `dist`: The distance between `x₁` and `x₂` using the modified distance metric
-"""
-function Distances.evaluate(d::EuclideanWithPenalty, x₁, x₂)
-    x₁_cont, x₁_cat = x₁[d.cont_inds], x₁[d.cat_inds]
-    x₂_cont, x₂_cat = x₂[d.cont_inds], x₂[d.cat_inds]
-    e = sqeuclidean(x₁_cont, x₂_cont)
-    h = hamming(x₁_cat, x₂_cat)
-    # distance computed as described above
-    dist = e + d.penalty * h
-    return dist
-end
 
 
 """

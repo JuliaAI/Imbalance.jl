@@ -1,4 +1,58 @@
 
+# Used by SMOTE and SMOTENC
+"""
+Generate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
+
+# Arguments
+- `x₁`: First observation 
+- `x₂`: Second observation 
+- `rng`: Random number generator
+
+# Returns
+-  New observation `x` as a vector that satisfies `x = (x₂ - x₁) * r + x₁`
+    where `r`` is a random number between `0` and `1`
+"""
+function get_collinear_point(
+    x₁::AbstractVector,
+    x₂::AbstractVector;
+    rng::AbstractRNG = default_rng(),
+)
+    r = rand(rng)
+    # Equivalent to (x₂  .- x₁ ) .* r .+ x₁  but avoids allocating a new vector
+    return @. (1 - r) * x₁ + r * x₂
+end
+
+
+
+# Used by SMOTE, SMOTENC
+"""
+Randomly return one of the k-nearest neighbor of a given observation `x` from an observations 
+matrix `X`
+
+# Arguments
+- `X`: A matrix where each column is an observation
+- `ind`: index of point for which we need random neighbor
+- `knn_map`: A vector of vectors mapping each element in X by index to its nearest neighbors' indices
+- `rng`: Random number generator
+
+# Returns
+- `x_randneigh`: A random observation from the k-nearest neighbors of x
+"""
+function get_random_neighbor(
+    X::AbstractMatrix{<:Real},
+    ind::Integer,
+    knn_map;
+    rng::AbstractRNG = default_rng(),
+)
+    # 1. extract the neighbors inds vector and exclude point itself
+    ind_neighs = knn_map[ind][2:end]
+    # 2. choose a random neighbor index
+    ind_rand_neigh = ind_neighs[rand(rng, 1:length(ind_neighs))]
+    # 3. return the corresponding point
+    x_randneigh = X[:, ind_rand_neigh]
+    return x_randneigh
+end
+
 """
 Choose a random point from the given observations matrix `X` and generate a new point that 
 randomly lies in the line joining the random point and randomly one of its k-nearest neighbors. 
@@ -26,6 +80,30 @@ function generate_new_smote_point(
     return x_new
 end
 
+
+# Used by SMOTE, SMOTENC and SMOTEN
+"""
+This function is only called when n>1 and checks whether 0<k<n or not. If k<0, it throws an error.
+and if k>=n, it warns the user and sets k=n-1.
+
+# Arguments
+- `k`: Number of nearest neighbors to consider
+- `n`: Number of observations
+
+# Returns
+-  Number of nearest neighbors to consider
+
+"""
+function check_k(k, n_class)
+    if k < 1
+        throw(ERR_NONPOS_K(k))
+    end
+    if k >= n_class
+        @warn WRN_K_TOO_BIG(k, n_class)
+        k = n_class - 1
+    end
+    return k
+end
 
 """
 Assuming that all the observations in the observation matrix X belong to the same class,
