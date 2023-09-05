@@ -5,44 +5,10 @@ using Imbalance:
     get_random_neighbor,
     precompute_value_encodings,
     precompute_mvdm_distances,
-    ValueDifference
+    ValueDifference,
+    ERR_BAD_NOM_COL_TYPES
 
 
-# TODO: make test work with Github actions
-@testset "MVDM Encoding and Distance" begin
-    Conda.add("imbalanced-learn")
-    Conda.add("numpy")
-    Conda.add("scikit-learn")
-    pyimport_conda("imblearn", "imbalanced-learn")
-    pyimport_conda("numpy", "numpy")
-    pyimport_conda("sklearn", "scikit-learn")
-    #pyimport_conda("imblearn", "imbalanced-learn")
-    # Import numpy and other libraries
-    np = pyimport("numpy")
-    imblearn = pyimport("imblearn")
-    fromsklearn = pyimport("sklearn.preprocessing")
-
-    # Set the dimensions of the matrix
-    rows = 50
-    cols = 8
-
-    # Generate a random matrix X and vector y in Python
-    X = np.random.randint(1, 11, size=(rows, cols))
-    y = np.random.randint(1, 6, size=rows)
-
-    mvdm_encoder_python = imblearn.metrics.pairwise.ValueDifferenceMetric().fit(X, y)
-
-    mvdm_encoder, num_cats_per_column = precompute_value_encodings(X, y)
-    for i ∈ 1:8
-        @test mvdm_encoder_python.proba_per_class_[i][2:end,:] ≈ mvdm_encoder[i]'
-    end
-
-    all_pairwise_mvdm = precompute_mvdm_distances(mvdm_encoder, num_cats_per_column)
-
-    V = ValueDifference(all_pairwise_mvdm)
-    D = pairwise(V, X, X, dims=1)
-    @test sum(pairwise(V, X, X, dims=1)) ≈ sum(D)
-end
 
 
 # Test that generated smote point is collinear with some pair of points
@@ -61,9 +27,9 @@ end
     all_pairwise_vdm = precompute_mvdm_distances(mvdm_encoder, num_categories_per_col)
     metric = ValueDifference(all_pairwise_vdm)
     tree = BruteTree(X', metric)
-    knn_matrix, _ = knn(tree, X', k + 1)
+    knn_map, _ = knn(tree, X', k + 1)
 
-    new_point = generate_new_smoten_point(X', knn_matrix; k, rng)
+    new_point = generate_new_smoten_point(X', knn_map; rng)
 
     @test new_point == [4, 3, 1, 2]
 end
@@ -84,4 +50,26 @@ end
     all_pairwise_vdm = precompute_mvdm_distances(mvdm_encoder, num_categories_per_col)
     smote_points = smoten_per_class(X', n, all_pairwise_vdm; k, rng)
     @test size(smote_points, 2) == n
+end
+
+
+# Test bad column types error
+@testset "smotenc throws error if column types are not supported" begin
+    X = (Column1=[1, 2, 3, 4, 5],
+         Column2=["a", "b", "c", "d", "e"],
+         Column3=["a", "b", "c", "d", "e"],
+         Column4=[1.0, 2.0, 3.0, 4.0, 5.0]
+    )
+    y = [1, 2, 3, 4, 5]
+    X = Tables.columntable(X)
+    # coerce first column to multiclass and last column to continuous
+    # second and third column to text
+    X = coerce(X, :Column1=>Multiclass, :Column4=>Continuous)
+    types = ScientificTypes.schema(X).scitypes
+    cat_inds = findall( x -> x <: Multiclass, types)
+    cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
+
+    @test_throws ERR_BAD_NOM_COL_TYPES([2,3,4], types[[2,3,4]]) begin
+        smoten(X, y)
+    end
 end
