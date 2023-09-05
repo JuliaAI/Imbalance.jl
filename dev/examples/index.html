@@ -1,118 +1,51 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Examples · Imbalance.jl</title><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script><link href="../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&amp;display=swap" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../"><img src="../assets/logo.gif" alt="Imbalance.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../">Imbalance.jl</a></span></div><form class="docs-search" action="../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../">Introduction</a></li><li><a class="tocitem" href="../algorithms/">Algorithms</a></li><li><a class="tocitem" href="../walkthrough/">Walkthrough</a></li><li class="is-active"><a class="tocitem" href>Examples</a></li><li><a class="tocitem" href="../contributing/">Contributing</a></li><li><a class="tocitem" href="../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Examples</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Examples</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/JuliaAI/Imbalance.jl/" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    max-width: 1200px;
-    padding: 20px;
-  }
-
-  .grid-item {
-    position: relative;
-    overflow: hidden;
-    border-radius: 15px;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-
-  .grid-item img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  .grid-item .title {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #fff;
-    padding: 8px 15px;
-    font-size: 16px;
-  }
-
-  .title p {
-    font-weight: normal !important;
-    display: none;
-  }
-
-
-
-  .grid-item:hover p {
-    display: block;
-  }
-
-  .grid-item:hover #colab {
-    display: block;
-  }
-
-  #colab {
-    border-radius: 25%;
-    position: absolute;
-    top: 3px;
-    right: 3px;
-    width: 11%;
-    display: none;
-  }
-</style>
-
-</head>
-<body>
 
   <div class="grid">
     <div class="grid-item">
-  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/main/examples/effect_of_ratios.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
-  <a href="/examples/effect_of_ratios">
-  <img src="/examples/assets/iris smote.jpeg" alt="Image">
-  <div class="title">Effect of Ratios Hyperparameter
+  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/effect_of_ratios.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
+  <a href="./effect_of_ratios">
+  <img src="./assets/iris smote.jpeg" alt="Image">
+  <div class="item-title">Effect of Ratios Hyperparameter
   <p>In this tutorial we use an SVM and SMOTE and the Iris data to study 
                       how the decision regions change with the amount of oversampling</p>
   </div>
   </a>
 </div>
   <div class="grid-item">
-  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/main/examples/effect_of_s.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
-  <a href="/examples/effect_of_s">
-  <img src="/examples/assets/iris rose.jpeg" alt="Image">
-  <div class="title">From Random Oversampling to ROSE
+  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/effect_of_s.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
+  <a href="./effect_of_s">
+  <img src="./assets/iris rose.jpeg" alt="Image">
+  <div class="item-title">From Random Oversampling to ROSE
   <p>In this tutorial we study the `s` parameter in rose and the effect
                         of increasing it.</p>
   </div>
   </a>
 </div>
   <div class="grid-item">
-  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/main/examples/smote_churn_dataset.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
-  <a href="/examples/smote_churn_dataset">
-  <img src="/examples/assets/churn smote.jpeg" alt="Image">
-  <div class="title">SMOTE on Customer Churn Data
+  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/smote_churn_dataset.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
+  <a href="./smote_churn_dataset">
+  <img src="./assets/churn smote.jpeg" alt="Image">
+  <div class="item-title">SMOTE on Customer Churn Data
   <p>In this tutorial we apply SMOTE and random forest to predict customer churn based 
                         on continuous attributes.</p>
   </div>
   </a>
 </div>
   <div class="grid-item">
-  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/main/examples/smoten_mushroom.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
-  <a href="/examples/smoten_mushroom">
-  <img src="/examples/assets/mushy.jpeg" alt="Image">
-  <div class="title">SMOTEN on Mushroom Data
+  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/smoten_mushroom.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
+  <a href="./smoten_mushroom">
+  <img src="./assets/mushy.jpeg" alt="Image">
+  <div class="item-title">SMOTEN on Mushroom Data
   <p>In this tutorial we use a purely categorical dataset to predict mushroom odour.</p>
   </div>
   </a>
 </div>
   <div class="grid-item">
-  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/main/examples/smotenc_churn_dataset.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
-  <a href="/examples/smotenc_churn_dataset">
-  <img src="/examples/assets/churn smoten.jpeg" alt="Image">
-  <div class="title">SMOTENC on Customer Churn Data
+  <a href="https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/smotenc_churn_dataset.ipynb"><img id="colab" src="/examples/assets/colab.png"/></a>
+  <a href="./smotenc_churn_dataset">
+  <img src="./assets/churn smoten.jpeg" alt="Image">
+  <div class="item-title">SMOTENC on Customer Churn Data
   <p>In this tutorial we extend the SMOTE tutorial to include both categorical and continuous
                         data for churn prediction</p>
   </div>
@@ -121,7 +54,4 @@
 
   </div>
 
-<script>
-</body>
-</html>
-</article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../walkthrough/">« Walkthrough</a><a class="docs-footer-nextpage" href="../contributing/">Contributing »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 5 September 2023 12:02">Tuesday 5 September 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../walkthrough/">« Walkthrough</a><a class="docs-footer-nextpage" href="../contributing/">Contributing »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 5 September 2023 13:03">Tuesday 5 September 2023</span>. Using Julia version 1.8.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
