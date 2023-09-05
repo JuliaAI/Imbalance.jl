@@ -140,6 +140,7 @@ function smotenc_per_class(
     σₘ = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
     tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
+    
     # Generate n new observations
     Xnew = zeros(Float32, size(X, 1), n)
     p = Progress(n)
