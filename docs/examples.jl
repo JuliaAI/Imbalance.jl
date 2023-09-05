@@ -54,7 +54,7 @@ for item in data
   colab_link = item["colab_link"]
     grid_item = """
       <div class="grid-item">
-      <a href="$colab_link"><img id="colab" src="/examples/assets/colab.png"/></a>
+      <a href="$colab_link"><img id="colab" src="./assets/colab.png"/></a>
       <a href="$link">
       <img src="$img_src" alt="Image">
       <div class="item-title">$title
