@@ -17,56 +17,54 @@ $(COMMON_DOCS["RATIOS"])
     that class to achieve the given ratio relative to the majority class.
 """
 # Method for handling ratios as a dictionary
-function get_class_counts(y::AbstractVector, ratios::Dict{T,<:AbstractFloat}) where {T}
+function get_class_counts(y::AbstractVector, ratios::Dict{T,<:AbstractFloat}; reference="majority") where {T}
     label_counts = countmap(y)
-    majority_count = maximum(values(label_counts))
+    (reference in ["majority", "minority"]) || throw("reference must be either 'majority' or 'minority'")
+    ref_count = (reference == "majority") ? maximum(values(label_counts)) : minimum(values(label_counts))
     # extra_counts shall map each class to the number of extra samples needed
     # for the class to satisfy ratios
-    extra_counts = OrderedDict{T,Int}()
+    counts = OrderedDict{T,Int}()
 
     # each class needs to be the size specified in `ratios`
     for (label, count) in label_counts
         (label in keys(ratios)) || continue
         ratios[label] > 0 || throw(ERR_INVALID_RATIO(label))
-        extra_counts[label] =
-            calculate_extra_counts(ratios[label], majority_count, count, label)
+        counts[label] = (reference == "majority") ?
+            calculate_extra_counts(ratios[label], ref_count, count, label) :
+            calculate_undersampled_counts(ratios[label], ref_count, count, label)
     end
-    return extra_counts
+    return counts
 end
 
 # Method for handling ratios as AbstractFloat
-function get_class_counts(y::AbstractVector{T}, ratio::AbstractFloat) where {T}
+function get_class_counts(y::AbstractVector{T}, ratio::AbstractFloat; reference="majority") where {T}
     label_counts = countmap(y)
-    majority_count = maximum(values(label_counts))
-    extra_counts = OrderedDict{T,Int}()
-
+    (reference in ["majority", "minority"]) || throw("reference must be either 'majority' or 'minority'")
+    ref_count = (reference == "majority") ? maximum(values(label_counts)) : minimum(values(label_counts))
+    counts = OrderedDict{T,Int}()
     # each class needs to be the size specified in `ratio`
     for (label, count) in label_counts
-        extra_counts[label] = calculate_extra_counts(ratio, majority_count, count, label)
+        ratio > 0 || throw(ERR_INVALID_RATIO(label))
+        counts[label] = (reference == "majority") ?
+        calculate_extra_counts(ratio, ref_count, count, label) :
+        calculate_undersampled_counts(ratio, ref_count, count, label)
     end
 
-    return extra_counts
+    return counts
 end
 
-# Default methods for when ratios is nothing or not given
-function get_class_counts(y::AbstractVector)
-    get_class_counts(y, 1.0)
-end
-function get_class_counts(y::AbstractVector, ratio::Nothing)
-    get_class_counts(y, 1.0)
-end
 
 """
 Helper function for calculating the number of extra samples needed for a class given a ratio, 
 its count and majoiry count.
-It assumes that if ratio is `a` and the majority count is `N` then the class should have `aN` samples.
+It assumes that if ratio is `a` and the majority count is `N` then the class should have `aN` samples so
+it computes the number of extra samples.
 """
 function calculate_extra_counts(
     ratio::AbstractFloat,
     majority_count::Integer,
     label_count::Integer,
-    label,
-)
+    label)
     extra_count = Int(round(ratio * majority_count)) - label_count
     if extra_count < 0
         old_ratio = label_count / majority_count
@@ -76,5 +74,27 @@ function calculate_extra_counts(
         extra_count = 0
     end
     return extra_count
+end
+
+
+"""
+Helper function for calculating the number of final samples needed for a class given a ratio, 
+its count and minority count.
+It assumes that if ratio is `a` and the minority count is `N` then the class should have `aN` samples.
+"""
+function calculate_undersampled_counts(
+    ratio::AbstractFloat,
+    minority_count::Integer,
+    label_count::Integer,
+    label)
+    undersampled_count =  Int(round(ratio * minority_count)) 
+    if undersampled_count > label_count
+        old_ratio = label_count / minority_count
+        new_ratio = ratio
+        extra_counts = undersampled_count - label_count
+        @warn WRN_OVERSAMPLE(new_ratio, label, extra_counts, old_ratio)
+        undersampled_count = label_count
+    end
+    return undersampled_count
 end
 

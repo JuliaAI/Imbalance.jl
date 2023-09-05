@@ -5,14 +5,15 @@ using Imbalance:
     randcols,
     rng_handler,
     ERR_INVALID_RATIO,
-    WRN_UNDERSAMPLE
+    WRN_UNDERSAMPLE,
+    WRN_OVERSAMPLE
 
 
 @testset "get_class_counts" begin
     @testset "Equalize classes" begin
         y = [1, 1, 2, 3, 3, 3]          # majority has 3 observations
         expected_needed_counts = Dict(1 => 1, 2 => 2, 3 => 0)
-        counts = get_class_counts(y)
+        counts = get_class_counts(y, 1.0)
         @test counts == expected_needed_counts
     end
 
@@ -47,7 +48,26 @@ using Imbalance:
         counts = get_class_counts(y, ratio)
         @test counts == expected_needed_counts
     end
+
+    @testset "testing undersample dict ratio" begin
+        y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3]
+        ratios = Dict(0=>2.0, 1=>0.5, 2=>1.0, 3=>1.0)
+        @test get_class_counts(y, ratios; reference="minority") == Dict(0=>4, 2=>2, 3=>2, 1=>1)
+    end
+    
+    @testset "testing undersample float ratio" begin
+        y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3]
+        get_class_counts(y, 0.5; reference="minority") == Dict(0=>1, 2=>1, 3=>1, 1=>1)
+    end
+    
+    @testset "invalid ratio warning" begin
+        @test_logs (:warn, WRN_OVERSAMPLE(2.0, 1, 2, 1.0)) begin
+                y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3]
+                get_class_counts(y, 2.0; reference="minority")
+            end
+    end
 end
+
 
 
 @testset "randcols" begin
