@@ -17,18 +17,15 @@ function rose_per_class(
     s::AbstractFloat = 1.0,
     rng::AbstractRNG = default_rng(),
 )
-    # sample n rows from X
+    # sample n cols from X
     Xnew = randcols(rng, X, n)
     # For s == 0 this is just random oversampling
-    if s ≈ 0.0
-        return Xnew
-    end
-
+    s ≈ 0.0 && return Xnew
     # compute the standard deviation feature-wise
-    σs = vec(std(Xnew, dims = 2))
+    σs = vec(std(X, dims = 2))
     # compute h and then H as in the paper
-    d = size(Xnew, 1)
-    N = size(Xnew, 2)
+    d = size(X, 1)  
+    N = size(X, 2)
     h = (4 / ((d + 2) * N))^(1 / (d + 4))
     # make a diagonal matrix of the result
     H = Diagonal(σs * s * h)

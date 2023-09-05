@@ -1,14 +1,65 @@
-# Disclaimer: This implementation is inspired by that of Resample.jl
 
+# Used by SMOTE and SMOTENC
+"""
+Generate a new random observation that lies in the line joining the two observations `x₁` and `x₂`
+
+# Arguments
+- `x₁`: First observation 
+- `x₂`: Second observation 
+- `rng`: Random number generator
+
+# Returns
+-  New observation `x` as a vector that satisfies `x = (x₂ - x₁) * r + x₁`
+    where `r`` is a random number between `0` and `1`
+"""
+function get_collinear_point(
+    x₁::AbstractVector,
+    x₂::AbstractVector;
+    rng::AbstractRNG = default_rng(),
+)
+    r = rand(rng)
+    # Equivalent to (x₂  .- x₁ ) .* r .+ x₁  but avoids allocating a new vector
+    return @. (1 - r) * x₁ + r * x₂
+end
+
+
+
+# Used by SMOTE, SMOTENC
+"""
+Randomly return one of the k-nearest neighbor of a given observation `x` from an observations 
+matrix `X`
+
+# Arguments
+- `X`: A matrix where each column is an observation
+- `ind`: index of point for which we need random neighbor
+- `knn_map`: A vector of vectors mapping each element in X by index to its nearest neighbors' indices
+- `rng`: Random number generator
+
+# Returns
+- `x_randneigh`: A random observation from the k-nearest neighbors of x
+"""
+function get_random_neighbor(
+    X::AbstractMatrix{<:Real},
+    ind::Integer,
+    knn_map;
+    rng::AbstractRNG = default_rng(),
+)
+    # 1. extract the neighbors inds vector and exclude point itself
+    ind_neighs = knn_map[ind][2:end]
+    # 2. choose a random neighbor index
+    ind_rand_neigh = ind_neighs[rand(rng, 1:length(ind_neighs))]
+    # 3. return the corresponding point
+    x_randneigh = X[:, ind_rand_neigh]
+    return x_randneigh
+end
 
 """
 Choose a random point from the given observations matrix `X` and generate a new point that 
 randomly lies in the line joining the random point and randomly one of its k-nearest neighbors. 
 
 # Arguments
-- `X`: A matrix where each row is an observation
-- `tree`: A k-d tree representation of the observations matrix X
-- `k`: Number of nearest neighbors to consider
+- `X`: A matrix where each column is an observation
+- `knn_map`: A vector of vectors mapping each element in X by index to its nearest neighbors' indices
 - `rng`: Random number generator
 
 # Returns
@@ -16,19 +67,43 @@ randomly lies in the line joining the random point and randomly one of its k-nea
 """
 function generate_new_smote_point(
     X::AbstractMatrix{<:AbstractFloat},
-    tree;
-    k::Integer,
+    knn_map;
     rng::AbstractRNG,
 )
-    # 1. Choose a random point from X
-    x_rand = randcols(rng, X)
-    # 2. Choose a random point from the k-nearest neighbors of x_rand
-    x_randneigh = get_random_neighbor(X, tree, x_rand; k, rng)
+    # 1. Choose a random point from X (by index)
+    ind = rand(rng, 1:size(X, 2))
+    x_rand = X[:, ind]
+    # 2. Choose a random point from its k-nearest neighbors 
+    x_rand_neigh = get_random_neighbor(X, ind, knn_map; rng)
     # 3. Generate a new point that randomly lies in the line between them
-    x_new = get_collinear_point(x_rand, x_randneigh; rng)
+    x_new = get_collinear_point(x_rand, x_rand_neigh; rng)
     return x_new
 end
 
+
+# Used by SMOTE, SMOTENC and SMOTEN
+"""
+This function is only called when n>1 and checks whether 0<k<n or not. If k<0, it throws an error.
+and if k>=n, it warns the user and sets k=n-1.
+
+# Arguments
+- `k`: Number of nearest neighbors to consider
+- `n`: Number of observations
+
+# Returns
+-  Number of nearest neighbors to consider
+
+"""
+function check_k(k, n_class)
+    if k < 1
+        throw(ERR_NONPOS_K(k))
+    end
+    if k >= n_class
+        @warn WRN_K_TOO_BIG(k, n_class)
+        k = n_class - 1
+    end
+    return k
+end
 
 """
 Assuming that all the observations in the observation matrix X belong to the same class,
@@ -53,15 +128,19 @@ function smote_per_class(
     # Can't draw lines if there are no neighbors
     n_class = size(X, 2)
     n_class == 1 && (@warn WRN_SINGLE_OBS; return X)
+
     # Automatically fix k if needed
     k = check_k(k, n_class)
+
     # Build KDTree for KNN
     tree = KDTree(X)
+    knn_map, _ = knn(tree, X, k + 1, true)
+
     # Generate n new observations
     Xnew = zeros(Float32, size(X, 1), n)
     p = Progress(n)
     for i=1:n
-        Xnew[:, i] = generate_new_smote_point(X, tree; k, rng)
+        Xnew[:, i] = generate_new_smote_point(X, knn_map; rng)
         next!(p)
     end
     return Xnew
