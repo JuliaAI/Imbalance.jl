@@ -1,3 +1,6 @@
+"""
+This file automatically generates the grid in examples.md from a given Julia dictionary.
+"""
 
 data = [
     Dict(
