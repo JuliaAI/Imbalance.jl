@@ -1,0 +1,5 @@
+always_for_in = true
+always_use_return = true
+whitespace_typedefs = true
+whitespace_in_kwargs = true
+remove_extra_newlines = true
