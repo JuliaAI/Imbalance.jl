@@ -3,7 +3,8 @@ using Imbalance:
     rose,
     random_oversample,
     smotenc,
-    smoten
+    smoten,
+    generate_imbalanced_data
 
 
 @testset "Random Oversampler MLJ" begin
@@ -51,4 +52,18 @@ end
     @test isempty(failures)
 end
 
-# For SMOTEN, need dataset with categorical variables
+# For SMOTEN, need dataset with categorical variables. let's (perhaps) consider a PR later.
+@testset "SMOTEN MLJ" begin   
+    num_rows = 100
+    num_cont_feats = 0
+    probs = [0.5, 0.2, 0.3]
+
+    cat_feats_num_vals = [3, 4, 2, 5]
+
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, cat_feats_num_vals)
+    X = DataFrame(X)
+    X = coerce(X, autotype(X, :few_to_finite))
+    smotenc_model = Imbalance.MLJ.SMOTEN(k=5, ratios=Dict(0=>1.2, 1=> 1.2, 2=>1.2), rng=42)
+    mach = machine(smotenc_model)
+    @test transform(mach, X, y) == smoten(X, y; k = 5, ratios = Dict(0=>1.2, 1=> 1.2, 2=>1.2), rng = 42)
+end

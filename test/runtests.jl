@@ -12,6 +12,7 @@ using MLJBase: machine, transform
 using StableRNGs: StableRNG
 using TableTransforms
 using ScientificTypes
+using IOCapture
 ENV["PYTHON"]=""
 import Pkg; Pkg.build("PyCall")
 using PyCall       
@@ -20,7 +21,6 @@ using Conda
 
 
 include("test_utils.jl")
-
 @testset "common_utils" begin
     include("common_utils.jl")
 end
@@ -28,14 +28,12 @@ end
 @testset "table_wrappers" begin
     include("table_wrappers.jl")
 end
-
 @testset "tabletransforms" begin
     include("tabletr_interface.jl")
 end
 @testset "MLJ Interface" begin
     include("mlj_interface.jl")
 end
-
 @testset "distance metrics" begin
     include("distance_metrics.jl")
 end

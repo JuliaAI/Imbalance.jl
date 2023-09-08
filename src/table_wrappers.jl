@@ -21,7 +21,7 @@ function matrixify(X)
     if Tables.columnaccess(X)
         columns = Tables.columns(X)
         names = Tables.columnnames(columns)
-        X = Tables.matrix(columns)
+        X = Tables.matrix(X)
     else
         iter = iterate(Tables.rows(X))
         names = iter === nothing ? () : Tables.columnnames(first(iter))
