@@ -2,7 +2,7 @@ name: Documenter
 on:
   push:
     branches:
-      - Doc-Examples
+      - dev
     tags: '*'
   pull_request:
 jobs:
