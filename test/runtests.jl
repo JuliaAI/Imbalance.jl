@@ -11,6 +11,7 @@ using NearestNeighbors, Distances
 using MLJBase: machine, transform
 using StableRNGs: StableRNG
 using TableTransforms
+using TransformsBase
 using ScientificTypes
 using IOCapture
 ENV["PYTHON"]=""

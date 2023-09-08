@@ -15,11 +15,11 @@ SMOTENC = Imbalance.TableTransforms.SMOTENC
     @test isrevertible(RandomOversampler) == true
     @test isrevertible(SMOTEN) == true
     @test isrevertible(SMOTENC) == true
-    @test isinvertible(ROSE) == false
-    @test isinvertible(SMOTE) == false
-    @test isinvertible(RandomOversampler) == false
-    @test isinvertible(SMOTEN) == false
-    @test isinvertible(SMOTENC) == false
+    @test TransformsBase.isinvertible(ROSE) == false
+    @test TransformsBase.isinvertible(SMOTE) == false
+    @test TransformsBase.isinvertible(RandomOversampler) == false
+    @test TransformsBase.isinvertible(SMOTEN) == false
+    @test TransformsBase.isinvertible(SMOTENC) == false
 end
 
 
