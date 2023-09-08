@@ -132,6 +132,10 @@ function smotenc_per_class(
     k = check_k(k, n_class)
 
     # Build a KNN tree with the modified distance metric
+    σₘ = get_penalty(X, cont_inds)
+    metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
+    tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
+    
     p = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(p, cont_inds, cat_inds)
     (knn_tree ∈ ["Ball", "Brute"]) || throw(ERR_WRNG_TREE(knn_tree))

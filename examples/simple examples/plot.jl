@@ -1,5 +1,5 @@
-
-
+import Pkg; Pkg.add("Colors")
+using Colors
 
 """
 Plot the data before and after oversampling in a 4x4 grid where the first row is 
@@ -25,7 +25,6 @@ function plot_data(y_before, y_after, X_before, X_after; hist_only = false)
     end
 
     # Frequency table
-    # Find labels of y
     labels = unique(y_before)
 
     # map labels to integers
