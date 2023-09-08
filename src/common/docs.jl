@@ -25,7 +25,13 @@ const COMMON_DOCS = Dict(
         - Can be a dictionary mapping each class to the ratio of the needed number of observations for that class to the \
         initial number of observations of the majority class
     """,
-
+    "RATIOS-UNDERSAMPLE" => """
+    - `ratios=1.0`: A parameter that controls the amount of undersampling to be done for each class
+        - Can be a float and in this case each class will be undersampled to the size of the minority class times the float. By \
+        default, all classes are undersampled to the size of the minority class
+        - Can be a dictionary mapping each class to the ratio of the needed number of observations for that class to the \
+        initial number of observations in the minority class
+    """,
     "RNG" => """
     - `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` 
         seed to be used with `Xoshiro`\n

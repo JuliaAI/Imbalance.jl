@@ -23,7 +23,7 @@ include("common/errors.jl")
 include("common/utils.jl")
 
 include("table_wrappers.jl")
-include("generic_oversample.jl")
+include("generic_resample.jl")
 include("generic_encoding.jl")
 
 include("extras.jl")

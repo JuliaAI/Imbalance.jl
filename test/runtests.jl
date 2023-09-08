@@ -29,6 +29,11 @@ end
 @testset "table_wrappers" begin
     include("table_wrappers.jl")
 end
+
+@testset "generic_resample" begin
+    include("generic_resample.jl")
+end
+
 @testset "tabletransforms" begin
     include("tabletr_interface.jl")
 end
