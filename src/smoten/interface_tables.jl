@@ -52,7 +52,7 @@ Apply the SMOTEN transform to a table Xy
 - `cache`: A cache that can be used to revert the oversampling
 """
 function TransformsBase.apply(s::SMOTEN, Xy)
-    Xyover = SMOTENn(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng, 
+    Xyover = smoten(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng, 
                     try_perserve_type = s.try_perserve_type)
     cache = rowcount(Xy)
     return Xyover, cache

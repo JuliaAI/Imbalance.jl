@@ -62,7 +62,7 @@ function plot_data(y_before, y_after, X_before, X_after; hist_only = false)
             xlabel = "X1",
             ylabel = "X2",
             title = "",
-            legend = true,
+            legend = false,
             color = [class_colors[label_map[yi]] for yi in y_before],
         )
         p4 = scatter(
@@ -71,12 +71,13 @@ function plot_data(y_before, y_after, X_before, X_after; hist_only = false)
             xlabel = "X1",
             ylabel = "X2",
             title = "",
-            legend = true,
+            legend = false,
             color = [class_colors[label_map[yi]] for yi in y_after],
+            markershape = :diamond
         )
 
         plot(p1, p2, p3, p4, layout = (2, 2), size = (900, 900))
     else
-        plot(p1, p2, layout = (1, 2), size = (900, 450))
+        plot(p1, p2, layout = (1, 2), size = (900, 650))
     end
 end
