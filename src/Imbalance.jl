@@ -16,7 +16,6 @@ using Tables
 using OrderedCollections
 using CategoricalArrays
 using ProgressMeter
-using Memoization
 
 
 include("common/docs.jl")
