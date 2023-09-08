@@ -4,8 +4,11 @@
 
 A Julia package with resampling methods to correct for class imbalance in a wide variety of classification settings.
 
-[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliaai.github.io/Imbalance.jl/dev/)
-[![Tests](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions/workflows/Runtests.yml)
+
+
+[![Build Status](https://github.com/JuliaAI/Imbalance.jl/workflows/CI/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions)
+[![codecov](https://codecov.io/gh/JuliaAI/Imbalance.jl/graph/badge.svg?token=K5UBZ3DCO6)](https://codecov.io/gh/JuliaAI/Imbalance.jl)
+[![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliaai.github.io/Imbalance.jl/dev/)
 
 ## ⏬ Installation
 ```julia
