@@ -64,9 +64,9 @@ julia> checkbalance(y; ref="minority")
  2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
  0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
 
-# apply random oversampling
-Xover, yover = random_undersample(X, y; ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
-checkbalance(yover)
+# apply randomundersampling
+X_under, y_under = random_undersample(X, y; ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
+checkbalance(y_under)
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
@@ -86,7 +86,7 @@ undersampler = RandomUndersampler(ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)
-Xover, yover = transform(mach, X, y)
+X_under, y_under = transform(mach, X, y)
 ```
 The `MLJ` interface is only supported for table inputs. Read more about the interface [here]().
 
@@ -109,8 +109,8 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
 
 # Initiate Random Undersampler model
 undersampler = RandomUndersampler(y_ind; ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-Xyover = Xy |> undersampler                    
-Xyover, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
+Xy_under = Xy |> undersampler                    
+Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```
 The `reapply(undersampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(undersample, Xy)` and the `revert(undersampler, Xy, cache)`
 is not supported.
@@ -122,8 +122,8 @@ function random_undersample(
     rng::Union{AbstractRNG,Integer} = default_rng(),
 )
     rng = rng_handler(rng)
-    Xover, yover = generic_undersample(X, y, random_undersample_per_class; ratios, rng,)
-    return Xover, yover
+    X_under, y_under = generic_undersample(X, y, random_undersample_per_class; ratios, rng,)
+    return X_under, y_under
 end
 
 # dispatch for when X is a table
@@ -134,13 +134,13 @@ function random_undersample(
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool=true
 )
-    Xover, yover = tablify(random_undersample, X, y; 
+    X_under, y_under = tablify(random_undersample, X, y; 
                            try_perserve_type=try_perserve_type, 
                            encode_func = generic_encoder,
                            decode_func = generic_decoder,
                            ratios, 
                            rng)
-    return Xover, yover
+    return X_under, y_under
 end
 
 
@@ -152,10 +152,10 @@ function random_undersample(
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool=true
 )
-    Xyover = tablify(random_undersample, Xy, y_ind; 
+    Xy_under = tablify(random_undersample, Xy, y_ind; 
                     try_perserve_type=try_perserve_type, 
                     encode_func = generic_encoder,
                     decode_func = generic_decoder,
                     ratios, rng)
-    return Xyover
+    return Xy_under
 end
