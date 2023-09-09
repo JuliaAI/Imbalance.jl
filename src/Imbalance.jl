@@ -45,26 +45,28 @@ module MLJ
 	using MLJModelInterface
 	const MMI = MLJModelInterface
 	using ..Imbalance: random_oversample, rose, smote, smoten, 
-                       smotenc, COMMON_DOCS
+                       smotenc, random_undersample, COMMON_DOCS
 	include("random_oversample/interface_mlj.jl")
 	include("rose/interface_mlj.jl")
 	include("smote/interface_mlj.jl")
 	include("smotenc/interface_mlj.jl")
 	include("smoten/interface_mlj.jl")
-	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC
+	include("random_undersample/interface_mlj.jl")
+	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC, RandomUndersampler
 end
 
 module TableTransforms
 	using Random: AbstractRNG, default_rng
 	using TransformsBase
 	using ..Imbalance: random_oversample, rose, smote, smoten, 
-                       smotenc, COMMON_DOCS, rowcount, revert_oversampling
+                       smotenc, random_undersample, COMMON_DOCS, rowcount, revert_oversampling
 	include("random_oversample/interface_tables.jl")
 	include("rose/interface_tables.jl")
 	include("smote/interface_tables.jl")
 	include("smotenc/interface_tables.jl")
 	include("smoten/interface_tables.jl")
-	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC
+	include("random_undersample/interface_tables.jl")
+	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC, RandomUndersampler
 end
 
 

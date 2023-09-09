@@ -2,6 +2,7 @@ using Imbalance:
     smote,
     rose,
     random_oversample,
+    random_undersample,
     smotenc,
     smoten,
     generate_imbalanced_data
@@ -66,4 +67,15 @@ end
     smotenc_model = Imbalance.MLJ.SMOTEN(k=5, ratios=Dict(0=>1.2, 1=> 1.2, 2=>1.2), rng=42)
     mach = machine(smotenc_model)
     @test transform(mach, X, y) == smoten(X, y; k = 5, ratios = Dict(0=>1.2, 1=> 1.2, 2=>1.2), rng = 42)
+end
+
+@testset "Random Undersampler MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [Imbalance.MLJ.RandomUndersampler],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
 end

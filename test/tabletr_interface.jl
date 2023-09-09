@@ -1,4 +1,4 @@
-using Imbalance: rose, smote, random_oversample, smoten, smotenc
+using Imbalance: rose, smote, random_oversample, smoten, smotenc, random_undersample
 
 using Test
 
@@ -7,6 +7,7 @@ SMOTE = Imbalance.TableTransforms.SMOTE
 ROSE = Imbalance.TableTransforms.ROSE
 SMOTEN = Imbalance.TableTransforms.SMOTEN
 SMOTENC = Imbalance.TableTransforms.SMOTENC
+RandomUndersampler = Imbalance.TableTransforms.RandomUndersampler
 
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
@@ -15,11 +16,13 @@ SMOTENC = Imbalance.TableTransforms.SMOTENC
     @test isrevertible(RandomOversampler) == true
     @test isrevertible(SMOTEN) == true
     @test isrevertible(SMOTENC) == true
+    @test isrevertible(RandomUndersampler) == false
     @test TransformsBase.isinvertible(ROSE) == false
     @test TransformsBase.isinvertible(SMOTE) == false
     @test TransformsBase.isinvertible(RandomOversampler) == false
     @test TransformsBase.isinvertible(SMOTEN) == false
     @test TransformsBase.isinvertible(SMOTENC) == false
+    @test isrevertible(RandomUndersampler) == false
 end
 
 
@@ -36,8 +39,10 @@ function test_tabletr(oversample_fun, oversample_t, Xy, y_ind)
     @test Xyover22 == Xyover2
 
     # revert works
-    Xyover_i = revert(oversample_t, Xyover2, cache)
-    @test Tables.matrix(Xyover_i) == Tables.matrix(Xy)
+    if isrevertible(oversample_t)
+        Xyover_i = revert(oversample_t, Xyover2, cache)
+        @test Tables.matrix(Xyover_i) == Tables.matrix(Xy)
+    end
 end
 
 @testset "TableTransforms" begin
@@ -45,7 +50,8 @@ end
     smote_t = SMOTE(y_ind; k = 5, rng = 42)
     rose_t = ROSE(y_ind; s = 1.0, rng = 42)
     random_oversample_t = RandomOversampler(y_ind; rng = 42)
-    oversample_funs = [random_oversample, rose, smote]
+    random_oversample_t = RandomOversampler(y_ind; rng = 42)
+    oversample_funs = [random_oversample, rose, smote, random_undersample]
     oversample_ts = [random_oversample_t, rose_t, smote_t]
     tables = ["RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"]
 
