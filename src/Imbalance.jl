@@ -4,12 +4,13 @@ Entry points to the package.
 
 module Imbalance
 
-using Random: AbstractRNG, default_rng, shuffle, Xoshiro
+using Random: AbstractRNG, default_rng, shuffle, Xoshiro, seed!
 using Statistics
 using StatsBase: mode, countmap, sample
 using LinearAlgebra
 using ScientificTypes
 using NearestNeighbors, Distances
+using Clustering
 using CategoricalDistributions
 using TableOperations
 using Tables
@@ -38,7 +39,8 @@ include("smotenc/smotenc.jl")
 export random_oversample, rose, smote, smoten, smotenc
 
 include("random_undersample/random_undersample.jl")
-export random_undersample
+include("cluster_undersample/cluster_undersample.jl")
+export random_undersample, cluster_undersample
 
 module MLJ
 	using Random: AbstractRNG, default_rng

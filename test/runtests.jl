@@ -5,6 +5,7 @@ using DataFrames
 using Random
 using MLJTestInterface
 using Statistics
+using Clustering
 using Distances
 using StatsBase: countmap
 using NearestNeighbors, Distances
@@ -22,7 +23,6 @@ using Conda
 
 
 include("test_utils.jl")
-
 @testset "common_utils" begin
     include("common_utils.jl")
 end
@@ -56,6 +56,10 @@ end
 
 @testset "Basic Random Undersampler" begin
     include("random_undersample.jl")
+end
+
+@testset "Cluster Undersampler" begin
+    include("cluster_undersample.jl")
 end
 
 @testset "SMOTE" begin
