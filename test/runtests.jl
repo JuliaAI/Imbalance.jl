@@ -22,6 +22,7 @@ using Conda
 
 
 include("test_utils.jl")
+
 @testset "common_utils" begin
     include("common_utils.jl")
 end
@@ -50,6 +51,10 @@ end
 
 @testset "Basic Random Oversampler" begin
     include("random_oversample.jl")
+end
+
+@testset "Basic Random Undersampler" begin
+    include("random_undersample.jl")
 end
 
 @testset "SMOTE" begin
