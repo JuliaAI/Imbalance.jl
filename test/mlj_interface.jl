@@ -3,6 +3,7 @@ using Imbalance:
     rose,
     random_oversample,
     random_undersample,
+    cluster_undersample,
     smotenc,
     smoten,
     generate_imbalanced_data
@@ -72,6 +73,18 @@ end
 @testset "Random Undersampler MLJ" begin
     failures, summary = MLJTestInterface.test(
         [Imbalance.MLJ.RandomUndersampler],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
+end
+
+
+@testset "Random Undersampler MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [Imbalance.MLJ.ClusterUndersampler],
         MLJTestInterface.make_multiclass()...;
         verbosity = 1,
         throw = true,

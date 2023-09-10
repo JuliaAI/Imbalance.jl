@@ -134,6 +134,11 @@ Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```
 The `reapply(undersampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(undersample, Xy)` and the `revert(undersampler, Xy, cache)`
 is not supported.
+
+
+# References
+[1] Wei-Chao, L., Chih-Fong, T., Ya-Han, H., & Jing-Shang, J. (2017). 
+    Clustering-based undersampling in class-imbalanced data. Information Sciences, 409–410, 17–26.
 """
 function cluster_undersample(
     X::AbstractMatrix{<:Real},
@@ -179,7 +184,7 @@ function cluster_undersample(
     rng::Union{Integer} = 42,
     try_perserve_type::Bool=true
 )
-    Xy_under = tablify(random_undersample, Xy, y_ind; 
+    Xy_under = tablify(cluster_undersample, Xy, y_ind; 
                     try_perserve_type=try_perserve_type, 
                     encode_func = generic_encoder,
                     decode_func = generic_decoder,

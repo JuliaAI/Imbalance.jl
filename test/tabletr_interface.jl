@@ -1,4 +1,4 @@
-using Imbalance: rose, smote, random_oversample, smoten, smotenc, random_undersample
+using Imbalance: rose, smote, random_oversample, smoten, smotenc, random_undersample, cluster_undersample
 
 using Test
 
@@ -8,6 +8,7 @@ ROSE = Imbalance.TableTransforms.ROSE
 SMOTEN = Imbalance.TableTransforms.SMOTEN
 SMOTENC = Imbalance.TableTransforms.SMOTENC
 RandomUndersampler = Imbalance.TableTransforms.RandomUndersampler
+ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
 
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
@@ -17,12 +18,14 @@ RandomUndersampler = Imbalance.TableTransforms.RandomUndersampler
     @test isrevertible(SMOTEN) == true
     @test isrevertible(SMOTENC) == true
     @test isrevertible(RandomUndersampler) == false
+    @test isrevertible(ClusterUndersampler) == false
     @test TransformsBase.isinvertible(ROSE) == false
     @test TransformsBase.isinvertible(SMOTE) == false
     @test TransformsBase.isinvertible(RandomOversampler) == false
     @test TransformsBase.isinvertible(SMOTEN) == false
     @test TransformsBase.isinvertible(SMOTENC) == false
-    @test isrevertible(RandomUndersampler) == false
+    @test TransformsBase.isinvertible(RandomUndersampler) == false
+    @test TransformsBase.isinvertible(ClusterUndersampler) == false
 end
 
 
@@ -50,9 +53,10 @@ end
     smote_t = SMOTE(y_ind; k = 5, rng = 42)
     rose_t = ROSE(y_ind; s = 1.0, rng = 42)
     random_oversample_t = RandomOversampler(y_ind; rng = 42)
-    random_oversample_t = RandomOversampler(y_ind; rng = 42)
-    oversample_funs = [random_oversample, rose, smote, random_undersample]
-    oversample_ts = [random_oversample_t, rose_t, smote_t]
+    random_undersample_t = RandomUndersampler(y_ind; rng = 42)
+    cluster_undersample_t = ClusterUndersampler(y_ind; rng = 42)
+    oversample_funs = [random_oversample, rose, smote, random_undersample, cluster_undersample]
+    oversample_ts = [random_oversample_t, rose_t, smote_t, random_undersample_t, cluster_undersample_t]
     tables = ["RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"]
 
     for i in eachindex(tables)
@@ -69,6 +73,7 @@ end
                 test_tabletr(oversample_fun, oversample_t, Xy, y_ind)
             end
         end
+
         @testset "TableTransform API with $tables[i] type for SMOTENC and SMOTEN" begin
             Xy, _ = generate_imbalanced_data(
                 50,
