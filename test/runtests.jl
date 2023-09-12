@@ -7,7 +7,7 @@ using MLJTestInterface
 using Statistics
 using Clustering
 using Distances
-using StatsBase: countmap
+using StatsBase: countmap, mode
 using NearestNeighbors, Distances
 using MLJBase: machine, transform
 using StableRNGs: StableRNG
@@ -56,6 +56,10 @@ end
 
 @testset "Basic Random Undersampler" begin
     include("random_undersample.jl")
+end
+
+@testset "ENN Undersampler" begin
+    include("enn_undersample.jl")
 end
 
 @testset "Cluster Undersampler" begin

@@ -6,7 +6,7 @@ module Imbalance
 
 using Random: AbstractRNG, default_rng, shuffle, Xoshiro, seed!
 using Statistics
-using StatsBase: mode, countmap, sample
+using StatsBase: mode, countmap, sample, modes
 using LinearAlgebra
 using ScientificTypes
 using NearestNeighbors, Distances
@@ -40,7 +40,8 @@ export random_oversample, rose, smote, smoten, smotenc
 
 include("random_undersample/random_undersample.jl")
 include("cluster_undersample/cluster_undersample.jl")
-export random_undersample, cluster_undersample
+include("enn_undersample/enn_undersample.jl")
+export random_undersample, cluster_undersample, enn_undersample
 
 module MLJ
 	using Random: AbstractRNG, default_rng

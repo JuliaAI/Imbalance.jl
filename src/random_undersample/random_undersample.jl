@@ -23,7 +23,7 @@ end
 """
     random_undersample(
         X, y; 
-        ratios=nothing, rng=default_rng(), 
+        ratios=1.0, rng=default_rng(), 
         try_preserve_type=true
     )
 

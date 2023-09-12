@@ -32,13 +32,26 @@ const COMMON_DOCS = Dict(
         - Can be a dictionary mapping each class to the ratio of the needed number of observations for that class to the \
         initial number of observations in the minority class
     """,
+    "MIN-RATIOS-UNDERSAMPLE" => """
+    - `min_ratios=1.0`: A parameter that controls the maximum amount of undersampling to be done for each class. If this algorithm
+        cleans the data to an extent that this is violated, some of the cleaned points will be revived randomly so its satisfied.
+        - Can be a float and in this case each class will be at most undersampled to the size of the minority class times the float. By \
+        default, all classes are undersampled to the size of the minority class
+        - Can be a dictionary mapping each class to the minimum ratio of the needed number of observations for that class to the \
+        initial number of observations in the minority class
+    """,
+    "FORCE-MIN-RATIOS" => """
+    - `force_min_ratios=false`: If `true`, and this algorithm cleans the data such that the ratios for each class
+        exceed those specified in `min_ratios` then further undersampling will be perform so that the final ratios
+        are equal to `min_ratios`.
+    """,
     "RNG" => """
     - `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` 
         seed to be used with `Xoshiro`\n
     """,
 
     "K" => """
-    - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE algorithm. Should be within the range \
+    - `k::Integer=5`: Number of nearest neighbors to consider in the algorithm. Should be within the range \
         `0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to \
         `n-1` for any class where `n ≤ k`.
     """,
