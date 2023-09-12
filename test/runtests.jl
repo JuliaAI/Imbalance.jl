@@ -62,6 +62,11 @@ end
     include("enn_undersample.jl")
 end
 
+@testset "Tomek Undersampler" begin
+    include("tomek_undersample.jl")
+end
+
+
 @testset "Cluster Undersampler" begin
     include("cluster_undersample.jl")
 end

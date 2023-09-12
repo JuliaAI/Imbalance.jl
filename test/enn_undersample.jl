@@ -1,6 +1,6 @@
-using Imbalance: filter_modifier, compute_enn_filter, enn_undersample_per_class
+using Imbalance:  compute_enn_filter
 
-@testset "filter computation, modification and application" begin
+@testset "filter computation" begin
 
     # test computing the filter
 	X = [1 2; 1.1 2.1; 1.05 2.05; 1.01 2.01; 2 3; 2.1 3.1; 2.05 3.05; 2.01 3.01]
@@ -37,21 +37,6 @@ using Imbalance: filter_modifier, compute_enn_filter, enn_undersample_per_class
 	]
 	y = [1, 1, 1, 1, 1, 2, 2, 2, 3, 2]
 	@test compute_enn_filter(X', y, 4, "all") == [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
-
-        # test filter modifier
-	filter_modifier(BitVector([1, 1, 1, 1, 1, 0, 0, 0, 0, 0]), 5) ==
-	[1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
-	for n in 1:10
-		@test sum(filter_modifier(BitVector([1, 1, 1, 1, 1, 0, 0, 0, 0, 0]), n, true)) == n
-	end
-
-    # test applying the filter
-	@test enn_undersample_per_class(
-		X'[:, 1:3],
-		2,
-		[1, 2, 3],
-		[true, true, false, true, true, false, false, false, false, false],
-	) == X[1:2, :]'
 
 end
 

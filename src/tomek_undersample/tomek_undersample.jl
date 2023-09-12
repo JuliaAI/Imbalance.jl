@@ -1,74 +1,52 @@
 """
-Compute a boolean filter according to a keep_condition to implement edited nearest neighbors.
+Compute a boolean filter that eliminates any point that is part of a tomek link in the data.
 
 # Arguments
 - X: A matrix where each row is treated as an observation
 - y: A vector of labels corresponding to the observations
-- k: The number of neighbors to consider while enforcing `keep_condition`
-- keep_condition="mode:: The condition that leads to cleaning a point upon violation. Takes one of "exists", "mode", "only mode" and "all"
-    - "exists": the point has at least one neighbor from the same class
-    - "mode": the class of the point is one of the most frequent classes of the neighbors (there may be many)
-    - "only mode": the class of the point is the single most frequent class of the neighbors
-    - "all": the class of the point is the same as all the neighbors
 
 # Returns
-- A boolean filter that can be used to filter the data to remove the points violating "keep_condition"
+- A boolean filter that can be used to filter the data to remove the points
 """
-function compute_enn_filter(X::AbstractMatrix{<:Real}, y::AbstractVector, k::Integer, keep_condition::AbstractString)
+function compute_tomek_filter(X::AbstractMatrix{<:Real}, y::AbstractVector)
 	tree = BallTree(X)
 	# Find KNN over the whole data
-	knn_map, _ = knn(tree, X, k + 1, true)
-	# Convert to matrix
-	knn_matrix = hcat(knn_map...)[2:end, :]
-	# find the labels of each neighbor
-	knn_matrix_labels = y[knn_matrix]
-	# find the points to be filtered out (a binary vector to index with)
-	modes_per_point = [modes(col) for col in eachcol(knn_matrix_labels)]
-	bool_filter = ones(Bool, length(y))
-
-	for i in 1:length(y)
-		if keep_condition == "only mode"
-			bool_filter[i] = (length(modes_per_point[i]) == 1 && y[i] in modes_per_point[i])
-		elseif keep_condition == "mode"
-			bool_filter[i] = (y[i] in modes_per_point[i])
-		elseif keep_condition == "exists"
-			bool_filter[i] = (y[i] in knn_matrix_labels[:, i])
-		else
-			neigh_labels = unique(knn_matrix_labels[:, i])
-			bool_filter[i] = (y[i] in neigh_labels && length(neigh_labels) == 1)
-		end
+	knn_map, _ = knn(tree, X, 2, true)
+	# prepare filter
+	bool_filter = ones(Bool, size(knn_map, 1))
+	for (i, neigh_inds) in enumerate(knn_map) 
+		# get the point's nearest neighbor
+		nn = neigh_inds[2]
+		# if the point has a label different than its nearest neighbor
+		# and it itself is its nearest neighbor's nearest neighbor
+		# then it should be cleaned.
+		if y[i] != y[nn] && knn_map[nn][2] == i
+			bool_filter[i] = false
+		end 
 	end
-
 	return BitVector(bool_filter)
 end
 
 
 
+
 """
-    enn_undersample(
-        X, y; k = 5, keep_conditio = "mode",
+    tomek_undersample(
+        X, y;
 	    min_ratios = 1.0, force_min_ratios = false,
         rng = default_rng(), try_preserve_type=true
     )
 
 # Description
 
-Undersample a dataset by cleaning points that violate a certain condition such as
-    having a different class compared to the majority of the neighbors as proposed in [1].
+Undersample a dataset by cleaning any point that is part of a tomek link in the data. 
+	Tomek links are presented in [1].
 
 # Positional Arguments
 
 $(COMMON_DOCS["INPUTS"])
 
 # Keyword Arguments
-
-$(COMMON_DOCS["K"])
-
-- keep_condition="mode:: The condition that leads to cleaning a point upon violation. Takes one of "exists", "mode", "only mode" and "all"
-    - "exists": the point has at least one neighbor from the same class
-    - "mode": the class of the point is one of the most frequent classes of the neighbors (there may be many)
-    - "only mode": the class of the point is the single most frequent class of the neighbors
-    - "all": the class of the point is the same as all the neighbors
 
 $(COMMON_DOCS["MIN-RATIOS-UNDERSAMPLE"])
 
@@ -99,24 +77,24 @@ julia> checkbalance(y; ref="minority")
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
 
 # apply enn undersampling
-X_under, y_under = enn_undersample(X, y; k=3, keep_condition="only mode", min_ratios=0.5, rng=42)
+X_under, y_under = tomek_undersample(X, y; min_ratios=1.0, rng=42)
 julia> checkbalance(y_under)
-2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (37.0%) 
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (37.0%) 
-0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 27 (100.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 22 (115.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 36 (189.5%) 
 ```
 
 # MLJ Model Interface
 
-Simply pass the keyword arguments while initiating the `ENNUndersampler` model and pass the 
+Simply pass the keyword arguments while initiating the `TomekUndersampler` model and pass the 
     positional arguments to the `transform` method. 
 
 ```julia
 using MLJ
-ENNUndersampler = @load ENNUndersampler pkg=Imbalance
+TomekUndersampler = @load TomekUndersampler pkg=Imbalance
 
 # Wrap the model in a machine
-undersampler = ENNUndersampler(ratios=1.0, rng=42)
+undersampler = TomekUndersampler(ratios=1.0, rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)
@@ -141,29 +119,25 @@ y_ind = 3
 Xy, _ = generate_imbalanced_data(num_rows, num_features; 
                                  probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
-# Initiate ENN Undersampler model
-undersampler = ENNUndersampler(y_ind; ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+# Initiate TomekUndersampler model
+undersampler = TomekUndersampler(y_ind; ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xy_under = Xy |> undersampler                    
 Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```
 The `reapply(undersampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(undersample, Xy)` and the `revert(undersampler, Xy, cache)`
 is not supported.
 """
-function enn_undersample(
+
+function tomek_undersample(
 	X::AbstractMatrix{<:Real},
 	y::AbstractVector;
-	k::Integer = 5,
-    keep_condition::AbstractString = "mode",
 	min_ratios = 1.0,
 	force_min_ratios = false,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
 )
 	rng = rng_handler(rng)
-	check_k(k, size(X, 1))
-	(keep_condition in ["exists", "mode", "only mode", "all"]) ||
-		throw("keep_condition must be one of: exists, mode, only mode, all")
 	X = transpose(X)
-	filter = compute_enn_filter(X, y, k, keep_condition)
+	filter = compute_tomek_filter(X, y)
 	pass_inds, is_transposed = true, true
 	X_under, y_under = generic_undersample(
 		X,
@@ -180,22 +154,18 @@ function enn_undersample(
 end
 
 # dispatch for when X is a table
-function enn_undersample(
+function tomek_undersample(
 	X,
 	y::AbstractVector;
-	k::Integer = 5,
-    keep_condition::AbstractString = "mode",
 	min_ratios = 1.0,
 	force_min_ratios = false,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
-	X_under, y_under = tablify(enn_undersample, X, y;
+	X_under, y_under = tablify(tomek_undersample, X, y;
 		try_perserve_type = try_perserve_type,
 		encode_func = generic_encoder,
 		decode_func = generic_decoder,
-        k,
-        keep_condition,
 		min_ratios, 
         force_min_ratios,
         rng)
@@ -204,22 +174,18 @@ end
 
 
 # dispatch for table inputs where y is one of the columns
-function enn_undersample(
+function tomek_undersample(
 	Xy,
 	y_ind::Integer;
-	k::Integer = 5,
-    keep_condition::AbstractString = "mode",
 	min_ratios = 1.0,
 	force_min_ratios = false,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
 	try_perserve_type::Bool = true,
 )
-	Xy_under = tablify(enn_undersample, Xy, y_ind;
+	Xy_under = tablify(tomek_undersample, Xy, y_ind;
 		try_perserve_type = try_perserve_type,
 		encode_func = generic_encoder,
 		decode_func = generic_decoder,
-        k,
-        keep_condition,
 		min_ratios, 
         force_min_ratios,
         rng)

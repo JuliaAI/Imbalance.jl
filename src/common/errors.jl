@@ -28,7 +28,7 @@ const ERR_NEG_S(s) = "Error: s must be >= 0 but got $s."
 const WRN_SINGLE_OBS = "Warning: class with a single will be ignored; point has no neighbors"
 const ERR_NONPOS_K(k) = "Error: k must be greater than 0 but got $k."
 const WRN_K_TOO_BIG(k, n) =
-    "Warning: k=$k is larger than the number of samples for the class which is ($n). Will set k=$n-1"
+    "Warning: k=$k is larger than the number of samples for the data which is ($n). Will set k=$n-1"
 
 ### SMOTENC
 const ERR_BAD_MIXED_COL_TYPES(bad_cols, bad_types) =

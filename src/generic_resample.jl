@@ -124,3 +124,57 @@ function generic_undersample(
 end
 
 
+"""
+Can be generically used with any cleaning method that outputs a filter to apply on points for each class.
+It takes such boolean filter that designates which points should be kept and modifies it to keep more or less points.
+
+# Arguments
+- filter: boolean filter
+- n: minimum number of points required to be kept for the class
+- force_min_ratios: whether to force further random undersampling if the filter keeps more than `n` points
+- rng: random number generator for random undersampling or random revival in case of excessive cleaning
+
+# Returns  
+- filter: modified boolean filter
+"""
+function filter_modifier(filter::AbstractVector{Bool}, n, force_min_ratios::Bool=false, rng::AbstractRNG=default_rng())
+    num_keep = sum(filter)
+    (num_keep == n) && return filter
+    if num_keep < n 
+        # need to satisfy min_ratios (no excessive cleaning)
+        filter_0 = @view filter[filter .== false]
+        # revive some cleaned points
+        n_further = n - num_keep
+        filter_0[sample(rng, 1:length(filter_0), n_further, replace=false)] .= 1  
+    elseif num_keep > n && force_min_ratios
+        filter_1 = @view filter[filter .== true]
+        # need to further undersample
+        n_further = num_keep - n
+        filter_1[sample(rng, 1:length(filter_1), n_further, replace=false)] .= 0     
+    end
+    return filter
+end
+
+
+"""
+Given the data belonging to a class and a boolean filter vector, filter the data.
+- `X`: A matrix where each column is an observation of floats belonging to the same class
+-`n`: Minimum number of observations to keep
+- `inds`: Indices of the observations belonging the class 
+- `filter`: A boolean filter vector for all the points
+- `force_min_ratios`: If true, further random undersampling may be applied to satisfy keeping exactly `n`
+- `rng`: Random number generator for random undersampling (or random revival of cleaned points)
+"""
+function generic_clean_per_class(
+	X::AbstractMatrix{<:Real},
+	n::Integer,
+	inds::AbstractVector{<:Integer},
+	filter::AbstractVector{Bool};
+	force_min_ratios::Bool = false,
+	rng::AbstractRNG = default_rng(),
+)
+	filter_per_class = filter[inds]
+	filter_per_class = filter_modifier(filter_per_class, n, force_min_ratios, rng)
+	Xnew = X[:, filter_per_class]
+	return Xnew
+end

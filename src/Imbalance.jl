@@ -41,7 +41,8 @@ export random_oversample, rose, smote, smoten, smotenc
 include("random_undersample/random_undersample.jl")
 include("cluster_undersample/cluster_undersample.jl")
 include("enn_undersample/enn_undersample.jl")
-export random_undersample, cluster_undersample, enn_undersample
+include("tomek_undersample/tomek_undersample.jl")
+export random_undersample, cluster_undersample, enn_undersample, tomek_undersample
 
 module MLJ
 	using Random: AbstractRNG, default_rng
