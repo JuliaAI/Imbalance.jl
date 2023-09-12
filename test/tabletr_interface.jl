@@ -1,4 +1,5 @@
-using Imbalance: rose, smote, random_oversample, smoten, smotenc, random_undersample, cluster_undersample
+using Imbalance:
+    rose, smote, random_oversample, smoten, smotenc, random_undersample, cluster_undersample
 
 using Test
 
@@ -34,7 +35,6 @@ ENNUndersampler = Imbalance.TableTransforms.ENNUndersampler
     @test TransformsBase.isinvertible(ENNUndersampler) == false
 end
 
-
 function test_tabletr(oversample_fun, oversample_t, Xy, y_ind)
     Xyover1 = oversample_fun(Xy, y_ind; rng = 42)
 
@@ -63,8 +63,24 @@ end
     cluster_undersample_t = ClusterUndersampler(y_ind; rng = 42)
     enn_undersample_t = ENNUndersampler(y_ind; rng = 42)
     tomek_undersample_t = TomekUndersampler(y_ind; rng = 42)
-    oversample_funs = [random_oversample, rose, smote, random_undersample, cluster_undersample, enn_undersample, tomek_undersample]
-    oversample_ts = [random_oversample_t, rose_t, smote_t, random_undersample_t, cluster_undersample_t, enn_undersample_t, tomek_undersample_t]
+    oversample_funs = [
+        random_oversample,
+        rose,
+        smote,
+        random_undersample,
+        cluster_undersample,
+        enn_undersample,
+        tomek_undersample,
+    ]
+    oversample_ts = [
+        random_oversample_t,
+        rose_t,
+        smote_t,
+        random_undersample_t,
+        cluster_undersample_t,
+        enn_undersample_t,
+        tomek_undersample_t,
+    ]
     tables = ["RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"]
 
     for i in eachindex(tables)
@@ -93,7 +109,7 @@ end
                 rng = 42,
             )
             Xy = coerce(Xy, autotype(Xy, :few_to_finite))
-            test_tabletr(smotenc,  SMOTENC(y_ind; k = 5, rng = 42), Xy, y_ind)
+            test_tabletr(smotenc, SMOTENC(y_ind; k = 5, rng = 42), Xy, y_ind)
             Xy, _ = generate_imbalanced_data(
                 50,
                 0;
@@ -104,7 +120,7 @@ end
                 rng = 42,
             )
             Xy = coerce(Xy, autotype(Xy, :few_to_finite))
-            test_tabletr(smoten,  SMOTEN(y_ind; k = 5, rng = 42), Xy, y_ind)
+            test_tabletr(smoten, SMOTEN(y_ind; k = 5, rng = 42), Xy, y_ind)
         end
     end
 end

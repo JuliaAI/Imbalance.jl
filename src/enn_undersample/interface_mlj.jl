@@ -2,25 +2,33 @@
 ### ENNUndersampler with MLJ Interface
 # interface struct
 mutable struct ENNUndersampler{T} <: Static
-  k::Integer
-  keep_condition::AbstractString
-  min_ratios::T
-  force_min_ratios::Bool
-  rng::Integer
-  try_perserve_type::Bool
+    k::Integer
+    keep_condition::AbstractString
+    min_ratios::T
+    force_min_ratios::Bool
+    rng::Integer
+    try_perserve_type::Bool
 end;
 
 """
 Initiate a ENN undersampling model with the given hyper-parameters.
 """
 function ENNUndersampler(;
-    k::Integer=5,keep_condition::AbstractString="mode",
-    min_ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    k::Integer = 5,
+    keep_condition::AbstractString = "mode",
+    min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     force_min_ratios::Bool = false,
-    rng::Integer = 42, 
-    try_perserve_type::Bool = true
+    rng::Integer = 42,
+    try_perserve_type::Bool = true,
 ) where {T}
-    model =  ENNUndersampler(k, keep_condition, min_ratios, force_min_ratios, rng, try_perserve_type)
+    model = ENNUndersampler(
+        k,
+        keep_condition,
+        min_ratios,
+        force_min_ratios,
+        rng,
+        try_perserve_type,
+    )
     return model
 end
 
@@ -28,34 +36,39 @@ end
 Undersample data X, y 
 """
 function MMI.transform(r::ENNUndersampler, _, X, y)
-    enn_undersample(X, y; k = r.k, keep_condition = r.keep_condition,
-    min_ratios = r.min_ratios, force_min_ratios=r.force_min_ratios,
-    rng = r.rng, try_perserve_type = r.try_perserve_type)
+    return enn_undersample(
+        X,
+        y;
+        k = r.k,
+        keep_condition = r.keep_condition,
+        min_ratios = r.min_ratios,
+        force_min_ratios = r.force_min_ratios,
+        rng = r.rng,
+        try_perserve_type = r.try_perserve_type,
+    )
 end
 
-
 MMI.metadata_pkg(
-  ENNUndersampler,
-  name = "Imbalance",
-  package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-  package_url = "https://github.com/JuliaAI/Imbalance.jl",
-  is_pure_julia = true,
+    ENNUndersampler,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-  ENNUndersampler,
-  input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  target_scitype = AbstractVector,
-  load_path = "Imbalance." * string(ENNUndersampler),
+    ENNUndersampler,
+    input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    target_scitype = AbstractVector,
+    load_path = "Imbalance." * string(ENNUndersampler),
 )
 function MMI.transform_scitype(s::ENNUndersampler)
-  return Tuple{
-      Union{Table(Continuous),AbstractMatrix{Continuous}},
-      AbstractVector{<:Finite},
-  }
+    return Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
 end
-
 
 """
 $(MMI.doc_header(ENNUndersampler))

@@ -15,7 +15,7 @@ function random_undersample_per_class(
     rng::AbstractRNG = default_rng(),
 )
     # sample n rows from X by sampling indices
-    random_inds = sample(rng, 1:size(X, 2), n; replace = false, ordered=true)
+    random_inds = sample(rng, 1:size(X, 2), n; replace = false, ordered = true)
     Xnew = X[:, random_inds]
     return Xnew
 end
@@ -119,10 +119,10 @@ function random_undersample(
     X::AbstractMatrix{<:Real},
     y::AbstractVector;
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
 )
     rng = rng_handler(rng)
-    X_under, y_under = generic_undersample(X, y, random_undersample_per_class; ratios, rng,)
+    X_under, y_under = generic_undersample(X, y, random_undersample_per_class; ratios, rng)
     return X_under, y_under
 end
 
@@ -131,31 +131,39 @@ function random_undersample(
     X,
     y::AbstractVector;
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool=true
+    rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-    X_under, y_under = tablify(random_undersample, X, y; 
-                           try_perserve_type=try_perserve_type, 
-                           encode_func = generic_encoder,
-                           decode_func = generic_decoder,
-                           ratios, 
-                           rng)
+    X_under, y_under = tablify(
+        random_undersample,
+        X,
+        y;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        ratios,
+        rng,
+    )
     return X_under, y_under
 end
-
 
 # dispatch for table inputs where y is one of the columns
 function random_undersample(
     Xy,
     y_ind::Integer;
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool=true
+    rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-    Xy_under = tablify(random_undersample, Xy, y_ind; 
-                    try_perserve_type=try_perserve_type, 
-                    encode_func = generic_encoder,
-                    decode_func = generic_decoder,
-                    ratios, rng)
+    Xy_under = tablify(
+        random_undersample,
+        Xy,
+        y_ind;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        ratios,
+        rng,
+    )
     return Xy_under
 end

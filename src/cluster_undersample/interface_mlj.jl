@@ -13,9 +13,11 @@ end;
 Initiate a cluster undersampling model with the given hyper-parameters.
 """
 function ClusterUndersampler(;
-    mode::AbstractString = "nearest", ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    maxiter::Integer = 100, rng::Integer = 42, 
-    try_perserve_type::Bool = true
+    mode::AbstractString = "nearest",
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    maxiter::Integer = 100,
+    rng::Integer = 42,
+    try_perserve_type::Bool = true,
 ) where {T}
     model = ClusterUndersampler(mode, ratios, maxiter, rng, try_perserve_type)
     return model
@@ -25,33 +27,38 @@ end
 Undersample data X, y 
 """
 function MMI.transform(r::ClusterUndersampler, _, X, y)
-    cluster_undersample(X, y; mode = r.mode, ratios = r.ratios, maxiter = r.maxiter,
-                        rng = r.rng, try_perserve_type = r.try_perserve_type)
+    return cluster_undersample(
+        X,
+        y;
+        mode = r.mode,
+        ratios = r.ratios,
+        maxiter = r.maxiter,
+        rng = r.rng,
+        try_perserve_type = r.try_perserve_type,
+    )
 end
 
-
 MMI.metadata_pkg(
-  ClusterUndersampler,
-  name = "Imbalance",
-  package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-  package_url = "https://github.com/JuliaAI/Imbalance.jl",
-  is_pure_julia = true,
+    ClusterUndersampler,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-  ClusterUndersampler,
-  input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  target_scitype = AbstractVector,
-  load_path = "Imbalance." * string(ClusterUndersampler),
+    ClusterUndersampler,
+    input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    target_scitype = AbstractVector,
+    load_path = "Imbalance." * string(ClusterUndersampler),
 )
 function MMI.transform_scitype(s::ClusterUndersampler)
-  return Tuple{
-      Union{Table(Continuous),AbstractMatrix{Continuous}},
-      AbstractVector{<:Finite},
-  }
+    return Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
 end
-
 
 """
 $(MMI.doc_header(ClusterUndersampler))

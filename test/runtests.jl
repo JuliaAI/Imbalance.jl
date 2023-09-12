@@ -15,12 +15,11 @@ using TableTransforms
 using TransformsBase
 using ScientificTypes
 using IOCapture
-ENV["PYTHON"]=""
-import Pkg; Pkg.build("PyCall")
-using PyCall       
-using Conda                 
-
-
+ENV["PYTHON"] = ""
+import Pkg;
+Pkg.build("PyCall");
+using PyCall
+using Conda
 
 include("test_utils.jl")
 @testset "common_utils" begin
@@ -66,7 +65,6 @@ end
     include("tomek_undersample.jl")
 end
 
-
 @testset "Cluster Undersampler" begin
     include("cluster_undersample.jl")
 end
@@ -78,7 +76,6 @@ end
 @testset "SMOTENC" begin
     include("smotenc.jl")
 end
-
 
 @testset "SMOTEN" begin
     include("smoten.jl")

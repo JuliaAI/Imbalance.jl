@@ -1,7 +1,7 @@
 
 ### RandomUndersampler with MLJ Interface
 # interface struct
-mutable struct RandomUndersampler{T,R<:Union{Integer,AbstractRNG}} <: Static
+mutable struct RandomUndersampler{T, R <: Union{Integer, AbstractRNG}} <: Static
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -11,8 +11,9 @@ end;
 Initiate a random undersampling model with the given hyper-parameters.
 """
 function RandomUndersampler(;
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool = true
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_perserve_type::Bool = true,
 ) where {T}
     model = RandomUndersampler(ratios, rng, try_perserve_type)
     return model
@@ -22,33 +23,36 @@ end
 Undersample data X, y 
 """
 function MMI.transform(r::RandomUndersampler, _, X, y)
-    random_undersample(X, y; ratios = r.ratios, rng = r.rng, 
-                      try_perserve_type = r.try_perserve_type)
+    return random_undersample(
+        X,
+        y;
+        ratios = r.ratios,
+        rng = r.rng,
+        try_perserve_type = r.try_perserve_type,
+    )
 end
 
-
 MMI.metadata_pkg(
-  RandomUndersampler,
-  name = "Imbalance",
-  package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-  package_url = "https://github.com/JuliaAI/Imbalance.jl",
-  is_pure_julia = true,
+    RandomUndersampler,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-  RandomUndersampler,
-  input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  target_scitype = AbstractVector,
-  load_path = "Imbalance." * string(RandomUndersampler),
+    RandomUndersampler,
+    input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    target_scitype = AbstractVector,
+    load_path = "Imbalance." * string(RandomUndersampler),
 )
 function MMI.transform_scitype(s::RandomUndersampler)
-  return Tuple{
-      Union{Table(Continuous),AbstractMatrix{Continuous}},
-      AbstractVector{<:Finite},
-  }
+    return Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
 end
-
 
 """
 $(MMI.doc_header(RandomUndersampler))

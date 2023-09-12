@@ -19,7 +19,8 @@ function cluster_undersample_per_class(
     maxiter::Integer = 100,
     rng::Integer = 42,
 )
-    (mode in ["center", "nearest"]) || throw(ArgumentError("mode must be either 'center' or 'nearest'"))
+    (mode in ["center", "nearest"]) ||
+        throw(ArgumentError("mode must be either 'center' or 'nearest'"))
     # to undersample down to n points find k=n clusters
     seed!(rng)               # kmeans offers no better way :(
     result = kmeans(X, n; maxiter)
@@ -148,7 +149,8 @@ function cluster_undersample(
     maxiter::Integer = 100,
     rng::Union{Integer} = 42,
 )
-    X_under, y_under = generic_undersample(X, y, cluster_undersample_per_class; ratios, mode, maxiter, rng)
+    X_under, y_under =
+        generic_undersample(X, y, cluster_undersample_per_class; ratios, mode, maxiter, rng)
     return X_under, y_under
 end
 
@@ -160,19 +162,22 @@ function cluster_undersample(
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{Integer} = 42,
-    try_perserve_type::Bool=true
+    try_perserve_type::Bool = true,
 )
-    X_under, y_under = tablify(cluster_undersample, X, y; 
-                           try_perserve_type=try_perserve_type, 
-                           encode_func = generic_encoder,
-                           decode_func = generic_decoder,
-                           mode,
-                           ratios, 
-                           maxiter,
-                           rng)
+    X_under, y_under = tablify(
+        cluster_undersample,
+        X,
+        y;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        mode,
+        ratios,
+        maxiter,
+        rng,
+    )
     return X_under, y_under
 end
-
 
 # dispatch for table inputs where y is one of the columns
 function cluster_undersample(
@@ -182,16 +187,19 @@ function cluster_undersample(
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{Integer} = 42,
-    try_perserve_type::Bool=true
+    try_perserve_type::Bool = true,
 )
-    Xy_under = tablify(cluster_undersample, Xy, y_ind; 
-                    try_perserve_type=try_perserve_type, 
-                    encode_func = generic_encoder,
-                    decode_func = generic_decoder,
-                    mode,
-                    ratios, 
-                    maxiter,
-                    rng)
+    Xy_under = tablify(
+        cluster_undersample,
+        Xy,
+        y_ind;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        mode,
+        ratios,
+        maxiter,
+        rng,
+    )
     return Xy_under
 end
-

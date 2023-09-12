@@ -1,7 +1,7 @@
 
 ### TomekUndersampler with MLJ Interface
 # interface struct
-mutable struct TomekUndersampler{T,R<:Union{Integer,AbstractRNG}} <: Static
+mutable struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}} <: Static
     min_ratios::T
     force_min_ratios::Bool
     rng::R
@@ -12,9 +12,10 @@ end;
 Initiate a tomek undersampling model with the given hyper-parameters.
 """
 function TomekUndersampler(;
-    min_ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     force_min_ratios::Bool = false,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool = true
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_perserve_type::Bool = true,
 ) where {T}
     model = TomekUndersampler(min_ratios, force_min_ratios, rng, try_perserve_type)
     return model
@@ -24,34 +25,37 @@ end
 Undersample data X, y 
 """
 function MMI.transform(r::TomekUndersampler, _, X, y)
-    tomek_undersample(X, y; min_ratios = r.min_ratios, force_min_ratios = r.force_min_ratios,
-                        rng = r.rng, 
-                      try_perserve_type = r.try_perserve_type)
+    return tomek_undersample(
+        X,
+        y;
+        min_ratios = r.min_ratios,
+        force_min_ratios = r.force_min_ratios,
+        rng = r.rng,
+        try_perserve_type = r.try_perserve_type,
+    )
 end
 
-
 MMI.metadata_pkg(
-  TomekUndersampler,
-  name = "Imbalance",
-  package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-  package_url = "https://github.com/JuliaAI/Imbalance.jl",
-  is_pure_julia = true,
+    TomekUndersampler,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-  TomekUndersampler,
-  input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  target_scitype = AbstractVector,
-  load_path = "Imbalance." * string(TomekUndersampler),
+    TomekUndersampler,
+    input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+    target_scitype = AbstractVector,
+    load_path = "Imbalance." * string(TomekUndersampler),
 )
 function MMI.transform_scitype(s::TomekUndersampler)
-  return Tuple{
-      Union{Table(Continuous),AbstractMatrix{Continuous}},
-      AbstractVector{<:Finite},
-  }
+    return Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
 end
-
 
 """
 $(MMI.doc_header(TomekUndersampler))

@@ -14,35 +14,38 @@ Compute a boolean filter according to a keep_condition to implement edited neare
 # Returns
 - A boolean filter that can be used to filter the data to remove the points violating "keep_condition"
 """
-function compute_enn_filter(X::AbstractMatrix{<:Real}, y::AbstractVector, k::Integer, keep_condition::AbstractString)
-	tree = BallTree(X)
-	# Find KNN over the whole data
-	knn_map, _ = knn(tree, X, k + 1, true)
-	# Convert to matrix
-	knn_matrix = hcat(knn_map...)[2:end, :]
-	# find the labels of each neighbor
-	knn_matrix_labels = y[knn_matrix]
-	# find the points to be filtered out (a binary vector to index with)
-	modes_per_point = [modes(col) for col in eachcol(knn_matrix_labels)]
-	bool_filter = ones(Bool, length(y))
+function compute_enn_filter(
+    X::AbstractMatrix{<:Real},
+    y::AbstractVector,
+    k::Integer,
+    keep_condition::AbstractString,
+)
+    tree = BallTree(X)
+    # Find KNN over the whole data
+    knn_map, _ = knn(tree, X, k + 1, true)
+    # Convert to matrix
+    knn_matrix = hcat(knn_map...)[2:end, :]
+    # find the labels of each neighbor
+    knn_matrix_labels = y[knn_matrix]
+    # find the points to be filtered out (a binary vector to index with)
+    modes_per_point = [modes(col) for col in eachcol(knn_matrix_labels)]
+    bool_filter = ones(Bool, length(y))
 
-	for i in 1:length(y)
-		if keep_condition == "only mode"
-			bool_filter[i] = (length(modes_per_point[i]) == 1 && y[i] in modes_per_point[i])
-		elseif keep_condition == "mode"
-			bool_filter[i] = (y[i] in modes_per_point[i])
-		elseif keep_condition == "exists"
-			bool_filter[i] = (y[i] in knn_matrix_labels[:, i])
-		else
-			neigh_labels = unique(knn_matrix_labels[:, i])
-			bool_filter[i] = (y[i] in neigh_labels && length(neigh_labels) == 1)
-		end
-	end
+    for i in 1:length(y)
+        if keep_condition == "only mode"
+            bool_filter[i] = (length(modes_per_point[i]) == 1 && y[i] in modes_per_point[i])
+        elseif keep_condition == "mode"
+            bool_filter[i] = (y[i] in modes_per_point[i])
+        elseif keep_condition == "exists"
+            bool_filter[i] = (y[i] in knn_matrix_labels[:, i])
+        else
+            neigh_labels = unique(knn_matrix_labels[:, i])
+            bool_filter[i] = (y[i] in neigh_labels && length(neigh_labels) == 1)
+        end
+    end
 
-	return BitVector(bool_filter)
+    return BitVector(bool_filter)
 end
-
-
 
 """
     enn_undersample(
@@ -154,78 +157,85 @@ is not supported.
 	IEEE Transactions on Systems, Man, and Cybernetics, pages 408–421, 1972.
 """
 function enn_undersample(
-	X::AbstractMatrix{<:Real},
-	y::AbstractVector;
-	k::Integer = 5,
+    X::AbstractMatrix{<:Real},
+    y::AbstractVector;
+    k::Integer = 5,
     keep_condition::AbstractString = "mode",
-	min_ratios = 1.0,
-	force_min_ratios = false,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    min_ratios = 1.0,
+    force_min_ratios = false,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
 )
-	rng = rng_handler(rng)
-	check_k(k, size(X, 1))
-	(keep_condition in ["exists", "mode", "only mode", "all"]) ||
-		throw("keep_condition must be one of: exists, mode, only mode, all")
-	X = transpose(X)
-	filter = compute_enn_filter(X, y, k, keep_condition)
-	pass_inds, is_transposed = true, true
-	X_under, y_under = generic_undersample(
-		X,
-		y,
-		generic_clean_per_class,
-		filter;
-		ratios = min_ratios,
-		is_transposed,
-		pass_inds,
-		force_min_ratios,
-		rng,
-	)
-	return X_under, y_under
+    rng = rng_handler(rng)
+    check_k(k, size(X, 1))
+    (keep_condition in ["exists", "mode", "only mode", "all"]) ||
+        throw("keep_condition must be one of: exists, mode, only mode, all")
+    X = transpose(X)
+    filter = compute_enn_filter(X, y, k, keep_condition)
+    pass_inds, is_transposed = true, true
+    X_under, y_under = generic_undersample(
+        X,
+        y,
+        generic_clean_per_class,
+        filter;
+        ratios = min_ratios,
+        is_transposed,
+        pass_inds,
+        force_min_ratios,
+        rng,
+    )
+    return X_under, y_under
 end
 
 # dispatch for when X is a table
 function enn_undersample(
-	X,
-	y::AbstractVector;
-	k::Integer = 5,
+    X,
+    y::AbstractVector;
+    k::Integer = 5,
     keep_condition::AbstractString = "mode",
-	min_ratios = 1.0,
-	force_min_ratios = false,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    min_ratios = 1.0,
+    force_min_ratios = false,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
-	X_under, y_under = tablify(enn_undersample, X, y;
-		try_perserve_type = try_perserve_type,
-		encode_func = generic_encoder,
-		decode_func = generic_decoder,
+    X_under, y_under = tablify(
+        enn_undersample,
+        X,
+        y;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
         k,
         keep_condition,
-		min_ratios, 
+        min_ratios,
         force_min_ratios,
-        rng)
-	return X_under, y_under
+        rng,
+    )
+    return X_under, y_under
 end
-
 
 # dispatch for table inputs where y is one of the columns
 function enn_undersample(
-	Xy,
-	y_ind::Integer;
-	k::Integer = 5,
+    Xy,
+    y_ind::Integer;
+    k::Integer = 5,
     keep_condition::AbstractString = "mode",
-	min_ratios = 1.0,
-	force_min_ratios = false,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
-	try_perserve_type::Bool = true,
+    min_ratios = 1.0,
+    force_min_ratios = false,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-	Xy_under = tablify(enn_undersample, Xy, y_ind;
-		try_perserve_type = try_perserve_type,
-		encode_func = generic_encoder,
-		decode_func = generic_decoder,
+    Xy_under = tablify(
+        enn_undersample,
+        Xy,
+        y_ind;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
         k,
         keep_condition,
-		min_ratios, 
+        min_ratios,
         force_min_ratios,
-        rng)
-	return Xy_under
+        rng,
+    )
+    return Xy_under
 end

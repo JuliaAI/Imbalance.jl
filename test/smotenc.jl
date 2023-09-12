@@ -9,8 +9,6 @@ using Imbalance:
     ERR_BAD_MIXED_COL_TYPES,
     ERR_WRNG_TREE
 
-
-
 @testset "Testing get_penalty" begin
     X = [
         1.0 2.0 3.0 4.0
@@ -49,7 +47,7 @@ end
     Xcont = X[cont_inds, :]
     @test any(
         is_in_between(new_point_cont, Xcont[:, i], Xcont[:, j]) for
-        i = 1:size(Xcont, 2), j = 1:size(Xcont, 2) if i != j
+        i in 1:size(Xcont, 2), j in 1:size(Xcont, 2) if i != j
     )
     new_point_cat = new_point[cat_inds]
     @test new_point_cat ≈ [4.0, 3.0]
@@ -69,8 +67,6 @@ end
     @test get_neighbors_mode(Xneighs, rng) ≈ [1.0, 2.0, 3.0]
 end
 
-
-
 # Test that it indeed generates n new points
 @testset "smote_per_class" begin
     X = [
@@ -88,27 +84,33 @@ end
     @test size(smote_points, 2) == n
 end
 
-
 # Test bad column types error
 @testset "smotenc throws error if column types are not supported" begin
-    X = (Column1=[1, 2, 3, 4, 5],
-         Column2=["a", "b", "c", "d", "e"],
-         Column3=["a", "b", "c", "d", "e"],
-         Column4=[1.0, 2.0, 3.0, 4.0, 5.0]
+    X = (
+        Column1 = [1, 2, 3, 4, 5],
+        Column2 = ["a", "b", "c", "d", "e"],
+        Column3 = ["a", "b", "c", "d", "e"],
+        Column4 = [1.0, 2.0, 3.0, 4.0, 5.0],
     )
     y = [1, 1, 1, 2, 2]
     X = Tables.columntable(X)
     # coerce first column to multiclass and last column to continuous
     # second and third column to text
-    X = coerce(X, :Column1=>Multiclass, :Column4=>Continuous)
+    X = coerce(X, :Column1 => Multiclass, :Column4 => Continuous)
     types = ScientificTypes.schema(X).scitypes
-    cat_inds = findall( x -> x <: Multiclass, types)
-    cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
-    @test_throws ERR_BAD_MIXED_COL_TYPES([2,3], types[[2,3]]) begin
+    cat_inds = findall(x -> x <: Multiclass, types)
+    cont_inds = findall(x -> x <: Union{Infinite, OrderedFactor}, types)
+    @test_throws ERR_BAD_MIXED_COL_TYPES([2, 3], types[[2, 3]]) begin
         smotenc(X, y)
     end
     @test_throws ERR_WRNG_TREE("KD") begin
-        X = coerce(X, :Column1=>Multiclass, :Column2=>Multiclass, :Column3=>Multiclass, :Column4=>Continuous)
-        smotenc(X, y; knn_tree="KD")
+        X = coerce(
+            X,
+            :Column1 => Multiclass,
+            :Column2 => Multiclass,
+            :Column3 => Multiclass,
+            :Column4 => Continuous,
+        )
+        smotenc(X, y; knn_tree = "KD")
     end
 end

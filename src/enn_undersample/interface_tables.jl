@@ -40,13 +40,21 @@ $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 """
 ENNUndersampler(
     y_ind::Integer;
-    k::Integer=5,keep_condition::AbstractString="mode",
-    min_ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    k::Integer = 5,
+    keep_condition::AbstractString = "mode",
+    min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     force_min_ratios::Bool = false,
-    rng::Integer = 42, 
-    try_perserve_type::Bool = true
-) where {T} = ENNUndersampler(y_ind, k, keep_condition, min_ratios, force_min_ratios, rng, try_perserve_type)
-
+    rng::Integer = 42,
+    try_perserve_type::Bool = true,
+) where {T} = ENNUndersampler(
+    y_ind,
+    k,
+    keep_condition,
+    min_ratios,
+    force_min_ratios,
+    rng,
+    try_perserve_type,
+)
 
 TransformsBase.isrevertible(::Type{ENNUndersampler}) = false
 
@@ -65,12 +73,18 @@ Apply the ENNUndersampler transform to a table Xy
 - `Xy_under::AbstractTable`: A table with both the original and new observations due to ENNUndersampler
 """
 function TransformsBase.apply(r::ENNUndersampler, Xy)
-    Xy_under = enn_undersample(Xy, r.y_ind; k = r.k, keep_condition = r.keep_condition,
-    min_ratios = r.min_ratios, force_min_ratios=r.force_min_ratios,
-    rng = r.rng, try_perserve_type = r.try_perserve_type)
+    Xy_under = enn_undersample(
+        Xy,
+        r.y_ind;
+        k = r.k,
+        keep_condition = r.keep_condition,
+        min_ratios = r.min_ratios,
+        force_min_ratios = r.force_min_ratios,
+        rng = r.rng,
+        try_perserve_type = r.try_perserve_type,
+    )
     return Xy_under, nothing
 end
-
 
 """
 Equivalent to `apply(r, Xy)`

@@ -9,26 +9,23 @@ Compute a boolean filter that eliminates any point that is part of a tomek link 
 - A boolean filter that can be used to filter the data to remove the points
 """
 function compute_tomek_filter(X::AbstractMatrix{<:Real}, y::AbstractVector)
-	tree = BallTree(X)
-	# Find KNN over the whole data
-	knn_map, _ = knn(tree, X, 2, true)
-	# prepare filter
-	bool_filter = ones(Bool, size(knn_map, 1))
-	for (i, neigh_inds) in enumerate(knn_map) 
-		# get the point's nearest neighbor
-		nn = neigh_inds[2]
-		# if the point has a label different than its nearest neighbor
-		# and it itself is its nearest neighbor's nearest neighbor
-		# then it should be cleaned.
-		if y[i] != y[nn] && knn_map[nn][2] == i
-			bool_filter[i] = false
-		end 
-	end
-	return BitVector(bool_filter)
+    tree = BallTree(X)
+    # Find KNN over the whole data
+    knn_map, _ = knn(tree, X, 2, true)
+    # prepare filter
+    bool_filter = ones(Bool, size(knn_map, 1))
+    for (i, neigh_inds) in enumerate(knn_map)
+        # get the point's nearest neighbor
+        nn = neigh_inds[2]
+        # if the point has a label different than its nearest neighbor
+        # and it itself is its nearest neighbor's nearest neighbor
+        # then it should be cleaned.
+        if y[i] != y[nn] && knn_map[nn][2] == i
+            bool_filter[i] = false
+        end
+    end
+    return BitVector(bool_filter)
 end
-
-
-
 
 """
     tomek_undersample(
@@ -132,65 +129,72 @@ is not supported.
 """
 
 function tomek_undersample(
-	X::AbstractMatrix{<:Real},
-	y::AbstractVector;
-	min_ratios = 1.0,
-	force_min_ratios = false,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    X::AbstractMatrix{<:Real},
+    y::AbstractVector;
+    min_ratios = 1.0,
+    force_min_ratios = false,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
 )
-	rng = rng_handler(rng)
-	X = transpose(X)
-	filter = compute_tomek_filter(X, y)
-	pass_inds, is_transposed = true, true
-	X_under, y_under = generic_undersample(
-		X,
-		y,
-		generic_clean_per_class,
-		filter;
-		ratios = min_ratios,
-		is_transposed,
-		pass_inds,
-		force_min_ratios,
-		rng,
-	)
-	return X_under, y_under
+    rng = rng_handler(rng)
+    X = transpose(X)
+    filter = compute_tomek_filter(X, y)
+    pass_inds, is_transposed = true, true
+    X_under, y_under = generic_undersample(
+        X,
+        y,
+        generic_clean_per_class,
+        filter;
+        ratios = min_ratios,
+        is_transposed,
+        pass_inds,
+        force_min_ratios,
+        rng,
+    )
+    return X_under, y_under
 end
 
 # dispatch for when X is a table
 function tomek_undersample(
-	X,
-	y::AbstractVector;
-	min_ratios = 1.0,
-	force_min_ratios = false,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    X,
+    y::AbstractVector;
+    min_ratios = 1.0,
+    force_min_ratios = false,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
-	X_under, y_under = tablify(tomek_undersample, X, y;
-		try_perserve_type = try_perserve_type,
-		encode_func = generic_encoder,
-		decode_func = generic_decoder,
-		min_ratios, 
+    X_under, y_under = tablify(
+        tomek_undersample,
+        X,
+        y;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        min_ratios,
         force_min_ratios,
-        rng)
-	return X_under, y_under
+        rng,
+    )
+    return X_under, y_under
 end
-
 
 # dispatch for table inputs where y is one of the columns
 function tomek_undersample(
-	Xy,
-	y_ind::Integer;
-	min_ratios = 1.0,
-	force_min_ratios = false,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
-	try_perserve_type::Bool = true,
+    Xy,
+    y_ind::Integer;
+    min_ratios = 1.0,
+    force_min_ratios = false,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
-	Xy_under = tablify(tomek_undersample, Xy, y_ind;
-		try_perserve_type = try_perserve_type,
-		encode_func = generic_encoder,
-		decode_func = generic_decoder,
-		min_ratios, 
+    Xy_under = tablify(
+        tomek_undersample,
+        Xy,
+        y_ind;
+        try_perserve_type = try_perserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        min_ratios,
         force_min_ratios,
-        rng)
-	return Xy_under
+        rng,
+    )
+    return Xy_under
 end

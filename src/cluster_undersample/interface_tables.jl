@@ -34,11 +34,12 @@ $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 """
 ClusterUndersampler(
     y_ind::Integer;
-    mode::AbstractString = "nearest", ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    maxiter::Integer = 100, rng::Integer = 42, 
-    try_perserve_type::Bool = true
+    mode::AbstractString = "nearest",
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    maxiter::Integer = 100,
+    rng::Integer = 42,
+    try_perserve_type::Bool = true,
 ) where {T} = ClusterUndersampler(y_ind, mode, ratios, maxiter, rng, try_perserve_type)
-
 
 TransformsBase.isrevertible(::Type{ClusterUndersampler}) = false
 
@@ -57,11 +58,17 @@ Apply the ClusterUndersampler transform to a table Xy
 - `Xy_under::AbstractTable`: A table with both the original and new observations due to ClusterUndersampler
 """
 function TransformsBase.apply(r::ClusterUndersampler, Xy)
-    Xy_under = cluster_undersample(Xy, r.y_ind; mode = r.mode, ratios = r.ratios, maxiter=r.maxiter,
-                                     rng = r.rng, try_perserve_type = r.try_perserve_type)
+    Xy_under = cluster_undersample(
+        Xy,
+        r.y_ind;
+        mode = r.mode,
+        ratios = r.ratios,
+        maxiter = r.maxiter,
+        rng = r.rng,
+        try_perserve_type = r.try_perserve_type,
+    )
     return Xy_under, nothing
 end
-
 
 """
 Equivalent to `apply(r, Xy)`

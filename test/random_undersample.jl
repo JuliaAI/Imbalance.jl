@@ -1,6 +1,5 @@
 using Imbalance: random_undersample
 
-
 @testset "random undersampler" begin
     X, y = generate_imbalanced_data(
         1000,
@@ -24,13 +23,21 @@ using Imbalance: random_undersample
     @test issubset(Set(eachrow(X_under)), Set(eachrow(X)))
 end
 
-
 # test that the materializer works for dataframes
 @testset "materializer" begin
-    X, y =
-        generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
-    X_under, y_under =
-        random_undersample(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
+    X, y = generate_imbalanced_data(
+        1000,
+        2;
+        probs = [0.2, 0.6, 0.2],
+        type = "MatrixTable",
+        rng = 121,
+    )
+    X_under, y_under = random_undersample(
+        DataFrame(X),
+        y;
+        ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9),
+        rng = 121,
+    )
     # Check that the number of samples increased correctly
     @test typeof(X_under) == DataFrame
 end
