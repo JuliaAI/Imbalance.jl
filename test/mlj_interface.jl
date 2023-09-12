@@ -92,3 +92,25 @@ end
     )
     @test isempty(failures)
 end
+
+@testset "ENN Undersampler MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [Imbalance.MLJ.ENNUndersampler],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
+end
+
+@testset "Tomek Undersampler MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [Imbalance.MLJ.TomekUndersampler],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
+end

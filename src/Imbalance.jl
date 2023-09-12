@@ -50,7 +50,7 @@ module MLJ
 	const MMI = MLJModelInterface
 	using ..Imbalance: random_oversample, rose, smote, smoten, 
                        smotenc, random_undersample, cluster_undersample, 
-					   COMMON_DOCS
+					   COMMON_DOCS,  enn_undersample, tomek_undersample
 	include("random_oversample/interface_mlj.jl")
 	include("rose/interface_mlj.jl")
 	include("smote/interface_mlj.jl")
@@ -58,15 +58,18 @@ module MLJ
 	include("smoten/interface_mlj.jl")
 	include("random_undersample/interface_mlj.jl")
 	include("cluster_undersample/interface_mlj.jl")
+	include("tomek_undersample/interface_mlj.jl")
+	include("enn_undersample/interface_mlj.jl")
 	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC, 
-		   RandomUndersampler, ClusterUndersampler
+		   RandomUndersampler, ClusterUndersampler, TomekUndersampler, ENNUndersampler
 end
 
 module TableTransforms
 	using Random: AbstractRNG, default_rng
 	using TransformsBase
 	using ..Imbalance: random_oversample, rose, smote, smoten, 
-                       smotenc, random_undersample, cluster_undersample, COMMON_DOCS, rowcount, revert_oversampling
+                       smotenc, random_undersample, cluster_undersample, COMMON_DOCS, 
+					   rowcount, revert_oversampling, enn_undersample, tomek_undersample
 	include("random_oversample/interface_tables.jl")
 	include("rose/interface_tables.jl")
 	include("smote/interface_tables.jl")
@@ -74,8 +77,10 @@ module TableTransforms
 	include("smoten/interface_tables.jl")
 	include("random_undersample/interface_tables.jl")
 	include("cluster_undersample/interface_tables.jl")
+	include("enn_undersample/interface_tables.jl")
+	include("tomek_undersample/interface_tables.jl")
 	export RandomOversampler, ROSE, SMOTE, SMOTEN, SMOTENC, 
-		   RandomUndersampler, ClusterUndersampler
+		   RandomUndersampler, ClusterUndersampler, TomekUndersampler, ENNUndersampler
 end
 
 

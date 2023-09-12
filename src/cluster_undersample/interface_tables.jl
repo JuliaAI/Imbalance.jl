@@ -2,7 +2,7 @@
 # interface struct
 struct ClusterUndersampler{T} <: Transform
     y_ind::Integer
-    mode::String
+    mode::AbstractString
     ratios::T
     maxiter::Integer
     rng::Integer
@@ -16,7 +16,7 @@ Instantiate a naive ClusterUndersampler table transform
 
 - `y_ind::Integer`: The index of the column containing the labels in the table
 
-- `mode::String="nearest`: If `center` then the undersampled data will consist of the centriods of 
+- `mode::AbstractString="nearest`: If `center` then the undersampled data will consist of the centriods of 
     each cluster found. Meanwhile, if `nearest` then it will consist of the nearest neighbor of each centroid.
 
 $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
@@ -34,7 +34,7 @@ $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 """
 ClusterUndersampler(
     y_ind::Integer;
-    mode::String = "nearest", ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    mode::AbstractString = "nearest", ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     maxiter::Integer = 100, rng::Integer = 42, 
     try_perserve_type::Bool = true
 ) where {T} = ClusterUndersampler(y_ind, mode, ratios, maxiter, rng, try_perserve_type)

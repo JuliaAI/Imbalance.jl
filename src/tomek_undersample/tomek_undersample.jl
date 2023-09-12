@@ -120,12 +120,15 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate TomekUndersampler model
-undersampler = TomekUndersampler(y_ind; ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+undersampler = TomekUndersampler(y_ind; min_ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xy_under = Xy |> undersampler                    
 Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```
 The `reapply(undersampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(undersample, Xy)` and the `revert(undersampler, Xy, cache)`
 is not supported.
+
+# References
+[1] Ivan Tomek. Two modifications of cnn. IEEE Trans. Systems, Man and Cybernetics, 6:769–772, 1976.
 """
 
 function tomek_undersample(

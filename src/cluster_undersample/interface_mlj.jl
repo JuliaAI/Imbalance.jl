@@ -2,7 +2,7 @@
 ### ClusterUndersampler with MLJ Interface
 # interface struct
 mutable struct ClusterUndersampler{T} <: Static
-    mode::String
+    mode::AbstractString
     ratios::T
     maxiter::Integer
     rng::Integer
@@ -13,7 +13,7 @@ end;
 Initiate a cluster undersampling model with the given hyper-parameters.
 """
 function ClusterUndersampler(;
-    mode::String = "nearest", ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    mode::AbstractString = "nearest", ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     maxiter::Integer = 100, rng::Integer = 42, 
     try_perserve_type::Bool = true
 ) where {T}
@@ -76,7 +76,7 @@ For default values of the hyper-parameters, model can be constructed by
 
 # Hyperparameters
 
-- `mode::String="nearest`: If `center` then the undersampled data will consist of the centriods of 
+- `mode::AbstractString="nearest`: If `center` then the undersampled data will consist of the centriods of 
     each cluster found. Meanwhile, if `nearest` then it will consist of the nearest neighbor of each centroid.
 
 $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])

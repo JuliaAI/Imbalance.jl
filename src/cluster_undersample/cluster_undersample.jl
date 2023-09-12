@@ -5,7 +5,7 @@ the observations using clustering undersampling
 # Arguments
 - `X`: A matrix where each column is an observation of floats
 - `n`: Number of observations in the undersampled dataset
-- `mode::String="nearest`: If `center` then the undersampled data will consist of the centriods of 
+- `mode::AbstractString="nearest`: If `center` then the undersampled data will consist of the centriods of 
     each cluster found. Meanwhile, if `nearest` then it will consist of the nearest neighbor of each centroid.
 - `maxiter::Integer=100`: Maximum number of iterations to run K-means
 - `rng::Integer=42`: Random number generator seed
@@ -15,7 +15,7 @@ the observations using clustering undersampling
 function cluster_undersample_per_class(
     X::AbstractMatrix{<:Real},
     n::Integer;
-    mode::String = "nearest",
+    mode::AbstractString = "nearest",
     maxiter::Integer = 100,
     rng::Integer = 42,
 )
@@ -53,7 +53,7 @@ $(COMMON_DOCS["INPUTS"])
 
 # Keyword Arguments
 
-- `mode::String="nearest`: If `center` then the undersampled data will consist of the centriods of 
+- `mode::AbstractString="nearest`: If `center` then the undersampled data will consist of the centriods of 
     each cluster found. Meanwhile, if `nearest` then it will consist of the nearest neighbor of each centroid.
 
 $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
@@ -143,7 +143,7 @@ is not supported.
 function cluster_undersample(
     X::AbstractMatrix{<:Real},
     y::AbstractVector;
-    mode::String = "nearest",
+    mode::AbstractString = "nearest",
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{Integer} = 42,
@@ -156,7 +156,7 @@ end
 function cluster_undersample(
     X,
     y::AbstractVector;
-    mode::String = "nearest",
+    mode::AbstractString = "nearest",
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{Integer} = 42,
@@ -178,7 +178,7 @@ end
 function cluster_undersample(
     Xy,
     y_ind::Integer;
-    mode::String = "nearest",
+    mode::AbstractString = "nearest",
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{Integer} = 42,

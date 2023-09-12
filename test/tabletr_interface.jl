@@ -9,6 +9,8 @@ SMOTEN = Imbalance.TableTransforms.SMOTEN
 SMOTENC = Imbalance.TableTransforms.SMOTENC
 RandomUndersampler = Imbalance.TableTransforms.RandomUndersampler
 ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
+TomekUndersampler = Imbalance.TableTransforms.TomekUndersampler
+ENNUndersampler = Imbalance.TableTransforms.ENNUndersampler
 
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
@@ -19,6 +21,8 @@ ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
     @test isrevertible(SMOTENC) == true
     @test isrevertible(RandomUndersampler) == false
     @test isrevertible(ClusterUndersampler) == false
+    @test isrevertible(TomekUndersampler) == false
+    @test isrevertible(ENNUndersampler) == false
     @test TransformsBase.isinvertible(ROSE) == false
     @test TransformsBase.isinvertible(SMOTE) == false
     @test TransformsBase.isinvertible(RandomOversampler) == false
@@ -26,6 +30,8 @@ ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
     @test TransformsBase.isinvertible(SMOTENC) == false
     @test TransformsBase.isinvertible(RandomUndersampler) == false
     @test TransformsBase.isinvertible(ClusterUndersampler) == false
+    @test TransformsBase.isinvertible(TomekUndersampler) == false
+    @test TransformsBase.isinvertible(ENNUndersampler) == false
 end
 
 
@@ -55,8 +61,10 @@ end
     random_oversample_t = RandomOversampler(y_ind; rng = 42)
     random_undersample_t = RandomUndersampler(y_ind; rng = 42)
     cluster_undersample_t = ClusterUndersampler(y_ind; rng = 42)
-    oversample_funs = [random_oversample, rose, smote, random_undersample, cluster_undersample]
-    oversample_ts = [random_oversample_t, rose_t, smote_t, random_undersample_t, cluster_undersample_t]
+    enn_undersample_t = ENNUndersampler(y_ind; rng = 42)
+    tomek_undersample_t = TomekUndersampler(y_ind; rng = 42)
+    oversample_funs = [random_oversample, rose, smote, random_undersample, cluster_undersample, enn_undersample, tomek_undersample]
+    oversample_ts = [random_oversample_t, rose_t, smote_t, random_undersample_t, cluster_undersample_t, enn_undersample_t, tomek_undersample_t]
     tables = ["RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"]
 
     for i in eachindex(tables)
