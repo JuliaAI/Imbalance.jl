@@ -8,7 +8,6 @@ using Imbalance: checkbalance, generate_imbalanced_data
         num_rows,
         num_cont_feats;
         probs,
-        cat_feats_num_vals,
         rng = 42,
     )
     c = IOCapture.capture() do
