@@ -49,7 +49,7 @@ end
 
 """
     enn_undersample(
-        X, y; k = 5, keep_conditio = "mode",
+        X, y; k = 5, keep_condition = "mode",
 	    min_ratios = 1.0, force_min_ratios = false,
         rng = default_rng(), try_preserve_type=true
     )
@@ -57,7 +57,7 @@ end
 # Description
 
 Undersample a dataset by cleaning points that violate a certain condition such as
-    having a different class compared to the majority of the neighbors as proposed in [1].
+    belonging to a different class compared to the majority of the neighbors as proposed in [1].
 
 # Positional Arguments
 
@@ -65,13 +65,14 @@ $(COMMON_DOCS["INPUTS"])
 
 # Keyword Arguments
 
-$(COMMON_DOCS["K"])
+$(COMMON_DOCS["K-FULL"])
 
-- keep_condition="mode:: The condition that leads to cleaning a point upon violation. Takes one of "exists", "mode", "only mode" and "all"
-    - "exists": the point has at least one neighbor from the same class
-    - "mode": the class of the point is one of the most frequent classes of the neighbors (there may be many)
-    - "only mode": the class of the point is the single most frequent class of the neighbors
-    - "all": the class of the point is the same as all the neighbors
+- `keep_condition::AbstractString="mode"`: The condition that leads to cleaning a point upon violation. Takes one of "exists", "mode", "only mode" and "all"
+    - `"exists"`: the point has at least one neighbor from the same class
+    - `"mode"`: the class of the point is one of the most frequent classes of the neighbors (there may be many)
+    - `"only mode"`: the class of the point is the single most frequent class of the neighbors
+    - `"all"`: the class of the point is the same as all the neighbors
+
 
 $(COMMON_DOCS["MIN-RATIOS-UNDERSAMPLE"])
 
@@ -83,7 +84,7 @@ $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
 
-$(COMMON_DOCS["OUTPUTS"])
+$(COMMON_DOCS["OUTPUTS-UNDER"])
 
 
 # Example
@@ -102,7 +103,8 @@ julia> checkbalance(y; ref="minority")
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
 
 # apply enn undersampling
-X_under, y_under = enn_undersample(X, y; k=3, keep_condition="only mode", min_ratios=0.5, rng=42)
+X_under, y_under = enn_undersample(X, y; k=3, keep_condition="only mode", 
+                                   min_ratios=0.5, rng=42)
 julia> checkbalance(y_under)
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (37.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (37.0%) 
@@ -119,7 +121,7 @@ using MLJ
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
 # Wrap the model in a machine
-undersampler = ENNUndersampler(ratios=1.0, rng=42)
+undersampler = ENNUndersampler(k=5, min_ratios=1.0, rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)

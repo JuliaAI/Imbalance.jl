@@ -98,7 +98,7 @@ $((COMMON_DOCS["INPUTS"]))
 
 # Transform Outputs
 
-$((COMMON_DOCS["OUTPUTS"]))
+$(COMMON_DOCS["OUTPUTS-UNDER"])
 
 # Operations
 

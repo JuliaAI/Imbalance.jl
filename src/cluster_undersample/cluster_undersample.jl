@@ -46,7 +46,7 @@ end
 
 # Description
 
-Undersample a dataset using clustering undersampling as presented in [1].
+Undersample a dataset using clustering undersampling as presented in [1] using K-means as the clustering algorithm.
 
 # Positional Arguments
 
@@ -67,7 +67,7 @@ $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
 
-$(COMMON_DOCS["OUTPUTS"])
+$(COMMON_DOCS["OUTPUTS-UNDER"])
 
 
 # Example
@@ -86,8 +86,9 @@ julia> checkbalance(y; ref="minority")
  0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
 
 # apply cluster_undersampling
-X_under, y_under = cluster_undersample(X, y; mode="nearest", ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
-checkbalance(y_under)
+X_under, y_under = cluster_undersample(X, y; mode="nearest", 
+                                       ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
+julia> checkbalance(y_under)
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
@@ -129,7 +130,8 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate ClusterUndersampler model
-undersampler = ClusterUndersampler(y_ind; mode="nearest", ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+undersampler = ClusterUndersampler(y_ind; mode="nearest", 
+                                   ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xy_under = Xy |> undersampler                    
 Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```

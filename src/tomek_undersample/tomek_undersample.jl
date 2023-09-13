@@ -55,7 +55,7 @@ $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
 
-$(COMMON_DOCS["OUTPUTS"])
+$(COMMON_DOCS["OUTPUTS-UNDER"])
 
 
 # Example
@@ -127,7 +127,6 @@ is not supported.
 # References
 [1] Ivan Tomek. Two modifications of cnn. IEEE Trans. Systems, Man and Cybernetics, 6:769–772, 1976.
 """
-
 function tomek_undersample(
     X::AbstractMatrix{<:Real},
     y::AbstractVector;

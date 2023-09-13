@@ -46,7 +46,7 @@ $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
 
-$(COMMON_DOCS["OUTPUTS"])
+$(COMMON_DOCS["OUTPUTS-UNDER"])
 
 
 # Example
@@ -65,8 +65,9 @@ julia> checkbalance(y; ref="minority")
  0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
 
 # apply randomundersampling
-X_under, y_under = random_undersample(X, y; ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
-checkbalance(y_under)
+X_under, y_under = random_undersample(X, y; ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), 
+                                      rng=42)
+julia> checkbalance(y_under)
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
@@ -82,7 +83,8 @@ using MLJ
 RandomUndersampler = @load RandomUndersampler pkg=Imbalance
 
 # Wrap the model in a machine
-undersampler = RandomUndersampler(ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
+undersampler = RandomUndersampler(ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), 
+               rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)
