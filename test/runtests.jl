@@ -26,6 +26,10 @@ include("test_utils.jl")
     include("common_utils.jl")
 end
 
+@testset "extras" begin
+    include("extras.jl")
+end
+
 @testset "table_wrappers" begin
     include("table_wrappers.jl")
 end
@@ -40,7 +44,7 @@ end
 @testset "MLJ Interface" begin
     include("mlj_interface.jl")
 end
-#=
+
 @testset "distance metrics" begin
     include("distance_metrics.jl")
 end
@@ -80,4 +84,3 @@ end
 @testset "SMOTEN" begin
     include("smoten.jl")
 end
-=#
