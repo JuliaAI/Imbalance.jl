@@ -57,8 +57,7 @@ end
 """
 $(MMI.doc_header(RandomUndersampler))
 
-`RandomUndersampler` implements naive undersampling by repeating existing observations
-with replacement.
+`RandomUndersampler` implements naive undersampling by randomly removing existing observations. 
 
 
 # Training data
