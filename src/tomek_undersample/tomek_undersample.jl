@@ -36,7 +36,7 @@ end
 
 # Description
 
-Undersample a dataset by cleaning any point that is part of a tomek link in the data. 
+Undersample a dataset by removing ("cleaning") any point that is part of a tomek link in the data. 
 	Tomek links are presented in [1].
 
 # Positional Arguments
