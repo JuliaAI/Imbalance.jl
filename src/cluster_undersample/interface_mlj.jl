@@ -77,8 +77,7 @@ There is no need to provide any data here because the model is a static transfor
 
 Likewise, there is no need to `fit!(mach)`. 
 
-For default values of the hyper-parameters, model can be constructed by
-    model = ClusterUndersampler()
+For default values of the hyper-parameters, model can be constructed with `model = ClusterUndersampler()`.
     
 
 # Hyperparameters
