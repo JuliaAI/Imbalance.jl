@@ -82,8 +82,8 @@ For default values of the hyper-parameters, model can be constructed with `model
 
 # Hyperparameters
 
-- `mode::AbstractString="nearest`: If `center` then the undersampled data will consist of the centriods of 
-    each cluster found. Meanwhile, if `nearest` then it will consist of the nearest neighbor of each centroid.
+- `mode::AbstractString="nearest`: If `"center"` then the undersampled data will consist of the centriods of 
+    each cluster found; if `"nearest"` then it will consist of the nearest neighbor of each centroid.
 
 $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
 
