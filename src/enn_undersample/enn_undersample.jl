@@ -56,8 +56,8 @@ end
 
 # Description
 
-Undersample a dataset by cleaning points that violate a certain condition such as
-    belonging to a different class compared to the majority of the neighbors as proposed in [1].
+Undersample a dataset by removing points that violate a certain condition such as
+    belonging to a different class compared to the majority of the neighbors, as proposed in [1].
 
 # Positional Arguments
 
