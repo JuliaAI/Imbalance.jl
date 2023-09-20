@@ -77,7 +77,7 @@ function generate_imbalanced_data(
 end
 
 """
-    checkbalance(y)
+    checkbalance(y; reference="majority")
 
 A visual version of `StatsBase.countmap` that returns nothing. It prints how 
     many observations in the dataset belong to each class and their percentage
