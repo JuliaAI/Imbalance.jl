@@ -96,11 +96,11 @@ For default values of the hyper-parameters, model can be constructed by
 
 $(COMMON_DOCS["K"])
 
-- `keep_condition::AbstractString="mode"` The condition that leads to cleaning a point upon violation. Takes one of "exists", "mode", "only mode" and "all"
-    - "exists": the point has at least one neighbor from the same class
-    - "mode": the class of the point is one of the most frequent classes of the neighbors (there may be many)
-    - "only mode": the class of the point is the single most frequent class of the neighbors
-    - "all": the class of the point is the same as all the neighbors
+- `keep_condition::AbstractString="mode"`: The condition that leads to cleaning a point upon violation. Takes one of `"exists"`, `"mode"`, `"only mode"` and `"all"`
+    - `"exists"`: the point has at least one neighbor from the same class
+    - `"mode"`: the class of the point is one of the most frequent classes of the neighbors (there may be many)
+    - `"only mode"`: the class of the point is the single most frequent class of the neighbors
+    - `"all"`: the class of the point is the same as all the neighbors
 
 $(COMMON_DOCS["MIN-RATIOS-UNDERSAMPLE"])
 
