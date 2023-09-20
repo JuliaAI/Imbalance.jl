@@ -5,8 +5,8 @@ the observations using clustering undersampling
 # Arguments
 - `X`: A matrix where each column is an observation of floats
 - `n`: Number of observations in the undersampled dataset
-- `mode::AbstractString="nearest`: If `center` then the undersampled data will consist of the centriods of 
-    each cluster found. Meanwhile, if `nearest` then it will consist of the nearest neighbor of each centroid.
+- `mode::AbstractString="nearest`: If `"center"` then the undersampled data will consist of the centriods of 
+    each cluster found; if `"nearest"` then it will consist of the nearest neighbor of each centroid.
 - `maxiter::Integer=100`: Maximum number of iterations to run K-means
 - `rng::Integer=42`: Random number generator seed
 # Returns
