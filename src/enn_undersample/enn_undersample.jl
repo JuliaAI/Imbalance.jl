@@ -1,5 +1,5 @@
 """
-Compute a boolean filter according to a keep_condition to implement edited nearest neighbors.
+Compute a boolean filter according to a keep_condition to implement Edited Nearest Neighbors undersampling.
 
 # Arguments
 - X: A matrix where each row is treated as an observation
