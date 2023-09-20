@@ -85,7 +85,7 @@ A visual version of `StatsBase.countmap` that returns nothing. It prints how
 
 # Arguments
 - `y::AbstractVector`: A vector of categorical values to test for imbalance
-- `reference::AbstractString`: Either "majority" or "minority" and decides whether the percentage should be
+- `reference="majority"`: Either `"majority"` or `"minority"` and decides whether the percentage should be
     relative to the size of majority or minority class.
 """
 function checkbalance(y; ref = "majority")
