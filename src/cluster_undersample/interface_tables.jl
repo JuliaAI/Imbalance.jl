@@ -16,8 +16,8 @@ Instantiate a naive ClusterUndersampler table transform
 
 - `y_ind::Integer`: The index of the column containing the labels in the table
 
-- `mode::AbstractString="nearest`: If `center` then the undersampled data will consist of the centriods of 
-    each cluster found. Meanwhile, if `nearest` then it will consist of the nearest neighbor of each centroid.
+- `mode::AbstractString="nearest`: If `"center"` then the undersampled data will consist of the centriods of 
+    each cluster found; if `"nearest"` then it will consist of the nearest neighbor of each centroid.
 
 $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
 
