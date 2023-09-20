@@ -73,7 +73,7 @@ end
 """
 $(MMI.doc_header(ENNUndersampler))
 
-`ENNUndersampler` undersamples a dataset by cleaning points that violate a certain condition such as
+`ENNUndersampler` undersamples a dataset by removing ("cleaning") points that violate a certain condition such as
   having a different class compared to the majority of the neighbors as proposed in Dennis L Wilson. 
   Asymptotic properties of nearest neighbor rules using edited data. IEEE Transactions on Systems, Man, 
   and Cybernetics, pages 408–421, 1972.
