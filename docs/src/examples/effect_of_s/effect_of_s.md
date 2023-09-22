@@ -12,11 +12,9 @@ using Plots
 ```
 
 ## Loading Data
-
-Let's load the Iris dataset, the objective of this dataset is to predict the type of flower as one of "virginica", "versicolor" and "setosa" using its sepal and petal length and width.
+Let's load the Iris dataset, the objective of this dataset is to predict the type of flower as one of "virginica", "versicolor" and "setosa" using its sepal and petal length and width. 
 
 We don't need to so from a CSV file this time because `MLJ` has a macro for loading it already! The only difference is that we will need to explictly convert it to a dataframe as `MLJ` loads it as a named tuple of vectors.
-
 
 
 ```julia
@@ -41,7 +39,6 @@ first(X, 5) |> pretty
 Our purpose for this tutorial is primarily visuallization. Thus, let's select two of the continuous features only to work with. It's known that the sepal length and width play a much bigger role in classifying the type of flower so let's keep those only.
 
 
-
 ```julia
 X = select(X, :petal_width, :petal_length)
 first(X, 5) |> pretty
@@ -63,7 +60,6 @@ first(X, 5) |> pretty
 ## Coercing Data
 
 
-
 ```julia
 ScientificTypes.schema(X)
 ```
@@ -80,19 +76,21 @@ ScientificTypes.schema(X)
 
 Things look good, no coercion is needed.
 
-
 ## Oversampling
 
 Iris, by default has no imbalance problem
-
 
 
 ```julia
 checkbalance(y)
 ```
 
-To simulate that there is a balance problem, we will consider a random sample of 100 observations. A random sample does not guarantee perserving the proportion of classes; in this, we actually set the seed to get a very unlikely random sample that suffers from moderate imbalance.
+    virginica:  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 50 (100.0%) 
+    setosa:     ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 50 (100.0%) 
+    versicolor: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 50 (100.0%) 
 
+
+To simulate that there is a balance problem, we will consider a random sample of 100 observations. A random sample does not guarantee perserving the proportion of classes; in this, we actually set the seed to get a very unlikely random sample that suffers from strong imbalance.
 
 
 ```julia
@@ -102,18 +100,28 @@ X, y = X[subset_indices, :], y[subset_indices]
 checkbalance(y)
 ```
 
-We will treat this as our training set going forward so we don't need to partition. Now let's oversample it with SMOTE.
+    versicolor: ▇▇▇▇▇▇▇▇▇▇▇ 12 (22.6%) 
+    setosa:     ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 35 (66.0%) 
+    virginica:  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%) 
 
+
+We will treat this as our training set going forward so we don't need to partition. Now let's oversample it with ROSE.
 
 
 ```julia
-Xover, yover = smote(X, y; k=5, ratios=Dict("versicolor" => 0.7), rng=42)
+Xover, yover = rose(X, y; s=0.3, ratios=Dict("versicolor" => 1.0, "setosa"=>1.0))
 checkbalance(yover)
 ```
 
+    Progress:  67%|███████████████████████████▍             |  ETA: 0:00:00[K
+    [A
+
+    virginica:  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%) 
+    setosa:     ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%) 
+    versicolor: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%) 
+
+
 ## Training the Model
-
-
 
 
 ```julia
@@ -144,18 +152,21 @@ models(matching(Xover, yover))
      (name = XGBoostClassifier, package_name = XGBoost, ... )
 
 
-Let's go for an SVM
-
+Let's go for a [Decision Tree](https://alan-turing-institute.github.io/MLJ.jl/dev/models/DecisionTreeClassifier_DecisionTree/#DecisionTreeClassifier_DecisionTree). This is just like the normal perceptron but it learns the separating hyperplane in a higher dimensional space using the kernel trick so that it corresponds to a nonlinear separating hypersurface in the original space. This isn't necessarily helpful in our case, but just to experiment.
 
 
 ```julia
-import Pkg;
-Pkg.add("MLJLIBSVMInterface");
+import Pkg; Pkg.add("MultivariateStats")
 ```
 
        Resolving package versions...
-      No Changes to `~/Documents/GitHub/Imbalance.jl/Project.toml`
-      No Changes to `~/Documents/GitHub/Imbalance.jl/Manifest.toml`
+        Updating `~/Documents/GitHub/Imbalance.jl/Project.toml`
+      [6f286f6a] + MultivariateStats v0.10.2
+        Updating `~/Documents/GitHub/Imbalance.jl/Manifest.toml`
+      [7d9fca2a] + Arpack v0.5.4
+      [6f286f6a] + MultivariateStats v0.10.2
+    ⌅ [68821587] + Arpack_jll v3.5.1+1
+            Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
 
 
 ### Before Oversampling
@@ -163,32 +174,31 @@ Pkg.add("MLJLIBSVMInterface");
 
 ```julia
 # 1. Load the model
-SVC = @load SVC pkg = LIBSVM
+BayesianLDA = @load BayesianLDA pkg=MultivariateStats
 
-# 2. Instantiate it (γ=0.01 is intentional)
-model = SVC(gamma=0.01)
+# 2. Instantiate it 
+model = BayesianLDA()
 
 # 3. Wrap it with the data in a machine
 mach = machine(model, X, y)
 
 # 4. fit the machine learning model
-fit!(mach)
+fit!(mach, verbosity=0)
 ```
 
-    import MLJLIBSVMInterface
+    import MLJMultivariateStatsInterface ✔
+
 
     ┌ Info: For silent loading, specify `verbosity=0`. 
     └ @ Main /Users/essam/.julia/packages/MLJModels/7apZ3/src/loading.jl:159
-    ┌ Info: Training machine(SVC(kernel = RadialBasis, …), …).
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/0rn2V/src/machines.jl:492
 
 
 
     trained Machine; caches model-specific representations of data
-      model: SVC(kernel = RadialBasis, …)
+      model: BayesianLDA(method = gevd, …)
       args: 
-        1:	Source @625 ⏎ Table{AbstractVector{Continuous}}
-        2:	Source @365 ⏎ AbstractVector{Multiclass{3}}
+        1:	Source @008 ⏎ Table{AbstractVector{Continuous}}
+        2:	Source @604 ⏎ AbstractVector{Multiclass{3}}
 
 
 
@@ -200,19 +210,15 @@ fit!(mach)
 mach_over = machine(model, Xover, yover)
 
 # 4. fit the machine learning model
-fit!(mach_over)
+fit!(mach_over, verbosity=0)
 ```
-
-    ┌ Info: Training machine(SVC(kernel = RadialBasis, …), …).
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/0rn2V/src/machines.jl:492
-
 
 
     trained Machine; caches model-specific representations of data
-      model: SVC(kernel = RadialBasis, …)
+      model: BayesianLDA(method = gevd, …)
       args: 
-        1:	Source @136 ⏎ Table{AbstractVector{Continuous}}
-        2:	Source @492 ⏎ AbstractVector{Multiclass{3}}
+        1:	Source @447 ⏎ Table{AbstractVector{Continuous}}
+        2:	Source @477 ⏎ AbstractVector{Multiclass{3}}
 
 
 
@@ -221,13 +227,13 @@ fit!(mach_over)
 Construct ranges for each feature and consecutively a grid
 
 
-
 ```julia
 petal_width_range =
 	range(minimum(X.petal_width) - 1, maximum(X.petal_width) + 1, length = 200)
 petal_length_range =
 	range(minimum(X.petal_length) - 1, maximum(X.petal_length) + 1, length = 200)
 grid_points = [(pw, pl) for pw in petal_width_range, pl in petal_length_range]
+
 ```
 
 
@@ -257,142 +263,138 @@ grid_points = [(pw, pl) for pw in petal_width_range, pl in petal_length_range]
 Evaluate the grid with the machine before and after oversampling
 
 
-
 ```julia
-grid_predictions =[
-    predict(mach, Tables.table(reshape(collect(point), 1, 2)))[1] for
- 	point in grid_points
- ]
+grid_predictions = [
+	predict_mode(mach, Tables.table(reshape(collect(point), 1, 2)))[1] for
+	point in grid_points
+]
 grid_predictions_over = [
-    predict(mach_over, Tables.table(reshape(collect(point), 1, 2)))[1] for
-    point in grid_points
+	predict_mode(mach_over, Tables.table(reshape(collect(point), 1, 2)))[1] for
+	point in grid_points
 ]
 ```
 
 
     200×200 CategoricalArrays.CategoricalArray{String,2,UInt32}:
-     "setosa"  "setosa"  "setosa"  "setosa"  …  "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"  …  "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     ⋮                                       ⋱               
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"  …  "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
-     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"     "setosa"     "setosa"     …  "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"     …  "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     "setosa"     "setosa"     "setosa"        "versicolor"  "versicolor"
+     ⋮                                      ⋱                
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"  …  "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
+     "virginica"  "virginica"  "virginica"     "virginica"   "virginica"
 
 
 Make two contour plots using the grid predictions before and after oversampling
 
 
-
 ```julia
 p = contourf(petal_length_range, petal_width_range, grid_predictions,
-    levels=3, color=:Set3_3, colorbar=false)
+	levels = 3, color = :Set3_3, colorbar = false)
 p_over = contourf(petal_length_range, petal_width_range, grid_predictions_over,
-    levels=3, color=:Set3_3, colorbar=false)
+	levels = 3, color = :Set3_3, colorbar = false)
+println()
 ```
+
+    
+
 
 Scatter plot the data before and after oversampling
 
 
-
 ```julia
 labels = unique(y)
-colors = Dict("setosa"=> "green", "versicolor" = > "yellow",
-              "virginica"=> "purple")
+colors = Dict("setosa" => "green", "versicolor" => "yellow",
+	"virginica" => "purple")
 
 for label in labels
-scatter!(p, X.petal_length[y. == label], X.petal_width[y. == label],
-         color=colors[label], label=label,
-         title="Before Oversampling")
-scatter!(p_over, Xover.petal_length[yover. == label], Xover.petal_width[yover. == label],
-         color=colors[label], label=label,
-         title="After Oversampling")
+	scatter!(p, X.petal_length[y.==label], X.petal_width[y.==label],
+		color = colors[label], label = label,
+		title = "Before Oversampling")
+	scatter!(p_over, Xover.petal_length[yover.==label], Xover.petal_width[yover.==label],
+		color = colors[label], label = label,
+		title = "After Oversampling")
 end
 
-plot_res = plot(p, p_over, layout=(1, 2), xlabel="petal length",
-                ylabel="petal width", size=(900, 300))
-savefig(plot_res, "./visuals/before-after-smote.png")
-
+plot_res = plot(
+	p,
+	p_over,
+	layout = (1, 2),
+	xlabel = "petal length",
+	ylabel = "petal width",
+	size = (900, 300),
+)
+savefig(plot_res, "./ROSE-before-after.png")
 ```
 
-
-    "/Users/essam/Documents/GitHub/Imbalance.jl/examples/visuals/before-after-smote.png"
-
-
-![before and after SMOTE](./visuals/before-after-SMOTE.png)
-
-
-Notice how the minority class was completely ignore prior to oversampling. Not all models and hyperparameter settings are this delicate to class imbalance.
-
-
-## Effect of Ratios Hyperparameter
-
-Now let's strudy the effect of the ratios hyperparameter. We will do this through an animated plot.
-
+```@raw html
+<img src="./ROSE-before-after.png"/>
+```
+## Effect of Increasing `s`
 
 
 ```julia
-anim = @animate for versicolor_ratio ∈ 0.3:0.01:2
+anim = @animate for s ∈ 0:0.03:6.0
 	# oversample
 	Xover, yover =
-		smote(X, y; k = 5, ratios = Dict("versicolor" => versicolor_ratio), rng = 42)
+		rose(X, y; s = s, ratios = Dict("setosa" => 1.0, "versicolor" => 1.0), rng = 42)
 
-	# fit machine
-	model = SVC(gamma = 0.01)
+	model = BayesianLDA()	
 	mach_over = machine(model, Xover, yover)
 	fit!(mach_over, verbosity = 0)
 
 	# grid predictions
 	grid_predictions_over = [
-		predict(mach_over, Tables.table(reshape(collect(point), 1, 2)))[1] for
+		predict_mode(mach_over, Tables.table(reshape(collect(point), 1, 2)))[1] for
 		point in grid_points
 	]
 
-	# plot
 	p_over = contourf(petal_length_range, petal_width_range, grid_predictions_over,
 		levels = 3, color = :Set3_3, colorbar = false)
+
 	for label in labels
 		scatter!(p_over, Xover.petal_length[yover.==label],
 			Xover.petal_width[yover.==label],
 			color = colors[label], label = label,
-			title = "Oversampling versicolor with ratio $versicolor_ratio")
+			title = "Oversampling with s=$s")
 	end
 	plot!(dpi = 150)
 end
 ```
 
 
-    Animation("/var/folders/nq/f_nplzp52qx_hrrhyg44xf4c0000gn/T/jl_ZGJtxs", ["000001.png", "000002.png", "000003.png", "000004.png", "000005.png", "000006.png", "000007.png", "000008.png", "000009.png", "000010.png"  …  "000162.png", "000163.png", "000164.png", "000165.png", "000166.png", "000167.png", "000168.png", "000169.png", "000170.png", "000171.png"])
-
-
-
 ```julia
-gif(anim, "./visuals/rose-animation.gif", fps=6)
+gif(anim, "./rose-animation.gif", fps=6)
 println()
 ```
 
-    ┌ Info: Saved animation to /Users/essam/Documents/GitHub/Imbalance.jl/examples/visuals/rose-animation.gif
+    
+
+
+    ┌ Info: Saved animation to /Users/essam/Documents/GitHub/Imbalance.jl/docs/src/examples/effect_of_s/rose-animation.gif
     └ @ Plots /Users/essam/.julia/packages/Plots/3BCH5/src/animation.jl:156
 
 
-![oversampling versicolor with ratio $versicolor_ratio](./visuals/smote-animation.gif)
+```@raw html
+<img src="./rose-anim.gif"/>
+```
 
+As we can see, the larger `s` is the more spread out are the oversampled points. This is expected because what ROSE does is oversample by sampling from the distribution that corresponds to placing Gaussians on the existing points and `s` is a hyperparameter proportional to the bandwidth of the Gaussians. When `s=0` the only points that can be generated lie on top of others; i.e., ROSE becomes equivalent to random oversampling
 
-Notice how setting ratios greedly can lead to overfitting.
-
+The decision boundary is mainly unstable because we used a small number of epochs with the perceptron to generate this animation. It still took plenty of time.
 
 
 
