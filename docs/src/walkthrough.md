@@ -43,7 +43,7 @@ first(df, 5) |> pretty
 
 
 ## Coercing Data
-Typical models from `MLJ` assume that elements in each column of a table have some `scientific type` as defined by the [ScientificTypes.jl](https://juliaai.github.io/ScientificTypes.jl/dev/) package. Among the many types defined by the package, we are interested in `Multiclass`, `OrderedFactor` which fall under the `Finite` abstract type and `Continuous` and `Count` which fall under the `Infinite` abstract type.
+Typical models from `MLJ` assume that elements in each column of a table have some *scientific type* as defined by the [ScientificTypes.jl](https://juliaai.github.io/ScientificTypes.jl/dev/) package. Among the many types defined by the package, we are interested in `Multiclass`, `OrderedFactor` which fall under the `Finite` abstract type and `Continuous` and `Count` which fall under the `Infinite` abstract type.
 
 One motivation for this package is that it's not generally obvious whether numerical data in input an input table is of continuous type or categorical type given that numbers can describe both. Meanwhile, it's problematic if a model treats numerical data as say continuous or count when it's in reality nominal (multiclass).
 
