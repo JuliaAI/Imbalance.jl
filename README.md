@@ -76,7 +76,7 @@ The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls
 
 
 ## 🎨 Features
-- Provides some of the most sought oversampling algorithms in machine learning and is still under development
+- Provides some of the most sought oversampling algorithms in machine learning
 - Supports multi-class classification and both nominal and continuous features
 - Generic by supporting table input/output formats as well as matrices
 - Provides `MLJ` and `TableTransforms` interfaces aside from the default pure functional interface
@@ -86,7 +86,7 @@ The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls
 
 ## 📝 Methods
 
-The package so far provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
+The package provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
 
 * Basic Random Oversampling 
 * Random Oversampling Examples (ROSE)
