@@ -45,9 +45,10 @@ first(df, 5) |> pretty
 ## Coercing Data
 Typical models from `MLJ` assume that elements in each column of a table have some *scientific type* as defined by the [ScientificTypes.jl](https://juliaai.github.io/ScientificTypes.jl/dev/) package. Among the many types defined by the package, we are interested in `Multiclass`, `OrderedFactor` which fall under the `Finite` abstract type and `Continuous` and `Count` which fall under the `Infinite` abstract type.
 
-One motivation for this package is that it's not generally obvious whether numerical data in input an input table is of continuous type or categorical type given that numbers can describe both. Meanwhile, it's problematic if a model treats numerical data as say continuous or count when it's in reality nominal (multiclass). The package uses a default scientific type for elements of each column depending on the machine type but allows us to coerce them to other scientific types if needed.
+One motivation for this package is that it's not generally obvious whether numerical data in an input table is of continuous type or categorical type given that numbers can describe both. Meanwhile, it's problematic if a model treats numerical data as say `Continuous` or `Count` when it's in reality nominal (i.e., `Multiclass`) or ordinal (i.e., `OrderedFactor`).
 
-For instance, these are the default scientific types for our data (and the corresponding machine types)
+We can use `schema(df)` to see how each features is currently going to be interpreted by the resampling algorithms: 
+
 ```julia
 ScientificTypes.schema(df)
 ```
@@ -63,10 +64,8 @@ ScientificTypes.schema(df)
     └────────┴──────────┴─────────┘
 
 
+To change encodings that are leading to incorrect interpretations (true for all variable in this example), we use the coerce method, as follows:
 
-It rather makes sense that gender is a `nominal` variable which is equivalent to the `Multiclass type`. Weight and height are`continuous` variables; although, they seem to be represented as integers in the dataset above. Lastly, `Index` is an `ordinal` variable that takes one of the 5 BMI levels so that should be coerced to `OrderedFactor`.
-
-Let's coerce the types accordingly.
 
 
 ```julia
