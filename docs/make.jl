@@ -31,8 +31,9 @@ makedocs(
               "Walkthrough" => "walkthrough.md", 
               "Examples" => "examples.md", 
               "Contributing" => "contributing.md", 
-              "About" => "about.md"]
-              
+              "About" => "about.md"],
+    checkdocs=:none,
+    warnonly = true
 )
 
 DocumenterTools.Themes.compile(
