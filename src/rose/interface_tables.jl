@@ -24,7 +24,7 @@ $((COMMON_DOCS["RNG"]))
 
 # Returns
 
-- `model::ROSE`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
+- `model::ROSE`: A ROSE table transform that can be used like other transforms in TableTransforms.jl
 """
 ROSE(
     y_ind::Integer;

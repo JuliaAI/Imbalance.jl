@@ -20,7 +20,7 @@ $(COMMON_DOCS["RNG"])
 $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
 # Returns
-- `model::TomekUndersampler`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
+- `model::TomekUndersampler`: A TomekUndersampler table transform that can be used like other transforms in TableTransforms.jl
 """
 TomekUndersampler(
     y_ind::Integer;
