@@ -52,6 +52,17 @@ function MMI.transform(r::ENNUndersampler, _, X, y)
 		try_perserve_type = r.try_perserve_type,
 	)
 end
+function MMI.transform(r::ENNUndersampler, _, X::AbstractMatrix{<:Real}, y)
+	return enn_undersample(
+		X,
+		y;
+		k = r.k,
+		keep_condition = r.keep_condition,
+		min_ratios = r.min_ratios,
+		force_min_ratios = r.force_min_ratios,
+		rng = r.rng,
+	)
+end
 
 MMI.metadata_pkg(
 	ENNUndersampler,
@@ -63,10 +74,10 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
 	ENNUndersampler,
-	input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
-	output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
+	input_scitype = Union{Table(Continuous)},
+	output_scitype = Union{Table(Continuous)},
 	target_scitype = AbstractVector,
-	load_path = "Imbalance." * string(ENNUndersampler),
+	load_path = "Imbalance.MLJ.ENNUndersampler" 
 )
 function MMI.transform_scitype(s::ENNUndersampler)
 	return Tuple{
@@ -150,7 +161,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
   "versicolor" => 5
   "setosa"     => 13
 
-# load SMOTE model type:
+# load ENN model type:
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
 # Underample the majority classes to  sizes relative to the minority class:

@@ -40,6 +40,9 @@ function MMI.transform(r::ROSE, _, X, y)
     rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng, 
         try_perserve_type = r.try_perserve_type)
 end
+function MMI.transform(r::ROSE, _, X::AbstractMatrix{<:Real}, y)
+    rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng,)
+end
 
 MMI.metadata_pkg(
     ROSE,
@@ -54,7 +57,7 @@ MMI.metadata_model(
     input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
     output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
     target_scitype = AbstractVector,
-    load_path = "Imbalance." * string(ROSE),
+    load_path = "Imbalance.MLJ.ROSE"
 )
 function MMI.transform_scitype(s::ROSE)
     return Tuple{
@@ -128,7 +131,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
   "versicolor" => 5
   "setosa"     => 13
 
-# load SMOTE model type:
+# load ROSE model type:
 ROSE = @load ROSE pkg=Imbalance
 
 # Oversample the minority classes to  sizes relative to the majority class:

@@ -25,7 +25,9 @@ function MMI.transform(r::RandomOversampler, _, X, y)
     random_oversample(X, y; ratios = r.ratios, rng = r.rng, 
                       try_perserve_type = r.try_perserve_type)
 end
-
+function MMI.transform(r::RandomOversampler, _, X::AbstractMatrix{<:Real}, y)
+  random_oversample(X, y; ratios = r.ratios, rng = r.rng)
+end
 
 MMI.metadata_pkg(
   RandomOversampler,
@@ -40,7 +42,7 @@ MMI.metadata_model(
   input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
   output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
   target_scitype = AbstractVector,
-  load_path = "Imbalance." * string(RandomOversampler),
+  load_path = "Imbalance.MLJ.RandomOversampler" 
 )
 function MMI.transform_scitype(s::RandomOversampler)
   return Tuple{
@@ -111,7 +113,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
   "versicolor" => 5
   "setosa"     => 13
 
-# load SMOTE model type:
+# load RandomOversampler model type:
 RandomOversampler = @load RandomOversampler pkg=Imbalance
 
 # Oversample the minority classes to  sizes relative to the majority class:

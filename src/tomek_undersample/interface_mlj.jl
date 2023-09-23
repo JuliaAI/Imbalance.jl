@@ -34,6 +34,15 @@ function MMI.transform(r::TomekUndersampler, _, X, y)
         try_perserve_type = r.try_perserve_type,
     )
 end
+function MMI.transform(r::TomekUndersampler, _, X::AbstractMatrix{<:Real}, y)
+    return tomek_undersample(
+        X,
+        y;
+        min_ratios = r.min_ratios,
+        force_min_ratios = r.force_min_ratios,
+        rng = r.rng,
+    )
+end
 
 MMI.metadata_pkg(
     TomekUndersampler,
@@ -48,7 +57,7 @@ MMI.metadata_model(
     input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
     output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
     target_scitype = AbstractVector,
-    load_path = "Imbalance." * string(TomekUndersampler),
+    load_path = "Imbalance.MLJ.TomekUndersampler"
 )
 function MMI.transform_scitype(s::TomekUndersampler)
     return Tuple{
@@ -122,7 +131,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
   "versicolor" => 5
   "setosa"     => 13
 
-# load SMOTE model type:
+# load TomekUndersampler model type:
 TomekUndersampler = @load TomekUndersampler pkg=Imbalance
 
 # Underample the majority classes to  sizes relative to the minority class:

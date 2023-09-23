@@ -42,6 +42,16 @@ function MMI.transform(r::ClusterUndersampler, _, X, y)
 		try_perserve_type = r.try_perserve_type,
 	)
 end
+function MMI.transform(r::ClusterUndersampler, _, X::AbstractMatrix{<:Real}, y)
+	return cluster_undersample(
+		X,
+		y;
+		mode = r.mode,
+		ratios = r.ratios,
+		maxiter = r.maxiter,
+		rng = r.rng,
+	)
+end
 
 MMI.metadata_pkg(
 	ClusterUndersampler,
@@ -56,8 +66,9 @@ MMI.metadata_model(
 	input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
 	output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
 	target_scitype = AbstractVector,
-	load_path = "Imbalance." * string(ClusterUndersampler),
+	load_path = "Imbalance.MLJ.ClusterUndersampler" 
 )
+
 function MMI.transform_scitype(s::ClusterUndersampler)
 	return Tuple{
 		Union{Table(Continuous), AbstractMatrix{Continuous}},

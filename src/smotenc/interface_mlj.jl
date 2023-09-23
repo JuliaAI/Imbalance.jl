@@ -61,14 +61,12 @@ MMI.metadata_model(
     SMOTENC,
     input_scitype = Union{
         Table(Union{Infinite, Finite}),
-        AbstractMatrix{Union{Infinite, Finite}},
     },
     output_scitype = Union{
         Table(Union{Infinite, Finite}),
-        AbstractMatrix{Union{Infinite, Finite}},
     },
     target_scitype = AbstractVector,
-    load_path = "Imbalance." * string(SMOTENC),
+    load_path = "Imbalance.MLJ.SMOTENC"
 )
 
 
@@ -76,7 +74,6 @@ function MMI.transform_scitype(s::SMOTENC)
     return Tuple{
         Union{
             Table(Union{Infinite,OrderedFactor,Multiclass}),
-            AbstractMatrix{Union{Infinite,OrderedFactor,Multiclass}},
         },
         AbstractVector{<:Finite},
     }

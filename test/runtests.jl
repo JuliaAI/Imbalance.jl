@@ -23,7 +23,7 @@ using Conda
 
 include("test_utils.jl")
 
-#=
+
 @testset "common_utils" begin
     include("common_utils.jl")
 end
@@ -43,6 +43,7 @@ end
 @testset "tabletransforms" begin
     include("tabletr_interface.jl")
 end
+
 @testset "MLJ Interface" begin
     include("mlj_interface.jl")
 end
@@ -62,7 +63,6 @@ end
 @testset "Basic Random Undersampler" begin
     include("random_undersample.jl")
 end
-=#
 @testset "ENN Undersampler" begin
     include("enn_undersample.jl")
 end
@@ -74,6 +74,7 @@ end
 @testset "Cluster Undersampler" begin
     include("cluster_undersample.jl")
 end
+
 
 @testset "SMOTE" begin
     include("smote.jl")

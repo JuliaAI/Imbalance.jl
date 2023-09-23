@@ -97,7 +97,9 @@ mach = machine(undersampler)
 # Provide the data to transform (there is nothing to fit)
 X_under, y_under = transform(mach, X, y)
 ```
-The `MLJ` interface is only supported for table inputs. Read more about the interface [here]().
+You can read more about this `MLJ` interface [here]().
+
+
 
 # TableTransforms Interface
 

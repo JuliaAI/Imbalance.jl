@@ -31,6 +31,14 @@ function MMI.transform(r::RandomUndersampler, _, X, y)
         try_perserve_type = r.try_perserve_type,
     )
 end
+function MMI.transform(r::RandomUndersampler, _, X::AbstractMatrix{<:Real}, y)
+    return random_undersample(
+        X,
+        y;
+        ratios = r.ratios,
+        rng = r.rng,
+    )
+end
 
 MMI.metadata_pkg(
     RandomUndersampler,
@@ -45,7 +53,7 @@ MMI.metadata_model(
     input_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
     output_scitype = Union{Table(Continuous), AbstractMatrix{Continuous}},
     target_scitype = AbstractVector,
-    load_path = "Imbalance." * string(RandomUndersampler),
+    load_path = "Imbalance.MLJ.RandomUndersampler"
 )
 function MMI.transform_scitype(s::RandomUndersampler)
     return Tuple{
@@ -114,7 +122,7 @@ Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
   "versicolor" => 5
   "setosa"     => 13
 
-# load SMOTE model type:
+# load RandomUndersampler model type:
 RandomUndersampler = @load RandomUndersampler pkg=Imbalance
 
 # Underample the majority classes to  sizes relative to the minority class:
