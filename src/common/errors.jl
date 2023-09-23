@@ -39,3 +39,10 @@ const ERR_WRNG_TREE(knn_tree) = "Expected KNN tree to be either 'BruteTree' or '
 ### SMOTEN
 const ERR_BAD_NOM_COL_TYPES(bad_cols, bad_types) =
     "Columns at indices $(bad_cols) are not categorical.\n Categorical columns must have scitype Multiclass or OrderedFactor.\n However, said columns have scitypes $(bad_types)."
+
+
+### Cluster Undersampling
+const ERR_INVALID_MODE = raw"mode must be either \"center\" or \"nearest\" "
+
+### ENN Undersampling
+const ERR_KEEP_CONDS = raw"keep_condition must be one of: \"exists\", \"mode\", \"only mode\", \"all\""

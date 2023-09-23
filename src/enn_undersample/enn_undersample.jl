@@ -170,7 +170,7 @@ function enn_undersample(
     rng = rng_handler(rng)
     check_k(k, size(X, 1))
     (keep_condition in ["exists", "mode", "only mode", "all"]) ||
-        throw("keep_condition must be one of: exists, mode, only mode, all")
+        throw(ERR_KEEP_CONDS)
     X = transpose(X)
     filter = compute_enn_filter(X, y, k, keep_condition)
     pass_inds, is_transposed = true, true

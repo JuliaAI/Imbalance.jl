@@ -17,13 +17,12 @@ function cluster_undersample_per_class(
     n::Integer;
     mode::AbstractString = "nearest",
     maxiter::Integer = 100,
-    rng::Integer = 42,
+    rng::Union{AbstractRNG,Integer} = default_rng()
 )
     (mode in ["center", "nearest"]) ||
-        throw(ArgumentError("mode must be either 'center' or 'nearest'"))
+        throw(ArgumentError(ERR_INVALID_MODE))
     # to undersample down to n points find k=n clusters
-    seed!(rng)               # kmeans offers no better way :(
-    result = kmeans(X, n; maxiter)
+    result = kmeans(X, n; maxiter, rng)
     # the n cluster centers are the undersampled points
     X_new = result.centers
     # unless mode is "nearest" where we seek the nearest neighbor of each center
@@ -61,7 +60,7 @@ $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
 
 - `maxiter::Integer=100`: Maximum number of iterations to run K-means
 
-- `rng::Integer=42`: Random number generator seed. Must be an integer.
+$(COMMON_DOCS["RNG"])
 
 $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
 
@@ -149,8 +148,9 @@ function cluster_undersample(
     mode::AbstractString = "nearest",
     ratios = 1.0,
     maxiter::Integer = 100,
-    rng::Union{Integer} = 42,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
 )
+    rng = rng_handler(rng)
     X_under, y_under =
         generic_undersample(X, y, cluster_undersample_per_class; ratios, mode, maxiter, rng)
     return X_under, y_under
@@ -163,7 +163,7 @@ function cluster_undersample(
     mode::AbstractString = "nearest",
     ratios = 1.0,
     maxiter::Integer = 100,
-    rng::Union{Integer} = 42,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
     X_under, y_under = tablify(
@@ -188,7 +188,7 @@ function cluster_undersample(
     mode::AbstractString = "nearest",
     ratios = 1.0,
     maxiter::Integer = 100,
-    rng::Union{Integer} = 42,
+    rng::Union{AbstractRNG,Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
     Xy_under = tablify(

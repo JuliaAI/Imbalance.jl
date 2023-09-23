@@ -1,11 +1,11 @@
 ### Cluster Undersampling TableTransforms Interface
 # interface struct
-struct ClusterUndersampler{T} <: Transform
-    y_ind::Integer
-    mode::AbstractString
+struct ClusterUndersampler{T, I<:Integer, S<:AbstractString, R<:Union{AbstractRNG, Integer}} <: Transform
+    y_ind::I
+    mode::S
     ratios::T
-    maxiter::Integer
-    rng::Integer
+    maxiter::I
+    rng::R
     try_perserve_type::Bool
 end
 
@@ -37,7 +37,7 @@ ClusterUndersampler(
     mode::AbstractString = "nearest",
     ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     maxiter::Integer = 100,
-    rng::Integer = 42,
+    rng::Union{Integer, AbstractRNG} = default_rng(),
     try_perserve_type::Bool = true,
 ) where {T} = ClusterUndersampler(y_ind, mode, ratios, maxiter, rng, try_perserve_type)
 
