@@ -11,14 +11,8 @@ using MLJ
 using Imbalance
 using ScientificTypes
 
-DocumenterTools.Themes.compile(
-  joinpath(@__DIR__, "src/assets/light.scss"), 
-  joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
-)
 
 include("examples.jl")
-
-
 
 makedocs(
 
@@ -41,8 +35,13 @@ makedocs(
               
 )
 
+DocumenterTools.Themes.compile(
+  joinpath(@__DIR__, "src/assets/light.scss"), 
+  joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
+)
+
 
 # Documenter can also automatically deploy documentation to gh-pages.
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
-deploydocs(repo = "github.com/JuliaAI/Imbalance.jl.git", branch = "gh-pages")
+deploydocs(repo = "github.com/JuliaAI/Imbalance.jl.git")
