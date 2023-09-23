@@ -177,7 +177,7 @@ It was obvious from the bar charts that there is a severe imbalance problem. Let
 
 
 ```julia
-checkbalance(y)
+checkbalance(y)         # comes from Imbalance
 ```
 
     m: ▇ 36 (1.0%) 

@@ -99,7 +99,7 @@ To simulate that there is a balance problem, we will consider a random sample of
 Random.seed!(803429)
 subset_indices = rand(1:size(X, 1), 100)
 X, y = X[subset_indices, :], y[subset_indices]
-checkbalance(y)
+checkbalance(y)         # comes from Imbalance
 ```
 
     versicolor: ▇▇▇▇▇▇▇▇▇▇▇ 12 (22.6%) 

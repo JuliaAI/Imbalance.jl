@@ -45,11 +45,9 @@ first(df, 5) |> pretty
 ## Coercing Data
 Typical models from `MLJ` assume that elements in each column of a table have some *scientific type* as defined by the [ScientificTypes.jl](https://juliaai.github.io/ScientificTypes.jl/dev/) package. Among the many types defined by the package, we are interested in `Multiclass`, `OrderedFactor` which fall under the `Finite` abstract type and `Continuous` and `Count` which fall under the `Infinite` abstract type.
 
-One motivation for this package is that it's not generally obvious whether numerical data in input an input table is of continuous type or categorical type given that numbers can describe both. Meanwhile, it's problematic if a model treats numerical data as say continuous or count when it's in reality nominal (multiclass).
+One motivation for this package is that it's not generally obvious whether numerical data in input an input table is of continuous type or categorical type given that numbers can describe both. Meanwhile, it's problematic if a model treats numerical data as say continuous or count when it's in reality nominal (multiclass). The package uses a default scientific type for elements of each column depending on the machine type but allows us to coerce them to other scientific types if needed.
 
-The package will try to automatically infer the element scientific types for each column but allows us as developers to correct them by coercion if needed .
-
-
+For instance, these are the default scientific types for our data (and the corresponding machine types)
 ```julia
 ScientificTypes.schema(df)
 ```
@@ -66,7 +64,7 @@ ScientificTypes.schema(df)
 
 
 
-Shown are the inferred types. It rather makes sense that gender is a `nominal` variable which is equivalent to the `Multiclass type`. Weight and height are`continuous` variables; although, they seem to be represented as integers in the dataset above. Lastly, `Index` is an `ordinal` variable that takes one of the 5 BMI levels so that should be coerced to `OrderedFactor`.
+It rather makes sense that gender is a `nominal` variable which is equivalent to the `Multiclass type`. Weight and height are`continuous` variables; although, they seem to be represented as integers in the dataset above. Lastly, `Index` is an `ordinal` variable that takes one of the 5 BMI levels so that should be coerced to `OrderedFactor`.
 
 Let's coerce the types accordingly.
 
@@ -140,7 +138,7 @@ Before deciding to oversample, let's see how adverse is the imbalance problem, i
 
 
 ```julia
-checkbalance(y)
+checkbalance(y)             # comes from Imbalance
 ```
 
     0: ▇▇▇ 13 (6.6%) 
