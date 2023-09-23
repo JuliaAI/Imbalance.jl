@@ -277,7 +277,7 @@ println()
 <img src="./smote-animation.gif"/>
 ```
 
-Notice how setting ratios greedly can lead to overfitting.
+Notice how setting ratios greedily can lead to overfitting.
 
 
 
