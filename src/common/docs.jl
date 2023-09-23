@@ -20,21 +20,21 @@ const COMMON_DOCS = Dict(
     
     "RATIOS" => """
     - `ratios=1.0`: A parameter that controls the amount of oversampling to be done for each class
-        - Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By \
-        default, all classes are oversampled to the size of the majority class
-        - Can be a dictionary mapping each class to the ratio of the needed number of observations for that class to the \
-        initial number of observations of the majority class
+        - Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By""" *
+        """default, all classes are oversampled to the size of the majority class
+        - Can be a dictionary mapping each class to the ratio of the needed number of observations for that class to the""" *
+        """initial number of observations of the majority class
     """,
 
     "RNG" => """
     - `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` 
-        seed to be used with `Xoshiro`\n
+        seed to be used with `Xoshiro`
     """,
 
     "K" => """
-    - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE algorithm. Should be within the range \
-        `0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to \
-        `n-1` for any class where `n ≤ k`.
+    - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE algorithm. Should be within the range """*
+        """`0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to""" *
+        """`n-1` for any class where `n ≤ k`.
     """,
 
     "TRY_PERSERVE_TYPE" => """
