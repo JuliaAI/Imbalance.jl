@@ -6,14 +6,10 @@
     using PyCall
     using Conda
 
-    Conda.add("imbalanced-learn")
-    Conda.add("numpy")
-    Conda.add("scikit-learn")
-    Conda.add("scipy")
-    pyimport_conda("imblearn", "imbalanced-learn")
-    pyimport_conda("numpy", "numpy")
-    pyimport_conda("sklearn", "scikit-learn")
-    pyimport_conda("scipy", "scipy")
+    Conda.add("imbalanced-learn=0.11")
+    Conda.add("numpy=1.26")
+    Conda.add("scikit-learn=1.3")
+    Conda.add("scipy=1.11")
 
     # Import numpy and other libraries
     np = pyimport("numpy")

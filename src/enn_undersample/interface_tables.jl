@@ -1,12 +1,12 @@
 ### ENN Undersampling TableTransforms Interface
 # interface struct
-struct ENNUndersampler{T} <: Transform
-    y_ind::Integer
-    k::Integer
-    keep_condition::AbstractString
+struct ENNUndersampler{T, I<:Integer, S<:AbstractString, R<:Union{AbstractRNG, Integer}} <: Transform
+    y_ind::I
+    k::I
+    keep_condition::S
     min_ratios::T
     force_min_ratios::Bool
-    rng::Integer
+    rng::R
     try_perserve_type::Bool
 end
 
@@ -44,7 +44,7 @@ ENNUndersampler(
     keep_condition::AbstractString = "mode",
     min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     force_min_ratios::Bool = false,
-    rng::Integer = 42,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
 ) where {T} = ENNUndersampler(
     y_ind,
