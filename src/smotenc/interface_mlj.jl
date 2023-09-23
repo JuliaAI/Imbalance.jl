@@ -134,37 +134,45 @@ $((COMMON_DOCS["OUTPUTS"]))
 ```
 using MLJ
 import Random.seed!
-using MLUtils
+import Imbalance.generate_imbalanced_data
 import StatsBase.countmap
 
-seed!(12345)
+# set probability of each class
+probs = [0.5, 0.2, 0.3]                         
+num_rows = 100
+num_continuous_feats = 3
+# want two categorical features with three and two possible values respectively
+cat_feats_num_vals = [3, 2]
 
-# Generate some imbalanced data:
-X, y = @load_iris # a table and a vector
-rand_inds = rand(1:150, 30)
-X, y = getobs(X, rand_inds), y[rand_inds]
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                probs, cat_feats_num_vals, rng=42)     
 
-julia> countmap(y)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 12
-  "versicolor" => 5
-  "setosa"     => 13
+julia> StatsBase.countmap(y)
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 33
+1 => 19
+
+julia> ScientificTypes.schema(X).scitypes
+(Continuous, Continuous, Continuous, Continuous, Continuous)
+# coerce nominal columns to a finite scitype (multiclass or ordered factor)
+X = coerce(X, :Column4=>Multiclass, :Column5=>Multiclass)
 
 # load SMOTENC model type:
 SMOTENC = @load SMOTENC pkg=Imbalance
 
 # Oversample the minority classes to  sizes relative to the majority class:
-smotenc = SMOTENC(k=10, ratios=Dict("setosa"=>1.0, "versicolor"=> 0.8, "virginica"=>1.0), rng=42)
+smotenc = SMOTENC(k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
 mach = machine(smotenc)
 Xover, yover = transform(mach, X, y)
 
-julia> countmap(yover)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 13
-  "versicolor" => 10
-  "setosa"     => 13
+julia>StatsBase.countmap(yover)
+Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
+0 => 48
+2 => 33
+1 => 19
 ```
-
 """
 SMOTENC
 

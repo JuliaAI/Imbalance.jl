@@ -16,7 +16,7 @@ In this example, we will consider the [Churn for Bank Customers](https://www.kag
 
 
 ```julia
-df = CSV.read("datasets/churn.csv", DataFrame)
+df = CSV.read("../datasets/churn.csv", DataFrame)
 first(df, 5) |> pretty
 ```
 
@@ -77,19 +77,19 @@ ScientificTypes.schema(df)
 ```
 
 
-    ┌─────────────────┬───────────────┬───────────────────────────────────┐
-    │ names           │ scitypes      │ types                             │
-    ├─────────────────┼───────────────┼───────────────────────────────────┤
-    │ CreditScore     │ Continuous    │ Float64                           │
-    │ Age             │ Continuous    │ Float64                           │
-    │ Tenure          │ Continuous    │ Float64                           │
-    │ Balance         │ Continuous    │ Float64                           │
-    │ NumOfProducts   │ Continuous    │ Float64                           │
-    │ HasCrCard       │ Continuous    │ Float64                           │
-    │ IsActiveMember  │ Continuous    │ Float64                           │
-    │ EstimatedSalary │ Continuous    │ Float64                           │
-    │ Exited          │ Multiclass{2} │ CategoricalValue{Float64, UInt32} │
-    └─────────────────┴───────────────┴───────────────────────────────────┘
+    ┌─────────────────┬───────────────┬─────────────────────────────────┐
+    │ names           │ scitypes      │ types                           │
+    ├─────────────────┼───────────────┼─────────────────────────────────┤
+    │ CreditScore     │ Count         │ Int64                           │
+    │ Age             │ Continuous    │ Float64                         │
+    │ Tenure          │ Continuous    │ Float64                         │
+    │ Balance         │ Continuous    │ Float64                         │
+    │ NumOfProducts   │ Continuous    │ Float64                         │
+    │ HasCrCard       │ Continuous    │ Float64                         │
+    │ IsActiveMember  │ Continuous    │ Float64                         │
+    │ EstimatedSalary │ Continuous    │ Float64                         │
+    │ Exited          │ Multiclass{2} │ CategoricalValue{Int64, UInt32} │
+    └─────────────────┴───────────────┴─────────────────────────────────┘
 
 
 
@@ -105,8 +105,8 @@ first(X, 5) |> pretty
 
     ┌─────────────┬────────────┬────────────┬────────────┬───────────────┬────────────┬────────────────┬─────────────────┐
     │ CreditScore │ Age        │ Tenure     │ Balance    │ NumOfProducts │ HasCrCard  │ IsActiveMember │ EstimatedSalary │
-    │ Float64     │ Float64    │ Float64    │ Float64    │ Float64       │ Float64    │ Float64        │ Float64         │
-    │ Continuous  │ Continuous │ Continuous │ Continuous │ Continuous    │ Continuous │ Continuous     │ Continuous      │
+    │ Int64       │ Float64    │ Float64    │ Float64    │ Float64       │ Float64    │ Float64        │ Float64         │
+    │ Count       │ Continuous │ Continuous │ Continuous │ Continuous    │ Continuous │ Continuous     │ Continuous      │
     ├─────────────┼────────────┼────────────┼────────────┼───────────────┼────────────┼────────────────┼─────────────────┤
     │ 669.0       │ 31.0       │ 6.0        │ 1.13001e5  │ 1.0           │ 1.0        │ 0.0            │ 40467.8         │
     │ 822.0       │ 37.0       │ 3.0        │ 105563.0   │ 1.0           │ 1.0        │ 0.0            │ 1.82625e5       │
@@ -126,7 +126,7 @@ y_train, y_test = y[train_inds], y[test_inds]
 ```
 
 
-    (CategoricalValue{Float64, UInt32}[0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0], CategoricalValue{Float64, UInt32}[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    (CategoricalValue{Int64, UInt32}[0, 1, 1, 0, 0, 0, 0, 0, 0, 0  …  0, 0, 0, 1, 0, 0, 0, 0, 1, 0], CategoricalValue{Int64, UInt32}[0, 0, 0, 0, 0, 1, 1, 0, 0, 0  …  0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
 
 ## Oversampling
@@ -137,11 +137,11 @@ Before deciding to oversample, let's see how adverse is the imbalance problem, i
 
 
 ```julia
-checkbalance(y)
+checkbalance(y)         # comes from Imbalance
 ```
 
-    1.0: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 2037 (25.6%) 
-    0.0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7963 (100.0%) 
+    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 2037 (25.6%) 
+    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7963 (100.0%) 
 
 
 Looks like we have a class imbalance problem. Let's oversample with SMOTE and set the desired ratios so that the positive minority class is 90% of the majority class
@@ -152,8 +152,8 @@ Xover, yover = smote(X, y; k=3, ratios=Dict(1=>0.9), rng=42)
 checkbalance(yover)
 ```
 
-    1.0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7167 (90.0%) 
-    0.0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7963 (100.0%) 
+    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7167 (90.0%) 
+    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7963 (100.0%) 
 
 
 ## Training the Model
@@ -198,6 +198,25 @@ Let's go for a logistic classifier form MLJLinearModels
 import Pkg; Pkg.add("MLJLinearModels")
 ```
 
+        Updating registry at `~/.julia/registries/General.toml`
+    ┌ Error: Some registries failed to update:
+    │     — /Users/essam/.julia/registries/General.toml — failed to download from https://pkg.julialang.org/registry/23338594-aafe-5451-b93e-139f81909106/95646b6cd2d61c2d6784757067e14d5bcb846090. Exception: HTTP/2 200 (Operation too slow. Less than 1 bytes/sec transferred the last 20 seconds) while requesting https://pkg.julialang.org/registry/23338594-aafe-5451-b93e-139f81909106/95646b6cd2d61c2d6784757067e14d5bcb846090
+    └ @ Pkg.Registry /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-macmini-aarch64-4.0/build/default-macmini-aarch64-4-0/julialang/julia-release-1-dot-8/usr/share/julia/stdlib/v1.8/Pkg/src/Registry/Registry.jl:449
+       Resolving package versions...
+        Updating `~/Documents/GitHub/Imbalance.jl/Project.toml`
+      [6ee0df7b] + MLJLinearModels v0.9.2
+        Updating `~/Documents/GitHub/Imbalance.jl/Manifest.toml`
+      [6a86dc24] + FiniteDiff v2.21.1
+      [42fd0dbc] + IterativeSolvers v0.9.2
+      [d3d80556] + LineSearches v7.2.0
+      [7a12625a] + LinearMaps v3.11.0
+      [6ee0df7b] + MLJLinearModels v0.9.2
+      [d41bc354] + NLSolversBase v7.8.3
+      [429524aa] + Optim v1.7.7
+      [85a6dd25] + PositiveFactorizations v0.2.4
+      [3cdcf5f2] + RecipesBase v1.3.4
+
+
 ### Before Oversampling
 
 
@@ -215,12 +234,34 @@ mach = machine(model, X_train, y_train)
 fit!(mach, verbosity=0)
 ```
 
+    ┌ Warning: The number and/or types of data arguments do not match what the specified model
+    │ supports. Suppress this type check by specifying `scitype_check_level=0`.
+    │ 
+    │ Run `@doc MLJLinearModels.LogisticClassifier` to learn more about your model's requirements.
+    │ 
+    │ Commonly, but non exclusively, supervised models are constructed using the syntax
+    │ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
+    │ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
+    │ sample or class weights.
+    │ 
+    │ In general, data in `machine(model, data...)` is expected to satisfy
+    │ 
+    │     scitype(data) <: MLJ.fit_data_scitype(model)
+    │ 
+    │ In the present case:
+    │ 
+    │ scitype(data) = Tuple{Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}, AbstractVector{Multiclass{2}}}
+    │ 
+    │ fit_data_scitype(model) = Tuple{Table{<:AbstractVector{<:Continuous}}, AbstractVector{<:Finite}}
+    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:230
+
+
 
     trained Machine; caches model-specific representations of data
       model: LogisticClassifier(lambda = 2.220446049250313e-16, …)
       args: 
-        1:	Source @245 ⏎ Table{AbstractVector{Continuous}}
-        2:	Source @712 ⏎ AbstractVector{Multiclass{2}}
+        1:	Source @148 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}
+        2:	Source @042 ⏎ AbstractVector{Multiclass{2}}
 
 
 
@@ -236,7 +277,7 @@ fit!(mach_over)
 ```
 
     ┌ Info: Training machine(LogisticClassifier(lambda = 2.220446049250313e-16, …), …).
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/0rn2V/src/machines.jl:492
+    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
     ┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, NamedTuple{(), Tuple{}}}
     │   optim_options: Optim.Options{Float64, Nothing}
     │   lbfgs_options: NamedTuple{(), Tuple{}} NamedTuple()
@@ -247,8 +288,8 @@ fit!(mach_over)
     trained Machine; caches model-specific representations of data
       model: LogisticClassifier(lambda = 2.220446049250313e-16, …)
       args: 
-        1:	Source @095 ⏎ Table{AbstractVector{Continuous}}
-        2:	Source @987 ⏎ AbstractVector{Multiclass{2}}
+        1:	Source @525 ⏎ Table{AbstractVector{Continuous}}
+        2:	Source @636 ⏎ AbstractVector{Multiclass{2}}
 
 
 
@@ -281,7 +322,7 @@ score = round(balanced_accuracy(y_pred_over, y_test), digits=2)
 ```
 
 
-    0.57
+    0.66
 
 
 

@@ -6,6 +6,7 @@ using MLJ
 using Imbalance
 using ScientificTypes
 using Plots
+using StatsBase
 ```
 
 ## Loading Data
@@ -15,7 +16,7 @@ In this example, we will consider the [Mushroom dataset](https://www.kaggle.com/
 
 
 ```julia
-df = CSV.read("datasets/mushrooms.csv", DataFrame)
+df = CSV.read("../datasets/mushrooms.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames
 first(df, 5) |> pretty
@@ -53,14 +54,12 @@ end
 plot_res = plot(bar_charts..., layout=(5, 5), 
                 size=(1300, 1200), 
                 plot_title="Value Frequencies for each Categorical Variable")
-savefig(plot_res, "./visuals/mushroom-bar-charts.png")
+savefig(plot_res, "./mushroom-bar-charts.png")
 ```
 
-
-    "/Users/essam/Documents/GitHub/Imbalance.jl/examples/visuals/mushroom-bar-charts.png"
-
-
-![mushroom barcharts](./visuals/mushroom-bar-charts.png)
+```@raw html
+<img src="./mushroom-bar-charts.png" />
+```
 
 We will take the mushroom odour as our target and all the rest as features. 
 
@@ -73,28 +72,28 @@ ScientificTypes.schema(df)
 ```
 
 
-    ┌──────────────────────────┬────────────────┬───────────────────────────────────
-    │ names                    │ scitypes       │ types                            ⋯
-    ├──────────────────────────┼────────────────┼───────────────────────────────────
-    │ class                    │ Multiclass{2}  │ CategoricalValue{String1, UInt32 ⋯
-    │ cap-shape                │ Multiclass{6}  │ CategoricalValue{String1, UInt32 ⋯
-    │ cap-surface              │ Multiclass{4}  │ CategoricalValue{String1, UInt32 ⋯
-    │ cap-color                │ Multiclass{10} │ CategoricalValue{String1, UInt32 ⋯
-    │ bruises                  │ Multiclass{2}  │ CategoricalValue{String1, UInt32 ⋯
-    │ odor                     │ Multiclass{9}  │ CategoricalValue{String1, UInt32 ⋯
-    │ gill-attachment          │ Multiclass{2}  │ CategoricalValue{String1, UInt32 ⋯
-    │ gill-spacing             │ Multiclass{2}  │ CategoricalValue{String1, UInt32 ⋯
-    │ gill-size                │ Multiclass{2}  │ CategoricalValue{String1, UInt32 ⋯
-    │ gill-color               │ Multiclass{12} │ CategoricalValue{String1, UInt32 ⋯
-    │ stalk-shape              │ Multiclass{2}  │ CategoricalValue{String1, UInt32 ⋯
-    │ stalk-root               │ Multiclass{5}  │ CategoricalValue{String1, UInt32 ⋯
-    │ stalk-surface-above-ring │ Multiclass{4}  │ CategoricalValue{String1, UInt32 ⋯
-    │ stalk-surface-below-ring │ Multiclass{4}  │ CategoricalValue{String1, UInt32 ⋯
-    │ stalk-color-above-ring   │ Multiclass{9}  │ CategoricalValue{String1, UInt32 ⋯
-    │ stalk-color-below-ring   │ Multiclass{9}  │ CategoricalValue{String1, UInt32 ⋯
-    │            ⋮             │       ⋮        │                 ⋮                ⋱
-    └──────────────────────────┴────────────────┴───────────────────────────────────
-                                                         1 column and 7 rows omitted
+    ┌──────────────────────────┬──────────┬─────────┐
+    │ names                    │ scitypes │ types   │
+    ├──────────────────────────┼──────────┼─────────┤
+    │ class                    │ Textual  │ String1 │
+    │ cap-shape                │ Textual  │ String1 │
+    │ cap-surface              │ Textual  │ String1 │
+    │ cap-color                │ Textual  │ String1 │
+    │ bruises                  │ Textual  │ String1 │
+    │ odor                     │ Textual  │ String1 │
+    │ gill-attachment          │ Textual  │ String1 │
+    │ gill-spacing             │ Textual  │ String1 │
+    │ gill-size                │ Textual  │ String1 │
+    │ gill-color               │ Textual  │ String1 │
+    │ stalk-shape              │ Textual  │ String1 │
+    │ stalk-root               │ Textual  │ String1 │
+    │ stalk-surface-above-ring │ Textual  │ String1 │
+    │ stalk-surface-below-ring │ Textual  │ String1 │
+    │ stalk-color-above-ring   │ Textual  │ String1 │
+    │ stalk-color-below-ring   │ Textual  │ String1 │
+    │            ⋮             │    ⋮     │    ⋮    │
+    └──────────────────────────┴──────────┴─────────┘
+                                       7 rows omitted
 
 
 
@@ -165,7 +164,7 @@ y_train, y_test = y[train_inds], y[test_inds]
 ```
 
 
-    (CategoricalValue{String1, UInt32}[String1("s"), String1("s"), String1("n"), String1("s"), String1("s"), String1("n"), String1("s"), String1("n"), String1("n"), String1("n")  …  String1("f"), String1("n"), String1("n"), String1("n"), String1("f"), String1("f"), String1("n"), String1("n"), String1("n"), String1("s")], CategoricalValue{String1, UInt32}[String1("f"), String1("y"), String1("a"), String1("c"), String1("f"), String1("n"), String1("f"), String1("n"), String1("n"), String1("n")  …  String1("f"), String1("f"), String1("n"), String1("n"), String1("f"), String1("y"), String1("f"), String1("n"), String1("n"), String1("n")])
+    (CategoricalArrays.CategoricalValue{String1, UInt32}[String1("s"), String1("s"), String1("n"), String1("s"), String1("s"), String1("n"), String1("s"), String1("n"), String1("n"), String1("n")  …  String1("f"), String1("n"), String1("n"), String1("n"), String1("f"), String1("f"), String1("n"), String1("n"), String1("n"), String1("s")], CategoricalArrays.CategoricalValue{String1, UInt32}[String1("f"), String1("y"), String1("a"), String1("c"), String1("f"), String1("n"), String1("f"), String1("n"), String1("n"), String1("n")  …  String1("f"), String1("f"), String1("n"), String1("n"), String1("f"), String1("y"), String1("f"), String1("n"), String1("n"), String1("n")])
 
 
 ⚠️ Always split the data before oversampling. If your test data has oversampled observations then train-test contamination has occurred; novel observations will not come from the oversampling function.
@@ -178,7 +177,7 @@ It was obvious from the bar charts that there is a severe imbalance problem. Let
 
 
 ```julia
-checkbalance(y)
+checkbalance(y)         # comes from Imbalance
 ```
 
     m: ▇ 36 (1.0%) 
@@ -193,7 +192,6 @@ checkbalance(y)
 
 
 Let's set our desired ratios as follows. these are set relative to the size of the majority class.
-
 
 
 ```julia
@@ -228,6 +226,34 @@ The easy option `ratios=1.0` always exists and would mean that we want to oversa
 ```julia
 Xover, yover = smoten(X_train, y_train; k=2, ratios=ratios, rng=Random.Xoshiro(42))
 ```
+
+    Progress:  22%|█████████▏                               |  ETA: 0:00:06[K
+    Progress: 100%|█████████████████████████████████████████| Time: 0:00:00[K
+
+
+
+    (15239×22 DataFrame
+       Row │ class  cap-shape  cap-surface  cap-color  bruises  gill-attachment  g ⋯
+           │ Cat…   Cat…       Cat…         Cat…       Cat…     Cat…             C ⋯
+    ───────┼────────────────────────────────────────────────────────────────────────
+         1 │ p      f          s            e          f        f                c ⋯
+         2 │ p      f          y            e          f        f                c
+         3 │ e      f          f            w          f        f                w
+         4 │ p      f          s            e          f        f                c
+         5 │ p      f          y            e          f        f                c ⋯
+         6 │ e      s          f            g          f        f                c
+         7 │ p      f          s            n          f        f                c
+         8 │ e      x          y            g          t        f                c
+       ⋮   │   ⋮        ⋮           ⋮           ⋮         ⋮            ⋮           ⋱
+     15233 │ p      x          y            c          f        a                c ⋯
+     15234 │ p      x          y            e          f        a                c
+     15235 │ p      x          y            n          f        a                c
+     15236 │ p      k          y            c          f        f                c
+     15237 │ p      x          y            c          f        a                c ⋯
+     15238 │ p      k          y            c          f        f                c
+     15239 │ p      x          y            e          f        f                c
+                                                   16 columns and 15224 rows omitted, CategoricalArrays.CategoricalValue{String1, UInt32}[String1("s"), String1("s"), String1("n"), String1("s"), String1("s"), String1("n"), String1("s"), String1("n"), String1("n"), String1("n")  …  String1("m"), String1("m"), String1("m"), String1("m"), String1("m"), String1("m"), String1("m"), String1("m"), String1("m"), String1("m")])
+
 
 SMOTEN uses a very specialized distance metric to decide the nearest neighbors which explains why it may be a bit slow as it's nontrivial to optimize KNN over such metric.
 
@@ -294,19 +320,19 @@ mach = machine(model, X_train, y_train)
 fit!(mach, verbosity=0)
 ```
 
-    import OneRule ✔
-
-
     ┌ Info: For silent loading, specify `verbosity=0`. 
     └ @ Main /Users/essam/.julia/packages/MLJModels/7apZ3/src/loading.jl:159
+
+
+    import OneRule ✔
 
 
 
     trained Machine; caches model-specific representations of data
       model: OneRuleClassifier()
       args: 
-        1:	Source @624 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
-        2:	Source @662 ⏎ AbstractVector{Multiclass{9}}
+        1:	Source @385 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
+        2:	Source @936 ⏎ AbstractVector{Multiclass{9}}
 
 
 
@@ -325,8 +351,8 @@ fit!(mach_over, verbosity=0)
     trained Machine; caches model-specific representations of data
       model: OneRuleClassifier()
       args: 
-        1:	Source @053 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
-        2:	Source @184 ⏎ AbstractVector{Multiclass{9}}
+        1:	Source @452 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
+        2:	Source @817 ⏎ AbstractVector{Multiclass{9}}
 
 
 

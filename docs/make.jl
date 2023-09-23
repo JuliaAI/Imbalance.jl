@@ -1,5 +1,5 @@
 using Documenter
-using DocumenterTools: Themes
+using DocumenterTools
 using Imbalance
 using Unicode
 using Printf
@@ -11,14 +11,8 @@ using MLJ
 using Imbalance
 using ScientificTypes
 
-Themes.compile(
-  joinpath(@__DIR__, "src/assets/light.scss"), 
-  joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
-)
 
 include("examples.jl")
-
-
 
 makedocs(
 
@@ -37,12 +31,18 @@ makedocs(
               "Walkthrough" => "walkthrough.md", 
               "Examples" => "examples.md", 
               "Contributing" => "contributing.md", 
-              "About" => "about.md"]
-              
+              "About" => "about.md"],
+    checkdocs=:none,
+    warnonly = true
+)
+
+DocumenterTools.Themes.compile(
+  joinpath(@__DIR__, "src/assets/light.scss"), 
+  joinpath(@__DIR__, "src/assets/themes/documenter-light.css")
 )
 
 
 # Documenter can also automatically deploy documentation to gh-pages.
 # See "Hosting Documentation" and deploydocs() in the Documenter manual
 # for more information.
-deploydocs(repo = "github.com/JuliaAI/Imbalance.jl.git")
+deploydocs(repo = "github.com/JuliaAI/Imbalance.jl.git", devbranch = "dev")

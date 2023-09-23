@@ -3,7 +3,7 @@
     generate_imbalanced_data(num_rows, num_continuous_feats; 
                              cat_feats_num_vals=[], 
                              probs=[0.5, 0.5], 
-                             insrt_y=nothing, 
+                             insert_y=nothing, 
                              rng=frgault_rng()
                              )
 

@@ -50,7 +50,7 @@ const COMMON_DOCS = Dict(
     """,
     "RNG" => """
     - `rng::Union{AbstractRNG, Integer}`: Either an `AbstractRNG` object or an `Integer` 
-        seed to be used with `Xoshiro`\n
+        seed to be used with `Xoshiro`
     """,
 
     "K" => """

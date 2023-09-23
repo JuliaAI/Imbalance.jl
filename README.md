@@ -36,7 +36,7 @@ Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 ```
 
 ### 🤖 MLJ Interface
-All methods support the `MLJ` interface over tables where instead of directly calling the method, one instantiates a model for the method while optionally passing the keyword parameters found in the functional interface then wraps the model in a `machine` and follows by calling `transform` on the machine and data.
+All methods support the [`MLJ` interface](https://alan-turing-institute.github.io/MLJ.jl/dev/) where instead of directly calling the method, one instantiates a model for the method while optionally passing the keyword parameters found in the functional interface then wraps the model in a `machine` and follows by calling `transform` on the machine and data.
 ```julia
 using MLJ
 
@@ -55,7 +55,7 @@ Xover, yover = transform(mach, X, y)
 All implemented oversampling methods are considered static transforms and hence, no `fit` is required. 
 
 ### 🏓 Table Transforms Interface
-This interface operates on single tables; it assumes that `y` is one of the columns of the given table. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed via `apply` is only one table `Xy`.
+The [`TableTransforms` interface](https://juliaml.github.io/TableTransforms.jl/stable/transforms/) operates on single tables; it assumes that `y` is one of the columns of the given table. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed via `apply` is only one table `Xy`.
 ```julia
 using Imbalance
 using Imbalance.TableTransforms
@@ -76,7 +76,7 @@ The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls
 
 
 ## 🎨 Features
-- Provides some of the most sought oversampling algorithms in machine learning and is still under development
+- Provides some of the most sought oversampling algorithms in machine learning
 - Supports multi-class classification and both nominal and continuous features
 - Generic by supporting table input/output formats as well as matrices
 - Provides `MLJ` and `TableTransforms` interfaces aside from the default pure functional interface
@@ -86,7 +86,7 @@ The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls
 
 ## 📝 Methods
 
-The package so far provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
+The package provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
 
 * Basic Random Oversampling 
 * Random Oversampling Examples (ROSE)
