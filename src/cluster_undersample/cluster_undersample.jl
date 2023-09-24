@@ -87,7 +87,8 @@ julia> checkbalance(y; ref="minority")
 # apply cluster_undersampling
 X_under, y_under = cluster_undersample(X, y; mode="nearest", 
                                        ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
-julia> checkbalance(y_under)
+                                       
+julia> checkbalance(y_under; ref="minority")
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 

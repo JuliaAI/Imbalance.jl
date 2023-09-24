@@ -18,7 +18,7 @@ makedocs(
         "assets/favicon.ico", 
         asset("https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&display=swap", class=:css)
       ],
-      repolink = "https://github.com/JuliaAI/Imbalance.jl/"
+      #repolink = "https://github.com/JuliaAI/Imbalance.jl/"
     ), 
     modules = [Imbalance], 
     pages = ["Introduction" => "index.md", 

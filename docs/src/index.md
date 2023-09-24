@@ -1,7 +1,5 @@
 # Imbalance.jl
 
-![Imbalance](https://i.imgur.com/C34ilSZ.png)
-
 A Julia package with resampling methods to correct for class imbalance in a wide variety of classification settings.
 
 

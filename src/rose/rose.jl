@@ -80,7 +80,6 @@ $(COMMON_DOCS["OUTPUTS"])
 
 ```julia
 using Imbalance
-using StatsBase
 
 # set probability of each class
 probs = [0.5, 0.2, 0.3]                         
@@ -88,19 +87,18 @@ num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 probs, rng=42)                       
-julia> StatsBase.countmap(y)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 33
-1 => 19
+julia> Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 
 # apply ROSE
 Xover, yover = rose(X, y; s=0.3, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-julia> StatsBase.countmap(yover)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 38
-1 => 43
+
+julia> Imbalance.checkbalance(y)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 ```
 
 # MLJ Model Interface

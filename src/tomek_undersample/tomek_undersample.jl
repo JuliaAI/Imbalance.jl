@@ -75,7 +75,8 @@ julia> checkbalance(y; ref="minority")
 
 # apply enn undersampling
 X_under, y_under = tomek_undersample(X, y; min_ratios=1.0, rng=42)
-julia> checkbalance(y_under)
+
+julia> checkbalance(y_under; ref="minority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 22 (115.8%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 36 (189.5%) 

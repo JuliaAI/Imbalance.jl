@@ -105,10 +105,10 @@ julia> checkbalance(y; ref="minority")
 # apply enn undersampling
 X_under, y_under = enn_undersample(X, y; k=3, keep_condition="only mode", 
                                    min_ratios=0.5, rng=42)
-julia> checkbalance(y_under)
-2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (37.0%) 
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (37.0%) 
-0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 27 (100.0%) 
+checkbalance(y_under; ref="minority")
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 27 (270.0%) 
 ```
 
 # MLJ Model Interface
