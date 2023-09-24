@@ -4,7 +4,8 @@ Entry points to the package.
 
 module Imbalance
 
-using Random: AbstractRNG, default_rng, shuffle, Xoshiro, seed!
+using Random: AbstractRNG, default_rng, shuffle, Xoshiro
+using Random
 using Statistics
 using StatsBase: mode, countmap, sample, modes
 using LinearAlgebra

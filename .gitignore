@@ -34,3 +34,4 @@ dataset.csv
 examples/*ipynb
 
 
+docs/src/examples/__pycache__/convert.cpython-39.pyc
