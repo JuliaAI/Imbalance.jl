@@ -33,6 +33,7 @@ makedocs(
               "Examples" => "examples.md", 
               "Contributing" => "contributing.md", 
               "About" => "about.md"],
+    checkdocs=:none,
     warnonly = true
 )
 
