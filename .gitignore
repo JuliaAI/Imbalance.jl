@@ -31,7 +31,6 @@ Transforms.ipynb
 dataset.csv
 1.8/Project.toml
 .CondaPkg
-examples/*ipynb
-
+examples/python/*.ipynb
 
 docs/src/examples/__pycache__/convert.cpython-39.pyc

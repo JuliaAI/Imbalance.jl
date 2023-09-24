@@ -1,6 +1,7 @@
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 DocumenterTools = "35a29f4d-8980-5a13-9543-d66fff28ecb8"
+Imbalance = "c709b415-507b-45b7-9a3d-1767c89fde68"
 
 [compat]
 Documenter = "1.0"
