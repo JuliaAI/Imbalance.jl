@@ -1,7 +1,7 @@
 
 # SMOTE-N uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
-include("../distance_metrics/mvdm.jl")
+include("../../distance_metrics/mvdm.jl")
 
 """
 Label encoding and decoding

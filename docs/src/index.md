@@ -11,6 +11,32 @@ Pkg.add("Imbalance")
 
 
 ## Quick Start
+The package so far implements the following resampling algorithms
+
+```@raw html
+<table>
+  <tr>
+    <th>Oversampling Methods </th>
+    <td>Random Oversampling</td>
+    <td>Random Oversampling Examples (ROSE)</td>
+    <td>Synthetic Minority Oversampling Technique (SMOTE)</td>
+    <td>SMOTE-Nominal (SMOTE-N)</td>
+    <td>SMOTE-Nominal Categorical (SMOTE-NC)</td>
+  </tr>
+</table>
+```
+```@raw html
+<table>
+  <tr>
+    <th>Undersampling & Cleaning Methods </th>
+    <td>Random Undersampling</td>
+    <td>Cluster Undersampling</td>
+    <td>EditedNearestNeighbors Undersampling</td>
+    <td>Tomek Links Undersampling</td>
+  </tr>
+</table>
+```
+
 We will illustrate using the package to oversample with`SMOTE`; however, all other implemented oversampling methods follow the same pattern.
 
 ### Standard API
@@ -69,23 +95,12 @@ The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls
 
 
 ## Features
-- Provides some of the most sought oversampling algorithms in machine learning
-- Supports multi-class classification and both nominal and continuous features
-- Generic by supporting table input/output formats as well as matrices
+- Supports multi-class variants of the algorithms and both nominal and continuous features
 - Provides `MLJ` and `TableTransforms` interfaces aside from the default pure functional interface
+- Generic by supporting table input/output formats as well as matrices
 - Supports tables regardless to whether the target is a separate column or one of the columns
 - Supports automatic encoding and decoding of nominal features
 
-
-## Methods
-
-The package provides five oversampling algorithms that all work in multi-class settings and with options for handling continuous and nominal features. In particular, it implements:
-
-* Basic Random Oversampling 
-* Random Oversampling Examples (ROSE)
-* Synthetic Minority Oversampling Technique (SMOTE)
-* SMOTE-Nominal (SMOTE-N)
-* SMOTE-Nominal Categorical (SMOTE-NC)
 
 ## Rationale
 Most if not all machine learning algorithms can be viewed as a form of empirical risk minimization where the object is to find the parameters $\theta$ that for some loss function $L$ minimize 

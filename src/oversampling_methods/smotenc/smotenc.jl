@@ -1,7 +1,7 @@
 
 # SMOTE-NC uses KNN with a modified distance metric. Refer to 
 # "SMOTE: Synthetic Minority Over-sampling Technique" by Chawla et al. (2002), pg. 351. 
-include("../distance_metrics/penalized_euclidean.jl")
+include("../../distance_metrics/penalized_euclidean.jl")
 
 """
 Label encode and decode each column in a given table X
