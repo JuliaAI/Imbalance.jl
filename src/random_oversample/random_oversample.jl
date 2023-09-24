@@ -124,6 +124,7 @@ function random_oversample(
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, random_oversample_per_class; ratios, rng,)

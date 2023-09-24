@@ -262,6 +262,7 @@ function smote(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, smote_per_class; ratios, k, rng)

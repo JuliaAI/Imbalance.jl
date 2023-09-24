@@ -124,6 +124,7 @@ function random_undersample(
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     X_under, y_under = generic_undersample(X, y, random_undersample_per_class; ratios, rng)

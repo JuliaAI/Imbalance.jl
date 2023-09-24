@@ -161,6 +161,7 @@ function rose(
     s::AbstractFloat = 1.0,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
     if s < 0.0
         throw(ERR_NEG_S(s))

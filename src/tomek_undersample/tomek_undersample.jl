@@ -135,6 +135,7 @@ function tomek_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     X = transpose(X)

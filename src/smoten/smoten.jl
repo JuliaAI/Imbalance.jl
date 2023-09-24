@@ -256,6 +256,7 @@ function smoten(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
+    try_perserve_type::Bool = true,
 )
     mvdm_encoder, num_categories_per_col = precompute_value_encodings(X, y)
     all_pairwise_mvdm = precompute_mvdm_distances(mvdm_encoder, num_categories_per_col)
