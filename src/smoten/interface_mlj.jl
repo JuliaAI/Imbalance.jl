@@ -151,7 +151,7 @@ julia> ScientificTypes.schema(X).scitypes
 # coerce to a finite scitype (multiclass or ordered factor)
 X = coerce(X, autotype(X, :few_to_finite))
 
-# load SMOTE
+# load SMOTEN
 SMOTEN = @load SMOTEN pkg=Imbalance
 
 # apply SMOTEN

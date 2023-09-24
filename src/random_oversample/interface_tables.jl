@@ -18,7 +18,7 @@ $((COMMON_DOCS["RNG"]))
 
 # Returns
 
-- `model::RandomOversampler`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
+- `model::RandomOversampler`: A RandomOversampler table transform that can be used like other transforms in TableTransforms.jl
 """
 RandomOversampler(
     y_ind::Integer;

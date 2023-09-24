@@ -61,6 +61,3 @@ enn_undersample
 ```@docs
 tomek_undersample
 ```
-
-
-
