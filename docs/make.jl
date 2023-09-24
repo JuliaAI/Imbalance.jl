@@ -4,12 +4,6 @@ using Imbalance
 using Unicode
 using Printf
 
-using Random
-using CSV
-using DataFrames
-using MLJ
-using Imbalance
-using ScientificTypes
 
 
 include("examples.jl")
