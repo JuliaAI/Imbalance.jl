@@ -4,7 +4,8 @@ In this section of the docs, we will walk you through some examples to demonstra
 
 # Prerequisites
 
-In further examples, we will assume familiarity with the [CSV](https://csv.juliadata.org/stable/index.html), [DataFrames](https://dataframes.juliadata.org/stable/), [ScientificTypes](https://juliaai.github.io/ScientificTypes.jl/dev/) and [MLJ](https://alan-turing-institute.github.io/MLJ.jl/dev/) packages, all of which come with excellent documentation. This example is devoted to assuring and enforcing your familiarity with such packages. You can try this all examples in the docs on your browser using [Google Colab](https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/main/examples/walkthrough.ipynb) and you can read more about that in the last section.
+In further examples, we will assume familiarity with the [CSV](https://csv.juliadata.org/stable/index.html), [DataFrames](https://dataframes.juliadata.org/stable/), [ScientificTypes](https://juliaai.github.io/ScientificTypes.jl/dev/) and [MLJ](https://alan-turing-institute.github.io/MLJ.jl/dev/) packages, all of which come with excellent documentation. This example is devoted to assuring and enforcing your familiarity with such packages. You can try this all examples in the docs on your browser using [Google Colab](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/walkthrough.ipynb) and you can read more about that in the last section.
+
 
 
 ```julia
@@ -20,6 +21,8 @@ using ScientificTypes
 In this example, we will consider the [BMI dataset](https://www.kaggle.com/datasets/yasserh/bmidataset) found on Kaggle where the objective is to predict the BMI index of individuals given their gender, weight and height. 
 
 `CSV` gives us the ability to easily read the dataset after it's downloaded as follows
+
+
 
 
 ```julia
@@ -49,6 +52,8 @@ One motivation for this package is that it's not generally obvious whether numer
 
 We can use `schema(df)` to see how each features is currently going to be interpreted by the resampling algorithms: 
 
+
+
 ```julia
 ScientificTypes.schema(df)
 ```
@@ -64,7 +69,9 @@ ScientificTypes.schema(df)
     └────────┴──────────┴─────────┘
 
 
+
 To change encodings that are leading to incorrect interpretations (true for all variable in this example), we use the coerce method, as follows:
+
 
 
 
@@ -94,6 +101,8 @@ ScientificTypes.schema(df)
 Both `MLJ` and the pure functional interface of `Imbalance` assume that the observations table `X` and target vector `y` are separate. We can accomplish that by using `unpack` from `MLJ`
 
 
+
+
 ```julia
 y, X = unpack(df, ==(:Index); rng=123);
 first(X, 5) |> pretty
@@ -112,7 +121,9 @@ first(X, 5) |> pretty
     └───────────────────────────────────┴────────────┴────────────┘
 
 
+
 Splitting the data into train and test portions is also easy using `MLJ`'s `partition` function. `stratify=y` guarantees that the data is distributed in the same proportions as the original dataset in both splits which is more representative of the real world.
+
 
 
 ```julia
@@ -120,7 +131,6 @@ train_inds, test_inds = partition(
     eachindex(y), 0.8, shuffle=true, stratify=y, rng=Random.Xoshiro(42))
 X_train, X_test = X[train_inds, :], X[test_inds, :]
 y_train, y_test = y[train_inds], y[test_inds]
-
 ```
 
 
@@ -134,6 +144,8 @@ y_train, y_test = y[train_inds], y[test_inds]
 
 
 Before deciding to oversample, let's see how adverse is the imbalance problem, if it exists. Ideally, you may as well check if the classification model is robust to this problem.
+
+
 
 
 ```julia
@@ -166,6 +178,7 @@ ratios = Dict(0=>0.3, 1=>0.3, 2=>0.5, 3=>0.5)
 
 
 Let's use random oversampling to oversample the data. This particular model does not care about the scientific types of the data. It takes `X` and `y` as positional arguments and `ratios` and `rng` are the main keyword arguments
+
 
 
 ```julia
@@ -221,6 +234,7 @@ This indeeds aligns with the desired ratios we have set earlier.
 Because we have scientific types setup, we can easily check what models will be able to train on our data. This should guarantee that the model we choose won't throw an error due to types after feeding it the data.
 
 
+
 ```julia
 models(matching(Xover, yover))
 ```
@@ -241,13 +255,8 @@ Let's go for a decision tree form BetaML
 import Pkg; Pkg.add("BetaML")
 ```
 
-        Updating registry at `~/.julia/registries/General.toml`
-       Resolving package versions...
-      No Changes to `~/Documents/GitHub/Imbalance.jl/Project.toml`
-      No Changes to `~/Documents/GitHub/Imbalance.jl/Manifest.toml`
-
-
 ### Before Oversampling
+
 
 
 ```julia
@@ -265,19 +274,20 @@ fit!(mach)
 ```
 
     ┌ Info: Training machine(DecisionTreeClassifier(max_depth = 5, …), …).
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/0rn2V/src/machines.jl:492
+    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
 
 
 
     trained Machine; caches model-specific representations of data
       model: DecisionTreeClassifier(max_depth = 5, …)
       args: 
-        1:	Source @636 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
-        2:	Source @264 ⏎ AbstractVector{OrderedFactor{6}}
+        1:	Source @505 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
+        2:	Source @092 ⏎ AbstractVector{OrderedFactor{6}}
 
 
 
 ### After Oversampling
+
 
 
 ```julia
@@ -289,15 +299,15 @@ fit!(mach_over)
 ```
 
     ┌ Info: Training machine(DecisionTreeClassifier(max_depth = 5, …), …).
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/0rn2V/src/machines.jl:492
+    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
 
 
 
     trained Machine; caches model-specific representations of data
       model: DecisionTreeClassifier(max_depth = 5, …)
       args: 
-        1:	Source @373 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
-        2:	Source @042 ⏎ AbstractVector{OrderedFactor{6}}
+        1:	Source @447 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
+        2:	Source @581 ⏎ AbstractVector{OrderedFactor{6}}
 
 
 
@@ -312,6 +322,8 @@ The `predict_mode` will return a vector of predictions given `X_test` and the fi
 ### Before Oversampling
 
 
+
+
 ```julia
 y_pred = predict_mode(mach, X_test)                         
 
@@ -323,6 +335,7 @@ score = round(balanced_accuracy(y_pred, y_test), digits=2)
 
 
 ### After Oversampling
+
 
 
 ```julia
@@ -341,6 +354,7 @@ It is possible to run this tutorial and others in the examples section on Google
 - Click the Colab icon link as your hover on the example
 - Paste and run the following in the first cell
 
+
 ```julia
 %%capture
 %%shell
@@ -353,14 +367,17 @@ then
 fi
 julia -e 'using Pkg; pkg"add IJulia; precompile;"'
 echo 'Done'
+
 ```
 
 - Change the runtime to Julia from the toolbar
 - `Pkg.add` Imbalance and any needed packages (those being used)
+```julia
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "ScientificTypes"])
+```
 - Click the folder icon on the left, make a `datasets` folder and drag and drop it in there
 - Run the notebook
 
 Sincere thanks to [Julia-on-Colab](https://github.com/Dsantra92/Julia-on-Colab) for making this possible
-
 
 

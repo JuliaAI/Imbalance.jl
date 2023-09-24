@@ -56,9 +56,7 @@ plot_res = plot(bar_charts..., layout=(5, 5),
 savefig(plot_res, "./mushroom-bar-charts.png")
 ```
 
-```@raw html
-<img src="./mushroom-bar-charts.png" />
-```
+![Mushroom Features Plots](https://gcdnb.pbrd.co/images/23qIg1DRShnL.png?o=1)
 
 We will take the mushroom odour as our target and all the rest as features. 
 

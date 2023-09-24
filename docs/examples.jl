@@ -9,7 +9,7 @@ data = [
                       how the decision regions change with the amount of oversampling", 
     "image" => "./assets/iris smote.jpeg",
     "link" => "./effect_of_ratios/effect_of_ratios",
-    "colab_link" => "https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/effect_of_ratios.ipynb"
+    "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/effect_of_ratios/effect_of_ratios.ipynb"
     ), 
     Dict(
       "title" => "From Random Oversampling to ROSE", 
@@ -17,22 +17,22 @@ data = [
                         of increasing it.", 
       "image" => "./assets/iris rose.jpeg",
       "link" => "./effect_of_s/effect_of_s",
-      "colab_link" => "https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/effect_of_s.ipynb"
-    ), 
+      "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/effect_of_s/effect_of_s.ipynb"
+      ), 
     Dict(
       "title" => "SMOTE on Customer Churn Data", 
       "description" => "In this tutorial we apply SMOTE and random forest to predict customer churn based 
                         on continuous attributes.", 
       "image" => "./assets/churn smote.jpeg",
       "link" => "./smote_churn_dataset/smote_churn_dataset",
-      "colab_link" => "https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/smote_churn_dataset.ipynb"
-    ), 
+      "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/smote_churn_dataset/smote_churn_dataset.ipynb"
+      ), 
     Dict(
       "title" => "SMOTEN on Mushroom Data", 
       "description" => "In this tutorial we use a purely categorical dataset to predict mushroom odour.", 
       "image" => "./assets/mushy.jpeg",
       "link" => "./smoten_mushroom/smoten_mushroom",
-      "colab_link" => "https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/smoten_mushroom.ipynb"
+      "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/smote_mushroom/smoten_mushroom.ipynb"
     ), 
     Dict(
       "title" => "SMOTENC on Customer Churn Data", 
@@ -40,7 +40,7 @@ data = [
                         data for churn prediction", 
       "image" => "./assets/churn smoten.jpeg",
       "link" => "./smotenc_churn_dataset/smotenc_churn_dataset",
-      "colab_link" => "https://colab.research.google.com/github/JuliaAI/Imbalance.jl/blob/Doc-Examples/examples/smotenc_churn_dataset.ipynb"
+      "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/smotenc_churn_dataset/smotenc_churn_dataset.ipynb"
     )
 ]
 

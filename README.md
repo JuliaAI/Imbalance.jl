@@ -1,6 +1,7 @@
 # Imbalance.jl
 
-![Imbalance](https://i.imgur.com/C34ilSZ.png)
+![Imbalance](https://i.imgur.com/CP97JdN.png)
+
 
 A Julia package with resampling methods to correct for class imbalance in a wide variety of classification settings.
 
@@ -16,30 +17,21 @@ import Pkg;
 Pkg.add("Imbalance")
 ```
 
+## ✨ Implemented Methods
+
+The package implements the following resampling algorithms
+
+- Random Oversampling
+- Random Oversampling Examples (ROSE)
+- Synthetic Minority Oversampling Technique (SMOTE)
+- SMOTE-Nominal (SMOTE-N)
+- SMOTE-Nominal Categorical (SMOTE-NC)
+- Random Undersampling
+- Cluster Undersampling
+- EditedNearestNeighbors Undersampling
+- Tomek Links Undersampling
 
 ## 🚀 Quick Start
-The package so far implements the following resampling algorithms
-
-<table>
-  <tr>
-    <th>Oversampling Methods </th>
-    <td>Random Oversampling</td>
-    <td>Random Oversampling Examples (ROSE)</td>
-    <td>Synthetic Minority Oversampling Technique (SMOTE)</td>
-    <td>SMOTE-Nominal (SMOTE-N)</td>
-    <td>SMOTE-Nominal Categorical (SMOTE-NC)</td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <th>Undersampling & Cleaning Methods </th>
-    <td>Random Undersampling</td>
-    <td>Cluster Undersampling</td>
-    <td>EditedNearestNeighbors Undersampling</td>
-    <td>Tomek Links Undersampling</td>
-  </tr>
-</table>
 
 We will illustrate using the package to oversample with`SMOTE`; however, all other implemented oversampling methods follow the same pattern.
 

@@ -25,7 +25,7 @@ Any method resampling method implemented in the `oversampling_methods` or `under
 ```
 
 # Adding New Resampling Methods
-- Make a new folder `resample_method` for the method in the oversampling_methods or undersampling_methods
+- Make a new folder `resample_method` for the method in the `oversampling_methods` or `undersampling_methods`
 - Implement in `resample_method/resample_method.jl` the method over matrices for one minority class
 - Use `generic_oversample.jl` to generalize it to work on the whole data
 - Use `table_wrapper.jl` to generalize the method to work on tables and possibly use `generic_encoder.jl`
@@ -33,6 +33,8 @@ Any method resampling method implemented in the `oversampling_methods` or `under
 - Implement the `TableTransforms` interface for the method in `resample_method/interface_tables.jl`
 - Use the rest of the files according to their description
 - Testing and documentation should be done in parallel
+
+Surely, you can ignore ignore the third step if the algorithm you are implementing does not operate in "per-class" sense.
 
 # Adding New Tutorials
 - Make a new notebook with the tutorial in the `examples` folder found in `docs/src/examples`

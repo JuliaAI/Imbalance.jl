@@ -224,9 +224,7 @@ savefig(plot_res, "./before-after-smote.png")
 
 ```
 
-```@raw html
-<img src="./before-after-SMOTE.png"/>
-```
+![](https://i.imgur.com/LMnKP9I.png)
 
 
 Notice how the minority class was completely ignore prior to oversampling. Not all models and hyperparameter settings are this delicate to class imbalance.
@@ -273,9 +271,7 @@ gif(anim, "./rose-animation.gif", fps=6)
 println()
 ```
 
-```@raw html
-<img src="./smote-animation.gif"/>
-```
+![abc](https://i.imgur.com/lxPhEke.gif)
 
 Notice how setting ratios greedily can lead to overfitting.
 

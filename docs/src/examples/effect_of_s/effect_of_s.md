@@ -340,9 +340,8 @@ plot_res = plot(
 savefig(plot_res, "./ROSE-before-after.png")
 ```
 
-```@raw html
-<img src="./ROSE-before-after.png"/>
-```
+![](https://i.imgur.com/85leARg.png)
+
 ## Effect of Increasing `s`
 
 
@@ -388,9 +387,7 @@ println()
     └ @ Plots /Users/essam/.julia/packages/Plots/3BCH5/src/animation.jl:156
 
 
-```@raw html
-<img src="./rose-anim.gif"/>
-```
+![](https://gcdnb.pbrd.co/images/RFbcAmPKNvKu.gif?o=1)
 
 As we can see, the larger `s` is the more spread out are the oversampled points. This is expected because what ROSE does is oversample by sampling from the distribution that corresponds to placing Gaussians on the existing points and `s` is a hyperparameter proportional to the bandwidth of the Gaussians. When `s=0` the only points that can be generated lie on top of others; i.e., ROSE becomes equivalent to random oversampling
 
