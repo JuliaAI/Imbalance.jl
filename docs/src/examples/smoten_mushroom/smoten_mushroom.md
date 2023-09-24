@@ -6,7 +6,6 @@ using MLJ
 using Imbalance
 using ScientificTypes
 using Plots
-using StatsBase
 ```
 
 ## Loading Data
