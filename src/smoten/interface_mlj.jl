@@ -34,12 +34,16 @@ function SMOTEN(;
     return model
 end
 
+
 """
 Oversample data X, y using SMOTEN
 """
 function MMI.transform(s::SMOTEN, _, X, y)
     smoten(X, y; k = s.k, ratios = s.ratios, rng = s.rng, 
         try_perserve_type = s.try_perserve_type)
+end
+function MMI.transform(s::SMOTEN, _, X::AbstractMatrix{<:Integer}, y)
+    smoten(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
 end
 
 
@@ -57,7 +61,7 @@ MMI.metadata_model(
     input_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
     output_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
     target_scitype = AbstractVector,
-    load_path = "Imbalance." * string(SMOTEN),
+    load_path = "Imbalance.MLJ.SMOTEN"
 )
 
 function MMI.transform_scitype(s::SMOTEN)

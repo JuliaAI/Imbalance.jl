@@ -44,6 +44,9 @@ function MMI.transform(s::SMOTE, _, X, y)
     smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng, 
         try_perserve_type = s.try_perserve_type)
 end
+function MMI.transform(s::SMOTE, _, X::AbstractMatrix{<:Real}, y)
+    smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
+end
 
 
 MMI.metadata_pkg(
@@ -59,7 +62,7 @@ MMI.metadata_model(
     input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
     output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
     target_scitype = AbstractVector,
-    load_path = "Imbalance." * string(SMOTE),
+    load_path = "Imbalance.MLJ.SMOTE"
 )
 function MMI.transform_scitype(s::SMOTE)
     return Tuple{

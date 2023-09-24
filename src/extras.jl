@@ -31,7 +31,7 @@ function generate_imbalanced_data(
     num_continuous_feats;
     cat_feats_num_vals = [],
     probs = [0.5, 0.5],
-    type = "ColTable",                
+    type = "ColTable",
     insert_y = nothing,
     rng = default_rng(),
 )
@@ -39,7 +39,7 @@ function generate_imbalanced_data(
     # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
     cum_probs = cumsum(probs)
     rands = rand(rng, num_rows)
-    y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i = 1:num_rows])
+    y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_probs) - 1 for i in 1:num_rows])
 
     if num_continuous_feats > 0
         Xc = rand(rng, Float64, num_rows, num_continuous_feats)
@@ -76,31 +76,32 @@ function generate_imbalanced_data(
     return X, y
 end
 
-
-
 """
-    checkbalance(y)
+    checkbalance(y; reference="majority")
 
 A visual version of `StatsBase.countmap` that returns nothing. It prints how 
     many observations in the dataset belong to each class and their percentage
-    relative to the majority class.
+    relative to the size of majority or minority class.
 
 # Arguments
 - `y::AbstractVector`: A vector of categorical values to test for imbalance
+- `reference="majority"`: Either `"majority"` or `"minority"` and decides whether the percentage should be
+    relative to the size of majority or minority class.
 """
-function checkbalance(y)
+function checkbalance(y; ref = "majority")
     counts = countmap(y)
-    sorted_counts = sort(collect(counts), by=x->x[2])
+    sorted_counts = sort(collect(counts), by = x -> x[2])
+    (ref in ["majority", "minority"]) || error("Invalid reference")
+    ref_class_count =
+        (ref == "majority") ? maximum(values(counts)) : minimum(values(counts))
     majority_class_count = maximum(values(counts))
-    
     longest_label_length = maximum(length.(string.(keys(counts))))
-    
+
     for (key, count) in sorted_counts
-        percentage = round(100 * count / majority_class_count, digits=1)
+        percentage = round(100 * count / ref_class_count, digits = 1)
         bar_length = round(Int, count * 50 / majority_class_count)
-        bar = "▇" ^ bar_length
-        padding = " " ^ (longest_label_length - length(string.(key)))
+        bar = "▇"^bar_length
+        padding = " "^(longest_label_length - length(string.(key)))
         println("$key:$padding $bar $count ($percentage%) ")
     end
 end
-

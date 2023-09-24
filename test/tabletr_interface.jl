@@ -1,4 +1,5 @@
-using Imbalance: rose, smote, random_oversample, smoten, smotenc
+using Imbalance:
+    rose, smote, random_oversample, smoten, smotenc, random_undersample, cluster_undersample
 
 using Test
 
@@ -7,6 +8,10 @@ SMOTE = Imbalance.TableTransforms.SMOTE
 ROSE = Imbalance.TableTransforms.ROSE
 SMOTEN = Imbalance.TableTransforms.SMOTEN
 SMOTENC = Imbalance.TableTransforms.SMOTENC
+RandomUndersampler = Imbalance.TableTransforms.RandomUndersampler
+ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
+TomekUndersampler = Imbalance.TableTransforms.TomekUndersampler
+ENNUndersampler = Imbalance.TableTransforms.ENNUndersampler
 
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
@@ -15,13 +20,20 @@ SMOTENC = Imbalance.TableTransforms.SMOTENC
     @test isrevertible(RandomOversampler) == true
     @test isrevertible(SMOTEN) == true
     @test isrevertible(SMOTENC) == true
+    @test isrevertible(RandomUndersampler) == false
+    @test isrevertible(ClusterUndersampler) == false
+    @test isrevertible(TomekUndersampler) == false
+    @test isrevertible(ENNUndersampler) == false
     @test TransformsBase.isinvertible(ROSE) == false
     @test TransformsBase.isinvertible(SMOTE) == false
     @test TransformsBase.isinvertible(RandomOversampler) == false
     @test TransformsBase.isinvertible(SMOTEN) == false
     @test TransformsBase.isinvertible(SMOTENC) == false
+    @test TransformsBase.isinvertible(RandomUndersampler) == false
+    @test TransformsBase.isinvertible(ClusterUndersampler) == false
+    @test TransformsBase.isinvertible(TomekUndersampler) == false
+    @test TransformsBase.isinvertible(ENNUndersampler) == false
 end
-
 
 function test_tabletr(oversample_fun, oversample_t, Xy, y_ind)
     Xyover1 = oversample_fun(Xy, y_ind; rng = 42)
@@ -36,8 +48,10 @@ function test_tabletr(oversample_fun, oversample_t, Xy, y_ind)
     @test Xyover22 == Xyover2
 
     # revert works
-    Xyover_i = revert(oversample_t, Xyover2, cache)
-    @test Tables.matrix(Xyover_i) == Tables.matrix(Xy)
+    if isrevertible(oversample_t)
+        Xyover_i = revert(oversample_t, Xyover2, cache)
+        @test Tables.matrix(Xyover_i) == Tables.matrix(Xy)
+    end
 end
 
 @testset "TableTransforms" begin
@@ -45,8 +59,28 @@ end
     smote_t = SMOTE(y_ind; k = 5, rng = 42)
     rose_t = ROSE(y_ind; s = 1.0, rng = 42)
     random_oversample_t = RandomOversampler(y_ind; rng = 42)
-    oversample_funs = [random_oversample, rose, smote]
-    oversample_ts = [random_oversample_t, rose_t, smote_t]
+    random_undersample_t = RandomUndersampler(y_ind; rng = 42)
+    cluster_undersample_t = ClusterUndersampler(y_ind; rng = 42)
+    enn_undersample_t = ENNUndersampler(y_ind; rng = 42)
+    tomek_undersample_t = TomekUndersampler(y_ind; rng = 42)
+    oversample_funs = [
+        random_oversample,
+        rose,
+        smote,
+        random_undersample,
+        cluster_undersample,
+        enn_undersample,
+        tomek_undersample,
+    ]
+    oversample_ts = [
+        random_oversample_t,
+        rose_t,
+        smote_t,
+        random_undersample_t,
+        cluster_undersample_t,
+        enn_undersample_t,
+        tomek_undersample_t,
+    ]
     tables = ["RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable"]
 
     for i in eachindex(tables)
@@ -63,6 +97,7 @@ end
                 test_tabletr(oversample_fun, oversample_t, Xy, y_ind)
             end
         end
+
         @testset "TableTransform API with $tables[i] type for SMOTENC and SMOTEN" begin
             Xy, _ = generate_imbalanced_data(
                 50,
@@ -74,7 +109,7 @@ end
                 rng = 42,
             )
             Xy = coerce(Xy, autotype(Xy, :few_to_finite))
-            test_tabletr(smotenc,  SMOTENC(y_ind; k = 5, rng = 42), Xy, y_ind)
+            test_tabletr(smotenc, SMOTENC(y_ind; k = 5, rng = 42), Xy, y_ind)
             Xy, _ = generate_imbalanced_data(
                 50,
                 0;
@@ -85,7 +120,7 @@ end
                 rng = 42,
             )
             Xy = coerce(Xy, autotype(Xy, :few_to_finite))
-            test_tabletr(smoten,  SMOTEN(y_ind; k = 5, rng = 42), Xy, y_ind)
+            test_tabletr(smoten, SMOTEN(y_ind; k = 5, rng = 42), Xy, y_ind)
         end
     end
 end
