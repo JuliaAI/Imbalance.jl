@@ -6,6 +6,12 @@
 random_oversample
 ```
 
+## Random Walk Oversampler
+
+```@docs
+random_walk_oversample
+```
+
 ## ROSE
 
 ```@docs

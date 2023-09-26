@@ -7,7 +7,7 @@ module Imbalance
 using Random: AbstractRNG, default_rng, shuffle
 using Random
 using Statistics
-using StatsBase: mode, countmap, sample, modes
+using StatsBase: mode, countmap, sample, modes, proportions, ProbabilityWeights
 using LinearAlgebra
 using ScientificTypes
 using NearestNeighbors, Distances
@@ -36,7 +36,8 @@ include("oversampling_methods/rose/rose.jl")
 include("oversampling_methods/smote/smote.jl")
 include("oversampling_methods/smoten/smoten.jl")
 include("oversampling_methods/smotenc/smotenc.jl")
-export random_oversample, rose, smote, smoten, smotenc
+include("oversampling_methods/random_walk/random_walk.jl")
+export random_oversample, rose, smote, smoten, smotenc, random_walk_oversample
 
 include("undersampling_methods/random_undersample/random_undersample.jl")
 include("undersampling_methods/cluster_undersample/cluster_undersample.jl")
@@ -54,6 +55,7 @@ using ..Imbalance:
     smote,
     smoten,
     smotenc,
+    random_walk_oversample,
     random_undersample,
     cluster_undersample,
     COMMON_DOCS,
@@ -64,6 +66,7 @@ include("oversampling_methods/rose/interface_mlj.jl")
 include("oversampling_methods/smote/interface_mlj.jl")
 include("oversampling_methods/smotenc/interface_mlj.jl")
 include("oversampling_methods/smoten/interface_mlj.jl")
+include("oversampling_methods/random_walk/interface_mlj.jl")
 include("undersampling_methods/random_undersample/interface_mlj.jl")
 include("undersampling_methods/cluster_undersample/interface_mlj.jl")
 include("undersampling_methods/tomek_undersample/interface_mlj.jl")
@@ -73,6 +76,7 @@ export RandomOversampler,
     SMOTE,
     SMOTEN,
     SMOTENC,
+    RandomWalkOversampler,
     RandomUndersampler,
     ClusterUndersampler,
     TomekUndersampler,
@@ -88,6 +92,7 @@ using ..Imbalance:
     smote,
     smoten,
     smotenc,
+    random_walk_oversample,
     random_undersample,
     cluster_undersample,
     COMMON_DOCS,
@@ -100,6 +105,7 @@ include("oversampling_methods/rose/interface_tables.jl")
 include("oversampling_methods/smote/interface_tables.jl")
 include("oversampling_methods/smotenc/interface_tables.jl")
 include("oversampling_methods/smoten/interface_tables.jl")
+include("oversampling_methods/random_walk/interface_tables.jl")
 include("undersampling_methods/random_undersample/interface_tables.jl")
 include("undersampling_methods/cluster_undersample/interface_tables.jl")
 include("undersampling_methods/enn_undersample/interface_tables.jl")
@@ -109,6 +115,7 @@ export RandomOversampler,
     SMOTE,
     SMOTEN,
     SMOTENC,
+    RandomWalkOversampler,
     RandomUndersampler,
     ClusterUndersampler,
     TomekUndersampler,

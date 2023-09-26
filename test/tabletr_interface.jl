@@ -1,5 +1,5 @@
 using Imbalance:
-    rose, smote, random_oversample, smoten, smotenc, random_undersample, cluster_undersample
+    rose, smote, random_oversample, smoten, smotenc, random_undersample, cluster_undersample, random_walk_oversample
 
 using Test
 
@@ -8,31 +8,25 @@ SMOTE = Imbalance.TableTransforms.SMOTE
 ROSE = Imbalance.TableTransforms.ROSE
 SMOTEN = Imbalance.TableTransforms.SMOTEN
 SMOTENC = Imbalance.TableTransforms.SMOTENC
+RandomWalkOversampler = Imbalance.TableTransforms.RandomWalkOversampler
 RandomUndersampler = Imbalance.TableTransforms.RandomUndersampler
 ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
 TomekUndersampler = Imbalance.TableTransforms.TomekUndersampler
 ENNUndersampler = Imbalance.TableTransforms.ENNUndersampler
 
+const oversampling_methods = [SMOTE, ROSE, SMOTEN, SMOTENC, RandomWalkOversampler]
+const undersampling_methods = [RandomUndersampler, ClusterUndersampler, TomekUndersampler, ENNUndersampler]
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
-    @test isrevertible(ROSE) == true
-    @test isrevertible(SMOTE) == true
-    @test isrevertible(RandomOversampler) == true
-    @test isrevertible(SMOTEN) == true
-    @test isrevertible(SMOTENC) == true
-    @test isrevertible(RandomUndersampler) == false
-    @test isrevertible(ClusterUndersampler) == false
-    @test isrevertible(TomekUndersampler) == false
-    @test isrevertible(ENNUndersampler) == false
-    @test TransformsBase.isinvertible(ROSE) == false
-    @test TransformsBase.isinvertible(SMOTE) == false
-    @test TransformsBase.isinvertible(RandomOversampler) == false
-    @test TransformsBase.isinvertible(SMOTEN) == false
-    @test TransformsBase.isinvertible(SMOTENC) == false
-    @test TransformsBase.isinvertible(RandomUndersampler) == false
-    @test TransformsBase.isinvertible(ClusterUndersampler) == false
-    @test TransformsBase.isinvertible(TomekUndersampler) == false
-    @test TransformsBase.isinvertible(ENNUndersampler) == false
+    for method in oversampling_methods
+        @test isrevertible(method) == true
+        @test TransformsBase.isinvertible(method) == false
+    end
+
+    for method in undersampling_methods
+        @test isrevertible(method) == false
+        @test TransformsBase.isinvertible(method) == false
+    end
 end
 
 function test_tabletr(oversample_fun, oversample_t, Xy, y_ind)
@@ -98,7 +92,7 @@ end
             end
         end
 
-        @testset "TableTransform API with $tables[i] type for SMOTENC and SMOTEN" begin
+        @testset "TableTransform API with $tables[i] type for SMOTENC and SMOTEN and Random Walk" begin
             Xy, _ = generate_imbalanced_data(
                 50,
                 4;
@@ -110,6 +104,8 @@ end
             )
             Xy = coerce(Xy, autotype(Xy, :few_to_finite))
             test_tabletr(smotenc, SMOTENC(y_ind; k = 5, rng = 42), Xy, y_ind)
+            test_tabletr(random_walk_oversample, RandomWalkOversampler(y_ind; rng = 42), Xy, y_ind)
+
             Xy, _ = generate_imbalanced_data(
                 50,
                 0;
