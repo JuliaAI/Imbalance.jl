@@ -34,10 +34,11 @@ include("class_counts.jl")
 include("oversampling_methods/random_oversample/random_oversample.jl")
 include("oversampling_methods/rose/rose.jl")
 include("oversampling_methods/smote/smote.jl")
+include("oversampling_methods/borderline_smote1/borderline_smote1.jl")
 include("oversampling_methods/smoten/smoten.jl")
 include("oversampling_methods/smotenc/smotenc.jl")
 include("oversampling_methods/random_walk/random_walk.jl")
-export random_oversample, rose, smote, smoten, smotenc, random_walk_oversample
+export random_oversample, rose, smote, smoten, smotenc, random_walk_oversample, borderline_smote1
 
 include("undersampling_methods/random_undersample/random_undersample.jl")
 include("undersampling_methods/cluster_undersample/cluster_undersample.jl")
@@ -53,6 +54,7 @@ using ..Imbalance:
     random_oversample,
     rose,
     smote,
+    borderline_smote1,
     smoten,
     smotenc,
     random_walk_oversample,
@@ -64,6 +66,7 @@ using ..Imbalance:
 include("oversampling_methods/random_oversample/interface_mlj.jl")
 include("oversampling_methods/rose/interface_mlj.jl")
 include("oversampling_methods/smote/interface_mlj.jl")
+include("oversampling_methods/borderline_smote1/interface_mlj.jl")
 include("oversampling_methods/smotenc/interface_mlj.jl")
 include("oversampling_methods/smoten/interface_mlj.jl")
 include("oversampling_methods/random_walk/interface_mlj.jl")
@@ -74,6 +77,7 @@ include("undersampling_methods/enn_undersample/interface_mlj.jl")
 export RandomOversampler,
     ROSE,
     SMOTE,
+    BorderlineSMOTE1,
     SMOTEN,
     SMOTENC,
     RandomWalkOversampler,
@@ -90,6 +94,7 @@ using ..Imbalance:
     random_oversample,
     rose,
     smote,
+    borderline_smote1,
     smoten,
     smotenc,
     random_walk_oversample,
@@ -103,6 +108,7 @@ using ..Imbalance:
 include("oversampling_methods/random_oversample/interface_tables.jl")
 include("oversampling_methods/rose/interface_tables.jl")
 include("oversampling_methods/smote/interface_tables.jl")
+include("oversampling_methods/borderline_smote1/interface_tables.jl")
 include("oversampling_methods/smotenc/interface_tables.jl")
 include("oversampling_methods/smoten/interface_tables.jl")
 include("oversampling_methods/random_walk/interface_tables.jl")
@@ -113,6 +119,7 @@ include("undersampling_methods/tomek_undersample/interface_tables.jl")
 export RandomOversampler,
     ROSE,
     SMOTE,
+    BorderlineSMOTE1,
     SMOTEN,
     SMOTENC,
     RandomWalkOversampler,

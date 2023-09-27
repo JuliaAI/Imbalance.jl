@@ -5,6 +5,7 @@ using Test
 
 RandomOversampler = Imbalance.TableTransforms.RandomOversampler
 SMOTE = Imbalance.TableTransforms.SMOTE
+BorderlineSMOTE1 = Imbalance.TableTransforms.BorderlineSMOTE1
 ROSE = Imbalance.TableTransforms.ROSE
 SMOTEN = Imbalance.TableTransforms.SMOTEN
 SMOTENC = Imbalance.TableTransforms.SMOTENC
@@ -14,7 +15,7 @@ ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
 TomekUndersampler = Imbalance.TableTransforms.TomekUndersampler
 ENNUndersampler = Imbalance.TableTransforms.ENNUndersampler
 
-const oversampling_methods = [SMOTE, ROSE, SMOTEN, SMOTENC, RandomWalkOversampler]
+const oversampling_methods = [SMOTE, ROSE, SMOTEN, SMOTENC, RandomWalkOversampler, BorderlineSMOTE1]
 const undersampling_methods = [RandomUndersampler, ClusterUndersampler, TomekUndersampler, ENNUndersampler]
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
@@ -51,6 +52,7 @@ end
 @testset "TableTransforms" begin
     y_ind = 5
     smote_t = SMOTE(y_ind; k = 5, rng = 42)
+    borderline_smote_t = BorderlineSMOTE1(y_ind; k = 5, m = 5, rng = 42)
     rose_t = ROSE(y_ind; s = 1.0, rng = 42)
     random_oversample_t = RandomOversampler(y_ind; rng = 42)
     random_undersample_t = RandomUndersampler(y_ind; rng = 42)
@@ -61,6 +63,7 @@ end
         random_oversample,
         rose,
         smote,
+        borderline_smote1,
         random_undersample,
         cluster_undersample,
         enn_undersample,
@@ -70,6 +73,7 @@ end
         random_oversample_t,
         rose_t,
         smote_t,
+        borderline_smote_t,
         random_undersample_t,
         cluster_undersample_t,
         enn_undersample_t,

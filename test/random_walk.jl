@@ -1,11 +1,11 @@
 @testset "on average generates the same continuous point" begin
     X = [1.0; 2.2; 3.1; 1.0;;]
     R = Random.Xoshiro(42)
-    Z = mean([generate_new_random_walk_point(X, [2, 3], [1, 4], [5., 8.], [[1.0], [1.0]]; rng=R) for i in 1:100000])
+    Z = mean([Imbalance.generate_new_random_walk_point(X, [2, 3], [1, 4], [5., 8.], [[1.0], [1.0]]; rng=R) for i in 1:100000])
     @test isapprox(collect(X), Z; rtol=0.01)
 end
 
-@testset "per class end-to-end test" begin
+@testset "random walk per class end-to-end test" begin
     cont_inds = [1, 2, 3, 4, 5]
     cat_inds = [6, 7, 8]
     Xt, y = Imbalance.generate_imbalanced_data(100000, 5; cat_feats_num_vals=[3, 4, 2], type="Matrix")
@@ -14,7 +14,7 @@ end
     
     R = Random.Xoshiro(42)
 
-    X_new = random_walk_per_class(X, 100000, cont_inds, cat_inds; rng=R)
+    X_new = Imbalance.random_walk_per_class(X, 100000, cont_inds, cat_inds; rng=R)
 
     # test proportions statistical property
     X_cat = Int32.(X[cat_inds, :])
@@ -43,37 +43,49 @@ end
     X, y = generate_imbalanced_data(
         1000,
         2;
+        cat_feats_num_vals=[3],
         probs = [0.2, 0.6, 0.2],
         type = "Matrix",
         rng = 121,
     )
     counts_per_class = countmap(y)
     majority_count = maximum(values(counts_per_class))
+    cat_inds = [3]
     Xover, yover =
-        random_walk_oversample(X, y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
+        random_walk_oversample(X, y, cat_inds; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
     @test size(Xover, 1) == (
         Int(round(1.0 * majority_count)) +
         Int(round(1.2 * majority_count)) +
         Int(round(0.9 * majority_count))
     )
-
-    X, y = generate_imbalanced_data(
+    
+    Xc, yc = generate_imbalanced_data(
         1000,
         2;
         probs = [0.2, 0.6, 0.2],
         type = "ColTable",
         rng = 121,
     )
-    counts_per_class = countmap(y)
+    counts_per_class = countmap(yc)
     majority_count = maximum(values(counts_per_class))
     Xover, yover =
-        random_walk_oversample(X, y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
+        random_walk_oversample(Xc, yc; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
-    @test size(Xover, 1) == (
+    @test Imbalance.rowcount(Xover) == (
         Int(round(1.0 * majority_count)) +
         Int(round(1.2 * majority_count)) +
         Int(round(0.9 * majority_count))
     )
 
+end
+
+
+# test that the materializer works for dataframes
+@testset "materializer" begin
+    X, y =
+        generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
+    Xover, yover = random_walk_oversample(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
+    # Check that the number of samples increased correctly
+    @test typeof(Xover) == DataFrame
 end

@@ -24,6 +24,12 @@ rose
 smote
 ```
 
+## Borderline SMOTE1
+
+```@docs
+borderline_smote1
+```
+
 ## SMOTE-N
 
 ```@docs

@@ -90,6 +90,34 @@ end
         smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
 
+
+@testset "BorderlineSMOTE1 MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [Imbalance.MLJ.BorderlineSMOTE1],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
+    num_rows = 100
+    num_cont_feats = 5
+    probs = [0.5, 0.2, 0.3]
+    # table
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X = DataFrame(X)
+    model =
+        Imbalance.MLJ.BorderlineSMOTE1(k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    mach = machine(model)
+    @test transform(mach, X, y) ==
+    borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+
+    # matrix
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    @test transform(mach, X, y) ==
+        borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+end
+
 @testset "SMOTENC MLJ" begin
     failures, summary = MLJTestInterface.test(
         [Imbalance.MLJ.SMOTENC],
@@ -115,7 +143,6 @@ end
     mach = machine(smotenc_model)
     @test transform(mach, X, y) ==
       smotenc(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
-
 end
 
 

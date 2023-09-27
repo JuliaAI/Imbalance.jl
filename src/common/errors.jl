@@ -25,10 +25,16 @@ const ERR_TABLE_TYPE(t) = "Error: expected a table or matrix but got a data of t
 const ERR_NEG_S(s) = "Error: s must be >= 0 but got $s."
 
 ### SMOTE
-const WRN_SINGLE_OBS = "Warning: class with a single will be ignored; point has no neighbors"
-const ERR_NONPOS_K(k) = "Error: k must be greater than 0 but got $k."
+const WRN_SINGLE_OBS = "Warning: class with a single point will be ignored; point has no neighbors"
+const ERR_NONPOS_K(k) = "Number of nearest neighbors `k` must be greater than 0 but got $k."
 const WRN_K_TOO_BIG(k, n) =
-    "Warning: k=$k is larger than the number of samples for the data which is ($n). Will set k=$n-1"
+    "Warning: k=$k is  larger than or equal to the number of samples for the data which is ($n). Will set k=$n-1"
+const ERR_NONPOS_M(k) = "Number of nearest neighbors `m` must be greater than 0 but got $k."
+
+### BorderlineSMOTE1
+const WRN_M_TOO_BIG(m, n) =
+	"Warning: m=$m is larger than or equal to the number of samples for the data which is ($n). Will set m=$m-1"
+const ERR_NO_BORDERLINE = "Error: No borderline points were found and thus, data cannot be oversampled with this method."
 
 
 ### SMOTENC
