@@ -173,7 +173,7 @@ function borderline_smote1(
 	rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
-    # this function adjust generic_oversampling to use in borderline smote
+    # this function is a variation on generic_oversampling to use in borderline smote
     rng = rng_handler(rng)
     X = transpose(X)
     filter = borderline1_filter(X, y; m)
