@@ -212,12 +212,12 @@ end
 
 # dispatch for table inputs
 function borderline_smote1(
-	X,
-	y::AbstractVector;
+    X,
+    y::AbstractVector;
     m::Integer = 5,
-	k::Integer = 5,
-	ratios = 1.0,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    k::Integer = 5,
+    ratios = 1.0,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
     Xover, yover = tablify(borderline_smote1, X, y; try_perserve_type=try_perserve_type,  m, k, ratios, rng)
