@@ -68,7 +68,7 @@ $(COMMON_DOCS["INPUTS"])
 # Keyword Arguments
 
 - `m::Integer=5`: The number of neighbors to consider while checking the BorderlineSMOTE1 condition. In this, a point may participate
-    in oversampling iff the number of neighbors that belong to its class is in \$(0, m/2]\$. Should be within the range 
+    in oversampling if and only if the number of neighbors that belong to its class is in \$(0, m/2]\$. Should be within the range 
    `0 < m < N` where N is the number of observations in the data. It will be automatically set to `N-1` if `N ≤ m`.
 
 - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE part of the algorithm. Should be within the range
@@ -176,7 +176,7 @@ function borderline_smote1(
     try_perserve_type::Bool = true,
     verbosity::Integer = 1
 )
-    # this function adjust generic_oversampling to use in borderline smote
+    # this function is a variation on generic_oversampling to use in borderline smote
     rng = rng_handler(rng)
     X = transpose(X)
     filter = borderline1_filter(X, y; m)
@@ -216,12 +216,12 @@ end
 
 # dispatch for table inputs
 function borderline_smote1(
-	X,
-	y::AbstractVector;
+    X,
+    y::AbstractVector;
     m::Integer = 5,
-	k::Integer = 5,
-	ratios = 1.0,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    k::Integer = 5,
+    ratios = 1.0,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
     verbosity::Integer = 1
 )
@@ -234,9 +234,9 @@ function borderline_smote1(
     Xy,
     y_ind::Integer;
     m::Integer = 5,
-	k::Integer = 5,
-	ratios = 1.0,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    k::Integer = 5,
+    ratios = 1.0,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
     verbosity::Integer = 1
 )
