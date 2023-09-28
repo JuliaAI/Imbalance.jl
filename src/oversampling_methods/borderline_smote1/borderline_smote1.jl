@@ -229,9 +229,9 @@ function borderline_smote1(
     Xy,
     y_ind::Integer;
     m::Integer = 5,
-	k::Integer = 5,
-	ratios = 1.0,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    k::Integer = 5,
+    ratios = 1.0,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
 )
     Xyover = tablify(borderline_smote1, Xy, y_ind; try_perserve_type=try_perserve_type, m, k, ratios, rng)
