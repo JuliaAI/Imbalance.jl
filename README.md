@@ -22,8 +22,10 @@ Pkg.add("Imbalance")
 The package implements the following resampling algorithms
 
 - Random Oversampling
+- Random Walk Oversampling (RWO)
 - Random Oversampling Examples (ROSE)
 - Synthetic Minority Oversampling Technique (SMOTE)
+- Borderline SMOTE1
 - SMOTE-Nominal (SMOTE-N)
 - SMOTE-Nominal Categorical (SMOTE-NC)
 - Random Undersampling

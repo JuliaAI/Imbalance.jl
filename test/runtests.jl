@@ -7,7 +7,7 @@ using MLJTestInterface
 using Statistics
 using Clustering
 using Distances
-using StatsBase: countmap, mode
+using StatsBase: countmap, mode, proportions
 using NearestNeighbors, Distances
 using MLJBase: machine, transform
 using StableRNGs: StableRNG
@@ -75,13 +75,20 @@ end
     include("cluster_undersample.jl")
 end
 
-
 @testset "SMOTE" begin
     include("smote.jl")
 end
 
+@testset "BorderlineSMOTE1" begin
+    include("borderline_smote1.jl")
+end
+
 @testset "SMOTENC" begin
     include("smotenc.jl")
+end
+
+@testset "Random Walk Oversampling" begin
+    include("random_walk.jl")
 end
 
 @testset "SMOTEN" begin

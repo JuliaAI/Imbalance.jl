@@ -6,6 +6,7 @@ using Imbalance:
     cluster_undersample,
     smotenc,
     smoten,
+    random_walk_oversample,
     generate_imbalanced_data
 
 @testset "Random Oversampler MLJ" begin
@@ -89,6 +90,34 @@ end
         smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
 
+
+@testset "BorderlineSMOTE1 MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [Imbalance.MLJ.BorderlineSMOTE1],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
+    num_rows = 100
+    num_cont_feats = 5
+    probs = [0.5, 0.2, 0.3]
+    # table
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X = DataFrame(X)
+    model =
+        Imbalance.MLJ.BorderlineSMOTE1(k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    mach = machine(model)
+    @test transform(mach, X, y) ==
+    borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+
+    # matrix
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    @test transform(mach, X, y) ==
+        borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+end
+
 @testset "SMOTENC MLJ" begin
     failures, summary = MLJTestInterface.test(
         [Imbalance.MLJ.SMOTENC],
@@ -114,7 +143,34 @@ end
     mach = machine(smotenc_model)
     @test transform(mach, X, y) ==
       smotenc(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+end
 
+
+@testset "RandomWalkOversampler MLJ" begin
+    failures, summary = MLJTestInterface.test(
+        [Imbalance.MLJ.RandomWalkOversampler],
+        MLJTestInterface.make_multiclass()...;
+        verbosity = 1,
+        throw = true,
+        mod = @__MODULE__
+    )
+    @test isempty(failures)
+
+    num_rows = 100
+    num_cont_feats = 4
+    probs = [0.5, 0.2, 0.3]
+
+    cat_feats_num_vals = [3, 4, 2, 5]
+
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, cat_feats_num_vals)
+    X = DataFrame(X)
+    X = coerce(X, autotype(X, :few_to_finite))
+
+    rwo_model =
+    Imbalance.MLJ.RandomWalkOversampler(ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    mach = machine(rwo_model)
+    @test transform(mach, X, y) ==
+      random_walk_oversample(X, y; ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
 
 # For SMOTEN, need dataset with categorical variables. let's (perhaps) consider a PR later.
