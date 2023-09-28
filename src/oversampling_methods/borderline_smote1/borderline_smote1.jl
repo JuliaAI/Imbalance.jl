@@ -54,7 +54,7 @@ end
     borderline_smote1(
         X, y;
         m=5, k=5, ratios=nothing, rng=default_rng(),
-        try_perserve_type=true
+        try_perserve_type=true, verbosity=1
     )
 
 # Description
@@ -80,6 +80,8 @@ $(COMMON_DOCS["RATIOS"])
 $(COMMON_DOCS["RNG"])
 
 $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+
+- `verbosity::Integer=1`: Whenever higher than `0` info regarding the points that will participate in oversampling is logged.
 
 # Returns
 
@@ -172,6 +174,7 @@ function borderline_smote1(
 	ratios = 1.0,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
+    verbosity::Integer = 1
 )
     # this function adjust generic_oversampling to use in borderline smote
     rng = rng_handler(rng)
@@ -181,7 +184,7 @@ function borderline_smote1(
 
     # give the user an idea about the filtered data.
     y1_stats = match(r"\((.*?)\)", string(countmap(y1))).captures[1]
-    @info "After filtering, the mapping from each class to number of borderline points is ($y1_stats)."
+    verbosity > 0 && @info INFO_BORDERLINE_PTS(y1_stats)
     length(y1) == 0 && throw(ERR_NO_BORDERLINE)
     
     # Get maps from labels to indices and the needed counts
@@ -205,6 +208,7 @@ function borderline_smote1(
         y = vcat(y, ynew)
         next!(p; showvalues = [(:class, label)])
     end
+
     yover = y
     Xover = transpose(X)
     return Xover, yover
@@ -219,8 +223,9 @@ function borderline_smote1(
 	ratios = 1.0,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
+    verbosity::Integer = 1
 )
-    Xover, yover = tablify(borderline_smote1, X, y; try_perserve_type=try_perserve_type,  m, k, ratios, rng)
+    Xover, yover = tablify(borderline_smote1, X, y; try_perserve_type=try_perserve_type,  m, k, ratios, rng, verbosity)
     return Xover, yover
 end
 
@@ -233,7 +238,8 @@ function borderline_smote1(
 	ratios = 1.0,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
     try_perserve_type::Bool = true,
+    verbosity::Integer = 1
 )
-    Xyover = tablify(borderline_smote1, Xy, y_ind; try_perserve_type=try_perserve_type, m, k, ratios, rng)
+    Xyover = tablify(borderline_smote1, Xy, y_ind; try_perserve_type=try_perserve_type, m, k, ratios, rng, verbosity)
     return Xyover
 end

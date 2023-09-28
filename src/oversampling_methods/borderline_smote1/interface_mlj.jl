@@ -7,6 +7,7 @@ mutable struct BorderlineSMOTE1{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: 
     ratios::T
     rng::R
     try_perserve_type::Bool
+    verbosity::I
 end;
 
 
@@ -35,9 +36,9 @@ function BorderlineSMOTE1(;
     m::Integer = 5,
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool=true
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool=true, verbosity::Integer=1
 ) where {T}
-    model = BorderlineSMOTE1(m, k, ratios, rng, try_perserve_type)
+    model = BorderlineSMOTE1(m, k, ratios, rng, try_perserve_type, verbosity)
     MMI.clean!(model)
     return model
 end
@@ -47,10 +48,10 @@ Oversample data X, y using BorderlineSMOTE1
 """
 function MMI.transform(s::BorderlineSMOTE1, _, X, y)
     borderline_smote1(X, y; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng, 
-        try_perserve_type = s.try_perserve_type)
+        try_perserve_type = s.try_perserve_type, verbosity = s.verbosity)
 end
 function MMI.transform(s::BorderlineSMOTE1, _, X::AbstractMatrix{<:Real}, y)
-    borderline_smote1(X, y; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng)
+    borderline_smote1(X, y; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng, verbosity = s.verbosity)
 end
 
 
@@ -114,6 +115,9 @@ For default values of the hyper-parameters, model can be constructed by
 $((COMMON_DOCS["RATIOS"]))
 
 $((COMMON_DOCS["RNG"]))
+
+- `verbosity::Integer=1`: Whenever higher than `0` info regarding the points that will participate in oversampling is logged.
+
 
 # Transform Inputs
 

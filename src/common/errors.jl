@@ -29,13 +29,13 @@ const WRN_SINGLE_OBS = "Warning: class with a single point will be ignored; poin
 const ERR_NONPOS_K(k) = "Number of nearest neighbors `k` must be greater than 0 but got $k."
 const WRN_K_TOO_BIG(k, n) =
     "Warning: k=$k is  larger than or equal to the number of samples for the data which is ($n). Will set k=$n-1"
-const ERR_NONPOS_M(k) = "Number of nearest neighbors `m` must be greater than 0 but got $k."
 
 ### BorderlineSMOTE1
+const ERR_NONPOS_M(m) = "Number of nearest neighbors `m` must be greater than 0 but got $m."
 const WRN_M_TOO_BIG(m, n) =
 	"Warning: m=$m is larger than or equal to the number of samples for the data which is ($n). Will set m=$m-1"
 const ERR_NO_BORDERLINE = "Error: No borderline points were found and thus, data cannot be oversampled with this method."
-
+const INFO_BORDERLINE_PTS(y1_stats) = "After filtering, the mapping from each class to number of borderline points is ($y1_stats)."
 
 ### SMOTENC
 const ERR_BAD_MIXED_COL_TYPES(bad_cols, bad_types) =
@@ -44,7 +44,7 @@ const ERR_BAD_MIXED_COL_TYPES(bad_cols, bad_types) =
 const ERR_WRNG_TREE(knn_tree) =
 	"Expected KNN tree to be either 'BruteTree' or 'BallTree' but given is '$knn_tree'"
 
-### SMOTEN
+### SMOTEN and RandomWalk
 const ERR_BAD_NOM_COL_TYPES(bad_cols, bad_types) =
     "Columns at indices $(bad_cols) are not categorical.\n Categorical columns must have scitype Multiclass or OrderedFactor.\n However, said columns have scitypes $(bad_types)."
 

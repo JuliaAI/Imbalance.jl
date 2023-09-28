@@ -79,7 +79,7 @@ end
     include("smote.jl")
 end
 
-@testset "SMOTE" begin
+@testset "BorderlineSMOTE1" begin
     include("borderline_smote1.jl")
 end
 

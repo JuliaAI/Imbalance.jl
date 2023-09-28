@@ -55,7 +55,16 @@ end
     X = [1.0 1.0; 2.0 2.0; 2.2 2.2; 4.0 4.0; 5.0 5.0; 6.0 6.0]
     y = [1, 1, 1, 1, 1, 1]
     @test_throws Imbalance.ERR_NO_BORDERLINE begin
-        Xover, yover = borderline_smote1(X, y; k = 2, m = 2, ratios = 1.3, rng=Random.Xoshiro(42))
+        Xover, yover = borderline_smote1(X, y; k = 2, m = 2, ratios = 1.3, rng=Random.Xoshiro(42), verbosity=0)
+    end
+    m = -5
+    @test_throws Imbalance.ERR_NONPOS_M(m) begin
+        Xover, yover = borderline_smote1(X, y; k = 2, m = m, ratios = 1.3, rng=Random.Xoshiro(42), verbosity=0)
+    end
+    y = [1, 1, 2, 2, 1, 1]
+    m = 7
+    @test_logs (:warn, Imbalance.WRN_M_TOO_BIG(m, 6)) begin
+        Xover, yover = borderline_smote1(X, y; k = 1, m = m, ratios = 1.3, rng=Random.Xoshiro(42), verbosity=0)
     end
 end
 
