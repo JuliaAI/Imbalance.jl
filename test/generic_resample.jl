@@ -6,8 +6,8 @@ using Imbalance:
     X, y = generate_imbalanced_data(
         1000,
         10;
-        cat_feats_num_vals = [],
-        probs = [0.7, 0.2, 0.1],
+        num_vals_per_category = [],
+        class_probs = [0.7, 0.2, 0.1],
         type = "Matrix",
         insert_y = nothing,
         rng = 41,
@@ -28,8 +28,8 @@ using Imbalance: generic_oversample
     X, y = generate_imbalanced_data(
         1000,
         10;
-        cat_feats_num_vals = [],
-        probs = [0.7, 0.2, 0.1],
+        num_vals_per_category = [],
+        class_probs = [0.7, 0.2, 0.1],
         type = "Matrix",
         insert_y = nothing,
         rng = 41,

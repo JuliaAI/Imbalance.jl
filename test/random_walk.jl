@@ -8,7 +8,7 @@ end
 @testset "random walk per class end-to-end test" begin
     cont_inds = [1, 2, 3, 4, 5]
     cat_inds = [6, 7, 8]
-    Xt, y = Imbalance.generate_imbalanced_data(100000, 5; cat_feats_num_vals=[3, 4, 2], type="Matrix")
+    Xt, y = Imbalance.generate_imbalanced_data(100000, 5; num_vals_per_category=[3, 4, 2], type="Matrix")
     Xt[:, cont_inds] = Xt[:, cont_inds] .+ 0.4*randn(size(Xt, 1), 5) .+ 0.3
     X = transpose(Xt)
     
@@ -43,8 +43,8 @@ end
     X, y = generate_imbalanced_data(
         1000,
         2;
-        cat_feats_num_vals=[3],
-        probs = [0.2, 0.6, 0.2],
+        num_vals_per_category=[3],
+        class_probs = [0.2, 0.6, 0.2],
         type = "Matrix",
         rng = 121,
     )
@@ -63,7 +63,7 @@ end
     Xc, yc = generate_imbalanced_data(
         1000,
         2;
-        probs = [0.2, 0.6, 0.2],
+        class_probs = [0.2, 0.6, 0.2],
         type = "ColTable",
         rng = 121,
     )
@@ -84,7 +84,7 @@ end
 # test that the materializer works for dataframes
 @testset "materializer" begin
     X, y =
-        generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
+        generate_imbalanced_data(1000, 2; class_probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
     Xover, yover = random_walk_oversample(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame

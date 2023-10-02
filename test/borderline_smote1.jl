@@ -29,7 +29,7 @@ end
 
 
 @testset "end-to-end borderline smote test" begin
-    X, y = Imbalance.generate_imbalanced_data(1000, 5; probs=[0.2, 0.8], type="Matrix", rng=Random.Xoshiro(42))
+    X, y = Imbalance.generate_imbalanced_data(1000, 5; class_probs=[0.2, 0.8], type="Matrix", rng=Random.Xoshiro(42))
     # manual filter
     bool_filter = Imbalance.borderline1_filter(X', y; m=5)
     Xover, yover = borderline_smote1(X, y; k = 5, m = 5, ratios = 1.0, rng=Random.Xoshiro(42))
@@ -71,7 +71,7 @@ end
 # test that the materializer works for dataframes
 @testset "materializer" begin
     X, y =
-        generate_imbalanced_data(1000, 2; probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
+        generate_imbalanced_data(1000, 2; class_probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
     Xover, yover = borderline_smote1(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame

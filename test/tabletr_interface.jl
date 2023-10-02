@@ -85,7 +85,7 @@ end
         Xy, _ = generate_imbalanced_data(
             50,
             4;
-            probs = [0.25, 0.5, 0.25],
+            class_probs = [0.25, 0.5, 0.25],
             type = tables[i],
             insert_y = y_ind,
             rng = 42,
@@ -100,8 +100,8 @@ end
             Xy, _ = generate_imbalanced_data(
                 50,
                 4;
-                cat_feats_num_vals = [2, 6, 3, 3],
-                probs = [0.25, 0.5, 0.25],
+                num_vals_per_category = [2, 6, 3, 3],
+                class_probs = [0.25, 0.5, 0.25],
                 type = tables[i],
                 insert_y = y_ind,
                 rng = 42,
@@ -113,8 +113,8 @@ end
             Xy, _ = generate_imbalanced_data(
                 50,
                 0;
-                cat_feats_num_vals = [2, 4, 3, 3],
-                probs = [0.25, 0.5, 0.25],
+                num_vals_per_category = [2, 4, 3, 3],
+                class_probs = [0.25, 0.5, 0.25],
                 type = tables[i],
                 insert_y = y_ind,
                 rng = 42,

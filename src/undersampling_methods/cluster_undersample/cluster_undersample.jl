@@ -74,11 +74,11 @@ $(COMMON_DOCS["OUTPUTS-UNDER"])
 using Imbalance
 
 # set probability of each class
-probs = [0.5, 0.2, 0.3]                         
+class_probs = [0.5, 0.2, 0.3]                         
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                probs, rng=42)                       
+                                class_probs, rng=42)                       
 julia> checkbalance(y; ref="minority")
  1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
  2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
@@ -129,7 +129,7 @@ num_rows = 100
 num_features = 5
 y_ind = 3
 Xy, _ = generate_imbalanced_data(num_rows, num_features; 
-                                 probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate ClusterUndersampler model
 undersampler = ClusterUndersampler(y_ind; mode="nearest", 

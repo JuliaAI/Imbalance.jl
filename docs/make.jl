@@ -22,7 +22,7 @@ makedocs(
     ), 
     modules = [Imbalance], 
     pages = ["Introduction" => "index.md", 
-              "Algorithms" => Any["Oversampling"=>"oversampling_algorithms.md", "Undersampling"=>"undersampling_algorithms.md"], 
+              "Algorithms" => Any["Oversampling"=>"oversampling_algorithms.md", "Undersampling"=>"undersampling_algorithms.md", "Extras"=>"extra_algorithms.md"], 
               "Walkthrough" => "examples/walkthrough.md", 
               "Examples" => "examples.md", 
               "Contributing" => "contributing.md", 

@@ -4,7 +4,7 @@ using Imbalance: cluster_undersample
     X, y = generate_imbalanced_data(
         100,
         2;
-        probs = [0.1, 0.6, 0.3],
+        class_probs = [0.1, 0.6, 0.3],
         type = "Matrix",
         rng = 121,
     )
@@ -51,7 +51,7 @@ end
     X, y = generate_imbalanced_data(
         1000,
         2;
-        probs = [0.2, 0.6, 0.2],
+        class_probs = [0.2, 0.6, 0.2],
         type = "MatrixTable",
         rng = 121,
     )

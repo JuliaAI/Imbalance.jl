@@ -20,9 +20,9 @@ using Imbalance:
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.RandomOversampler(ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
@@ -31,7 +31,7 @@ using Imbalance:
           random_oversample(X, y; ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
     
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
           random_oversample(X, y; ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
@@ -47,9 +47,9 @@ end
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.ROSE(s = 0.01,ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
@@ -58,7 +58,7 @@ end
           rose(X, y; s = 0.01, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
     
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
         rose(X, y; s = 0.01, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
@@ -74,9 +74,9 @@ end
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.SMOTE(k = 5,ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
@@ -85,7 +85,7 @@ end
     smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
         smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
@@ -102,9 +102,9 @@ end
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.BorderlineSMOTE1(k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
@@ -113,7 +113,7 @@ end
     borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
         borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
@@ -130,11 +130,11 @@ end
 
     num_rows = 100
     num_cont_feats = 4
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
 
-    cat_feats_num_vals = [3, 4, 2, 5]
+    num_vals_per_category = [3, 4, 2, 5]
 
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, cat_feats_num_vals)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
 
@@ -158,11 +158,11 @@ end
 
     num_rows = 100
     num_cont_feats = 4
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
 
-    cat_feats_num_vals = [3, 4, 2, 5]
+    num_vals_per_category = [3, 4, 2, 5]
 
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, cat_feats_num_vals)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
 
@@ -177,11 +177,11 @@ end
 @testset "SMOTEN MLJ" begin
     num_rows = 100
     num_cont_feats = 0
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
 
-    cat_feats_num_vals = [3, 4, 2, 5]
+    num_vals_per_category = [3, 4, 2, 5]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, cat_feats_num_vals)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
     smotenc_model =
@@ -191,7 +191,7 @@ end
           smoten(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, cat_feats_num_vals, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category, type="Matrix")
     X = Int32.(X)
     @test transform(mach, X, y) ==
         smoten(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
@@ -208,8 +208,8 @@ end
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    class_probs = [0.5, 0.2, 0.3]
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.RandomUndersampler(ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
@@ -218,7 +218,7 @@ end
     random_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
         random_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end
@@ -234,10 +234,10 @@ end
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
 
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.ClusterUndersampler(ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
@@ -246,7 +246,7 @@ end
           cluster_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
           cluster_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end
@@ -262,8 +262,8 @@ end
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    class_probs = [0.5, 0.2, 0.3]
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.ENNUndersampler(min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
@@ -272,7 +272,7 @@ end
           enn_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
           enn_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end
@@ -288,9 +288,9 @@ end
     @test isempty(failures)
     num_rows = 100
     num_cont_feats = 5
-    probs = [0.5, 0.2, 0.3]
+    class_probs = [0.5, 0.2, 0.3]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
         Imbalance.MLJ.TomekUndersampler(min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
@@ -299,7 +299,7 @@ end
           tomek_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
     @test transform(mach, X, y) ==
         tomek_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end

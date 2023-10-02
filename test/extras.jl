@@ -3,11 +3,11 @@ using Imbalance: checkbalance, generate_imbalanced_data
 @testset "testing checkbalance" begin
     num_rows = 100
     num_cont_feats = 4
-    probs = [0.9, 0.1]
+    class_probs = [0.9, 0.1]
     X, y = generate_imbalanced_data(
         num_rows,
         num_cont_feats;
-        probs,
+        class_probs,
         rng = 42,
     )
     c = IOCapture.capture() do

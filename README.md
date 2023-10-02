@@ -44,9 +44,9 @@ All methods by default support a pure functional interface.
 using Imbalance
 
 # Set dataset properties then generate imbalanced data
-probs = [0.5, 0.2, 0.3]                  # probability of each class      
+class_probs = [0.5, 0.2, 0.3]                  # probability of each class      
 num_rows, num_continuous_feats = 100, 5
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; probs, rng=42)      
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; class_probs, rng=42)      
 
 # Apply SMOTE to oversample the classes
 Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
@@ -83,7 +83,7 @@ num_rows = 200
 num_features = 5
 y_ind = 3
 Xy, _ = generate_imbalanced_data(num_rows, num_features; 
-                                 probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate SMOTE model
 oversampler = SMOTE(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)

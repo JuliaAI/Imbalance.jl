@@ -94,11 +94,11 @@ $(COMMON_DOCS["OUTPUTS"])
 using Imbalance
 
 # set probability of each class
-probs = [0.5, 0.2, 0.3]                         
+class_probs = [0.5, 0.2, 0.3]                         
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                probs, rng=42)            
+                                class_probs, rng=42)            
 
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
@@ -150,7 +150,7 @@ num_rows = 200
 num_features = 5
 y_ind = 3
 Xy, _ = generate_imbalanced_data(num_rows, num_features; 
-                                 probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate BorderlineSMOTE1 Oversampler model
 oversampler = BorderlineSMOTE1(y_ind; m=3, k=5, 

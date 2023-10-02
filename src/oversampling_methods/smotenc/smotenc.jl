@@ -203,15 +203,15 @@ $(COMMON_DOCS["OUTPUTS"])
 using Imbalance
 
 # set probability of each class
-probs = [0.5, 0.2, 0.3]                         
+class_probs = [0.5, 0.2, 0.3]                         
 num_rows = 100
 num_continuous_feats = 3
 # want two categorical features with three and two possible values respectively
-cat_feats_num_vals = [3, 2]
+num_vals_per_category = [3, 2]
 
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                probs, cat_feats_num_vals, rng=42)                      
+                                class_probs, num_vals_per_category, rng=42)                      
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
@@ -267,7 +267,7 @@ num_continuous_feats = 3
 y_ind = 2
 # generate a table and categorical vector accordingly
 Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
-                                probs= [0.5, 0.2, 0.3], cat_feats_num_vals=[3, 2],
+                                class_probs= [0.5, 0.2, 0.3], num_vals_per_category=[3, 2],
                                  rng=42)  
 
 # Table must have only finite or continuous scitypes                                
