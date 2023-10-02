@@ -127,7 +127,7 @@ function smote_per_class(
 )
     # Can't draw lines if there are no neighbors
     n_class = size(X, 2)
-    n_class == 1 && (@warn WRN_SINGLE_OBS; return X)
+    n_class == 1 && (@warn WRN_SINGLE_OBS; return Array{Float64}(undef, size(X, 1), 0))
 
     # Automatically fix k if needed
     k = check_k(k, n_class)

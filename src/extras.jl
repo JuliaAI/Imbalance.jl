@@ -142,7 +142,7 @@ function generate_imbalanced_data(
             stds[i]
             # put the generated data at the corresponding indices to y
             class_inds = BitVector(y .== (i-1))
-            Xc[class_inds, :] = round.((randn(sum(class_inds), num_continuous_feats) .* σ) .+ μ, digits=3)
+            Xc[class_inds, :] = round.((randn(rng, sum(class_inds), num_continuous_feats) .* σ) .+ μ, digits=3)
         end
     else
         Xc = Matrix{Int64}(undef, num_rows, 0)

@@ -100,11 +100,12 @@ end
         mod = @__MODULE__
     )
     @test isempty(failures)
-    num_rows = 100
-    num_cont_feats = 5
-    class_probs = [0.5, 0.2, 0.3]
+    num_rows = 500
+    num_cont_feats = 4
+    class_probs = [0.25, 0.5, 0.25]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; min_sep=0.0, class_probs, rng=42)
+
     X = DataFrame(X)
     model =
         Imbalance.MLJ.BorderlineSMOTE1(k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
@@ -113,7 +114,7 @@ end
     borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; min_sep=0.0, class_probs, type="Matrix", rng=42)
     @test transform(mach, X, y) ==
         borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end

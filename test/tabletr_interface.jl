@@ -83,8 +83,9 @@ end
 
     for i in eachindex(tables)
         Xy, _ = generate_imbalanced_data(
-            50,
+            500,
             4;
+            min_sep=0.0,
             class_probs = [0.25, 0.5, 0.25],
             type = tables[i],
             insert_y = y_ind,

@@ -29,7 +29,7 @@ end
 
 
 @testset "end-to-end borderline smote test" begin
-    X, y = Imbalance.generate_imbalanced_data(1000, 5; class_probs=[0.2, 0.8], type="Matrix", rng=Random.Xoshiro(42))
+    X, y = Imbalance.generate_imbalanced_data(500, 4; min_sep=0.0, class_probs=[0.25, 0.5, 0.25], type="Matrix", rng=Random.Xoshiro(42))
     # manual filter
     bool_filter = Imbalance.borderline1_filter(X', y; m=5)
     Xover, yover = borderline_smote1(X, y; k = 5, m = 5, ratios = 1.0, rng=Random.Xoshiro(42))
@@ -43,8 +43,8 @@ end
     # test that SMOTE condition is met for all oversampled points
     for l in eachindex(y_ex)
         @test any(
-        is_in_between(X_ex[l, :], X1[i, :], X1[j, :]) && y1[i] == y1[j] == y_ex[l] for
-        i = 1:size(X1, 1), j = 1:size(X1, 1) if i != j
+        is_in_between(X_ex[l, :], X1[i, :], X[j, :]) && y1[i] == y[j] == y_ex[l] for
+        i = 1:size(X1, 1), j = 1:size(X, 1) if i != j
     )
     end
 end
@@ -63,7 +63,7 @@ end
     end
     y = [1, 1, 2, 2, 1, 1]
     m = 7
-    @test_logs (:warn, Imbalance.WRN_M_TOO_BIG(m, 6)) begin
+    @test_logs (:warn, Imbalance.WRN_M_TOO_BIG(m, 6)) (:warn, Imbalance.WRN_NO_BORDERLINE_CLASS) begin
         Xover, yover = borderline_smote1(X, y; k = 1, m = m, ratios = 1.3, rng=Random.Xoshiro(42), verbosity=0)
     end
 end
@@ -71,7 +71,7 @@ end
 # test that the materializer works for dataframes
 @testset "materializer" begin
     X, y =
-        generate_imbalanced_data(1000, 2; class_probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
+        generate_imbalanced_data(1000, 2; min_sep=0.0, class_probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
     Xover, yover = borderline_smote1(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame

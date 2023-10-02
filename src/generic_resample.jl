@@ -28,10 +28,12 @@ function generic_oversample(
     oversample_per_class,
     args...;
     ratios = 1.0,
+    pass_inds::Bool = false,
+    is_transposed::Bool = false,
     kwargs...,
 )
     # Transposing for performance (hcat) and as assumed by NearestNeighbors
-    X = transpose(X)
+    is_transposed || (X = transpose(X))
     # Get maps from labels to indices and the needed counts
     label_inds = group_inds(y)
     extra_counts = get_class_counts(y, ratios)
@@ -45,7 +47,9 @@ function generic_oversample(
         n = extra_counts[label]
         n == 0 && continue
         # Generate the n needed new points
-        Xnew = oversample_per_class(X_label, n, args...; kwargs...)
+        Xnew =
+            (pass_inds) ? oversample_per_class(X_label, n, inds, args...; kwargs...) :
+            oversample_per_class(X_label, n, args...; kwargs...)
         # Generate the corresponding labels
         ynew = fill(label, size(Xnew, 2))
         X = hcat(X, Xnew)

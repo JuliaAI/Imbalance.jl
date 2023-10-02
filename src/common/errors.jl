@@ -35,7 +35,9 @@ const ERR_NONPOS_M(m) = "Number of nearest neighbors `m` must be greater than 0 
 const WRN_M_TOO_BIG(m, n) =
 	"Warning: m=$m is larger than or equal to the number of samples for the data which is ($n). Will set m=$m-1"
 const ERR_NO_BORDERLINE = "Error: No borderline points were found and thus, data cannot be oversampled with this method."
+const WRN_NO_BORDERLINE_CLASS = "Warning: Cannot oversample a class with no borderline points. Skipping."
 const INFO_BORDERLINE_PTS(y1_stats) = "After filtering, the mapping from each class to number of borderline points is ($y1_stats)."
+
 
 ### SMOTENC
 const ERR_BAD_MIXED_COL_TYPES(bad_cols, bad_types) =

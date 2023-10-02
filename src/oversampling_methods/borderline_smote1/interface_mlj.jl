@@ -104,8 +104,7 @@ For default values of the hyper-parameters, model can be constructed by
 
 # Hyperparameters
 
-- `m::Integer=5`: The number of neighbors to consider while checking the BorderlineSMOTE1 condition. In this, a point may participate
-    in oversampling iff the number of neighbors that belong to its class is in \$(0, m/2]\$. Should be within the range 
+- `m::Integer=5`: The number of neighbors to consider while checking the BorderlineSMOTE1 condition. Should be within the range 
    `0 < m < N` where N is the number of observations in the data. It will be automatically set to `N-1` if `N ≤ m`.
 
 - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE part of the algorithm. Should be within the range
