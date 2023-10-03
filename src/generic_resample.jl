@@ -97,8 +97,8 @@ function generic_undersample(
     undersampled_counts = get_class_counts(y, ratios; reference = "minority")
     num_feats = size(X, 1)
     # Declare X_under, y_under
-    X_under = Matrix{Any}(undef, num_feats, 0)
-    y_under = Vector{Any}(undef, 0)
+    X_under = Matrix{eltype(X)}(undef, num_feats, 0)
+    y_under = Vector{eltype(y)}(undef, 0)
     # Apply undersample per class on each set of points belonging to the same class
     p = Progress(length(label_inds))
     for (label, inds) in label_inds

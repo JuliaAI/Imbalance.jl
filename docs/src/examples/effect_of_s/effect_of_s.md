@@ -1,4 +1,4 @@
-# Imports
+# From RandomOversampling to ROSE
 
 
 ```julia
@@ -8,7 +8,7 @@ using DataFrames
 using MLJ
 using ScientificTypes
 using Imbalance
-using Plots
+using Plots, Measures
 ```
 
 ## Loading Data
@@ -159,16 +159,6 @@ Let's go for a [Decision Tree](https://alan-turing-institute.github.io/MLJ.jl/de
 import Pkg; Pkg.add("MultivariateStats")
 ```
 
-       Resolving package versions...
-        Updating `~/Documents/GitHub/Imbalance.jl/Project.toml`
-      [6f286f6a] + MultivariateStats v0.10.2
-        Updating `~/Documents/GitHub/Imbalance.jl/Manifest.toml`
-      [7d9fca2a] + Arpack v0.5.4
-      [6f286f6a] + MultivariateStats v0.10.2
-    ⌅ [68821587] + Arpack_jll v3.5.1+1
-            Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
-
-
 ### Before Oversampling
 
 
@@ -186,22 +176,6 @@ mach = machine(model, X, y)
 fit!(mach, verbosity=0)
 ```
 
-    import MLJMultivariateStatsInterface ✔
-
-
-    ┌ Info: For silent loading, specify `verbosity=0`. 
-    └ @ Main /Users/essam/.julia/packages/MLJModels/7apZ3/src/loading.jl:159
-
-
-
-    trained Machine; caches model-specific representations of data
-      model: BayesianLDA(method = gevd, …)
-      args: 
-        1:	Source @008 ⏎ Table{AbstractVector{Continuous}}
-        2:	Source @604 ⏎ AbstractVector{Multiclass{3}}
-
-
-
 ### After Oversampling
 
 
@@ -212,15 +186,6 @@ mach_over = machine(model, Xover, yover)
 # 4. fit the machine learning model
 fit!(mach_over, verbosity=0)
 ```
-
-
-    trained Machine; caches model-specific representations of data
-      model: BayesianLDA(method = gevd, …)
-      args: 
-        1:	Source @447 ⏎ Table{AbstractVector{Continuous}}
-        2:	Source @477 ⏎ AbstractVector{Multiclass{3}}
-
-
 
 ## Plot Decision Boundaries
 
@@ -316,6 +281,7 @@ Scatter plot the data before and after oversampling
 
 
 ```julia
+old_count = size(X, 1)
 labels = unique(y)
 colors = Dict("setosa" => "green", "versicolor" => "yellow",
 	"virginica" => "purple")
@@ -324,8 +290,13 @@ for label in labels
 	scatter!(p, X.petal_length[y.==label], X.petal_width[y.==label],
 		color = colors[label], label = label,
 		title = "Before Oversampling")
-	scatter!(p_over, Xover.petal_length[yover.==label], Xover.petal_width[yover.==label],
+	scatter!(p_over, X.petal_length[y.==label], X.petal_width[y.==label],
 		color = colors[label], label = label,
+		title = "After Oversampling")
+	# find new points only and plot with different shape
+	scatter!(p_over, Xover.petal_length[old_count+1:end][yover[old_count+1:end].==label],
+		Xover.petal_width[old_count+1:end][yover[old_count+1:end].==label],
+		color = colors[label], label = label*"-over", markershape = :diamond,
 		title = "After Oversampling")
 end
 
@@ -336,11 +307,12 @@ plot_res = plot(
 	xlabel = "petal length",
 	ylabel = "petal width",
 	size = (900, 300),
+	margin = 5mm, dpi = 200
 )
-savefig(plot_res, "./ROSE-before-after.png")
+savefig(plot_res, "./assets/ROSE-before-after.png")
 ```
 
-![](https://i.imgur.com/85leARg.png)
+![Before After ROSE](./assets/ROSE-before-after.png)
 
 ## Effect of Increasing `s`
 
@@ -351,7 +323,7 @@ anim = @animate for s ∈ 0:0.03:6.0
 	Xover, yover =
 		rose(X, y; s = s, ratios = Dict("setosa" => 1.0, "versicolor" => 1.0), rng = 42)
 
-	model = BayesianLDA()	
+	model = BayesianLDA()
 	mach_over = machine(model, Xover, yover)
 	fit!(mach_over, verbosity = 0)
 
@@ -364,30 +336,30 @@ anim = @animate for s ∈ 0:0.03:6.0
 	p_over = contourf(petal_length_range, petal_width_range, grid_predictions_over,
 		levels = 3, color = :Set3_3, colorbar = false)
 
+	old_count = size(X, 1)
 	for label in labels
-		scatter!(p_over, Xover.petal_length[yover.==label],
-			Xover.petal_width[yover.==label],
+		scatter!(p_over, X.petal_length[y.==label], X.petal_width[y.==label],
 			color = colors[label], label = label,
+			title = "Oversampling with s=$s")
+		# find new points only and plot with different shape
+		scatter!(p_over,
+			Xover.petal_length[old_count+1:end][yover[old_count+1:end].==label],
+			Xover.petal_width[old_count+1:end][yover[old_count+1:end].==label],
+			color = colors[label], label = label * "-over", markershape = :diamond,
 			title = "Oversampling with s=$s")
 	end
 	plot!(dpi = 150)
 end
+
 ```
 
 
 ```julia
-gif(anim, "./rose-animation.gif", fps=6)
+gif(anim, "./assets/rose-animation.gif", fps=6)
 println()
 ```
 
-    
-
-
-    ┌ Info: Saved animation to /Users/essam/Documents/GitHub/Imbalance.jl/docs/src/examples/effect_of_s/rose-animation.gif
-    └ @ Plots /Users/essam/.julia/packages/Plots/3BCH5/src/animation.jl:156
-
-
-![](https://gcdnb.pbrd.co/images/RFbcAmPKNvKu.gif?o=1)
+![ROSE Effect of S](./assets/rose-animation.gif)
 
 As we can see, the larger `s` is the more spread out are the oversampled points. This is expected because what ROSE does is oversample by sampling from the distribution that corresponds to placing Gaussians on the existing points and `s` is a hyperparameter proportional to the bandwidth of the Gaussians. When `s=0` the only points that can be generated lie on top of others; i.e., ROSE becomes equivalent to random oversampling
 

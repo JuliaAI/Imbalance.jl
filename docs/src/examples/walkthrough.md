@@ -14,6 +14,7 @@ using CSV
 using DataFrames
 using MLJ
 using Imbalance
+using MLJBalancing
 using ScientificTypes
 ```
 
@@ -127,14 +128,58 @@ Splitting the data into train and test portions is also easy using `MLJ`'s `part
 
 
 ```julia
-train_inds, test_inds = partition(
-    eachindex(y), 0.8, shuffle=true, stratify=y, rng=Random.Xoshiro(42))
-X_train, X_test = X[train_inds, :], X[test_inds, :]
-y_train, y_test = y[train_inds], y[test_inds]
+(X_train, X_test), (y_train, y_test) = partition(
+	(X, y),
+	0.8,
+	multi = true,
+	shuffle = true,
+	stratify = y,
+	rng = Random.Xoshiro(42)
+)
 ```
 
 
-    (CategoricalArrays.CategoricalValue{Int64, UInt32}[5, 5, 5, 4, 5, 3, 4, 5, 5, 5  …  5, 4, 4, 5, 4, 5, 5, 3, 5, 2], CategoricalArrays.CategoricalValue{Int64, UInt32}[2, 2, 5, 5, 4, 2, 2, 4, 3, 3  …  2, 0, 0, 5, 3, 5, 2, 4, 5, 5])
+    ((399×3 DataFrame
+     Row │ Gender  Height   Weight  
+         │ Cat…    Float64  Float64 
+    ─────┼──────────────────────────
+       1 │ Female    179.0    150.0
+       2 │ Male      141.0     80.0
+       3 │ Male      179.0    152.0
+       4 │ Male      187.0    138.0
+       5 │ Male      148.0    155.0
+       6 │ Female    192.0    101.0
+       7 │ Male      145.0     78.0
+       8 │ Female    162.0    159.0
+      ⋮  │   ⋮        ⋮        ⋮
+     393 │ Female    161.0    154.0
+     394 │ Female    172.0    109.0
+     395 │ Female    163.0    159.0
+     396 │ Female    186.0    146.0
+     397 │ Male      194.0    106.0
+     398 │ Female    167.0    153.0
+     399 │ Female    162.0     64.0
+                    384 rows omitted, 101×3 DataFrame
+     Row │ Gender  Height   Weight  
+         │ Cat…    Float64  Float64 
+    ─────┼──────────────────────────
+       1 │ Female    157.0     56.0
+       2 │ Male      180.0     75.0
+       3 │ Female    157.0    110.0
+       4 │ Female    182.0    143.0
+       5 │ Male      165.0    104.0
+       6 │ Male      182.0     73.0
+       7 │ Male      165.0     68.0
+       8 │ Male      166.0    107.0
+      ⋮  │   ⋮        ⋮        ⋮
+      95 │ Male      163.0    137.0
+      96 │ Female    188.0     99.0
+      97 │ Female    146.0    123.0
+      98 │ Male      186.0     68.0
+      99 │ Female    140.0     76.0
+     100 │ Female    168.0    139.0
+     101 │ Male      180.0    149.0
+                     86 rows omitted), (CategoricalArrays.CategoricalValue{Int64, UInt32}[5, 5, 5, 4, 5, 3, 4, 5, 5, 5  …  5, 4, 4, 5, 4, 5, 5, 3, 5, 2], CategoricalArrays.CategoricalValue{Int64, UInt32}[2, 2, 5, 5, 4, 2, 2, 4, 3, 3  …  2, 0, 0, 5, 3, 5, 2, 4, 5, 5]))
 
 
 ⚠️ Always split the data before oversampling. If your test data has oversampled observations then train-test contamination has occurred; novel observations will not come from the oversampling function.
@@ -182,34 +227,31 @@ Let's use random oversampling to oversample the data. This particular model does
 
 
 ```julia
-Xover, yover = random_oversample(X, y; ratios, rng=42)        
+Xover, yover = random_oversample(X_train, y_train; ratios, rng=42)        
 ```
 
-    Progress:  33%|█████████████▋                           |  ETA: 0:00:01[K
-    [A
 
-
-    (644×3 DataFrame
+    (514×3 DataFrame
      Row │ Gender  Height   Weight  
          │ Cat…    Float64  Float64 
     ─────┼──────────────────────────
-       1 │ Female    173.0     82.0
-       2 │ Female    187.0    121.0
-       3 │ Male      144.0    145.0
-       4 │ Male      156.0     74.0
-       5 │ Male      167.0    151.0
-       6 │ Female    146.0    147.0
-       7 │ Female    157.0    153.0
-       8 │ Male      187.0    140.0
+       1 │ Female    179.0    150.0
+       2 │ Male      141.0     80.0
+       3 │ Male      179.0    152.0
+       4 │ Male      187.0    138.0
+       5 │ Male      148.0    155.0
+       6 │ Female    192.0    101.0
+       7 │ Male      145.0     78.0
+       8 │ Female    162.0    159.0
       ⋮  │   ⋮        ⋮        ⋮
-     638 │ Female    183.0     50.0
-     639 │ Female    163.0     57.0
-     640 │ Female    190.0     50.0
-     641 │ Male      181.0     51.0
-     642 │ Male      188.0     54.0
-     643 │ Female    191.0     54.0
-     644 │ Male      198.0     50.0
-                    629 rows omitted, CategoricalArrays.CategoricalValue{Int64, UInt32}[2, 4, 5, 4, 5, 5, 5, 5, 5, 2  …  0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+     508 │ Female    196.0     50.0
+     509 │ Male      193.0     54.0
+     510 │ Male      182.0     50.0
+     511 │ Male      190.0     50.0
+     512 │ Male      190.0     50.0
+     513 │ Male      198.0     50.0
+     514 │ Male      198.0     50.0
+                    499 rows omitted, CategoricalArrays.CategoricalValue{Int64, UInt32}[5, 5, 5, 4, 5, 3, 4, 5, 5, 5  …  0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
 
 
@@ -217,12 +259,12 @@ Xover, yover = random_oversample(X, y; ratios, rng=42)
 checkbalance(yover)
 ```
 
-    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 59 (29.8%) 
-    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 59 (29.8%) 
-    2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 99 (50.0%) 
-    3: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 99 (50.0%) 
-    4: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 130 (65.7%) 
-    5: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 198 (100.0%) 
+    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 47 (29.7%) 
+    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 47 (29.7%) 
+    2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 79 (50.0%) 
+    3: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 79 (50.0%) 
+    4: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 104 (65.8%) 
+    5: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 158 (100.0%) 
 
 
 This indeeds aligns with the desired ratios we have set earlier.
@@ -281,7 +323,7 @@ fit!(mach)
     trained Machine; caches model-specific representations of data
       model: DecisionTreeClassifier(max_depth = 5, …)
       args: 
-        1:	Source @505 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
+        1:	Source @027 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
         2:	Source @092 ⏎ AbstractVector{OrderedFactor{6}}
 
 
@@ -306,8 +348,8 @@ fit!(mach_over)
     trained Machine; caches model-specific representations of data
       model: DecisionTreeClassifier(max_depth = 5, …)
       args: 
-        1:	Source @447 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
-        2:	Source @581 ⏎ AbstractVector{OrderedFactor{6}}
+        1:	Source @592 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
+        2:	Source @711 ⏎ AbstractVector{OrderedFactor{6}}
 
 
 
@@ -340,13 +382,114 @@ score = round(balanced_accuracy(y_pred, y_test), digits=2)
 
 ```julia
 y_pred_over = predict_mode(mach_over, X_test)
-
 score = round(balanced_accuracy(y_pred_over, y_test), digits=2)
 ```
 
 
-    0.77
+    0.75
 
+
+## Evaluating the Model - Revisited
+
+We have previously evaluated the model using a single point estimate of the balanced accuracy resulting in a `13%` improvement. A more precise evaluation would use cross validation to combine many different point estimates into a more precise one (their average). The standard deviation among such point estimates also allows us to quantify the uncertainty of the estimate; a smaller standard deviation would imply a smaller confidence interval at the same probability.
+
+### Before Oversampling
+
+
+```julia
+cv=CV(nfolds=10)
+evaluate!(mach, resampling=cv, measure=balanced_accuracy) 
+```
+
+    Evaluating over 10 folds: 100%[=========================] Time: 0:00:00[K
+
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+    │ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+    ├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+    │ BalancedAccuracy(   │ predict_mode │ 0.621       │ 0.0913  │ [0.593, 0.473,  ⋯
+    │   adjusted = false) │              │             │         │                 ⋯
+    └─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                    1 column omitted
+
+
+
+Under the normality assumption, the `95%` confidence interval is `62.1±9.13%` which is pretty big. Let's see how it looks after oversampling.
+
+### After Oversampling
+
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+
+In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
+
+
+```julia
+# 2. Instantiate the models
+oversampler = Imbalance.MLJ.RandomOversampler(ratios=ratios, rng=42)
+model = DecisionTreeClassifier(max_depth=5, rng=Random.Xoshiro(42))
+
+# 2.1 Wrap them in one model
+balanced_model = BalancedModel(model=model, balancer1=oversampler)
+
+# 3. Wrap it with the data in a machine
+mach_over = machine(balanced_model, X_train, y_train, scitype_check_level=0)
+
+# 4. fit the machine learning model
+fit!(mach_over, verbosity=0)
+```
+
+
+    trained Machine; does not cache data
+      model: BalancedModelProbabilistic(model = DecisionTreeClassifier(max_depth = 5, …), …)
+      args: 
+        1:	Source @099 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{2}}}}
+        2:	Source @071 ⏎ AbstractVector{OrderedFactor{6}}
+
+
+
+We can easily confirm that this is equivalent to what we had earlier
+
+
+```julia
+predict_mode(mach_over, X_test) ==  y_pred_over
+```
+
+
+    true
+
+
+
+```julia
+cv=CV(nfolds=10)
+evaluate!(mach_over, resampling=cv, measure=balanced_accuracy) 
+```
+
+    Evaluating over 10 folds: 100%[=========================] Time: 0:00:00[K
+
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+    │ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+    ├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+    │ BalancedAccuracy(   │ predict_mode │ 0.7         │ 0.0717  │ [0.7, 0.536, 0. ⋯
+    │   adjusted = false) │              │             │         │                 ⋯
+    └─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                    1 column omitted
+
+
+
+This results in an interval `70±7.2%` which can be viewed as a reasonable improvement over `62.1±9.13%`. The uncertainty in the intervals can be explained by the fact that the dataset is small with many classes.
 
 # Google Colab
 
@@ -373,7 +516,7 @@ echo 'Done'
 - Change the runtime to Julia from the toolbar
 - `Pkg.add` Imbalance and any needed packages (those being used)
 ```julia
-Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "ScientificTypes"])
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", "StatsBase", "ScientificTypes", "Plots", "Impute", "CategoricalArrays"])
 ```
 - Click the folder icon on the left, make a `datasets` folder and drag and drop it in there
 - Run the notebook
@@ -381,3 +524,6 @@ Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "ScientificTypes"])
 Sincere thanks to [Julia-on-Colab](https://github.com/Dsantra92/Julia-on-Colab) for making this possible
 
 
+
+from convert import convert_to_md; convert_to_md('walkthrough', copy=False)
+```

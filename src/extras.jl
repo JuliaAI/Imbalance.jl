@@ -58,7 +58,7 @@ X, y = generate_imbalanced_data(
 p = plot()
 [scatter!(p, X[:, 1][y.==yi], X[:, 2][y.==yi], label = "\$y=yi\$") for yi in unique(y)]
 
->julia plot(p)
+julia> plot(p)
 ```
 ![generated data](./assets/gen_one.png)
 ```julia
@@ -75,7 +75,7 @@ X, y = generate_imbalanced_data(
 p = plot()
 [scatter!(p, X[:, 1][y.==yi], X[:, 2][y.==yi], label = "\$y=yi\$") for yi in unique(y)]
 
->julia plot(p)
+julia> plot(p)
 ```
 ![generated data](./assets/gen_two.png)
 ```julia
@@ -91,7 +91,7 @@ X, y = generate_imbalanced_data(
 	rng = 33,
 )
 
->julia X
+julia> X
 (Column1 = [0.883, 0.9, 0.577  …  0.887,],
  Column2 = [0.578, 0.718, 0.378  …  0.573,],
  Column3 = [2.0, 2.0, 3.0, …  2.0,],
@@ -203,11 +203,11 @@ X, y = generate_imbalanced_data(
 	rng = 42,
 )
 
->julia checkbalance(y; ref="majority")
+julia> checkbalance(y; ref="majority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 10034 (25.1%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 39966 (100.0%) 
 
->julia checkbalance(y; ref="minority")
+julia> checkbalance(y; ref="minority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 10034 (100.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 39966 (398.3%) 
 ```

@@ -1,4 +1,4 @@
-# Imports
+# Effect of `ratios` Hyperparameter
 
 
 ```julia
@@ -8,7 +8,7 @@ using DataFrames
 using MLJ
 using ScientificTypes
 using Imbalance
-using Plots
+using Plots, Measures
 ```
 
 ## Loading Data
@@ -127,6 +127,30 @@ checkbalance(yover)
 models(matching(Xover, yover))
 ```
 
+
+    53-element Vector{NamedTuple{(:name, :package_name, :is_supervised, :abstract_type, :deep_properties, :docstring, :fit_data_scitype, :human_name, :hyperparameter_ranges, :hyperparameter_types, :hyperparameters, :implemented_methods, :inverse_transform_scitype, :is_pure_julia, :is_wrapper, :iteration_parameter, :load_path, :package_license, :package_url, :package_uuid, :predict_scitype, :prediction_type, :reporting_operations, :reports_feature_importances, :supports_class_weights, :supports_online, :supports_training_losses, :supports_weights, :transform_scitype, :input_scitype, :target_scitype, :output_scitype)}}:
+     (name = AdaBoostClassifier, package_name = MLJScikitLearnInterface, ... )
+     (name = AdaBoostStumpClassifier, package_name = DecisionTree, ... )
+     (name = BaggingClassifier, package_name = MLJScikitLearnInterface, ... )
+     (name = BayesianLDA, package_name = MLJScikitLearnInterface, ... )
+     (name = BayesianLDA, package_name = MultivariateStats, ... )
+     (name = BayesianQDA, package_name = MLJScikitLearnInterface, ... )
+     (name = BayesianSubspaceLDA, package_name = MultivariateStats, ... )
+     (name = CatBoostClassifier, package_name = CatBoost, ... )
+     (name = ConstantClassifier, package_name = MLJModels, ... )
+     (name = DecisionTreeClassifier, package_name = BetaML, ... )
+     ⋮
+     (name = SGDClassifier, package_name = MLJScikitLearnInterface, ... )
+     (name = SVC, package_name = LIBSVM, ... )
+     (name = SVMClassifier, package_name = MLJScikitLearnInterface, ... )
+     (name = SVMLinearClassifier, package_name = MLJScikitLearnInterface, ... )
+     (name = SVMNuClassifier, package_name = MLJScikitLearnInterface, ... )
+     (name = StableForestClassifier, package_name = SIRUS, ... )
+     (name = StableRulesClassifier, package_name = SIRUS, ... )
+     (name = SubspaceLDA, package_name = MultivariateStats, ... )
+     (name = XGBoostClassifier, package_name = XGBoost, ... )
+
+
 Let's go for an SVM
 
 
@@ -152,6 +176,26 @@ mach = machine(model, X, y)
 fit!(mach)
 ```
 
+    ┌ Info: For silent loading, specify `verbosity=0`. 
+    └ @ Main /Users/essam/.julia/packages/MLJModels/EkXIe/src/loading.jl:159
+
+
+    import MLJLIBSVMInterface ✔
+
+
+    ┌ Info: Training machine(SVC(kernel = RadialBasis, …), …).
+    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
+
+
+
+    trained Machine; caches model-specific representations of data
+      model: SVC(kernel = RadialBasis, …)
+      args: 
+        1:	Source @527 ⏎ Table{AbstractVector{Continuous}}
+        2:	Source @580 ⏎ AbstractVector{Multiclass{3}}
+
+
+
 ### After Oversampling
 
 
@@ -162,6 +206,19 @@ mach_over = machine(model, Xover, yover)
 # 4. fit the machine learning model
 fit!(mach_over)
 ```
+
+    ┌ Info: Training machine(SVC(kernel = RadialBasis, …), …).
+    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
+
+
+
+    trained Machine; caches model-specific representations of data
+      model: SVC(kernel = RadialBasis, …)
+      args: 
+        1:	Source @277 ⏎ Table{AbstractVector{Continuous}}
+        2:	Source @977 ⏎ AbstractVector{Multiclass{3}}
+
+
 
 ## Plot Decision Boundaries
 
@@ -175,6 +232,30 @@ petal_length_range =
 	range(minimum(X.petal_length) - 1, maximum(X.petal_length) + 1, length = 200)
 grid_points = [(pw, pl) for pw in petal_width_range, pl in petal_length_range]
 ```
+
+
+    200×200 Matrix{Tuple{Float64, Float64}}:
+     (-0.9, 0.2)       (-0.9, 0.238693)       …  (-0.9, 7.9)
+     (-0.878894, 0.2)  (-0.878894, 0.238693)     (-0.878894, 7.9)
+     (-0.857789, 0.2)  (-0.857789, 0.238693)     (-0.857789, 7.9)
+     (-0.836683, 0.2)  (-0.836683, 0.238693)     (-0.836683, 7.9)
+     (-0.815578, 0.2)  (-0.815578, 0.238693)     (-0.815578, 7.9)
+     (-0.794472, 0.2)  (-0.794472, 0.238693)  …  (-0.794472, 7.9)
+     (-0.773367, 0.2)  (-0.773367, 0.238693)     (-0.773367, 7.9)
+     (-0.752261, 0.2)  (-0.752261, 0.238693)     (-0.752261, 7.9)
+     (-0.731156, 0.2)  (-0.731156, 0.238693)     (-0.731156, 7.9)
+     (-0.71005, 0.2)   (-0.71005, 0.238693)      (-0.71005, 7.9)
+     ⋮                                        ⋱  
+     (3.13116, 0.2)    (3.13116, 0.238693)       (3.13116, 7.9)
+     (3.15226, 0.2)    (3.15226, 0.238693)       (3.15226, 7.9)
+     (3.17337, 0.2)    (3.17337, 0.238693)       (3.17337, 7.9)
+     (3.19447, 0.2)    (3.19447, 0.238693)       (3.19447, 7.9)
+     (3.21558, 0.2)    (3.21558, 0.238693)    …  (3.21558, 7.9)
+     (3.23668, 0.2)    (3.23668, 0.238693)       (3.23668, 7.9)
+     (3.25779, 0.2)    (3.25779, 0.238693)       (3.25779, 7.9)
+     (3.27889, 0.2)    (3.27889, 0.238693)       (3.27889, 7.9)
+     (3.3, 0.2)        (3.3, 0.238693)           (3.3, 7.9)
+
 
 Evaluate the grid with the machine before and after oversampling
 
@@ -190,41 +271,75 @@ grid_predictions_over = [
 ]
 ```
 
+
+    200×200 CategoricalArrays.CategoricalArray{String,2,UInt32}:
+     "setosa"  "setosa"  "setosa"  "setosa"  …  "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"  …  "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     ⋮                                       ⋱               
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"  …  "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+     "setosa"  "setosa"  "setosa"  "setosa"     "virginica"  "virginica"
+
+
 Make two contour plots using the grid predictions before and after oversampling
 
 
 ```julia
-%%capture
 p = contourf(petal_length_range, petal_width_range, grid_predictions,
     levels=3, color=:Set3_3, colorbar=false)
 p_over = contourf(petal_length_range, petal_width_range, grid_predictions_over,
     levels=3, color=:Set3_3, colorbar=false)
+println()
 ```
+
+    
+
 
 Scatter plot the data before and after oversampling
 
 
 ```julia
-labels = unique(y)
-colors = Dict("setosa"=> "green", "versicolor" => "yellow",
-              "virginica"=> "purple")
+old_count = size(X, 1)
 
+colors = Dict("setosa" => "green", "versicolor" => "yellow",
+	"virginica" => "purple")
+labels = unique(y)
 for label in labels
-scatter!(p, X.petal_length[y. == label], X.petal_width[y. == label],
-         color=colors[label], label=label,
-         title="Before Oversampling")
-scatter!(p_over, Xover.petal_length[yover. == label], Xover.petal_width[yover. == label],
-         color=colors[label], label=label,
-         title="After Oversampling")
+	scatter!(p, X.petal_length[y.==label], X.petal_width[y.==label],
+		color = colors[label], label = label,
+		title = "Before Oversampling")
+	scatter!(p_over, X.petal_length[y.==label], X.petal_width[y.==label],
+		color = colors[label], label = label,
+		title = "After Oversampling")
+	# find new points only and plot with different shape
+	scatter!(p_over, Xover.petal_length[old_count+1:end][yover[old_count+1:end].==label],
+		Xover.petal_width[old_count+1:end][yover[old_count+1:end].==label],
+		color = colors[label], label = label*"-over", markershape = :hexagon,
+		title = "After Oversampling")
 end
 
-plot_res = plot(p, p_over, layout=(1, 2), xlabel="petal length",
-                ylabel="petal width", size=(900, 300))
-savefig(plot_res, "./before-after-smote.png")
-
+plot_res = plot(p, p_over, layout = (1, 2), xlabel = "petal length",
+	ylabel = "petal width", size = (900, 300), margin = 5mm, dpi = 200)
+savefig(plot_res, "./assets/before-after-smote.png")
+println()
 ```
 
-![](https://i.imgur.com/LMnKP9I.png)
+![Before After SMOTE](./assets/before-after-smote.png)
+
 
 
 Notice how the minority class was completely ignore prior to oversampling. Not all models and hyperparameter settings are this delicate to class imbalance.
@@ -251,27 +366,34 @@ anim = @animate for versicolor_ratio ∈ 0.3:0.01:2
 		predict(mach_over, Tables.table(reshape(collect(point), 1, 2)))[1] for
 		point in grid_points
 	]
-
 	# plot
 	p_over = contourf(petal_length_range, petal_width_range, grid_predictions_over,
 		levels = 3, color = :Set3_3, colorbar = false)
+	old_count = size(X, 1)
 	for label in labels
-		scatter!(p_over, Xover.petal_length[yover.==label],
-			Xover.petal_width[yover.==label],
+		scatter!(p_over, X.petal_length[y.==label], X.petal_width[y.==label],
 			color = colors[label], label = label,
+			title = "Oversampling versicolor with ratio $versicolor_ratio")
+		# find new points only and plot with different shape
+		scatter!(p_over,
+			Xover.petal_length[old_count+1:end][yover[old_count+1:end].==label],
+			Xover.petal_width[old_count+1:end][yover[old_count+1:end].==label],
+			color = colors[label], label = label * "-over", markershape = :hexagon,
 			title = "Oversampling versicolor with ratio $versicolor_ratio")
 	end
 	plot!(dpi = 150)
 end
+
 ```
 
 
 ```julia
-gif(anim, "./rose-animation.gif", fps=6)
+gif(anim, "./assets/smote-animation.gif", fps=6)
 println()
 ```
 
-![abc](https://i.imgur.com/lxPhEke.gif)
+![Ratios Parameter Effect](./assets/smote-animation.gif)
+
 
 Notice how setting ratios greedily can lead to overfitting.
 

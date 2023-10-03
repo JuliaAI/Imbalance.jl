@@ -1,5 +1,9 @@
+# SMOTE on Customer Churn Data
+
+
 ```julia
 using Imbalance
+using MLJBalancing
 using CSV
 using DataFrames
 using ScientificTypes
@@ -148,12 +152,12 @@ Looks like we have a class imbalance problem. Let's oversample with SMOTE and se
 
 
 ```julia
-Xover, yover = smote(X, y; k=3, ratios=Dict(1=>0.9), rng=42)
+Xover, yover = smote(X_train, y_train; k=3, ratios=Dict(1=>0.9), rng=42)
 checkbalance(yover)
 ```
 
-    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7167 (90.0%) 
-    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7963 (100.0%) 
+    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5736 (90.0%) 
+    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 6373 (100.0%) 
 
 
 ## Training the Model
@@ -198,25 +202,6 @@ Let's go for a logistic classifier form MLJLinearModels
 import Pkg; Pkg.add("MLJLinearModels")
 ```
 
-        Updating registry at `~/.julia/registries/General.toml`
-    ┌ Error: Some registries failed to update:
-    │     — /Users/essam/.julia/registries/General.toml — failed to download from https://pkg.julialang.org/registry/23338594-aafe-5451-b93e-139f81909106/95646b6cd2d61c2d6784757067e14d5bcb846090. Exception: HTTP/2 200 (Operation too slow. Less than 1 bytes/sec transferred the last 20 seconds) while requesting https://pkg.julialang.org/registry/23338594-aafe-5451-b93e-139f81909106/95646b6cd2d61c2d6784757067e14d5bcb846090
-    └ @ Pkg.Registry /Users/julia/.julia/scratchspaces/a66863c6-20e8-4ff4-8a62-49f30b1f605e/agent-cache/default-macmini-aarch64-4.0/build/default-macmini-aarch64-4-0/julialang/julia-release-1-dot-8/usr/share/julia/stdlib/v1.8/Pkg/src/Registry/Registry.jl:449
-       Resolving package versions...
-        Updating `~/Documents/GitHub/Imbalance.jl/Project.toml`
-      [6ee0df7b] + MLJLinearModels v0.9.2
-        Updating `~/Documents/GitHub/Imbalance.jl/Manifest.toml`
-      [6a86dc24] + FiniteDiff v2.21.1
-      [42fd0dbc] + IterativeSolvers v0.9.2
-      [d3d80556] + LineSearches v7.2.0
-      [7a12625a] + LinearMaps v3.11.0
-      [6ee0df7b] + MLJLinearModels v0.9.2
-      [d41bc354] + NLSolversBase v7.8.3
-      [429524aa] + Optim v1.7.7
-      [85a6dd25] + PositiveFactorizations v0.2.4
-      [3cdcf5f2] + RecipesBase v1.3.4
-
-
 ### Before Oversampling
 
 
@@ -228,40 +213,18 @@ LogisticClassifier = @load LogisticClassifier pkg=MLJLinearModels verbosity=0
 model = LogisticClassifier()
 
 # 3. Wrap it with the data in a machine
-mach = machine(model, X_train, y_train)
+mach = machine(model, X_train, y_train, scitype_check_level=0)
 
 # 4. fit the machine learning model
 fit!(mach, verbosity=0)
 ```
 
-    ┌ Warning: The number and/or types of data arguments do not match what the specified model
-    │ supports. Suppress this type check by specifying `scitype_check_level=0`.
-    │ 
-    │ Run `@doc MLJLinearModels.LogisticClassifier` to learn more about your model's requirements.
-    │ 
-    │ Commonly, but non exclusively, supervised models are constructed using the syntax
-    │ `machine(model, X, y)` or `machine(model, X, y, w)` while most other models are
-    │ constructed with `machine(model, X)`.  Here `X` are features, `y` a target, and `w`
-    │ sample or class weights.
-    │ 
-    │ In general, data in `machine(model, data...)` is expected to satisfy
-    │ 
-    │     scitype(data) <: MLJ.fit_data_scitype(model)
-    │ 
-    │ In the present case:
-    │ 
-    │ scitype(data) = Tuple{Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}, AbstractVector{Multiclass{2}}}
-    │ 
-    │ fit_data_scitype(model) = Tuple{Table{<:AbstractVector{<:Continuous}}, AbstractVector{<:Finite}}
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:230
-
-
 
     trained Machine; caches model-specific representations of data
       model: LogisticClassifier(lambda = 2.220446049250313e-16, …)
       args: 
-        1:	Source @148 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}
-        2:	Source @042 ⏎ AbstractVector{Multiclass{2}}
+        1:	Source @113 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}
+        2:	Source @972 ⏎ AbstractVector{Multiclass{2}}
 
 
 
@@ -275,23 +238,6 @@ mach_over = machine(model, Xover, yover)
 # 4. fit the machine learning model
 fit!(mach_over)
 ```
-
-    ┌ Info: Training machine(LogisticClassifier(lambda = 2.220446049250313e-16, …), …).
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
-    ┌ Info: Solver: MLJLinearModels.LBFGS{Optim.Options{Float64, Nothing}, NamedTuple{(), Tuple{}}}
-    │   optim_options: Optim.Options{Float64, Nothing}
-    │   lbfgs_options: NamedTuple{(), Tuple{}} NamedTuple()
-    └ @ MLJLinearModels /Users/essam/.julia/packages/MLJLinearModels/zSQnL/src/mlj/interface.jl:72
-
-
-
-    trained Machine; caches model-specific representations of data
-      model: LogisticClassifier(lambda = 2.220446049250313e-16, …)
-      args: 
-        1:	Source @525 ⏎ Table{AbstractVector{Continuous}}
-        2:	Source @636 ⏎ AbstractVector{Multiclass{2}}
-
-
 
 ## Evaluating the Model
 
@@ -322,8 +268,111 @@ score = round(balanced_accuracy(y_pred_over, y_test), digits=2)
 ```
 
 
-    0.66
+    0.57
 
+
+## Evaluating the Model - Revisited
+
+We have previously evaluated the model using a single point estimate of the balanced accuracy resulting in a `7%` improvement. A more precise evaluation would use cross validation to combine many different point estimates into a more precise one (their average). The standard deviation among such point estimates also allows us to quantify the uncertainty of the estimate; a smaller standard deviation would imply a smaller confidence interval at the same probability.
+
+### Before Oversampling
+
+
+```julia
+cv=CV(nfolds=10)
+evaluate!(mach, resampling=cv, measure=balanced_accuracy) 
+```
+
+    Evaluating over 10 folds: 100%[=========================] Time: 0:00:00[K
+
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬──────────────┬─────────────┬──────────┬─────────────────
+    │ measure             │ operation    │ measurement │ 1.96*SE  │ per_fold       ⋯
+    ├─────────────────────┼──────────────┼─────────────┼──────────┼─────────────────
+    │ BalancedAccuracy(   │ predict_mode │ 0.5         │ 3.29e-16 │ [0.5, 0.5, 0.5 ⋯
+    │   adjusted = false) │              │             │          │                ⋯
+    └─────────────────────┴──────────────┴─────────────┴──────────┴─────────────────
+                                                                    1 column omitted
+
+
+
+This looks good. Negligble standard deviation; point estimates are all centered around `0.5`.
+
+### After Oversampling
+
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+
+In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
+
+
+```julia
+# 2. Instantiate the models
+oversampler = Imbalance.MLJ.SMOTE(k=3, ratios=Dict(1=>0.9), rng=42)
+
+# 2.1 Wrap them in one model
+balanced_model = BalancedModel(model=model, balancer1=oversampler)
+
+# 3. Wrap it with the data in a machine
+mach_over = machine(balanced_model, X_train, y_train, scitype_check_level=0)
+
+# 4. fit the machine learning model
+fit!(mach_over, verbosity=0)
+```
+
+
+    trained Machine; does not cache data
+      model: BalancedModelProbabilistic(model = LogisticClassifier(lambda = 2.220446049250313e-16, …), …)
+      args: 
+        1:	Source @991 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}
+        2:	Source @939 ⏎ AbstractVector{Multiclass{2}}
+
+
+
+We can easily confirm that this is equivalent to what we had earlier
+
+
+```julia
+predict_mode(mach_over, X_test) == y_pred_over
+```
+
+
+    true
+
+
+Now let's cross-validate
+
+
+```julia
+cv=CV(nfolds=10)
+evaluate!(mach_over, resampling=cv, measure=balanced_accuracy) 
+```
+
+    Evaluating over 10 folds: 100%[=========================] Time: 0:00:00[K
+
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+    │ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+    ├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+    │ BalancedAccuracy(   │ predict_mode │ 0.552       │ 0.0145  │ [0.549, 0.563,  ⋯
+    │   adjusted = false) │              │             │         │                 ⋯
+    └─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                    1 column omitted
+
+
+
+The improvement is about `5.2%` after cross-validation. If we are further to assume scores to be normally distributed, then the `95%` confidence interval is `5.2±1.45%` improvement. Let's see if this gets any better when we rather use `SMOTE-NC` in a later example.
 
 
 

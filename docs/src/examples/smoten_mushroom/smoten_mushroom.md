@@ -1,9 +1,14 @@
+# SMOTEN on Mushroom Data
+
+
 ```julia
 using Random
 using CSV
 using DataFrames
 using MLJ
 using Imbalance
+using MLJBalancing
+using StatsBase
 using ScientificTypes
 using Plots
 ```
@@ -19,6 +24,7 @@ df = CSV.read("../datasets/mushrooms.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames
 first(df, 5) |> pretty
+
 ```
 
     ┌─────────┬───────────┬─────────────┬───────────┬─────────┬─────────┬─────────────────┬──────────────┬───────────┬────────────┬─────────────┬────────────┬──────────────────────────┬──────────────────────────┬────────────────────────┬────────────────────────┬───────────┬────────────┬─────────────┬───────────┬───────────────────┬────────────┬─────────┐
@@ -53,10 +59,10 @@ end
 plot_res = plot(bar_charts..., layout=(5, 5), 
                 size=(1300, 1200), 
                 plot_title="Value Frequencies for each Categorical Variable")
-savefig(plot_res, "./mushroom-bar-charts.png")
+savefig(plot_res, "./assets/mushroom-bar-charts.png")
 ```
 
-![Mushroom Features Plots](https://gcdnb.pbrd.co/images/23qIg1DRShnL.png?o=1)
+![Mushroom Features Plots](./assets/mushroom-bar-charts.png)
 
 We will take the mushroom odour as our target and all the rest as features. 
 
@@ -224,9 +230,10 @@ The easy option `ratios=1.0` always exists and would mean that we want to oversa
 Xover, yover = smoten(X_train, y_train; k=2, ratios=ratios, rng=Random.Xoshiro(42))
 ```
 
-    Progress:  22%|█████████▏                               |  ETA: 0:00:06[K
-    Progress: 100%|█████████████████████████████████████████| Time: 0:00:00[K
-
+    Progress:  22%|█████████▏                               |  ETA: 0:00:01[K
+    [A
+    Progress:  67%|███████████████████████████▍             |  ETA: 0:00:00[K
+    [A
 
 
     (15239×22 DataFrame
@@ -300,6 +307,17 @@ Let's go for a OneRuleClassifier
 import Pkg; Pkg.add("OneRule")
 ```
 
+       Resolving package versions...
+       Installed MLJBalancing ─ v0.1.0
+        Updating `~/Documents/GitHub/Imbalance.jl/docs/Project.toml`
+      [45f359ea] + MLJBalancing v0.1.0
+        Updating `~/Documents/GitHub/Imbalance.jl/docs/Manifest.toml`
+      [45f359ea] + MLJBalancing v0.1.0
+    Precompiling project...
+      ✓ MLJBalancing
+      1 dependency successfully precompiled in 25 seconds. 262 already precompiled.
+
+
 ### Before Oversampling
 
 
@@ -317,19 +335,19 @@ mach = machine(model, X_train, y_train)
 fit!(mach, verbosity=0)
 ```
 
-    ┌ Info: For silent loading, specify `verbosity=0`. 
-    └ @ Main /Users/essam/.julia/packages/MLJModels/7apZ3/src/loading.jl:159
-
-
     import OneRule ✔
+
+
+    ┌ Info: For silent loading, specify `verbosity=0`. 
+    └ @ Main /Users/essam/.julia/packages/MLJModels/EkXIe/src/loading.jl:159
 
 
 
     trained Machine; caches model-specific representations of data
       model: OneRuleClassifier()
       args: 
-        1:	Source @385 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
-        2:	Source @936 ⏎ AbstractVector{Multiclass{9}}
+        1:	Source @978 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
+        2:	Source @097 ⏎ AbstractVector{Multiclass{9}}
 
 
 
@@ -348,8 +366,8 @@ fit!(mach_over, verbosity=0)
     trained Machine; caches model-specific representations of data
       model: OneRuleClassifier()
       args: 
-        1:	Source @452 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
-        2:	Source @817 ⏎ AbstractVector{Multiclass{9}}
+        1:	Source @469 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
+        2:	Source @942 ⏎ AbstractVector{Multiclass{9}}
 
 
 
@@ -384,6 +402,119 @@ score = round(balanced_accuracy(y_pred_over, y_test), digits=2)
 
     0.4
 
+
+## Evaluating the Model - Revisited
+
+We have previously evaluated the model using a single point estimate of the balanced accuracy resulting in a full blown `18%` improvement. A more precise evaluation would use cross validation to combine many different point estimates into a more precise one (their average). The standard deviation among such point estimates also allows us to quantify the uncertainty of the estimate; a smaller standard deviation would imply a smaller confidence interval at the same probability.
+
+### Before Oversampling
+
+
+```julia
+cv=CV(nfolds=10)
+evaluate!(mach, resampling=cv, measure=balanced_accuracy) 
+```
+
+    Evaluating over 10 folds: 100%[=========================] Time: 0:00:00[K
+
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬───────────┬─────────────┬──────────┬────────────────────
+    │ measure             │ operation │ measurement │ 1.96*SE  │ per_fold          ⋯
+    ├─────────────────────┼───────────┼─────────────┼──────────┼────────────────────
+    │ BalancedAccuracy(   │ predict   │ 0.218       │ 0.000718 │ [0.218, 0.218, 0. ⋯
+    │   adjusted = false) │           │             │          │                   ⋯
+    └─────────────────────┴───────────┴─────────────┴──────────┴────────────────────
+                                                                    1 column omitted
+
+
+
+Before oversampling, and assuming that the balanced accuracy score is normally distribued we can be `95%` confident that the balanced accuracy on new data is `21.8±0.07`. This is a better estimate than the `20%` figure we had earlier.
+
+### After Oversampling
+
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+
+In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
+
+
+```julia
+# 2. Instantiate the models
+oversampler = Imbalance.MLJ.SMOTEN(k=2, ratios=ratios, rng=Random.Xoshiro(42))
+
+# 2.1 Wrap them in one model
+balanced_model = BalancedModel(model=model, balancer1=oversampler)
+
+# 3. Wrap it with the data in a machine
+mach_over = machine(balanced_model, X_train, y_train)
+
+# 4. fit the machine learning model
+fit!(mach_over, verbosity=0)
+```
+
+    Progress:  22%|█████████▏                               |  ETA: 0:00:01[K
+    [A
+    Progress:  56%|██████████████████████▊                  |  ETA: 0:00:00[K
+    Progress:  22%|█████████▏                               |  ETA: 0:00:00[K
+    [A
+    Progress:  78%|███████████████████████████████▉         |  ETA: 0:00:00[K
+    [A
+
+
+    trained Machine; does not cache data
+      model: BalancedModelDeterministic(balancers = Imbalance.MLJ.SMOTEN{Dict{String, Float64}, Xoshiro}[SMOTEN(k = 2, …)], …)
+      args: 
+        1:	Source @692 ⏎ Table{Union{AbstractVector{Multiclass{10}}, AbstractVector{Multiclass{12}}, AbstractVector{Multiclass{2}}, AbstractVector{Multiclass{1}}, AbstractVector{Multiclass{4}}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{5}}, AbstractVector{Multiclass{9}}, AbstractVector{Multiclass{6}}, AbstractVector{Multiclass{7}}}}
+        2:	Source @468 ⏎ AbstractVector{Multiclass{9}}
+
+
+
+We can easily confirm that this is equivalent to what we had earlier
+
+
+```julia
+ y_pred_over == predict(mach_over, X_test)
+```
+
+
+    true
+
+
+Now let's cross-validate
+
+
+```julia
+cv=CV(nfolds=10)
+e = evaluate!(mach_over, resampling=cv, measure=balanced_accuracy) 
+```
+
+
+```julia
+e
+```
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬───────────┬─────────────┬─────────┬─────────────────────
+    │ measure             │ operation │ measurement │ 1.96*SE │ per_fold           ⋯
+    ├─────────────────────┼───────────┼─────────────┼─────────┼─────────────────────
+    │ BalancedAccuracy(   │ predict   │ 0.4         │ 0.00483 │ [0.398, 0.405, 0.3 ⋯
+    │   adjusted = false) │           │             │         │                    ⋯
+    └─────────────────────┴───────────┴─────────────┴─────────┴─────────────────────
+                                                                    1 column omitted
+
+
+
+Fair enough. After oversampling the interval under the same assumptions is `40±0.5%`; this agrees with our earlier observations using simple point estimates; oversampling here approximately delivers a `18%` improvement in balanced accuracy.
 
 
 

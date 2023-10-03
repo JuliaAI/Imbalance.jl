@@ -51,6 +51,33 @@
   </div>
   </a>
 </div>
+  <div class="grid-item">
+  <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/effect_of_k_enn/effect_of_k_enn.ipynb"><img id="colab" src="./assets/colab.png"/></a>
+  <a href="./effect_of_k_enn/effect_of_k_enn">
+  <img src="./assets/bmi.jpeg" alt="Image">
+  <div class="item-title">Effect of ENN Hyperparameters
+  <p>In this tutorial we oberve the effects of the hyperparameters found in ENN undersampling with an SVM model</p>
+  </div>
+  </a>
+</div>
+  <div class="grid-item">
+  <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/fraud_detection/fraud_detection.ipynb"><img id="colab" src="./assets/colab.png"/></a>
+  <a href="./fraud_detection/fraud_detection">
+  <img src="./assets/eth.jpeg" alt="Image">
+  <div class="item-title">SMOTE-Tomek for Ethereum Fraud Detection
+  <p>In this tutorial we combine SMOTE with TomekUndersampler and a classification model from MLJ for fraud detection</p>
+  </div>
+  </a>
+</div>
+  <div class="grid-item">
+  <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/cerebral_ensemble/cerebral_ensemble.ipynb"><img id="colab" src="./assets/colab.png"/></a>
+  <a href="./cerebral_ensemble/cerebral_ensemble">
+  <img src="./assets/brain.jpeg" alt="Image">
+  <div class="item-title">BalancedBagging for Cerebral Stroke Prediction
+  <p>In this tutorial we use BalancedBagging from MLJBalancing with Decision Tree to predict Cerebral Strokes</p>
+  </div>
+  </a>
+</div>
 
   </div>
 

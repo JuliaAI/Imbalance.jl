@@ -41,7 +41,28 @@ data = [
       "image" => "./assets/churn smoten.jpeg",
       "link" => "./smotenc_churn_dataset/smotenc_churn_dataset",
       "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/smotenc_churn_dataset/smotenc_churn_dataset.ipynb"
-    )
+    ),
+    Dict(
+      "title" => "Effect of ENN Hyperparameters", 
+      "description" => "In this tutorial we oberve the effects of the hyperparameters found in ENN undersampling with an SVM model", 
+      "image" => "./assets/bmi.jpeg",
+      "link" => "./effect_of_k_enn/effect_of_k_enn",
+      "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/effect_of_k_enn/effect_of_k_enn.ipynb"
+    ),
+    Dict(
+      "title" => "SMOTE-Tomek for Ethereum Fraud Detection", 
+      "description" => "In this tutorial we combine SMOTE with TomekUndersampler and a classification model from MLJ for fraud detection", 
+      "image" => "./assets/eth.jpeg",
+      "link" => "./fraud_detection/fraud_detection",
+      "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/fraud_detection/fraud_detection.ipynb"
+    ),
+    Dict(
+      "title" => "BalancedBagging for Cerebral Stroke Prediction", 
+      "description" => "In this tutorial we use BalancedBagging from MLJBalancing with Decision Tree to predict Cerebral Strokes", 
+      "image" => "./assets/brain.jpeg",
+      "link" => "./cerebral_ensemble/cerebral_ensemble",
+      "colab_link" => "https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/cerebral_ensemble/cerebral_ensemble.ipynb"
+    ),
 ]
 
 

@@ -1,6 +1,8 @@
 import subprocess
+import os
+import shutil
 
-def convert_to_md(name):
+def convert_to_md(name, copy=True):
     md_name = name + '.md'
     ipynb_name = name + '.ipynb'
     command = ["jupyter", "nbconvert", "--to", "markdown", ipynb_name]
@@ -34,5 +36,31 @@ def convert_to_md(name):
         file.seek(0)
         file.write(content)
         file.truncate()
-
+    if copy:    copy_images_to_parent_directory()
     print("Conversion Complete!")
+
+
+# Needed due to a bug in documenter. When "./smote-animation.gif" is put as the path
+# it becomes "../smote-animation.gif" in HTML and renders nothing. When its "../smote-animation.gif"
+# it becomes "../../smote-animation.gif" and renders nothing. Basic inefficient solution to deal with
+# this madness (which also depends on where file exactly is!!!) is to maintain two copies of the file.
+def copy_images_to_parent_directory():
+    source_dir = "./assets"
+    destination_dir = "../assets"
+    
+    # List of valid image file extensions
+    valid_extensions = ['.png', '.jpg', '.jpeg', '.gif']
+
+    try:
+        for filename in os.listdir(source_dir):
+            if os.path.isfile(os.path.join(source_dir, filename)):
+                # Check if the file has a valid image extension
+                ext = os.path.splitext(filename)[-1].lower()
+                if ext in valid_extensions:
+                    src_path = os.path.join(source_dir, filename)
+                    dest_path = os.path.join(destination_dir, filename)
+                    shutil.copy(src_path, dest_path)
+                    print(f"Copied {filename} to {dest_path}")
+    
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")

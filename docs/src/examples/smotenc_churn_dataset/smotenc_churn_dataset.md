@@ -1,5 +1,9 @@
+# SMOTENC on Customer Churn Data
+
+
 ```julia
 using Imbalance
+using MLJBalancing
 using CSV
 using DataFrames
 using ScientificTypes
@@ -16,7 +20,7 @@ We already considered this dataset using SMOTE, in this example we see if the re
 
 
 ```julia
-df = CSV.read("datasets/churn.csv", DataFrame)
+df = CSV.read("../datasets/churn.csv", DataFrame)
 first(df, 5) |> pretty
 ```
 
@@ -58,7 +62,6 @@ first(df, 5) |> pretty
 ## Coercing Data
 
 Let's coerce the nominal data to `Multiclass`, the ordinal data to `OrderedFactor` and the continuous data to `Continuous`.
-
 
 
 ```julia
@@ -139,7 +142,7 @@ Before deciding to oversample, let's see how adverse is the imbalance problem, i
 
 
 ```julia
-checkbalance(y)
+checkbalance(y)         # comes from Imbalance
 ```
 
     1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 2037 (25.6%) 
@@ -150,16 +153,40 @@ Looks like we have a class imbalance problem. Let's oversample with SMOTE-NC and
 
 
 ```julia
-Xover, yover = smotenc(X, y; k=3, ratios=Dict(1=>0.9), rng=42)
+Xover, yover = smotenc(X_train, y_train; k=3, ratios=Dict(1=>0.9), rng=42)
 ```
+
+
+    (12109×10 DataFrame
+       Row │ CreditScore  Geography  Gender  Age   Tenure  Balance         NumOfPr ⋯
+           │ Cat…         Cat…       Cat…    Cat…  Cat…    Float64         Cat…    ⋯
+    ───────┼────────────────────────────────────────────────────────────────────────
+         1 │ 551          France     Female  38    10           0.0        2       ⋯
+         2 │ 676          France     Female  37    5        89634.7        1
+         3 │ 543          France     Male    42    4        89838.7        3
+         4 │ 663          France     Male    34    10           0.0        1
+         5 │ 621          Germany    Female  34    2        91258.5        2       ⋯
+         6 │ 723          France     Male    28    4            0.0        2
+         7 │ 735          France     Female  21    1            1.78718e5  2
+         8 │ 501          France     Male    35    6        99760.8        1
+       ⋮   │      ⋮           ⋮        ⋮      ⋮      ⋮           ⋮               ⋮ ⋱
+     12103 │ 551          France     Female  40    2            1.68002e5  1       ⋯
+     12104 │ 716          France     Female  46    2            1.09379e5  2
+     12105 │ 850          Spain      Female  45    10           1.66777e5  1
+     12106 │ 785          France     Female  39    9            1.33118e5  1
+     12107 │ 565          Germany    Female  39    5            1.44874e5  1       ⋯
+     12108 │ 510          Germany    Male    43    0            1.38862e5  1
+     12109 │ 760          France     Female  41    2       113419.0        1
+                                                    4 columns and 12094 rows omitted, CategoricalValue{Int64, UInt32}[0, 1, 1, 0, 0, 0, 0, 0, 0, 0  …  1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
 
 
 ```julia
 checkbalance(yover)
 ```
 
-    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7167 (90.0%) 
-    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7963 (100.0%) 
+    1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5736 (90.0%) 
+    0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 6373 (100.0%) 
 
 
 ## Training the Model
@@ -212,15 +239,15 @@ fit!(mach, verbosity=0)
 
 
     ┌ Info: For silent loading, specify `verbosity=0`. 
-    └ @ Main /Users/essam/.julia/packages/MLJModels/7apZ3/src/loading.jl:159
+    └ @ Main /Users/essam/.julia/packages/MLJModels/EkXIe/src/loading.jl:159
 
 
 
     trained Machine; caches model-specific representations of data
       model: DecisionTreeClassifier(max_depth = 4, …)
       args: 
-        1:	Source @966 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{2}}, AbstractVector{OrderedFactor{460}}, AbstractVector{OrderedFactor{70}}, AbstractVector{OrderedFactor{11}}, AbstractVector{OrderedFactor{4}}}}
-        2:	Source @230 ⏎ AbstractVector{Multiclass{2}}
+        1:	Source @378 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{2}}, AbstractVector{OrderedFactor{460}}, AbstractVector{OrderedFactor{70}}, AbstractVector{OrderedFactor{11}}, AbstractVector{OrderedFactor{4}}}}
+        2:	Source @049 ⏎ AbstractVector{Multiclass{2}}
 
 
 
@@ -236,15 +263,15 @@ fit!(mach_over)
 ```
 
     ┌ Info: Training machine(DecisionTreeClassifier(max_depth = 4, …), …).
-    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/0rn2V/src/machines.jl:492
+    └ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
 
 
 
     trained Machine; caches model-specific representations of data
       model: DecisionTreeClassifier(max_depth = 4, …)
       args: 
-        1:	Source @511 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{2}}, AbstractVector{OrderedFactor{460}}, AbstractVector{OrderedFactor{70}}, AbstractVector{OrderedFactor{11}}, AbstractVector{OrderedFactor{4}}}}
-        2:	Source @112 ⏎ AbstractVector{Multiclass{2}}
+        1:	Source @033 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{2}}, AbstractVector{OrderedFactor{460}}, AbstractVector{OrderedFactor{70}}, AbstractVector{OrderedFactor{11}}, AbstractVector{OrderedFactor{4}}}}
+        2:	Source @939 ⏎ AbstractVector{Multiclass{2}}
 
 
 
@@ -280,7 +307,110 @@ score = round(balanced_accuracy(y_pred_over, y_test), digits=2)
     0.7
 
 
-Although the results do get better compared to when we just used SMOTE, it holds in this case that the extra categorical features we took into account aren't that important. The difference can be attributed to the decision tree.
+Although the results do get better compared to when we just used SMOTE, it may hold in this case that the extra categorical features we took into account are not be that important. The difference may be attributed to the decision tree.
+
+## Evaluating the Model - Revisited
+
+We have previously evaluated the model using a single point estimate of the balanced accuracy resulting in a `13%` improvement. A more precise evaluation would use cross validation to combine many different point estimates into a more precise one (their average). The standard deviation among such point estimates also allows us to quantify the uncertainty of the estimate; a smaller standard deviation would imply a smaller confidence interval at the same probability.
+
+### Before Oversampling
+
+
+```julia
+cv=CV(nfolds=10)
+evaluate!(mach, resampling=cv, measure=balanced_accuracy) 
+```
+
+    Evaluating over 10 folds: 100%[=========================] Time: 0:02:54[K
+
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+    │ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+    ├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+    │ BalancedAccuracy(   │ predict_mode │ 0.565       │ 0.00623 │ [0.568, 0.554,  ⋯
+    │   adjusted = false) │              │             │         │                 ⋯
+    └─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                    1 column omitted
+
+
+
+Before oversampling, and assuming that the balanced accuracy score is normally distribued we can be `95%` confident that the balanced accuracy on new data is `56.5±0.62`. Indeed, this agrees a lot with the original point estimate.
+
+### After Oversampling
+
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+
+In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
+
+
+```julia
+# 2. Instantiate the models
+oversampler = Imbalance.MLJ.SMOTENC(k=3, ratios=Dict(1=>0.9), rng=42)
+
+# 2.1 Wrap them in one model
+balanced_model = BalancedModel(model=model, balancer1=oversampler)
+
+# 3. Wrap it with the data in a machine
+mach_over = machine(balanced_model, X_train, y_train, scitype_check_level=0)
+
+# 4. fit the machine learning model
+fit!(mach_over, verbosity=0)
+```
+
+
+    trained Machine; does not cache data
+      model: BalancedModelProbabilistic(model = DecisionTreeClassifier(max_depth = 4, …), …)
+      args: 
+        1:	Source @967 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Multiclass{3}}, AbstractVector{Multiclass{2}}, AbstractVector{OrderedFactor{460}}, AbstractVector{OrderedFactor{70}}, AbstractVector{OrderedFactor{11}}, AbstractVector{OrderedFactor{4}}}}
+        2:	Source @394 ⏎ AbstractVector{Multiclass{2}}
+
+
+
+We can easily confirm that this is equivalent to what we had earlier
+
+
+```julia
+predict_mode(mach_over, X_test) == y_pred_over
+```
+
+
+    true
+
+
+Now let's cross-validate
+
+
+```julia
+cv=CV(nfolds=10)
+evaluate!(mach_over, resampling=cv, measure=balanced_accuracy) 
+```
+
+    Evaluating over 10 folds: 100%[=========================] Time: 0:07:24[K
+
+
+
+    PerformanceEvaluation object with these fields:
+      model, measure, operation, measurement, per_fold,
+      per_observation, fitted_params_per_fold,
+      report_per_fold, train_test_rows, resampling, repeats
+    Extract:
+    ┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+    │ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+    ├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+    │ BalancedAccuracy(   │ predict_mode │ 0.677       │ 0.0124  │ [0.678, 0.688,  ⋯
+    │   adjusted = false) │              │             │         │                 ⋯
+    └─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                    1 column omitted
+
+
+
+Fair enough. After oversampling the interval under the same assumptions is `67.7±1.2%` which is still a meaningful improvement over `56.5±0.62` that we had prior to oversampling ot the `55.2±1.5%` that we had with logistic regression and SMOTE in an earlier example.
 
 
 
