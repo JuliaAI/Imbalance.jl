@@ -152,7 +152,7 @@ julia> Imbalance.checkbalance(y)
 
 # apply BorderlineSMOTE1
 BorderlineSMOTE1 = @load BorderlineSMOTE1 pkg=Imbalance
-oversampler = BorderlineSMOTE1(k=10, ratios=Dict("setosa"=>1.0, "versicolor"=> 0.8, "virginica"=>1.0), rng=42)
+oversampler = BorderlineSMOTE1(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 mach = machine(oversampler)
 Xover, yover = transform(mach, X, y)
 

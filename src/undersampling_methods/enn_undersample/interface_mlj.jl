@@ -162,7 +162,7 @@ julia> checkbalance(y; ref="minority")
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
 # Underample the majority classes to  sizes relative to the minority class:
-undersampler = ENNUndersampler(keep_condition="all", min_ratios=0.5, rng=42)
+undersampler = ENNUndersampler(min_ratios=0.5, rng=42)
 mach = machine(undersampler)
 X_under, y_under = transform(mach, X, y)
 
