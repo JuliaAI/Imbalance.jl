@@ -15,7 +15,7 @@ Takes a table and returns a matrix and the column names of the table.
 - `names`: A vector of column names
 """
 function matrixify(X)
-    Tables.istable(X) || throw(ERR_TABLE_TYPE(typeof(X)))
+    Tables.istable(X) || throw(ArgumentError(ERR_TABLE_TYPE(typeof(X))))
     # Get the column names using Tables.columns or the first row
     # Former is efficient for column tables, latter is efficient for row tables
     if Tables.columnaccess(X)

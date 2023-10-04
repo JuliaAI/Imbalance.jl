@@ -80,7 +80,7 @@ by Chawla et al. (2002), pg. 351.
     representing the number of categories per column.
 
 # Returns
-- `mvdm_distances`: A vector
+- `all_pairwise_mvdm`: A vector
     of matrices that associates with each column in X a matrix that stores the
     mvdm distance component between any two categories.
 """

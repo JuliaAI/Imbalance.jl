@@ -7,12 +7,9 @@ using Imbalance:
 
 
 @testset "MVDM Encoding and Distance" begin
-    Conda.add("imbalanced-learn")
-    Conda.add("numpy")
-    Conda.add("scikit-learn")
-    pyimport_conda("imblearn", "imbalanced-learn")
-    pyimport_conda("numpy", "numpy")
-    pyimport_conda("sklearn", "scikit-learn")
+    Conda.add("imbalanced-learn=0.11.0")
+    Conda.add("numpy=1.26")
+    Conda.add("scikit-learn=1.3.0")    
 
     # Import numpy and other libraries
     np = pyimport("numpy")
