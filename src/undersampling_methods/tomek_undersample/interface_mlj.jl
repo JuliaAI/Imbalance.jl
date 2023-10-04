@@ -113,37 +113,34 @@ $(COMMON_DOCS["OUTPUTS-UNDER"])
 # Example
 
 ```
-using MLJ
-import Random.seed!
-using MLUtils
-import StatsBase.countmap
+import MLJ
 
-seed!(12345)
+using Imbalance
 
-# Generate some imbalanced data:
-X, y = @load_iris # a table and a vector
-rand_inds = rand(1:150, 30)
-X, y = getobs(X, rand_inds), y[rand_inds]
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 100, 5
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)   
 
-julia> countmap(y)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 12
-  "versicolor" => 5
-  "setosa"     => 13
+julia> Imbalance.checkbalance(y; ref="minority")
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
 
 # load TomekUndersampler model type:
 TomekUndersampler = @load TomekUndersampler pkg=Imbalance
 
 # Underample the majority classes to  sizes relative to the minority class:
-tomek_undersampler = TomekUndersampler(min_ratios=Dict("setosa"=>1.0, "versicolor"=> 1.0, "virginica"=>1.0), rng=42)
+tomek_undersampler = TomekUndersampler(min_ratios=1.0, rng=42)
 mach = machine(tomek_undersampler)
 X_under, y_under = transform(mach, X, y)
 
-julia> countmap(y_under)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 12
-  "versicolor" => 5
-  "setosa"     => 13
+julia> Imbalance.checkbalance(y_under; ref="minority")
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 22 (115.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 36 (189.5%)
 ```
 
 """

@@ -51,7 +51,7 @@ end
     enn_undersample(
         X, y; k = 5, keep_condition = "mode",
 	    min_ratios = 1.0, force_min_ratios = false,
-        rng = default_rng(), try_preserve_type=true
+        rng = default_rng(), try_perserve_type=true
     )
 
 # Description
@@ -96,8 +96,9 @@ class_probs = [0.5, 0.2, 0.3]
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                class_probs, rng=42)                       
-julia> checkbalance(y; ref="minority")
+                                min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)
+
+julia> Imbalance.checkbalance(y; ref="minority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
@@ -105,23 +106,24 @@ julia> checkbalance(y; ref="minority")
 # apply enn undersampling
 X_under, y_under = enn_undersample(X, y; k=3, keep_condition="only mode", 
                                    min_ratios=0.5, rng=42)
-checkbalance(y_under; ref="minority")
-2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
-0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 27 (270.0%) 
+
+julia> checkbalance(y_under; ref="minority")
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 24 (240.0%) 
 ```
 
 # MLJ Model Interface
 
 Simply pass the keyword arguments while initiating the `ENNUndersampler` model and pass the 
-    positional arguments to the `transform` method. 
+    positional arguments `X, y` to the `transform` method. 
 
 ```julia
 using MLJ
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
 # Wrap the model in a machine
-undersampler = ENNUndersampler(k=5, min_ratios=1.0, rng=42)
+undersampler = ENNUndersampler(k=5, min_ratios=0.5, rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)
@@ -146,10 +148,10 @@ num_rows = 100
 num_features = 5
 y_ind = 3
 Xy, _ = generate_imbalanced_data(num_rows, num_features; 
-                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+                                 min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)
 
 # Initiate ENN Undersampler model
-undersampler = ENNUndersampler(y_ind; min_ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+undersampler = ENNUndersampler(y_ind; min_ratios=0.5, rng=42)
 Xy_under = Xy |> undersampler                    
 Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```

@@ -39,7 +39,7 @@ end
     cluster_undersample(
         X, y; 
         mode= "nearest", ratios = 1.0, maxiter = 100,
-        rng=default_rng(), try_preserve_type=true
+        rng=default_rng(), try_perserve_type=true
     )
 
 
@@ -78,8 +78,9 @@ class_probs = [0.5, 0.2, 0.3]
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                class_probs, rng=42)                       
-julia> checkbalance(y; ref="minority")
+                                class_probs, rng=42)   
+                                                    
+julia> Imbalance.checkbalance(y; ref="minority")
  1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
  2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
  0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
@@ -88,7 +89,7 @@ julia> checkbalance(y; ref="minority")
 X_under, y_under = cluster_undersample(X, y; mode="nearest", 
                                        ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
                                        
-julia> checkbalance(y_under; ref="minority")
+julia> Imbalance.checkbalance(y_under; ref="minority")
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
@@ -97,14 +98,15 @@ julia> checkbalance(y_under; ref="minority")
 # MLJ Model Interface
 
 Simply pass the keyword arguments while initiating the `ClusterUndersampler` model and pass the 
-    positional arguments to the `transform` method. 
+    positional arguments `X, y` to the `transform` method. 
 
 ```julia
 using MLJ
 ClusterUndersampler = @load ClusterUndersampler pkg=Imbalance
 
 # Wrap the model in a machine
-undersampler = ClusterUndersampler(mode="nearest", ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
+undersampler = ClusterUndersampler(mode="nearest", 
+                                   ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)

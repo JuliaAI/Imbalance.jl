@@ -92,6 +92,7 @@ predict(mach, X)
 The [`TableTransforms` interface](https://juliaml.github.io/TableTransforms.jl/stable/transforms/) operates on single tables; it assumes that `y` is one of the columns of the given table. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed via `apply` is only one table `Xy`.
 ```julia
 using Imbalance
+using Imbalance.TableTransforms
 using TableTransforms
 
 # Generate imbalanced data
@@ -102,8 +103,9 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate SMOTE model
-oversampler = SMOTE_t(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+oversampler = SMOTE(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xyover = Xy |> oversampler       # can chain with other table transforms                  
+# equivalently if TableTransforms is used
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)` reverts the transform by removing the oversampled observations from the table.
@@ -128,8 +130,8 @@ In a multi-class setting with $K$ classes, one can write
 
 $$\hat{\theta} = \arg\min_{\theta} \left( \frac{1}{N_1} \sum_{i \in C_1} L(f_{\theta}(x_i), y_i) + \frac{1}{N_2} \sum_{i \in C_2} L(f_{\theta}(x_i), y_i) + \ldots + \frac{1}{N_K} \sum_{i \in C_K} L(f_{\theta}(x_i), y_i) \right)$$
 
-Class imbalance occurs when some classes have much fewer examples than other classes. In this case, the corresponding terms contribute minimally to the sum which makes it easier for any learning algorithm to find an approximate solution to the empirical risk that mostly only minimizes the over the significant sums. This yields a hypothesis $f_\theta$ that may be very different from the true target $f$ with respect to the minority classes which may be the most important for the application in question.
+Class imbalance occurs when some classes have much fewer examples than other classes. In this case, the terms corresponding to smaller classes contribute minimally to the sum which makes it possible for any learning algorithm to find an approximate solution to minimizing the empirical risk that mostly only minimizes the over the significant sums. This yields a hypothesis $f_\theta$ that may be very different from the true target $f$ with respect to the minority classes which may be the most important for the application in question.
 
-One obvious possible remedy is to weight the smaller sums so that a learning algorithm more easily avoids approximate solutions that exploit their insignificance which can be seen to be equivalent to repeating examples of the observations in minority classes. This can be achieved by naive random oversampling which is offered by this package along with other more advanced oversampling methods.
+One obvious possible remedy is to weight the smaller sums so that a learning algorithm more easily avoids approximate solutions that exploit their insignificance which can be seen to be equivalent to repeating examples of the observations in minority classes. This can be achieved by naive random oversampling which is offered by this package along with other more advanced oversampling methods that function by generating synthetic data, which ideally would be analogous to one of the most plausible solutions to the class imbalance problem: collecting more data.
 
-To our knowledge, there are no existing maintained Julia packages that implement oversampling algorithms for multi-class classification problems or that handle both nominal and continuous features. This has served as a primary motivation for the creation of this package.
+To our knowledge, there are no existing maintained Julia packages that implement resampling algorithms for multi-class classification problems or that handle both nominal and continuous features. This has served as a primary motivation for the creation of this package.

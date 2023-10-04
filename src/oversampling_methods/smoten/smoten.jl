@@ -125,19 +125,19 @@ end
 """
     smoten(
         X, y;
-        k, ratios=nothing, rng=default_rng(),
+        k=5, ratios=1.0, rng=default_rng(),
         try_perserve_type=true
     )
 
 # Description
 Oversamples a dataset using `SMOTE-N` (Synthetic Minority Oversampling Techniques-Nominal) algorithm to 
     correct for class imbalance as presented in [1]. This is a variant of `SMOTE` to deal with datasets 
-    where all the features are nominal.
+    where all features are nominal.
 
 
 # Positional Arguments
 
-- `X`: A matrix of integers or a table with element[scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Finite`. 
+- `X`: A matrix of integers or a table with element [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Finite`. 
      That is, for table inputs each column should have either `OrderedFactor` or `Multiclass` as the element [scitype](https://juliaai.github.io/ScientificTypes.jl/).
 
 - `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
@@ -194,7 +194,7 @@ julia> Imbalance.countmap(y)
 # MLJ Model Interface
 
 Simply pass the keyword arguments while initiating the `SMOTEN` model and pass the 
-    positional arguments to the `transform` method. 
+    positional arguments `X, y` to the `transform` method. 
 
 ```julia
 using MLJ
@@ -234,9 +234,10 @@ Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
 # Table must have only finite scitypes                                
 Xy = coerce(Xy, :Column1=>Multiclass, :Column2=>Multiclass, :Column3=>Multiclass)
 
-# Initiate Random Oversampler model
+# Initiate SMOTEN model
 oversampler = SMOTEN(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
 Xyover = Xy |> oversampler                               
+# equivalently if TableTransforms is used
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)`

@@ -1,6 +1,6 @@
 # Combining Resamplers
 
-Resampling methods can be combined sequentially or in parallel to yield hybrid or ensemble models that may be even more powerful than using one of the individual resamplers.
+Resampling methods can be combined sequentially or in parallel, along with a classification model, to yield hybrid or ensemble models that may be even more powerful than using the classification model with only one of the individual resamplers.
 
 ## Sequential Resampling
 
@@ -9,11 +9,11 @@ Resampling methods can be combined sequentially or in parallel to yield hybrid o
 
 #### Construct the resampler and classification models
 ```julia
-SMOTENC = @load SMOTENC pkg=Imbalance verbosity=0
+SMOTE = @load SMOTE pkg=Imbalance verbosity=0
 TomekUndersampler = @load TomekUndersampler pkg=Imbalance verbosity=0
 LogisticClassifier = @load LogisticClassifier pkg=MLJLinearModels verbosity=0
 
-oversampler = SMOTENC(k=5, ratios=1.0, rng=42)
+oversampler = SMOTE(k=5, ratios=1.0, rng=42)
 undersampler = TomekUndersampler(min_ratios=0.5, rng=42)
 
 logistic_model = LogisticClassifier()
@@ -24,7 +24,7 @@ logistic_model = LogisticClassifier()
 balanced_model = BalancedModel(model=logistic_model, 
                                balancer1=oversampler, balancer2=undersampler)
 ```
-Here training data will be passed to `balancer1` then `balancer2`, whose output is used to train the classifier `model`.  In prediction, the resamplers `balancer1` and `blancer2` are bypassed and in general. At this point, they behave like one single `MLJ` model that can be fit, validated or fine-tuned.
+Here training data will be passed to `balancer1` then `balancer2`, whose output is used to train the classifier `model`.  In prediction, the resamplers `balancer1` and `blancer2` are bypassed and in general. At this point, they behave like one single `MLJ` model that can be fit, validated or fine-tuned like any other.
 
 In general, there can be any number of balancers, and the user can give the balancers arbitrary names. 
 

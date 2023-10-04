@@ -108,8 +108,8 @@ For default values of the hyper-parameters, model can be constructed by
    `0 < m < N` where N is the number of observations in the data. It will be automatically set to `N-1` if `N ≤ m`.
 
 - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE part of the algorithm. Should be within the range
-    `0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to
-    `n-1` for any class where `n ≤ k`.
+   `0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to
+   `l-1` for any class with `l` points where `l ≤ k`.
 
 $((COMMON_DOCS["RATIOS"]))
 
@@ -136,37 +136,31 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 ```
 using MLJ
-import Random.seed!
-using MLUtils
-import StatsBase.countmap
+import Imbalance
 
-seed!(12345)
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 1000, 5
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                min_sep=0.01, class_probs, rng=42)            
 
-# Generate some imbalanced data:
-X, y = @load_iris # a table and a vector
-rand_inds = rand(1:150, 30)
-X, y = getobs(X, rand_inds), y[rand_inds]
+julia> Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 310 (63.3%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 
-julia> countmap(y)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 12
-  "versicolor" => 5
-  "setosa"     => 13
-
-# load BorderlineSMOTE1 model type:
+# apply BorderlineSMOTE1
 BorderlineSMOTE1 = @load BorderlineSMOTE1 pkg=Imbalance
-
-# Oversample the minority classes to  sizes relative to the majority class:
 oversampler = BorderlineSMOTE1(k=10, ratios=Dict("setosa"=>1.0, "versicolor"=> 0.8, "virginica"=>1.0), rng=42)
 mach = machine(oversampler)
 Xover, yover = transform(mach, X, y)
 
-julia> countmap(yover)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 13
-  "versicolor" => 10
-  "setosa"     => 13
+
+julia> Imbalance.checkbalance(yover)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 392 (80.0%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 ```
 
 """
-BorderlineSMOTE1

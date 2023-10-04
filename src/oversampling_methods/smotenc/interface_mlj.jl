@@ -113,6 +113,9 @@ For default values of the hyper-parameters, model can be constructed by
 
 $((COMMON_DOCS["RATIOS"]))
 
+- `knn_tree`: Decides the tree used in KNN computations. Either `"Brute"` or `"Ball"`.
+    BallTree can be much faster but may lead to inaccurate results.
+
 $((COMMON_DOCS["RNG"]))
 
 # Transform Inputs

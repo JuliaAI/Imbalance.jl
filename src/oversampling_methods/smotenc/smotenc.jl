@@ -156,7 +156,7 @@ end
 """
     smotenc(
         X, y, split_ind;
-        k=5, ratios=nothing, rng=default_rng(),
+        k=5, ratios=1.0, knn_tree="Brute", rng=default_rng(),
         try_perserve_type=true
     )
 
@@ -188,8 +188,9 @@ $(COMMON_DOCS["K"])
 
 $(COMMON_DOCS["RATIOS"])
 
-- `knn_tree`: Decides the tree used in KNN computations. Either "Brute" or "Ball".
-    BallTree can be much faster but may lead to innacurate results.
+- `knn_tree`: Decides the tree used in KNN computations. Either `"Brute"` or `"Ball"`.
+    BallTree can be much faster but may lead to inaccurate results.
+
 $(COMMON_DOCS["RNG"])
 
 $(COMMON_DOCS["TRY_PERSERVE_TYPE"])
@@ -246,7 +247,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here](). Note that only `Table` input is supported for this method.
+You can read more about this `MLJ` interface [here](). Note that only `Table` input is supported by the MLJ interface for this method.
 
 
 
@@ -273,9 +274,10 @@ Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
 # Table must have only finite or continuous scitypes                                
 Xy = coerce(Xy, :Column2=>Multiclass, :Column5=>Multiclass, :Column6=>Multiclass)
 
-# Initiate Random Oversampler model
+# Initiate SMOTENC model
 oversampler = SMOTENC(y_ind; k=5, ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
 Xyover = Xy |> oversampler                               
+# equivalently if TableTransforms is used
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 

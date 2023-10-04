@@ -135,7 +135,7 @@ end
 """
     borderline_smote1(
         X, y;
-        m=5, k=5, ratios=nothing, rng=default_rng(),
+        m=5, k=5, ratios=1.0, rng=default_rng(),
         try_perserve_type=true, verbosity=1
     )
 
@@ -154,7 +154,7 @@ $(COMMON_DOCS["INPUTS"])
 
 - `k::Integer=5`: Number of nearest neighbors to consider in the SMOTE part of the algorithm. Should be within the range
    `0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to
-   `n-1` for any class where `n ≤ k`.
+   `l-1` for any class with `l` points where `l ≤ k`.
 
 $(COMMON_DOCS["RATIOS"])
 
@@ -176,30 +176,30 @@ using Imbalance
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
-num_rows, num_continuous_feats = 100, 5
+num_rows, num_continuous_feats = 1000, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                class_probs, rng=42)            
+                                min_sep=0.01, class_probs, rng=42)            
 
 julia> Imbalance.checkbalance(y)
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
-2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
-0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 310 (63.3%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 
 # apply BorderlineSMOTE1
 Xover, yover = borderline_smote1(X, y; m = 3, 
                k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
 
-julia> Imbalance.checkbalance(y)
-2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
-0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+julia> Imbalance.checkbalance(yover)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 392 (80.0%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 ```
 
 # MLJ Model Interface
 
 Simply pass the keyword arguments while initiating the `BorderlineSMOTE1` model and pass the 
-    positional arguments to the `transform` method. 
+    positional arguments `X, y` to the `transform` method. 
 
 ```julia
 using MLJ
@@ -227,17 +227,18 @@ using Imbalance
 using Imbalance.TableTransforms
 
 # Generate imbalanced data
-num_rows = 200
+num_rows = 1000
 num_features = 5
 y_ind = 3
 Xy, _ = generate_imbalanced_data(num_rows, num_features; 
-                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+                                 class_probs=[0.5, 0.2, 0.3], min_sep=0.01, insert_y=y_ind, rng=42)
 
 # Initiate BorderlineSMOTE1 Oversampler model
 oversampler = BorderlineSMOTE1(y_ind; m=3, k=5, 
               ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xyover = Xy |> oversampler                              
-Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)`
 reverts the transform by removing the oversampled observations from the table.

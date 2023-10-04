@@ -203,11 +203,11 @@ X, y = generate_imbalanced_data(
 	rng = 42,
 )
 
-julia> checkbalance(y; ref="majority")
+julia> Imbalance.checkbalance(y; ref="majority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 10034 (25.1%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 39966 (100.0%) 
 
-julia> checkbalance(y; ref="minority")
+julia> Imbalance.checkbalance(y; ref="minority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 10034 (100.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 39966 (398.3%) 
 ```

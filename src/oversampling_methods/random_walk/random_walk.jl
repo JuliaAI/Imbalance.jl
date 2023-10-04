@@ -118,7 +118,7 @@ end
 """
 	random_walk_oversample(
 		X, y, cat_inds;
-		ratios=nothing, rng=default_rng(),
+		ratios=1.0, rng=default_rng(),
 		try_perserve_type=true
 	)
 
@@ -200,7 +200,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here](). Note that only `Table` input is supported for this method.
+You can read more about this `MLJ` interface [here](). Note that only `Table` input is supported by the MLJ interface for this method.
 
 
 # TableTransforms Interface
@@ -231,6 +231,7 @@ Xy = coerce(Xy, :Column2=>Multiclass, :Column5=>Multiclass, :Column6=>Multiclass
 oversampler = RandomWalkOversampler(y_ind;
                                     ratios=Dict(1=>1.0, 2=> 0.9, 3=>0.9), rng=42)
 Xyover = Xy |> oversampler                               
+# equivalently if TableTransforms is used
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 

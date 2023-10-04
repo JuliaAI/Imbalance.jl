@@ -3,7 +3,7 @@
 The following table portrays the supported oversampling algorithms, whether the mechanism repeats or generates data and the supported types of data.
 
 | Oversampling Method | Mechanism | Supported Data Type |
-|----------|----------|----------|
+|:----------:|:----------:|:----------:|
 | Random Oversampler | Repeat existing data | Continuous and/or nominal  |
 | Random Walk Oversampler | Generate synthetic data | Continuous and/or nominal |
 | ROSE | Generate synthetic data | Continuous |

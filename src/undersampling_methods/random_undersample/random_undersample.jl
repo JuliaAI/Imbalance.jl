@@ -24,7 +24,7 @@ end
     random_undersample(
         X, y; 
         ratios=1.0, rng=default_rng(), 
-        try_preserve_type=true
+        try_perserve_type=true
     )
 
 
@@ -58,8 +58,9 @@ class_probs = [0.5, 0.2, 0.3]
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                class_probs, rng=42)                       
-julia> checkbalance(y; ref="minority")
+                                class_probs, rng=42)   
+
+julia> Imbalance.checkbalance(y; ref="minority")
  1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
  2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
  0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
@@ -68,7 +69,7 @@ julia> checkbalance(y; ref="minority")
 X_under, y_under = random_undersample(X, y; ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), 
                                       rng=42)
                                       
-julia> checkbalance(y_under; ref="minority")
+julia> Imbalance.checkbalance(y_under; ref="minority")
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
@@ -77,7 +78,7 @@ julia> checkbalance(y_under; ref="minority")
 # MLJ Model Interface
 
 Simply pass the keyword arguments while initiating the `RandomUndersampler` model and pass the 
-    positional arguments to the `transform` method. 
+    positional arguments `X, y` to the `transform` method. 
 
 ```julia
 using MLJ
@@ -113,7 +114,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate Random Undersampler model
-undersampler = RandomUndersampler(y_ind; ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+undersampler = RandomUndersampler(y_ind; ratios=Dict(0=>1.0, 1=>1.0, 2=>1.0), rng=42)
 Xy_under = Xy |> undersampler                    
 Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```

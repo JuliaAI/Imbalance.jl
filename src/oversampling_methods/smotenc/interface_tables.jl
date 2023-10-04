@@ -18,9 +18,15 @@ Instantiate a SMOTENC table transform
 # Arguments
 
 - `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
+
 - `k::Integer`: Number of nearest neighbors to consider in the SMOTENC algorithm. 
     Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
+
 $((COMMON_DOCS["RATIOS"]))
+
+- `knn_tree`: Decides the tree used in KNN computations. Either `"Brute"` or `"Ball"`.
+    BallTree can be much faster but may lead to inaccurate results.
+
 $((COMMON_DOCS["RNG"]))
 
 # Returns

@@ -150,7 +150,7 @@ end
 """
     smote(
         X, y;
-        k=5, ratios=nothing, rng=default_rng(),
+        k=5, ratios=1.0, rng=default_rng(),
         try_perserve_type=true
     )
 
@@ -187,7 +187,8 @@ class_probs = [0.5, 0.2, 0.3]
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                class_probs, rng=42)                       
+                                class_probs, rng=42)    
+
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
@@ -196,7 +197,7 @@ julia> Imbalance.checkbalance(y)
 # apply SMOTE
 Xover, yover = smote(X, y; k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
 
-julia> Imbalance.checkbalance(y)
+julia> Imbalance.checkbalance(yover)
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
@@ -204,8 +205,8 @@ julia> Imbalance.checkbalance(y)
 
 # MLJ Model Interface
 
-Simply pass the keyword arguments while initiating the `SMOTEN` model and pass the 
-    positional arguments to the `transform` method. 
+Simply pass the keyword arguments while initiating the `SMOTE` model and pass the 
+    positional arguments `X, y` to the `transform` method. 
 
 ```julia
 using MLJ
@@ -239,9 +240,10 @@ y_ind = 3
 Xy, _ = generate_imbalanced_data(num_rows, num_features; 
                                  class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
-# Initiate Random Oversampler model
+# Initiate SMOTE model
 oversampler = SMOTE(y_ind; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 Xyover = Xy |> oversampler                              
+# equivalently if TableTransforms is used
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)`
