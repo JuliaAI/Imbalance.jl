@@ -20,7 +20,7 @@ using CategoricalArrays
 using ProgressMeter
 
 include("common/docs.jl")
-include("common/errors.jl")
+include("common/logging.jl")
 include("common/utils.jl")
 
 include("table_wrappers.jl")

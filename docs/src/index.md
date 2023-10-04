@@ -68,6 +68,7 @@ Xover, yover = transform(mach, X, y)
 ```
 All implemented oversampling methods are considered static transforms and hence, no `fit` is required. 
 
+#### Pipelining Models
 If `MLJBalancing` is also used, an arbitrary number of resampling methods from `Imbalance.jl` can be wrapped with a classification model from `MLJ` to function as a unified model where resampling automatically takes place on given data before training the model.
 
 ```julia

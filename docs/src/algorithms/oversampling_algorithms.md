@@ -2,15 +2,15 @@
 
 The following table portrays the supported oversampling algorithms, whether the mechanism repeats or generates data and the supported types of data.
 
-| Oversampling Method | Mechanism | Supported Data Type |
+| Oversampling Method | Mechanism | Supported Data Types |
 |:----------:|:----------:|:----------:|
-| Random Oversampler | Repeat existing data | Continuous and/or nominal  |
-| Random Walk Oversampler | Generate synthetic data | Continuous and/or nominal |
-| ROSE | Generate synthetic data | Continuous |
-| SMOTE | Generate synthetic data | Continuous |
-| BorderlineSMOTE1 | Generate synthetic data | Continuous |
-| SMOTE-N | Generate synthetic data | Nominal |
-| SMOTE-NC | Generate synthetic data | Continuous and nominal |
+| [Random Oversampler](@ref) | Repeat existing data | Continuous and/or nominal  |
+| [Random Walk Oversampler](@ref) | Generate synthetic data | Continuous and/or nominal |
+| [ROSE](@ref) | Generate synthetic data | Continuous |
+| [SMOTE](@ref) | Generate synthetic data | Continuous |
+| [Borderline SMOTE1](@ref) | Generate synthetic data | Continuous |
+| [SMOTE-N](@ref) | Generate synthetic data | Nominal |
+| [SMOTE-NC](@ref) | Generate synthetic data | Continuous and nominal |
 
 
 ## Random Oversampler

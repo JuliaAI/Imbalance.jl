@@ -29,13 +29,12 @@ makedocs(sitename = "Imbalance.jl",
       "Combination"=>"algorithms/mlj_balancing.md",
 			"Extras"=>"algorithms/extra_algorithms.md",
 		],
-    "Walkthrough" => Any[
+    "Tutorial" => Any[
 			"Introduction"=>"examples/walkthrough.md",
 			"More Examples"=>"examples.md",
 		],
 		"Contributing" => "contributing.md",
 		"About" => "about.md"],
-	warnonly = true,
 )
 
 
