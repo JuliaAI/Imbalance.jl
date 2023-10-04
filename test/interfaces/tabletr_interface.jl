@@ -97,6 +97,7 @@ end
             end
         end
 
+        # two more manual tests (support categorical features)
         @testset "TableTransform API with $tables[i] type for SMOTENC and SMOTEN and Random Walk" begin
             Xy, _ = generate_imbalanced_data(
                 50,

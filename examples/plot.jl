@@ -12,13 +12,18 @@ Plot the data before and after resampling in a 4x4 grid where the first row is
 - `y_after::CategoricalArray`: An abstract vector of class labels after resampling
 - `X_before::AbstractMatrix`: A matrix where each column is an observation before resampling
 - `X_after::AbstractMatrix`: A matrix where each column is an observation after resampling
+- `single_plot::Bool`: If true, only plot points after oversampling and ignore the next parameter
+- `single_plot_title::AbstractString`: Title of plot in case it's a single plot.
 - `points_only::Bool`: If true, only plot the points before and after resampling
+- `show_deleted::Bool`: Whether to show deleted points by undersampling or not
 """
 function plot_data(
 	y_before,
 	y_after,
 	X_before,
 	X_after;
+	single_plot = false,
+	single_plot_title="",
 	points_only = false,
 	show_deleted = true,
 )
@@ -72,15 +77,17 @@ function plot_data(
 		distinguishable_colors(length(labels), [RGB(1, 0, 0), RGB(0, 1, 0), RGB(0, 0, 1)])
 
 	# Scatter plot
-	p3 = plot()
-	[
-		scatter!(p3, X_before[:, 1][y_before.==y], X_before[:, 2][y_before.==y],
-			xlabel = "\$x_{1}\$",
-			ylabel = "\$x_{2}\$", label = "\$y=$y\$", color = class_colors[label_map[y]],
-			markerstrokewidth = 0.5,
-			legend_font_pointsize = 7,
-		) for y in unique(y_before)
-	]
+	if !single_plot
+		p3 = plot()
+		[
+			scatter!(p3, X_before[:, 1][y_before.==y], X_before[:, 2][y_before.==y],
+				xlabel = "\$x_{1}\$",
+				ylabel = "\$x_{2}\$", label = "\$y=$y\$", color = class_colors[label_map[y]],
+				markerstrokewidth = 0.5,
+				legend_font_pointsize = 7,
+			) for y in unique(y_before)
+		]
+	end
 
 	p4 = plot()
 	[
@@ -109,7 +116,7 @@ function plot_data(
 		]
 	end
 
-	if !points_only
+	if !(points_only || single_plot)
 		# Find counts of each label for each version of y
 		label_counts_before = [count(yi -> yi == label, y_before) for label in labels]
 		label_counts_after = [count(yi -> yi == label, y_after) for label in labels]
@@ -138,14 +145,23 @@ function plot_data(
 			size = (900, 900),
 			plot_title = "Data before and after $mode",
 		)
-	else
+	elseif single_plot
+		plot(
+			p4,
+			layout = (1, 1),
+			size = (500, 500),
+			dpi=120,
+			titlefontsize=12,
+			plot_title = single_plot_title,
+		)
+	elseif points_only
 		plot(
 			p3,
 			p4,
 			layout = (1, 2),
 			size = (900, 450),
 			plot_title = "Data before and after $mode",
-		)
+			)
 	end
 
 end

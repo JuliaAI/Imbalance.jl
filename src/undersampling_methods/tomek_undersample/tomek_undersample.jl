@@ -128,6 +128,11 @@ Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 The `reapply(undersampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(undersample, Xy)` and the `revert(undersampler, Xy, cache)`
 is not supported.
 
+# Illustration
+A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/undersample_tomek.ipynb). 
+    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    section which also explains running code on Google Colab.
+
 # References
 [1] Ivan Tomek. Two modifications of cnn. IEEE Trans. Systems, Man and Cybernetics, 6:769–772, 1976.
 """

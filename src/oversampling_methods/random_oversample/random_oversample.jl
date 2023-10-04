@@ -118,6 +118,11 @@ Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)`
 reverts the transform by removing the oversampled observations from the table.
+
+# Illustration
+A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_random.ipynb). 
+    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    section which also explains running code on Google Colab.
 """
 function random_oversample(
     X::AbstractMatrix{<:Real},

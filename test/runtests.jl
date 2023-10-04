@@ -16,81 +16,94 @@ using TransformsBase
 using ScientificTypes
 using IOCapture
 ENV["PYTHON"] = ""
-import Pkg;
+using Pkg: Pkg;
 Pkg.build("PyCall");
 using PyCall
 using Conda
 
 include("test_utils.jl")
 
+### general
 
-@testset "common_utils" begin
-    include("common_utils.jl")
-end
-
-@testset "extras" begin
-    include("extras.jl")
+@testset "class_counts" begin
+	include("class_counts.jl")
 end
 
 @testset "table_wrappers" begin
-    include("table_wrappers.jl")
+	include("table_wrappers.jl")
 end
 
 @testset "generic_resample" begin
-    include("generic_resample.jl")
+	include("generic_resample.jl")
 end
 
-@testset "tabletransforms" begin
-    include("tabletr_interface.jl")
-end
-
-@testset "MLJ Interface" begin
-    include("mlj_interface.jl")
+@testset "extras" begin
+	include("extras.jl")
 end
 
 @testset "distance metrics" begin
-    include("distance_metrics.jl")
+	include("distance_metrics.jl")
 end
 
-@testset "ROSE" begin
-    include("rose.jl")
+
+
+### interfaces
+@testset "MLJ Interface" begin
+	include("interfaces/mlj_interface.jl")
 end
 
-@testset "Basic Random Oversampler" begin
-    include("random_oversample.jl")
+@testset "tabletransforms" begin
+	include("interfaces/tabletr_interface.jl")
 end
+
+
+### undersampling
 
 @testset "Basic Random Undersampler" begin
-    include("random_undersample.jl")
+	include("undersampling/random_undersample.jl")
 end
+
 @testset "ENN Undersampler" begin
-    include("enn_undersample.jl")
+	include("undersampling/enn_undersample.jl")
 end
 
 @testset "Tomek Undersampler" begin
-    include("tomek_undersample.jl")
+	include("undersampling/tomek_undersample.jl")
 end
 
 @testset "Cluster Undersampler" begin
-    include("cluster_undersample.jl")
+	include("undersampling/cluster_undersample.jl")
 end
 
-@testset "SMOTE" begin
-    include("smote.jl")
-end
 
-@testset "BorderlineSMOTE1" begin
-    include("borderline_smote1.jl")
-end
 
-@testset "SMOTENC" begin
-    include("smotenc.jl")
+### oversampling
+
+@testset "Basic Random Oversampler" begin
+	include("oversampling/random_oversample.jl")
 end
 
 @testset "Random Walk Oversampling" begin
-    include("random_walk.jl")
+	include("oversampling/random_walk.jl")
 end
 
+@testset "ROSE" begin
+	include("oversampling/rose.jl")
+end
+
+@testset "SMOTE" begin
+	include("oversampling/smote.jl")
+end
+
+@testset "BorderlineSMOTE1" begin
+	include("oversampling/borderline_smote1.jl")
+end
+
+
 @testset "SMOTEN" begin
-    include("smoten.jl")
+	include("oversampling/smoten.jl")
+end
+
+@testset "SMOTENC" begin
+	include("oversampling/smotenc.jl")
 end

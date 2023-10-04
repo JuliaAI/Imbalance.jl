@@ -234,6 +234,10 @@ Xyover = Xy |> oversampler
 # equivalently if TableTransforms is used
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
+# Illustration
+A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_randomwalk.ipynb). 
+    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    section which also explains running code on Google Colab.
 
 # References
 [1] Zhang, H., & Li, M. (2014). RWO-Sampling: A random walk over-sampling approach to imbalanced data classification. 

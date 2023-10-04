@@ -143,6 +143,11 @@ The `reapply(undersampler, Xy, cache)` method from `TableTransforms` simply fall
 is not supported.
 
 
+# Illustration
+A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/undersample_cluster.ipynb). 
+    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    section which also explains running code on Google Colab.
+
 # References
 [1] Wei-Chao, L., Chih-Fong, T., Ya-Han, H., & Jing-Shang, J. (2017). 
     Clustering-based undersampling in class-imbalanced data. Information Sciences, 409–410, 17–26.
