@@ -16,14 +16,17 @@ Pkg.add("Imbalance")
 The package implements the following resampling algorithms
 
 - Random Oversampling
+- Random Walk Oversampling (RWO)
 - Random Oversampling Examples (ROSE)
 - Synthetic Minority Oversampling Technique (SMOTE)
+- Borderline SMOTE1
 - SMOTE-Nominal (SMOTE-N)
 - SMOTE-Nominal Categorical (SMOTE-NC)
 - Random Undersampling
 - Cluster Undersampling
 - EditedNearestNeighbors Undersampling
 - Tomek Links Undersampling
+- Balanced Bagging Classifier (@MLJBalancing.jl)
 
 ## Quick Start
 
@@ -62,6 +65,28 @@ mach = machine(oversampler)
 Xover, yover = transform(mach, X, y)
 ```
 All implemented oversampling methods are considered static transforms and hence, no `fit` is required. 
+
+If `MLJBalancing` is also used, an arbitrary number of resampling methods from `Imbalance.jl` can be wrapped with a classification model from `MLJ` to function as a unified model where resampling automatically takes place on given data before training the model.
+
+```julia
+using MLJBalancing
+
+# grab one more resampler and a classifier
+LogisticClassifier = @load LogisticClassifier pkg=MLJLinearModels verbosity=0
+TomekUndersampler = @load TomekUndersampler pkg=Imbalance verbosity=0
+
+undersampler = TomekUndersampler(min_ratios=0.5, rng=42)
+logistic_model = LogisticClassifier()
+
+# wrap the oversampler, undersample and classification model together
+balanced_model = BalancedModel(model=logistic_model, 
+                               balancer1=oversampler, balancer2=undersampler)
+
+# behaves like a single model
+mach = machine(balanced_model, X, y);
+fit!(mach, verbosity=0)
+predict(mach, X)
+```
 
 ### Table Transforms Interface
 The [`TableTransforms` interface](https://juliaml.github.io/TableTransforms.jl/stable/transforms/) operates on single tables; it assumes that `y` is one of the columns of the given table. Thus, it follows a similar pattern to the `MLJ` interface except that the index of `y` is a required argument while instantiating the model and the data to be transformed via `apply` is only one table `Xy`.
