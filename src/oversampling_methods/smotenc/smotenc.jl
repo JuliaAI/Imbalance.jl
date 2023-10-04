@@ -138,7 +138,7 @@ function smotenc_per_class(
     
     p = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(p, cont_inds, cat_inds)
-    (knn_tree ∈ ["Ball", "Brute"]) || throw(ERR_WRNG_TREE(knn_tree))
+    (knn_tree ∈ ["Ball", "Brute"]) || throw(ArgumentError(ERR_WRNG_TREE(knn_tree)))
     tree = (knn_tree == "Brute") ? BruteTree(X, metric) : BallTree(X, metric)
     knn_map, _ = knn(tree, X, k + 1, true)
 

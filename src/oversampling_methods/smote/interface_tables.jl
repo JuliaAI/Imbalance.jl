@@ -1,8 +1,8 @@
 ### SMOTE TableTransforms Interface
 
-struct SMOTE{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
-    y_ind::Integer
-    k::Integer
+struct SMOTE{T,R<:Union{Integer,AbstractRNG}, I <: Integer} <: TransformsBase.Transform
+    y_ind::I
+    k::I
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -14,19 +14,6 @@ TransformsBase.isinvertible(::Type{SMOTE}) = false
 
 """
 Instantiate a SMOTE table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-- `k::Integer`: Number of nearest neighbors to consider in the SMOTE algorithm. 
-    Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-$((COMMON_DOCS["RATIOS"]))
-$((COMMON_DOCS["RNG"]))
-
-# Returns
-
-- `model::SMOTE`: A SMOTE table transform that can be used like other transforms in TableTransforms.jl
-
 """
 SMOTE(
     y_ind::Integer;

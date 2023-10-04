@@ -1,7 +1,7 @@
 ### Random Oversample TableTransforms Interface
 # interface struct
-struct RandomOversampler{T,R<:Union{Integer,AbstractRNG}} <: Transform
-    y_ind::Integer
+struct RandomOversampler{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Transform
+    y_ind::I
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -9,16 +9,6 @@ end
 
 """
 Instantiate a naive RandomOversampler table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-$((COMMON_DOCS["RATIOS"]))
-$((COMMON_DOCS["RNG"]))
-
-# Returns
-
-- `model::RandomOversampler`: A RandomOversampler table transform that can be used like other transforms in TableTransforms.jl
 """
 RandomOversampler(
     y_ind::Integer;

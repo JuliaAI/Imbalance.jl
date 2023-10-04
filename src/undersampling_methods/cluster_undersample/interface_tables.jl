@@ -11,26 +11,6 @@ end
 
 """
 Instantiate a naive ClusterUndersampler table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels in the table
-
-- `mode::AbstractString="nearest`: If `"center"` then the undersampled data will consist of the centriods of 
-    each cluster found; if `"nearest"` then it will consist of the nearest neighbor of each centroid.
-
-$(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
-
-- `maxiter::Integer=100`: Maximum number of iterations to run K-means
-
-- `rng::Integer=42`: Random number generator seed. Must be an integer.
-
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
-
-# Returns
-
-- `model::ClusterUndersampler`: A Cluster Undersampling table transform that can be 
-    used like other transforms in TableTransforms.jl
 """
 ClusterUndersampler(
     y_ind::Integer;

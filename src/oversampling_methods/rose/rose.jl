@@ -164,7 +164,7 @@ function rose(
     try_perserve_type::Bool = true,
 )
     if s < 0.0
-        throw(ERR_NEG_S(s))
+        throw(ArgumentError(ERR_NEG_S(s)))
     end
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, rose_per_class; s, ratios, rng,)

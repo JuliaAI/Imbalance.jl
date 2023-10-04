@@ -28,12 +28,12 @@ Generate `num_rows` observations with target `y` respecting given probabilities 
     from this vector.
 - `type::AbstractString="ColTable"`: Can be `"Matrix"` or `"ColTable"`. In the latter case, a named-tuple of vectors is returned.
 - `insert_y::Integer=nothing`: If not nothing, insert the class labels column at the given index in the table
-- `rng::Union{AbstractRNG, Integer}`: Random number generator. If integer then used as `seed` in `Random.Xoshiro(seed)` 
+- `rng::Union{AbstractRNG, Integer}=default_rng()`: Random number generator. If integer then used as `seed` in `Random.Xoshiro(seed)` 
 
 # Returns
 - `X:`: A column table or matrix with generated imbalanced data with `num_rows` rows and 
     `num_continuous_feats + length(num_vals_per_category)` columns. If `insert_y` is specified as in integer
-    then `y` is also inserted at the specified index.
+    then `y` is also inserted at the specified index as an extra column.
 - `y::CategoricalArray`: An abstract vector of class labels with labels \$0\$, \$1\$, \$2\$, ..., \$k-1\$
     where `k=length(class_probs)`
 
@@ -60,13 +60,15 @@ p = plot()
 
 julia> plot(p)
 ```
-![generated data](./assets/gen_one.png)
+
+![generated data](../../assets/gen_one.png)
+
 ```julia
 # generating continuous features with random mean and std
 X, y = generate_imbalanced_data(
 	num_rows,
 	num_features;
-    min_sep=0.3,      # specify min sep between means
+    min_sep=0.3,      
 	class_probs=[0.5, 0.2, 0.3],
 	type="Matrix",
 	rng = 33,
@@ -77,7 +79,9 @@ p = plot()
 
 julia> plot(p)
 ```
-![generated data](./assets/gen_two.png)
+
+![generated data](../../assets/gen_two.png)
+
 ```julia
 num_rows = 500
 num_features = 2

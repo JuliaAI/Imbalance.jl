@@ -1,9 +1,10 @@
 ### SMOTENC TableTransforms Interface
 
-struct SMOTENC{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
-    y_ind::Integer
-    k::Integer
+struct SMOTENC{T,R<:Union{Integer,AbstractRNG}, S<:AbstractString, I<:Integer} <: TransformsBase.Transform
+    y_ind::I
+    k::I
     ratios::T
+    knn_tree::S
     rng::R
     try_perserve_type::Bool
 end
@@ -14,33 +15,15 @@ TransformsBase.isinvertible(::Type{SMOTENC}) = false
 
 """
 Instantiate a SMOTENC table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-
-- `k::Integer`: Number of nearest neighbors to consider in the SMOTENC algorithm. 
-    Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-
-$((COMMON_DOCS["RATIOS"]))
-
-- `knn_tree`: Decides the tree used in KNN computations. Either `"Brute"` or `"Ball"`.
-    BallTree can be much faster but may lead to inaccurate results.
-
-$((COMMON_DOCS["RNG"]))
-
-# Returns
-
-- `model::SMOTENC`: A SMOTENC table transform that can be used like other transforms in TableTransforms.jl
-
 """
 SMOTENC(
     y_ind::Integer;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
+    knn_tree::AbstractString = "Brute",
     rng::Union{Integer,AbstractRNG} = 123,
     try_perserve_type::Bool=true
-) where {T} = SMOTENC(y_ind, k, ratios, rng, try_perserve_type)
+) where {T} = SMOTENC(y_ind, k, ratios, knn_tree, rng, try_perserve_type)
 
 
 """
@@ -58,7 +41,7 @@ Apply the SMOTENC transform to a table Xy
 - `cache`: A cache that can be used to revert the oversampling
 """
 function TransformsBase.apply(s::SMOTENC, Xy)
-    Xyover = smotenc(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng,
+    Xyover = smotenc(Xy, s.y_ind; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng,
                         try_perserve_type = s.try_perserve_type)
     cache = rowcount(Xy)
     return Xyover, cache

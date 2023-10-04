@@ -7,7 +7,7 @@ struct BorderlineSMOTE1{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Transfor
     ratios::T
     rng::R
     try_perserve_type::Bool
-    verbosity::Integer
+    verbosity::I
 end
 
 
@@ -16,27 +16,6 @@ TransformsBase.isinvertible(::Type{BorderlineSMOTE1}) = false
 
 """
 Instantiate a BorderlineSMOTE1 table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-
-- `m::Integer=5`: The number of neighbors to consider while checking the BorderlineSMOTE1 condition. Should be within the range 
-   `0 < m < N` where N is the number of observations in the data. It will be automatically set to `N-1` if `N ≤ m`.
-
-$(COMMON_DOCS["K"])
-
-$((COMMON_DOCS["RATIOS"]))
-
-$((COMMON_DOCS["RNG"]))
-
-- `verbosity::Integer=1`: Whenever higher than `0` info regarding the points that will participate in oversampling is logged.
-
-
-# Returns
-
-- `model::BorderlineSMOTE1`: A BorderlineSMOTE1 table transform that can be used like other transforms in TableTransforms.jl
-
 """
 BorderlineSMOTE1(
     y_ind::Integer;

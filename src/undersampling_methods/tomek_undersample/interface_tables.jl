@@ -1,7 +1,7 @@
 ### Tomek Undersampling TableTransforms Interface
 # interface struct
-struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}} <: Transform
-    y_ind::Integer
+struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}, I<:Integer} <: Transform
+    y_ind::I
     min_ratios::T
     force_min_ratios::Bool
     rng::R
@@ -10,17 +10,6 @@ end
 
 """
 Instantiate a TomekUndersampler table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels in the table
-$(COMMON_DOCS["MIN-RATIOS-UNDERSAMPLE"])
-$(COMMON_DOCS["FORCE-MIN-RATIOS"])
-$(COMMON_DOCS["RNG"])
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
-
-# Returns
-- `model::TomekUndersampler`: A TomekUndersampler table transform that can be used like other transforms in TableTransforms.jl
 """
 TomekUndersampler(
     y_ind::Integer;

@@ -1,8 +1,8 @@
 ### SMOTEN TableTransforms Interface
 
-struct SMOTEN{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
-    y_ind::Integer
-    k::Integer
+struct SMOTEN{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: TransformsBase.Transform
+    y_ind::I
+    k::I
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -15,19 +15,6 @@ TransformsBase.isinvertible(::Type{SMOTEN}) = false
 
 """
 Instantiate a SMOTEN table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-- `k::Integer`: Number of nearest neighbors to consider in the SMOTEN algorithm. 
-    Should be within the range `[1, size(X, 1) - 1]` else set to the nearest of these two values.
-$((COMMON_DOCS["RATIOS"]))
-$((COMMON_DOCS["RNG"]))
-
-# Returns
-
-- `model::SMOTEN`: A SMOTEN table transform that can be used like other transforms in TableTransforms.jl
-
 """
 SMOTEN(
     y_ind::Integer;

@@ -28,6 +28,8 @@ The package implements the following resampling algorithms
 - Tomek Links Undersampling
 - Balanced Bagging Classifier (@MLJBalancing.jl)
 
+Interested in contributing with more? Check [this](https://juliaai.github.io/Imbalance.jl/dev/contributing/).
+
 ## Quick Start
 
 We will illustrate using the package to oversample with`SMOTE`; however, all other implemented oversampling methods follow the same pattern.

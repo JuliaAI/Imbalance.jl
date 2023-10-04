@@ -1,9 +1,9 @@
 ### ROSE TableTransforms Interface
 ## Wrap all of this in a TableTransforms module and then can use ROSE 
 
-struct ROSE{T,R<:Union{Integer,AbstractRNG}} <: TransformsBase.Transform
-    y_ind::Integer
-    s::AbstractFloat
+struct ROSE{T,R<:Union{Integer,AbstractRNG}, I<:Integer, F<:AbstractFloat} <: TransformsBase.Transform
+    y_ind::I
+    s::F
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -14,17 +14,6 @@ end
 
 """
 Instantiate a ROSE table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-- `s::AbstractFloat=1.0`: A parameter that proportionally controls the bandwidth of the Gaussian kernel
-$((COMMON_DOCS["RATIOS"]))
-$((COMMON_DOCS["RNG"]))
-
-# Returns
-
-- `model::ROSE`: A ROSE table transform that can be used like other transforms in TableTransforms.jl
 """
 ROSE(
     y_ind::Integer;

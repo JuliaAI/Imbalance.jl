@@ -1,7 +1,7 @@
 ### ROSE MLJ Interface
 # interface struct
-mutable struct ROSE{T,R<:Union{Integer,AbstractRNG}} <: MMI.Static
-    s::AbstractFloat
+mutable struct ROSE{T,R<:Union{Integer,AbstractRNG}, F<:AbstractFloat} <: MMI.Static
+    s::F
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -15,7 +15,7 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(r::ROSE)
     message = ""
     if r.s < 0
-        throw(ERR_NONNEG_S(r.s))
+        throw(ArgumentError(ERR_NONNEG_S(r.s)))
     end
     return message
 end

@@ -1,8 +1,8 @@
 
 ### SMOTEN with MLJ Interface
 
-mutable struct SMOTEN{T,R<:Union{Integer,AbstractRNG}} <: Static
-    k::Integer
+mutable struct SMOTEN{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Static
+    k::I
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -16,7 +16,7 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::SMOTEN)
     message = ""
     if s.k < 1
-        throw(ERR_NONPOS_K(s.k))
+        throw(ArgumentError(ERR_NONPOS_K(s.k)))
     end
     return message
 end

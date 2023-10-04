@@ -13,18 +13,6 @@ TransformsBase.isinvertible(::Type{RandomWalkOversampler}) = false
 
 """
 Instantiate a `RandomWalkOversampler` table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels (integer-code) in the table
-$((COMMON_DOCS["RATIOS"]))
-$((COMMON_DOCS["RNG"]))
-
-# Returns
-
-- `model::RandomWalkOversampler`: A RandomWalkOversampler table transform that can be 
-    used like other transforms in TableTransforms.jl
-
 """
 RandomWalkOversampler(
     y_ind::Integer;

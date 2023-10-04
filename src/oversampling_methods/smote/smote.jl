@@ -96,7 +96,7 @@ and if k>=n, it warns the user and sets k=n-1.
 """
 function check_k(k, n_class)
     if k < 1
-        throw(ERR_NONPOS_K(k))
+        throw(ArgumentError(ERR_NONPOS_K(k)))
     end
     if k >= n_class
         @warn WRN_K_TOO_BIG(k, n_class)

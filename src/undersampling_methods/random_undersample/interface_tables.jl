@@ -1,7 +1,7 @@
 ### Random Undersampling TableTransforms Interface
 # interface struct
-struct RandomUndersampler{T, R <: Union{Integer, AbstractRNG}} <: Transform
-    y_ind::Integer
+struct RandomUndersampler{T, R <: Union{Integer, AbstractRNG}, I<:Integer} <: Transform
+    y_ind::I
     ratios::T
     rng::R
     try_perserve_type::Bool
@@ -9,16 +9,6 @@ end
 
 """
 Instantiate a naive RandomUndersampler table transform
-
-# Arguments
-
-- `y_ind::Integer`: The index of the column containing the labels in the table
-$(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
-$((COMMON_DOCS["RNG"]))
-
-# Returns
-
-- `model::RandomUndersampler`: A RandomUndersampler table transform that can be used like other transforms in TableTransforms.jl
 """
 RandomUndersampler(
     y_ind::Integer;

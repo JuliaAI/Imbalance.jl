@@ -1,10 +1,8 @@
 ### SMOTENC with MLJ Interface
-
-
-
-mutable struct SMOTENC{T,R<:Union{Integer,AbstractRNG}} <: Static
-    k::Integer
+mutable struct SMOTENC{T,R<:Union{Integer,AbstractRNG}, S<:AbstractString, I<:Integer} <: Static
+    k::I
     ratios::T
+    knn_tree::S
     rng::R
     try_perserve_type::Bool
 end
@@ -16,8 +14,9 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::SMOTENC)
     message = ""
     if s.k < 1
-        throw(ERR_NONPOS_K(s.k))
+        throw(ArgumentError(ERR_NONPOS_K(s.k)))
     end
+    (s.knn_tree ∈ ["Ball", "Brute"]) || throw(ArgumentError(ERR_WRNG_TREE(knn_tree)))
     return message
 end
 
@@ -28,10 +27,11 @@ Initiate a SMOTENC model with the given hyper-parameters.
 function SMOTENC(;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} =1.0,
+    knn_tree::AbstractString = "Brute",
     rng::Union{Integer,AbstractRNG} = default_rng(),
     try_perserve_type::Bool=true
 ) where {T}
-    model = SMOTENC(k, ratios, rng, try_perserve_type)
+    model = SMOTENC(k, ratios, knn_tree, rng, try_perserve_type)
     MMI.clean!(model)
     return model
 end
@@ -43,7 +43,7 @@ end
 Oversample data X, y using SMOTENC
 """
 function MMI.transform(s::SMOTENC, _, X, y)
-    smotenc(X, y; k = s.k, ratios = s.ratios, rng = s.rng, try_perserve_type=s.try_perserve_type)
+    smotenc(X, y; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_perserve_type=s.try_perserve_type)
 end
 
 
