@@ -35,6 +35,7 @@ makedocs(sitename = "Imbalance.jl",
 		],
 		"Contributing" => "contributing.md",
 		"About" => "about.md"],
+		warn_only=true
 )
 
 
