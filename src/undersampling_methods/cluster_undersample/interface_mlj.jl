@@ -11,7 +11,7 @@ mutable struct ClusterUndersampler{
 	ratios::T
 	maxiter::I
 	rng::R
-	try_perserve_type::Bool
+	try_preserve_type::Bool
 end;
 
 """
@@ -22,9 +22,9 @@ function ClusterUndersampler(;
 	ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
 	maxiter::Integer = 100,
     rng::Union{Integer, AbstractRNG} = default_rng(),
-	try_perserve_type::Bool = true,
+	try_preserve_type::Bool = true,
 ) where {T}
-	model = ClusterUndersampler(mode, ratios, maxiter, rng, try_perserve_type)
+	model = ClusterUndersampler(mode, ratios, maxiter, rng, try_preserve_type)
 	return model
 end
 
@@ -39,7 +39,7 @@ function MMI.transform(r::ClusterUndersampler, _, X, y)
 		ratios = r.ratios,
 		maxiter = r.maxiter,
 		rng = r.rng,
-		try_perserve_type = r.try_perserve_type,
+		try_preserve_type = r.try_preserve_type,
 	)
 end
 function MMI.transform(r::ClusterUndersampler, _, X::AbstractMatrix{<:Real}, y)

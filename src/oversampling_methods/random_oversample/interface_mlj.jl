@@ -4,7 +4,7 @@
 mutable struct RandomOversampler{T,R<:Union{Integer,AbstractRNG}} <: Static
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end;
 
 """
@@ -12,9 +12,9 @@ Initiate a random oversampling model with the given hyper-parameters.
 """
 function RandomOversampler(;
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool = true
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool = true
 ) where {T}
-    model = RandomOversampler(ratios, rng, try_perserve_type)
+    model = RandomOversampler(ratios, rng, try_preserve_type)
     return model
 end
 
@@ -23,7 +23,7 @@ Oversample data X, y using ROSE
 """
 function MMI.transform(r::RandomOversampler, _, X, y)
     random_oversample(X, y; ratios = r.ratios, rng = r.rng, 
-                      try_perserve_type = r.try_perserve_type)
+                      try_preserve_type = r.try_preserve_type)
 end
 function MMI.transform(r::RandomOversampler, _, X::AbstractMatrix{<:Real}, y)
   random_oversample(X, y; ratios = r.ratios, rng = r.rng)

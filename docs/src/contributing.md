@@ -37,10 +37,10 @@ Any method resampling method implemented in the `oversampling_methods` or `under
 Surely, you can ignore ignore the third step if the algorithm you are implementing does not operate in "per-class" sense.
 
 ### 🔥 Hot algorithms to add
-- `K-Means SMOTE`: Takes care of where exactly to generate more points using SMOTE by factoring in "within class imbalance"
+- `K-Means SMOTE`: Takes care of where exactly to generate more points using `SMOTE` by factoring in "within class imbalance". This may be also easily generalized to algorithms beyond `SMOTE`.
 - `CondensedNearestNeighbors`: Undersamples the dataset such as to perserve the decision boundary by `KNN`
-- `BorderlineSMOTE2`: A small modification of the BorderlineSMOTE1 condition
-- `RepeatedENNUndersampler`: Simply repeat `ENNUndersampler` multiple times
+- `BorderlineSMOTE2`: A small modification of the `BorderlineSMOTE1` condition
+- `RepeatedENNUndersampler`: Simply repeats `ENNUndersampler` multiple times
 
 # Adding New Tutorials
 - Make a new notebook with the tutorial in the `examples` folder found in `docs/src/examples`

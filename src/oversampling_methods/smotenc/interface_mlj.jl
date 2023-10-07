@@ -4,7 +4,7 @@ mutable struct SMOTENC{T,R<:Union{Integer,AbstractRNG}, S<:AbstractString, I<:In
     ratios::T
     knn_tree::S
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 
@@ -29,9 +29,9 @@ function SMOTENC(;
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} =1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{Integer,AbstractRNG} = default_rng(),
-    try_perserve_type::Bool=true
+    try_preserve_type::Bool=true
 ) where {T}
-    model = SMOTENC(k, ratios, knn_tree, rng, try_perserve_type)
+    model = SMOTENC(k, ratios, knn_tree, rng, try_preserve_type)
     MMI.clean!(model)
     return model
 end
@@ -43,7 +43,7 @@ end
 Oversample data X, y using SMOTENC
 """
 function MMI.transform(s::SMOTENC, _, X, y)
-    smotenc(X, y; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_perserve_type=s.try_perserve_type)
+    smotenc(X, y; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_preserve_type=s.try_preserve_type)
 end
 
 

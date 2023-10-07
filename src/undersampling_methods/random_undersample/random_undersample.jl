@@ -24,7 +24,7 @@ end
     random_undersample(
         X, y; 
         ratios=1.0, rng=default_rng(), 
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 
@@ -42,7 +42,7 @@ $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -131,7 +131,7 @@ function random_undersample(
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     X_under, y_under = generic_undersample(X, y, random_undersample_per_class; ratios, rng)
@@ -144,13 +144,13 @@ function random_undersample(
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     X_under, y_under = tablify(
         random_undersample,
         X,
         y;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         ratios,
@@ -165,13 +165,13 @@ function random_undersample(
     y_ind::Integer;
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xy_under = tablify(
         random_undersample,
         Xy,
         y_ind;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         ratios,

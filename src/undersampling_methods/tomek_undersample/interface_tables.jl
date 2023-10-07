@@ -5,7 +5,7 @@ struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}, I<:Integer} <: Tra
     min_ratios::T
     force_min_ratios::Bool
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 """
@@ -16,8 +16,8 @@ TomekUndersampler(
     min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     force_min_ratios::Bool = false,
     rng::Union{Integer, AbstractRNG} = 123,
-    try_perserve_type::Bool = true,
-) where {T} = TomekUndersampler(y_ind, min_ratios, force_min_ratios, rng, try_perserve_type)
+    try_preserve_type::Bool = true,
+) where {T} = TomekUndersampler(y_ind, min_ratios, force_min_ratios, rng, try_preserve_type)
 
 TransformsBase.isrevertible(::Type{TomekUndersampler}) = false
 
@@ -42,7 +42,7 @@ function TransformsBase.apply(r::TomekUndersampler, Xy)
         min_ratios = r.min_ratios,
         force_min_ratios = r.force_min_ratios,
         rng = r.rng,
-        try_perserve_type = r.try_perserve_type,
+        try_preserve_type = r.try_preserve_type,
     )
     return Xy_under, nothing
 end

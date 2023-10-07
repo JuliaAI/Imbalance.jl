@@ -6,7 +6,7 @@ struct SMOTENC{T,R<:Union{Integer,AbstractRNG}, S<:AbstractString, I<:Integer} <
     ratios::T
     knn_tree::S
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 
@@ -22,8 +22,8 @@ SMOTENC(
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{Integer,AbstractRNG} = 123,
-    try_perserve_type::Bool=true
-) where {T} = SMOTENC(y_ind, k, ratios, knn_tree, rng, try_perserve_type)
+    try_preserve_type::Bool=true
+) where {T} = SMOTENC(y_ind, k, ratios, knn_tree, rng, try_preserve_type)
 
 
 """
@@ -42,7 +42,7 @@ Apply the SMOTENC transform to a table Xy
 """
 function TransformsBase.apply(s::SMOTENC, Xy)
     Xyover = smotenc(Xy, s.y_ind; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng,
-                        try_perserve_type = s.try_perserve_type)
+                        try_preserve_type = s.try_preserve_type)
     cache = rowcount(Xy)
     return Xyover, cache
 end

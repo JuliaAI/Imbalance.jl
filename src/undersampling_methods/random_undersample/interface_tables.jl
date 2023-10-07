@@ -4,7 +4,7 @@ struct RandomUndersampler{T, R <: Union{Integer, AbstractRNG}, I<:Integer} <: Tr
     y_ind::I
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 """
@@ -14,8 +14,8 @@ RandomUndersampler(
     y_ind::Integer;
     ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     rng::Union{Integer, AbstractRNG} = 123,
-    try_perserve_type::Bool = true,
-) where {T} = RandomUndersampler(y_ind, ratios, rng, try_perserve_type)
+    try_preserve_type::Bool = true,
+) where {T} = RandomUndersampler(y_ind, ratios, rng, try_preserve_type)
 
 TransformsBase.isrevertible(::Type{RandomUndersampler}) = false
 
@@ -39,7 +39,7 @@ function TransformsBase.apply(r::RandomUndersampler, Xy)
         r.y_ind;
         ratios = r.ratios,
         rng = r.rng,
-        try_perserve_type = r.try_perserve_type,
+        try_preserve_type = r.try_preserve_type,
     )
     return Xy_under, nothing
 end

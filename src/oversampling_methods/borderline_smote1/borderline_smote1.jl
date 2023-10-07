@@ -136,7 +136,7 @@ end
     borderline_smote1(
         X, y;
         m=5, k=5, ratios=1.0, rng=default_rng(),
-        try_perserve_type=true, verbosity=1
+        try_preserve_type=true, verbosity=1
     )
 
 # Description
@@ -160,7 +160,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 - `verbosity::Integer=1`: Whenever higher than `0` info regarding the points that will participate in oversampling is logged.
 
@@ -259,7 +259,7 @@ function borderline_smote1(
 	k::Integer = 5,
 	ratios = 1.0,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     verbosity::Integer = 1
 )
     # this function is a variation on generic_oversampling to use in borderline smote
@@ -278,10 +278,10 @@ function borderline_smote1(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     verbosity::Integer = 1
 )
-    Xover, yover = tablify(borderline_smote1, X, y; try_perserve_type=try_perserve_type,  m, k, ratios, rng, verbosity)
+    Xover, yover = tablify(borderline_smote1, X, y; try_preserve_type=try_preserve_type,  m, k, ratios, rng, verbosity)
     return Xover, yover
 end
 
@@ -293,9 +293,9 @@ function borderline_smote1(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     verbosity::Integer = 1
 )
-    Xyover = tablify(borderline_smote1, Xy, y_ind; try_perserve_type=try_perserve_type, m, k, ratios, rng, verbosity)
+    Xyover = tablify(borderline_smote1, Xy, y_ind; try_preserve_type=try_preserve_type, m, k, ratios, rng, verbosity)
     return Xyover
 end

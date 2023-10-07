@@ -5,7 +5,7 @@ mutable struct SMOTEN{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Static
     k::I
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end;
 
 
@@ -27,9 +27,9 @@ Initiate a SMOTEN model with the given hyper-parameters.
 function SMOTEN(;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool=true
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool=true
 ) where {T}
-    model = SMOTEN(k, ratios, rng, try_perserve_type)
+    model = SMOTEN(k, ratios, rng, try_preserve_type)
     MMI.clean!(model)
     return model
 end
@@ -40,7 +40,7 @@ Oversample data X, y using SMOTEN
 """
 function MMI.transform(s::SMOTEN, _, X, y)
     smoten(X, y; k = s.k, ratios = s.ratios, rng = s.rng, 
-        try_perserve_type = s.try_perserve_type)
+        try_preserve_type = s.try_preserve_type)
 end
 function MMI.transform(s::SMOTEN, _, X::AbstractMatrix{<:Integer}, y)
     smoten(X, y; k = s.k, ratios = s.ratios, rng = s.rng)

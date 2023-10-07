@@ -5,7 +5,7 @@ mutable struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}} <: Static
     min_ratios::T
     force_min_ratios::Bool
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end;
 
 """
@@ -15,9 +15,9 @@ function TomekUndersampler(;
     min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     force_min_ratios::Bool = false,
     rng::Union{Integer, AbstractRNG} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 ) where {T}
-    model = TomekUndersampler(min_ratios, force_min_ratios, rng, try_perserve_type)
+    model = TomekUndersampler(min_ratios, force_min_ratios, rng, try_preserve_type)
     return model
 end
 
@@ -31,7 +31,7 @@ function MMI.transform(r::TomekUndersampler, _, X, y)
         min_ratios = r.min_ratios,
         force_min_ratios = r.force_min_ratios,
         rng = r.rng,
-        try_perserve_type = r.try_perserve_type,
+        try_preserve_type = r.try_preserve_type,
     )
 end
 function MMI.transform(r::TomekUndersampler, _, X::AbstractMatrix{<:Real}, y)
@@ -94,7 +94,7 @@ $(COMMON_DOCS["FORCE-MIN-RATIOS"])
 
 $((COMMON_DOCS["RNG"]))
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Transform Inputs
 

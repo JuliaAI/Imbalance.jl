@@ -47,7 +47,7 @@ end
     rose(
         X, y; 
         s=1.0, ratios=1.0, rng=default_rng(),
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 # Description
@@ -69,7 +69,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 
 # Returns
@@ -166,7 +166,7 @@ function rose(
     s::AbstractFloat = 1.0,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     if s < 0.0
         throw(ArgumentError(ERR_NEG_S(s)))
@@ -183,9 +183,9 @@ function rose(
     s::AbstractFloat = 1.0,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true
+    try_preserve_type::Bool = true
 )
-    Xover, yover = tablify(rose, X, y; try_perserve_type=try_perserve_type, s, ratios, rng, 
+    Xover, yover = tablify(rose, X, y; try_preserve_type=try_preserve_type, s, ratios, rng, 
                            )
     return Xover, yover
 end
@@ -197,7 +197,7 @@ function rose(
     s::AbstractFloat = 1.0,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
-    return tablify(rose, Xy, y_ind;try_perserve_type=try_perserve_type,  s, ratios, rng)
+    return tablify(rose, Xy, y_ind;try_preserve_type=try_preserve_type,  s, ratios, rng)
 end

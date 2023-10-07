@@ -4,7 +4,7 @@ struct RandomWalkOversampler{T, R<:Union{Integer,AbstractRNG}, I<:Integer} <: Tr
     y_ind::I
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 
@@ -18,8 +18,8 @@ RandomWalkOversampler(
     y_ind::Integer;
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
     rng::Union{Integer,AbstractRNG} = default_rng(),
-    try_perserve_type::Bool=true
-) where {T} = RandomWalkOversampler(y_ind, ratios, rng, try_perserve_type)
+    try_preserve_type::Bool=true
+) where {T} = RandomWalkOversampler(y_ind, ratios, rng, try_preserve_type)
 
 
 """
@@ -38,7 +38,7 @@ Apply the `RandomWalkOversampler` transform to a table Xy
 """
 function TransformsBase.apply(s::RandomWalkOversampler, Xy)
     Xyover = random_walk_oversample(Xy, s.y_ind; ratios = s.ratios, rng = s.rng,
-                        try_perserve_type = s.try_perserve_type)
+                        try_preserve_type = s.try_preserve_type)
     cache = rowcount(Xy)
     return Xyover, cache
 end

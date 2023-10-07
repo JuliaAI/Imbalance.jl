@@ -5,7 +5,7 @@ struct SMOTEN{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: TransformsBase.Tra
     k::I
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 
@@ -20,8 +20,8 @@ SMOTEN(
     y_ind::Integer;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = 123, try_perserve_type::Bool=true
-) where {T} = SMOTEN(y_ind, k, ratios, rng, try_perserve_type)
+    rng::Union{Integer,AbstractRNG} = 123, try_preserve_type::Bool=true
+) where {T} = SMOTEN(y_ind, k, ratios, rng, try_preserve_type)
 
 
 """
@@ -40,7 +40,7 @@ Apply the SMOTEN transform to a table Xy
 """
 function TransformsBase.apply(s::SMOTEN, Xy)
     Xyover = smoten(Xy, s.y_ind; k = s.k, ratios = s.ratios, rng = s.rng, 
-                    try_perserve_type = s.try_perserve_type)
+                    try_preserve_type = s.try_preserve_type)
     cache = rowcount(Xy)
     return Xyover, cache
 end

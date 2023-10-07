@@ -126,7 +126,7 @@ end
     smoten(
         X, y;
         k=5, ratios=1.0, rng=default_rng(),
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 # Description
@@ -150,7 +150,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -260,7 +260,7 @@ function smoten(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     mvdm_encoder, num_categories_per_col = precompute_value_encodings(X, y)
     all_pairwise_mvdm = precompute_mvdm_distances(mvdm_encoder, num_categories_per_col)
@@ -277,13 +277,13 @@ function smoten(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xover, yover = tablify(
         smoten,
         X,
         y;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smoten_encoder,
         decode_func = smoten_decoder,
         k,
@@ -300,13 +300,13 @@ function smoten(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xyover = tablify(
         smoten,
         Xy,
         y_ind;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smoten_encoder,
         decode_func = smoten_decoder,
         k,

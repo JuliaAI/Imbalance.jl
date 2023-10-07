@@ -51,7 +51,7 @@ end
     enn_undersample(
         X, y; k = 5, keep_condition = "mode",
 	    min_ratios = 1.0, force_min_ratios = false,
-        rng = default_rng(), try_perserve_type=true
+        rng = default_rng(), try_preserve_type=true
     )
 
 # Description
@@ -80,7 +80,7 @@ $(COMMON_DOCS["FORCE-MIN-RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -175,7 +175,7 @@ function enn_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     check_k(k, size(X, 1))
@@ -207,13 +207,13 @@ function enn_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     X_under, y_under = tablify(
         enn_undersample,
         X,
         y;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         k,
@@ -234,13 +234,13 @@ function enn_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xy_under = tablify(
         enn_undersample,
         Xy,
         y_ind;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         k,
