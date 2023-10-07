@@ -1,11 +1,6 @@
 name: CI
-on:
-  push:
-    branches:
-      - dev
-    tags: ['*']
-  pull_request:
-  workflow_dispatch:jobs:
+on: [push, pull_request]
+jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
