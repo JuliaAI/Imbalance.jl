@@ -90,7 +90,7 @@ and if m>=N, it warns the user and sets m=N-1.
 """
 function check_m(m, N)
     if m < 1
-        throw(ArgumentError(ERR_NONPOS_M(m)))
+        throw((ERR_NONPOS_M(m)))
     end
     if m >= N
         @warn WRN_M_TOO_BIG(m, N)
@@ -127,7 +127,7 @@ function borderline1_filter(X, y; m=5, verbosity=1)
     y1 = y[bool_filter]
     y1_stats = match(r"\((.*?)\)", string(countmap(y1))).captures[1]
     verbosity > 0 && @info INFO_BORDERLINE_PTS(y1_stats)
-    length(y1) == 0 && throw(ArgumentError(ERR_NO_BORDERLINE))
+    length(y1) == 0 && throw((ERR_NO_BORDERLINE))
     return BitVector(bool_filter)
 end
 

@@ -18,7 +18,7 @@ Check that columns have the correct scientific types and if not, throw an error.
 function check_scitypes_random_walk(ncols, cat_inds, cont_inds, types)	
 	bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))	# columns with wrong scitype
 	if !isempty(bad_cols)
-		throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
+		throw((ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
 	end
 end
 

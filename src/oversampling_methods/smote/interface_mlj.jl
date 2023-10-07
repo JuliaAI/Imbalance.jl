@@ -16,7 +16,7 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::SMOTE)
     message = ""
     if s.k < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.k)))
+        throw((ERR_NONPOS_K(s.k)))
     end
     return message
 end

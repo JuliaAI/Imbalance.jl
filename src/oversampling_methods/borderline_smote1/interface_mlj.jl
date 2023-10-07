@@ -18,10 +18,10 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::BorderlineSMOTE1)
     message = ""
     if s.k < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.k)))
+        throw((ERR_NONPOS_K(s.k)))
     end
     if s.m < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.m)))
+        throw((ERR_NONPOS_K(s.m)))
     end
     return message
 end

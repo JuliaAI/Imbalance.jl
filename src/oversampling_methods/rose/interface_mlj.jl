@@ -15,7 +15,7 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(r::ROSE)
     message = ""
     if r.s < 0
-        throw(ArgumentError(ERR_NONNEG_S(r.s)))
+        throw((ERR_NONNEG_S(r.s)))
     end
     return message
 end
