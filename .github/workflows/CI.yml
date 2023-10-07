@@ -1,11 +1,16 @@
 name: CI
-on: [push, pull_request]
-jobs:
+on:
+  push:
+    branches:
+      - dev
+    tags: ['*']
+  pull_request:
+  workflow_dispatch:jobs:
   test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        julia-version: ['1.8']
+        julia-version: ['1', '1.7']
         julia-arch: [x64]
         os: [ubuntu-latest, windows-latest, macOS-latest]
     steps:
