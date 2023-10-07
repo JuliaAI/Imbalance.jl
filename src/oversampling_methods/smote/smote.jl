@@ -151,7 +151,7 @@ end
     smote(
         X, y;
         k=5, ratios=1.0, rng=default_rng(),
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 # Description
@@ -170,7 +170,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -265,7 +265,7 @@ function smote(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, smote_per_class; ratios, k, rng)
@@ -279,9 +279,9 @@ function smote(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
-    Xover, yover = tablify(smote, X, y;try_perserve_type=try_perserve_type,  k, ratios, rng)
+    Xover, yover = tablify(smote, X, y;try_preserve_type=try_preserve_type,  k, ratios, rng)
     return Xover, yover
 end
 
@@ -292,8 +292,8 @@ function smote(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
-    Xyover = tablify(smote, Xy, y_ind; try_perserve_type=try_perserve_type, k, ratios, rng)
+    Xyover = tablify(smote, Xy, y_ind; try_preserve_type=try_preserve_type, k, ratios, rng)
     return Xyover
 end

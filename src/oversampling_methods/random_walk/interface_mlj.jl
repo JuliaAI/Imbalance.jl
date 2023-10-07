@@ -3,7 +3,7 @@
 mutable struct RandomWalkOversampler{T,R<:Union{Integer,AbstractRNG}} <: Static
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 
@@ -15,9 +15,9 @@ Initiate a RandomWalkOversampler model with the given hyper-parameters.
 function RandomWalkOversampler(;
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} =1.0,
     rng::Union{Integer,AbstractRNG} = default_rng(),
-    try_perserve_type::Bool=true
+    try_preserve_type::Bool=true
 ) where {T}
-    model = RandomWalkOversampler(ratios, rng, try_perserve_type)
+    model = RandomWalkOversampler(ratios, rng, try_preserve_type)
     return model
 end
 
@@ -28,7 +28,7 @@ end
 Oversample data X, y using RandomWalkOversampler
 """
 function MMI.transform(s::RandomWalkOversampler, _, X, y)
-    random_walk_oversample(X, y; ratios = s.ratios, rng = s.rng, try_perserve_type=s.try_perserve_type)
+    random_walk_oversample(X, y; ratios = s.ratios, rng = s.rng, try_preserve_type=s.try_preserve_type)
 end
 
 

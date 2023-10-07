@@ -39,7 +39,7 @@ end
     cluster_undersample(
         X, y; 
         mode= "nearest", ratios = 1.0, maxiter = 100,
-        rng=default_rng(), try_perserve_type=true
+        rng=default_rng(), try_preserve_type=true
     )
 
 
@@ -62,7 +62,7 @@ $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -174,13 +174,13 @@ function cluster_undersample(
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     X_under, y_under = tablify(
         cluster_undersample,
         X,
         y;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         mode,
@@ -199,13 +199,13 @@ function cluster_undersample(
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xy_under = tablify(
         cluster_undersample,
         Xy,
         y_ind;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         mode,

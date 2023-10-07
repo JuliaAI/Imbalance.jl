@@ -15,7 +15,7 @@ using Impute
 ```
 
 ## Loading Data
-In this example, we will consider the [Cerebral Stroke Prediction Dataset](https://www.kaggle.com/datasets/shashwatwork/cerebral-stroke-predictionimbalaced-dataset) found on Kaggle for the objective of predicting where a stroke has occured given medical features about patients.
+In this example, we will consider the [Cerebral Stroke Prediction Dataset](https://www.kaggle.com/datasets/shashwatwork/cerebral-stroke-predictionimbalaced-dataset) found on Kaggle for the objective of predicting where a stroke has occurred given medical features about patients.
 
 `CSV` gives us the ability to easily read the dataset after it's downloaded as follows
 

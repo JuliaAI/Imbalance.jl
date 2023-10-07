@@ -344,7 +344,7 @@ Before oversampling, and assuming that the balanced accuracy score is normally d
 
 ### After Oversampling
 
-At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an arbitrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
 
 In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
 

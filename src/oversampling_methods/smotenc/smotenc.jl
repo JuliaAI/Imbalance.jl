@@ -157,7 +157,7 @@ end
     smotenc(
         X, y, split_ind;
         k=5, ratios=1.0, knn_tree="Brute", rng=default_rng(),
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 # Description
@@ -193,7 +193,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -300,7 +300,7 @@ function smotenc(
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     # implictly infer the continuous indices
@@ -318,13 +318,13 @@ function smotenc(
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xover, yover = tablify(
         smotenc,
         X,
         y;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smotenc_encoder,
         decode_func = smotenc_decoder,
         k,
@@ -343,13 +343,13 @@ function smotenc(
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xyover = tablify(
         smotenc,
         Xy,
         y_ind;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smotenc_encoder,
         decode_func = smotenc_decoder,
         k,

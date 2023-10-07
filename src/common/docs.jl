@@ -63,7 +63,7 @@ const COMMON_DOCS = Dict(
         """`0 < k < n` where n is the number of observations in the data. It will be automatically set to """*
         """`n-1` if `n ≤ k`.
     """,
-    "TRY_PERSERVE_TYPE" => """
+    "TRY_PRESERVE_TYPE" => """
     - `try_preserve_type::Bool=true`: When `true`, the function will try to not change the type of the input 
         table (e.g., `DataFrame`). However, for some tables, this may not succeed, and in this case, the table returned will
         be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.

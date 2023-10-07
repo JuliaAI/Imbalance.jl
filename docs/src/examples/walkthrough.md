@@ -1,6 +1,6 @@
 # Introduction
 
-In this section of the docs, we will walk you through some examples to demonstrate how you can use `Imbalance.jl` in your machine learning project. Although we focus on examples, you can learn more about how specific algorithms work by reading this series of blogposts on  [Medium](https://medium.com/towards-data-science/class-imbalance-from-random-oversampling-to-rose-517e06d7a9b).
+In this section of the docs, we will walk you through some examples to demonstrate how you can use `Imbalance.jl` in your machine learning project. Although we focus on examples, you can learn more about how the algorithms work by reading this series of blogposts on  [Medium](https://medium.com/@essamwissam/class-imbalance-and-oversampling-a-formal-introduction-c77b918e586d).
 
 # Prerequisites
 
@@ -424,7 +424,7 @@ Under the normality assumption, the `95%` confidence interval is `62.1±9.13%` w
 
 ### After Oversampling
 
-At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an arbitrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
 
 In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
 

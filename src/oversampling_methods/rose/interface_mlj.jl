@@ -4,7 +4,7 @@ mutable struct ROSE{T,R<:Union{Integer,AbstractRNG}, F<:AbstractFloat} <: MMI.St
     s::F
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end;
 
 
@@ -26,9 +26,9 @@ Initiate a ROSE model with the given hyper-parameters.
 function ROSE(;
     s::AbstractFloat = 1.0,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool = true,
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool = true,
 ) where {T}
-    model = ROSE(s, ratios, rng, try_perserve_type)
+    model = ROSE(s, ratios, rng, try_preserve_type)
     MMI.clean!(model)
     return model
 end
@@ -38,7 +38,7 @@ Oversample data X, y using ROSE
 """
 function MMI.transform(r::ROSE, _, X, y)
     rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng, 
-        try_perserve_type = r.try_perserve_type)
+        try_preserve_type = r.try_preserve_type)
 end
 function MMI.transform(r::ROSE, _, X::AbstractMatrix{<:Real}, y)
     rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng,)

@@ -6,7 +6,7 @@ struct BorderlineSMOTE1{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Transfor
     k::I
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
     verbosity::I
 end
 
@@ -22,8 +22,8 @@ BorderlineSMOTE1(
     m::Integer=5,
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool=true, verbosity::Integer=1
-) where {T} = BorderlineSMOTE1(y_ind, m, k, ratios, rng, try_perserve_type, verbosity)
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool=true, verbosity::Integer=1
+) where {T} = BorderlineSMOTE1(y_ind, m, k, ratios, rng, try_preserve_type, verbosity)
 
 
 """
@@ -42,7 +42,7 @@ Apply the BorderlineSMOTE1 transform to a table Xy
 """
 function TransformsBase.apply(s::BorderlineSMOTE1, Xy)
     Xyover = borderline_smote1(Xy, s.y_ind; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng, 
-                   try_perserve_type = s.try_perserve_type, verbosity=s.verbosity)
+                   try_preserve_type = s.try_preserve_type, verbosity=s.verbosity)
     cache = rowcount(Xy)
     return Xyover, cache
 end
