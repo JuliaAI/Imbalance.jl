@@ -12,9 +12,12 @@ using Imbalance:
     Conda.add("scikit-learn=1.3.0")    
 
     # Import numpy and other libraries
-    np = pyimport("numpy")
-    imblearn = pyimport("imblearn")
-    fromsklearn = pyimport("sklearn.preprocessing")
+    np = pyimport_conda("imblearn", "imbalanced-learn")
+    imblearn = pyimport_conda("numpy", "numpy")
+    fromsklearn = pyimport_conda("sklearn", "scikit-learn")
+    #np = pyimport("numpy")
+    #imblearn = pyimport("imblearn")
+    #fromsklearn = pyimport("sklearn.preprocessing")
 
     # Set the dimensions of the matrix
     rows = 50
