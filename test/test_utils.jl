@@ -18,3 +18,26 @@ function is_in_between(a, b, c)::Bool
     dist_total = sqrt(sum((b .- c) .^ 2))
     return isapprox(dist_ab + dist_ac, dist_total)
 end
+
+
+"""
+Read a Julia variable from a file
+"""
+function read_var(filename)
+    if isfile(filename)
+        open(filename, "r") do file
+            return deserialize(file)
+        end
+    else
+        error("File $filename not found. Try locally setting offline_python_test = true")
+    end
+end
+
+"""
+Save a Julia variable into a file
+"""
+function write_var(var, filename)
+    open("$filename", "w") do file
+        serialize(file, var)
+    end
+end

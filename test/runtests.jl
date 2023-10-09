@@ -14,6 +14,7 @@ using StableRNGs: StableRNG
 using TableTransforms
 using TransformsBase
 using ScientificTypes
+using Serialization
 using IOCapture
 ENV["PYTHON"] = ""
 using Pkg: Pkg;
@@ -22,6 +23,10 @@ using PyCall
 using Conda
 
 include("test_utils.jl")
+# When the following variable is set to false, offline results from PyCall will be used
+# When it is set to true, PyCall will be used instead of saved resules and it will save the results.
+
+offline_python_test = true
 
 ### general
 
@@ -40,6 +45,7 @@ end
 @testset "extras" begin
 	include("extras.jl")
 end
+
 
 @testset "distance metrics" begin
 	include("distance_metrics.jl")
@@ -70,6 +76,7 @@ end
 @testset "Tomek Undersampler" begin
 	include("undersampling/tomek_undersample.jl")
 end
+
 
 @testset "Cluster Undersampler" begin
 	include("undersampling/cluster_undersample.jl")
