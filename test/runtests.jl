@@ -30,7 +30,7 @@ include("test_utils.jl")
 offline_python_test = true
 
 ### general
-#=
+
 @testset "class_counts" begin
 	include("class_counts.jl")
 end
@@ -52,7 +52,7 @@ end
 	include("distance_metrics.jl")
 end
 
-=#
+
 
 ### interfaces
 
@@ -62,26 +62,6 @@ end
 
 @testset "tabletransforms" begin
 	include("interfaces/tabletr_interface.jl")
-end
-
-
-### undersampling
-
-@testset "Basic Random Undersampler" begin
-	include("undersampling/random_undersample.jl")
-end
-
-@testset "ENN Undersampler" begin
-	include("undersampling/enn_undersample.jl")
-end
-
-@testset "Tomek Undersampler" begin
-	include("undersampling/tomek_undersample.jl")
-end
-
-
-@testset "Cluster Undersampler" begin
-	include("undersampling/cluster_undersample.jl")
 end
 
 
@@ -116,3 +96,24 @@ end
 @testset "SMOTENC" begin
 	include("oversampling/smotenc.jl")
 end
+
+
+### undersampling
+
+@testset "Basic Random Undersampler" begin
+	include("undersampling/random_undersample.jl")
+end
+
+@testset "ENN Undersampler" begin
+	include("undersampling/enn_undersample.jl")
+end
+
+@testset "Tomek Undersampler" begin
+	include("undersampling/tomek_undersample.jl")
+end
+
+
+@testset "Cluster Undersampler" begin
+	include("undersampling/cluster_undersample.jl")
+end
+
