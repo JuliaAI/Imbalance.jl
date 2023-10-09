@@ -11,7 +11,7 @@ using Imbalance: cluster_undersample
     counts_per_class = countmap(y)
     minority_count = minimum(values(counts_per_class))
     X_under, y_under =
-        cluster_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 1.2, 2 => 1.0), rng = Imbalance.XoshiroOrMT(121))
+        cluster_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 1.2, 2 => 1.0), rng = MersenneTwister(121))
 
     # Check that the number of samples decreased correctly
     @test size(X_under, 1) == (
@@ -26,7 +26,7 @@ using Imbalance: cluster_undersample
     n = Int(round(0.8 * minority_count))
     X_c0 = X[y.==0, :]'
     
-    center = kmeans(X_c0, n; maxiter = 100, rng=Imbalance.XoshiroOrMT(121)).centers[:, 2]
+    center = kmeans(X_c0, n; maxiter = 100, rng=MersenneTwister(121)).centers[:, 2]
     tree = BallTree(X_c0)
     i_n, _ = knn(tree, center, 1, true)
     x_n = X_c0[:, i_n[1]]
@@ -39,10 +39,10 @@ using Imbalance: cluster_undersample
         y;
         mode = "center",
         ratios = Dict(0 => 0.8, 1 => 1.2, 2 => 1.0),
-        rng = Imbalance.XoshiroOrMT(121),
+        rng = Imbalance.MersenneTwister(121),
     )
     @test !issubset(Set(eachrow(X_under)), Set(eachrow(X)))
-    @test X_under[y_under.==0, :]' ≈ kmeans(X_c0, n; maxiter = 100, rng=Imbalance.XoshiroOrMT(121)).centers
+    @test X_under[y_under.==0, :]' ≈ kmeans(X_c0, n; maxiter = 100, rng=MersenneTwister(121)).centers
     
 end
 
