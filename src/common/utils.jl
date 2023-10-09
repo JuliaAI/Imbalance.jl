@@ -8,9 +8,10 @@ randcols(rng::AbstractRNG, X) = X[:, rand(rng, 1:size(X, 2))]
 # randomly sample n columns of a matrix
 randcols(rng::AbstractRNG, X, n) = X[:, rand(rng, 1:size(X, 2), n)]
 # to enable algorithms to accept either an integer or an RNG object
-rng_handler(rng::Integer) = Random.Xoshiro(rng)
+rng_handler(rng::Integer) = XoshiroOrMT(rng)
 rng_handler(rng::AbstractRNG) = rng
-
+# To support Julia 1.6 which does not have Xoshiro
+XoshiroOrMT(rng::Integer) = (VERSION <= v"1.7") ? Random.MersenneTwister(rng) : Random.Xoshiro(rng)
 
 """
 Get the number of rows of a table. This implementations comes from Tables.jl as used internally there.

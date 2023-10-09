@@ -50,7 +50,7 @@ const COMMON_DOCS = Dict(
     """,
     "RNG" => """
     - `rng::Union{AbstractRNG, Integer}=default_rng()`: Either an `AbstractRNG` object or an `Integer` 
-        seed to be used with `Xoshiro`
+        seed to be used with `Xoshiro` if the Julia `VERSION` supports it. Otherwise, uses MersenneTwister`.
     """,
 
     "K" => """

@@ -165,7 +165,7 @@ end
                 y;
                 k = 5,
                 ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9),
-                rng = Random.Xoshiro(1234),
+                rng = Imbalance.XoshiroOrMT(1234),
             )
             Xover2, yover2 =
                 smote(X, y; k = 5, ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 1234)

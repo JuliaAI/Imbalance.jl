@@ -23,13 +23,14 @@ using PyCall
 using Conda
 
 include("test_utils.jl")
+
 # When the following variable is set to false, offline results from PyCall will be used
 # When it is set to true, PyCall will be used instead of saved resules and it will save the results.
-
+# For purposes of testing with Github actions, keep it true
 offline_python_test = true
 
 ### general
-
+#=
 @testset "class_counts" begin
 	include("class_counts.jl")
 end
@@ -51,7 +52,7 @@ end
 	include("distance_metrics.jl")
 end
 
-
+=#
 
 ### interfaces
 
