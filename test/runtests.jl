@@ -14,7 +14,6 @@ using StableRNGs: StableRNG
 using TableTransforms
 using TransformsBase
 using ScientificTypes
-using Serialization
 using IOCapture
 using JLD2
 ENV["PYTHON"] = ""
