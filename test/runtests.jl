@@ -16,6 +16,7 @@ using TransformsBase
 using ScientificTypes
 using Serialization
 using IOCapture
+using JLD2
 ENV["PYTHON"] = ""
 using Pkg: Pkg;
 Pkg.build("PyCall");
@@ -54,6 +55,7 @@ end
 
 
 ### interfaces
+
 @testset "MLJ Interface" begin
 	include("interfaces/mlj_interface.jl")
 end
