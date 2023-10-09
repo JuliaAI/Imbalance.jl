@@ -1,7 +1,7 @@
 @testset "on average generates the same continuous point" begin
     X = [1.0 2.2 3.1 1.0]'
     R = Imbalance.XoshiroOrMT(42)
-    Z = mean([Imbalance.generate_new_random_walk_point(X, [2, 3], [1, 4], [5., 8.], [[1.0], [1.0]]; rng=R) for i in 1:100000])
+    Z = mean([Imbalance.generate_new_random_walk_point(X, [2, 3], [1, 4], [5., 8.], [[1.0], [1.0]]; rng=R) for i in 1:1000000])
     @test isapprox(collect(X), Z; rtol=0.01)
 end
 
