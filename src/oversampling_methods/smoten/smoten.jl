@@ -23,7 +23,7 @@ Check that all columns are either categorical or continuous. If not, throw an er
 function check_scitypes_smoten(ncols, cat_inds, cont_inds, types)
     bad_cols = setdiff(1:ncols, cat_inds)
     if !isempty(bad_cols)
-        throw(ArgumentError(ERR_BAD_NOM_COL_TYPES(bad_cols, types[bad_cols])))
+        throw((ERR_BAD_NOM_COL_TYPES(bad_cols, types[bad_cols])))
     end
     return
 end

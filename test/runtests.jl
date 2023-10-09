@@ -15,6 +15,7 @@ using TableTransforms
 using TransformsBase
 using ScientificTypes
 using IOCapture
+using JLD2
 ENV["PYTHON"] = ""
 using Pkg: Pkg;
 Pkg.build("PyCall");
@@ -22,6 +23,10 @@ using PyCall
 using Conda
 
 include("test_utils.jl")
+# When the following variable is set to false, offline results from PyCall will be used
+# When it is set to true, PyCall will be used instead of saved resules and it will save the results.
+
+offline_python_test = true
 
 ### general
 
@@ -41,6 +46,7 @@ end
 	include("extras.jl")
 end
 
+
 @testset "distance metrics" begin
 	include("distance_metrics.jl")
 end
@@ -48,6 +54,7 @@ end
 
 
 ### interfaces
+
 @testset "MLJ Interface" begin
 	include("interfaces/mlj_interface.jl")
 end
@@ -70,6 +77,7 @@ end
 @testset "Tomek Undersampler" begin
 	include("undersampling/tomek_undersample.jl")
 end
+
 
 @testset "Cluster Undersampler" begin
 	include("undersampling/cluster_undersample.jl")

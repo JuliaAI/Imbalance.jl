@@ -22,7 +22,7 @@ Check that all columns are categorical . If not, throw an error.
 function check_scitypes_smotenc(ncols, cat_inds, cont_inds, types)
     bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))
     if !isempty(bad_cols)
-        throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
+        throw((ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
     end
 end
 
@@ -138,7 +138,7 @@ function smotenc_per_class(
     
     p = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(p, cont_inds, cat_inds)
-    (knn_tree ∈ ["Ball", "Brute"]) || throw(ArgumentError(ERR_WRNG_TREE(knn_tree)))
+    (knn_tree ∈ ["Ball", "Brute"]) || throw((ERR_WRNG_TREE(knn_tree)))
     tree = (knn_tree == "Brute") ? BruteTree(X, metric) : BallTree(X, metric)
     knn_map, _ = knn(tree, X, k + 1, true)
 

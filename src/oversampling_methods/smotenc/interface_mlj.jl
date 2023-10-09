@@ -14,9 +14,9 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::SMOTENC)
     message = ""
     if s.k < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.k)))
+        throw((ERR_NONPOS_K(s.k)))
     end
-    (s.knn_tree ∈ ["Ball", "Brute"]) || throw(ArgumentError(ERR_WRNG_TREE(knn_tree)))
+    (s.knn_tree ∈ ["Ball", "Brute"]) || throw((ERR_WRNG_TREE(knn_tree)))
     return message
 end
 

@@ -20,7 +20,7 @@ function cluster_undersample_per_class(
     rng::Union{AbstractRNG,Integer} = default_rng()
 )
     (mode in ["center", "nearest"]) ||
-        throw(ArgumentError(ERR_INVALID_MODE))
+        throw((ERR_INVALID_MODE))
     # to undersample down to n points find k=n clusters
     result = kmeans(X, n; maxiter, rng)
     # the n cluster centers are the undersampled points

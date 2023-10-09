@@ -19,7 +19,7 @@ $(COMMON_DOCS["RATIOS"])
 # Method for handling ratios as a dictionary
 function get_class_counts(y::AbstractVector, ratios::Dict{T,<:AbstractFloat}; reference="majority") where {T}
     label_counts = countmap(y)
-    (reference in ["majority", "minority"]) || throw(ArgumentError("reference must be either 'majority' or 'minority'"))
+    (reference in ["majority", "minority"]) || throw(())
     ref_count = (reference == "majority") ? maximum(values(label_counts)) : minimum(values(label_counts))
     # extra_counts shall map each class to the number of extra samples needed
     # for the class to satisfy ratios
@@ -28,7 +28,7 @@ function get_class_counts(y::AbstractVector, ratios::Dict{T,<:AbstractFloat}; re
     # each class needs to be the size specified in `ratios`
     for (label, count) in label_counts
         (label in keys(ratios)) || continue
-        ratios[label] > 0 || throw(ArgumentError(ERR_INVALID_RATIO(label)))
+        ratios[label] > 0 || throw((ERR_INVALID_RATIO(label)))
         counts[label] = (reference == "majority") ?
             calculate_extra_counts(ratios[label], ref_count, count, label) :
             calculate_undersampled_counts(ratios[label], ref_count, count, label)
@@ -39,12 +39,12 @@ end
 # Method for handling ratios as AbstractFloat
 function get_class_counts(y::AbstractVector{T}, ratio::AbstractFloat; reference="majority") where {T}
     label_counts = countmap(y)
-    (reference in ["majority", "minority"]) || throw(ArgumentError("reference must be either 'majority' or 'minority'"))
+    (reference in ["majority", "minority"]) || throw(ERR_INVALID_REF)
     ref_count = (reference == "majority") ? maximum(values(label_counts)) : minimum(values(label_counts))
     counts = OrderedDict{T,Int}()
     # each class needs to be the size specified in `ratio`
     for (label, count) in label_counts
-        ratio > 0 || throw(ArgumentError(ERR_INVALID_RATIO(label)))
+        ratio > 0 || throw((ERR_INVALID_RATIO(label)))
         counts[label] = (reference == "majority") ?
         calculate_extra_counts(ratio, ref_count, count, label) :
         calculate_undersampled_counts(ratio, ref_count, count, label)
