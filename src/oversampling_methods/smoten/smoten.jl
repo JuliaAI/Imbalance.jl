@@ -160,6 +160,7 @@ $(COMMON_DOCS["OUTPUTS"])
 
 ```@repl
 using Imbalance
+using ScientificTypes
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -171,7 +172,7 @@ num_vals_per_category = [3, 2]
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 class_probs, num_vals_per_category, rng=42)                      
-julia> Imbalance.countmap(y)
+julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
@@ -185,7 +186,7 @@ X = coerce(X, autotype(X, :few_to_finite))
 # apply SMOTEN
 Xover, yover = smoten(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 
-julia> Imbalance.countmap(y)
+julia> Imbalance.checkbalance(yover)
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 

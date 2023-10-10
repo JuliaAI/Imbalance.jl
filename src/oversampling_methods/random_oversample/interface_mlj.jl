@@ -93,39 +93,36 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 
 # Example
-
-```
+```julia
 using MLJ
-import Random.seed!
-using MLUtils
-import StatsBase.countmap
+import Imbalance
 
-seed!(12345)
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 100, 5
+# generate a table and categorical vector accordingly
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, rng=42)    
 
-# Generate some imbalanced data:
-X, y = @load_iris # a table and a vector
-rand_inds = rand(1:150, 30)
-X, y = getobs(X, rand_inds), y[rand_inds]
+julia> Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 
-julia> countmap(y)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 12
-  "versicolor" => 5
-  "setosa"     => 13
-
-# load RandomOversampler model type:
+# load RandomOversampler
 RandomOversampler = @load RandomOversampler pkg=Imbalance
 
-# Oversample the minority classes to  sizes relative to the majority class:
-random_oversampler = RandomOversampler(ratios=Dict("setosa"=>0.9, "versicolor"=> 1.0, "virginica"=>0.7), rng=42)
-mach = machine(random_oversampler)
+# wrap the model in a machine
+oversampler = RandomOversampler(ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+mach = machine(oversampler)
+
+# provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 
-julia> countmap(yover)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 13
-  "versicolor" => 10
-  "setosa"     => 13
+julia> Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 ```
 
 """

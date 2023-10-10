@@ -144,7 +144,7 @@ X = coerce(X, :Column4=>Multiclass, :Column5=>Multiclass)
 # load RandomWalkOversampler model type:
 RandomWalkOversampler = @load RandomWalkOversampler pkg=Imbalance
 
-# Oversample the minority classes to  sizes relative to the majority class:
+# oversample the minority classes to  sizes relative to the majority class:
 oversampler = RandomWalkOversampler(ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
 mach = machine(oversampler)
 Xover, yover = transform(mach, X, y)

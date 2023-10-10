@@ -179,7 +179,7 @@ class_probs = [0.5, 0.2, 0.3]
 num_rows, num_continuous_feats = 1000, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                min_sep=0.01, class_probs, rng=42)            
+                                stds=[0.1 0.1 0.1], min_sep=0.01, class_probs, rng=42)            
 
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
@@ -191,8 +191,8 @@ Xover, yover = borderline_smote1(X, y; m = 3,
                k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
 
 julia> Imbalance.checkbalance(yover)
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 392 (80.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 441 (90.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 ```
 

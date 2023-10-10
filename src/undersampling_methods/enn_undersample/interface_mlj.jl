@@ -150,10 +150,10 @@ import Imbalance
 class_probs = [0.5, 0.2, 0.3]                         
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)     
 
-julia> checkbalance(y; ref="minority")
+julia> Imbalance.checkbalance(y; ref="minority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
@@ -161,12 +161,12 @@ julia> checkbalance(y; ref="minority")
 # load ENN model type:
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
-# Underample the majority classes to  sizes relative to the minority class:
+# underample the majority classes to  sizes relative to the minority class:
 undersampler = ENNUndersampler(min_ratios=0.5, rng=42)
 mach = machine(undersampler)
 X_under, y_under = transform(mach, X, y)
 
-julia> checkbalance(y_under; ref="minority")
+julia> Imbalance.checkbalance(y_under; ref="minority")
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 24 (240.0%) 

@@ -49,6 +49,7 @@ $(COMMON_DOCS["OUTPUTS"])
 
 
 # Example
+
 ```julia
 using Imbalance
 

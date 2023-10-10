@@ -123,11 +123,9 @@ $((COMMON_DOCS["OUTPUTS"]))
 # Example
 
 ```
-using MLJ
-import Random.seed!
-using MLUtils
-import StatsBase.countmap
-import Imbalance.generate_imbalanced_data
+using Imbalance
+using ScientificTypes
+import Imbalance
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -137,13 +135,12 @@ num_continuous_feats = 0
 num_vals_per_category = [3, 2]
 
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 class_probs, num_vals_per_category, rng=42)                      
-julia> StatsBase.countmap(y)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 33
-1 => 19
+julia> Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 
 julia> ScientificTypes.schema(X).scitypes
 (Count, Count)
@@ -154,16 +151,17 @@ X = coerce(X, autotype(X, :few_to_finite))
 # load SMOTEN
 SMOTEN = @load SMOTEN pkg=Imbalance
 
-# apply SMOTEN
-SMOTEN = SMOTEN(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-mach = machine(SMOTEN)
+# wrap the model in a machine
+oversampler = SMOTEN(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+mach = machine(oversampler)
+
+# provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 
-julia> StatsBase.countmap(yover)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 33
-1 => 19
+julia> Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 ```
 
 """

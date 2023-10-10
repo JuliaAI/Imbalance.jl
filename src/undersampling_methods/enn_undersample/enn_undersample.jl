@@ -107,7 +107,7 @@ julia> Imbalance.checkbalance(y; ref="minority")
 X_under, y_under = enn_undersample(X, y; k=3, keep_condition="only mode", 
                                    min_ratios=0.5, rng=42)
 
-julia> checkbalance(y_under; ref="minority")
+julia> Imbalance.checkbalance(y_under; ref="minority")
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 24 (240.0%) 
@@ -123,7 +123,7 @@ using MLJ
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
 # Wrap the model in a machine
-undersampler = ENNUndersampler(k=5, min_ratios=0.5, rng=42)
+undersampler = ENNUndersampler(k=3, keep_condition="only mode", min_ratios=0.5, rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)
@@ -150,7 +150,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)
 
 # Initiate ENN Undersampler model
-undersampler = ENNUndersampler(y_ind; min_ratios=0.5, rng=42)
+undersampler = ENNUndersampler(y_ind; k=3, keep_condition="only mode", rng=42)
 Xy_under = Xy |> undersampler                    
 Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```

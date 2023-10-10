@@ -113,15 +113,14 @@ $(COMMON_DOCS["OUTPUTS-UNDER"])
 # Example
 
 ```
-import MLJ
-
-using Imbalance
+using MLJ
+import Imbalance
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)   
 
 julia> Imbalance.checkbalance(y; ref="minority")

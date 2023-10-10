@@ -202,6 +202,7 @@ $(COMMON_DOCS["OUTPUTS"])
 # Example
 ```@repl
 using Imbalance
+using ScientificTypes
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -238,7 +239,7 @@ Simply pass the keyword arguments while initiating the `SMOTENC` model and pass 
 
 ```julia
 using MLJ
-SMOTEN = @load SMOTEN pkg=Imbalance
+SMOTENC = @load SMOTENC pkg=Imbalance
 
 # Wrap the model in a machine
 oversampler = SMOTENC(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)

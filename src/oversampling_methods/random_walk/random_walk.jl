@@ -153,6 +153,7 @@ $(COMMON_DOCS["OUTPUTS"])
 # Example
 ```@repl
 using Imbalance
+using ScientificTypes
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         

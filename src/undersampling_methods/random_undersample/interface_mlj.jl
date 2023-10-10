@@ -103,38 +103,37 @@ $(COMMON_DOCS["OUTPUTS-UNDER"])
 
 # Example
 
-```
+```julia
 using MLJ
-import Random.seed!
-using MLUtils
-import StatsBase.countmap
+import Imbalance
 
-seed!(12345)
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 100, 5
+# generate a table and categorical vector accordingly
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, rng=42)   
 
-# Generate some imbalanced data:
-X, y = @load_iris # a table and a vector
-rand_inds = rand(1:150, 30)
-X, y = getobs(X, rand_inds), y[rand_inds]
+julia> Imbalance.checkbalance(y; ref="minority")
+ 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
+ 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
+ 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
 
-julia> countmap(y)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 12
-  "versicolor" => 5
-  "setosa"     => 13
-
-# load RandomUndersampler model type:
+# load RandomUndersampler
 RandomUndersampler = @load RandomUndersampler pkg=Imbalance
 
-# Underample the majority classes to  sizes relative to the minority class:
-random_undersampler = RandomUndersampler(ratios=Dict("setosa"=>1.0, "versicolor"=> 1.0, "virginica"=>1.0), rng=42)
-mach = machine(random_undersampler)
-X_under, y_under = transform(mach, X, y)
+# wrap the model in a machine
+undersampler = RandomUndersampler(ratios=Dict(0=>1.0, 1=> 1.0, 2=>1.0), 
+               rng=42)
+mach = machine(undersampler)
 
-julia> countmap(y_under)
-Dict{CategoricalArrays.CategoricalValue{String, UInt32}, Int64} with 3 entries:
-  "virginica"  => 5
-  "versicolor" => 5
-  "setosa"     => 5
+# provide the data to transform (there is nothing to fit)
+X_under, y_under = transform(mach, X, y)
+                                      
+julia> Imbalance.checkbalance(y_under; ref="minority")
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 ```
 
 """
