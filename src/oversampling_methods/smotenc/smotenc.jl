@@ -168,7 +168,7 @@ Oversamples a dataset using `SMOTE-NC` (Synthetic Minority Oversampling Techniqu
 
 !!! warning "SMOTE-NC Assumes Continuous Features Exist"
     SMOTE-NC will not work if the dataset is purely nominal. In that case, refer to [SMOTE-N](@ref) instead.
-        Meanwhile, if the dataset is purely continuous then it's equivalent to the standard [SMOTE`](@ref).
+        Meanwhile, if the dataset is purely continuous then it's equivalent to the standard [SMOTE](@ref).
 
 # Positional Arguments
 
@@ -247,7 +247,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here](). Note that only `Table` input is supported by the MLJ interface for this method.
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/). Note that only `Table` input is supported by the MLJ interface for this method.
 
 
 
