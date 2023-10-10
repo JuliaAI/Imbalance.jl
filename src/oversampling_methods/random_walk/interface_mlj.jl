@@ -115,9 +115,9 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 # Example
 
-```
+```julia
 using MLJ
-import Random.seed!
+using ScientificTypes
 import Imbalance
 
 # set probability of each class

@@ -5,7 +5,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/effect_of_ratios/effect_of_ratios.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./effect_of_ratios/effect_of_ratios">
   <img src="./assets/iris smote.jpeg" alt="Image">
-  <div class="item-title">Effect of Ratios Hyperparameter
+  <div class="item-title">
+  <b>Effect of Ratios Hyperparameter</b>
   <p>In this tutorial we use an SVM and SMOTE and the Iris data to study 
                       how the decision regions change with the amount of oversampling</p>
   </div>
@@ -15,7 +16,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/effect_of_s/effect_of_s.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./effect_of_s/effect_of_s">
   <img src="./assets/iris rose.jpeg" alt="Image">
-  <div class="item-title">From Random Oversampling to ROSE
+  <div class="item-title">
+  <b>From Random Oversampling to ROSE</b>
   <p>In this tutorial we study the `s` parameter in rose and the effect
                         of increasing it.</p>
   </div>
@@ -25,7 +27,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/smote_churn_dataset/smote_churn_dataset.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./smote_churn_dataset/smote_churn_dataset">
   <img src="./assets/churn smote.jpeg" alt="Image">
-  <div class="item-title">SMOTE on Customer Churn Data
+  <div class="item-title">
+  <b>SMOTE on Customer Churn Data</b>
   <p>In this tutorial we apply SMOTE and random forest to predict customer churn based 
                         on continuous attributes.</p>
   </div>
@@ -35,7 +38,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/smote_mushroom/smoten_mushroom.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./smoten_mushroom/smoten_mushroom">
   <img src="./assets/mushy.jpeg" alt="Image">
-  <div class="item-title">SMOTEN on Mushroom Data
+  <div class="item-title">
+  <b>SMOTEN on Mushroom Data</b>
   <p>In this tutorial we use a purely categorical dataset to predict mushroom odour.</p>
   </div>
   </a>
@@ -44,7 +48,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/smotenc_churn_dataset/smotenc_churn_dataset.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./smotenc_churn_dataset/smotenc_churn_dataset">
   <img src="./assets/churn smoten.jpeg" alt="Image">
-  <div class="item-title">SMOTENC on Customer Churn Data
+  <div class="item-title">
+  <b>SMOTENC on Customer Churn Data</b>
   <p>In this tutorial we extend the SMOTE tutorial to include both categorical and continuous
                         data for churn prediction</p>
   </div>
@@ -54,7 +59,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/effect_of_k_enn/effect_of_k_enn.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./effect_of_k_enn/effect_of_k_enn">
   <img src="./assets/bmi.jpeg" alt="Image">
-  <div class="item-title">Effect of ENN Hyperparameters
+  <div class="item-title">
+  <b>Effect of ENN Hyperparameters</b>
   <p>In this tutorial we oberve the effects of the hyperparameters found in ENN undersampling with an SVM model</p>
   </div>
   </a>
@@ -63,7 +69,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/fraud_detection/fraud_detection.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./fraud_detection/fraud_detection">
   <img src="./assets/eth.jpeg" alt="Image">
-  <div class="item-title">SMOTE-Tomek for Ethereum Fraud Detection
+  <div class="item-title">
+  <b>SMOTE-Tomek for Ethereum Fraud Detection</b>
   <p>In this tutorial we combine SMOTE with TomekUndersampler and a classification model from MLJ for fraud detection</p>
   </div>
   </a>
@@ -72,7 +79,8 @@
   <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/cerebral_ensemble/cerebral_ensemble.ipynb"><img id="colab" src="./assets/colab.png"/></a>
   <a href="./cerebral_ensemble/cerebral_ensemble">
   <img src="./assets/brain.jpeg" alt="Image">
-  <div class="item-title">BalancedBagging for Cerebral Stroke Prediction
+  <div class="item-title">
+  <b>BalancedBagging for Cerebral Stroke Prediction</b>
   <p>In this tutorial we use BalancedBagging from MLJBalancing with Decision Tree to predict Cerebral Strokes</p>
   </div>
   </a>

@@ -142,7 +142,7 @@ $(COMMON_DOCS["OUTPUTS-UNDER"])
 
 # Example
 
-```
+```julia
 using MLJ
 import Imbalance
 

@@ -34,6 +34,7 @@ makedocs(sitename = "Imbalance.jl",
     "Tutorial" => Any[
 			"Introduction"=>"examples/walkthrough.md",
 			"More Examples"=>"examples.md",
+			"Google Colab"=>"examples/Colab.md"
 		],
 		"Contributing" => "contributing.md",
 		"About" => "about.md"],

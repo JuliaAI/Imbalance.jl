@@ -179,7 +179,7 @@ $(COMMON_DOCS["OUTPUTS"])
 
 # Example
 
-```@repl
+```julia
 using Imbalance
 
 # set probability of each class

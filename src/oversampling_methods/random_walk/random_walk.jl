@@ -151,7 +151,7 @@ $(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 $(COMMON_DOCS["OUTPUTS"])
 
 # Example
-```@repl
+```julia
 using Imbalance
 using ScientificTypes
 

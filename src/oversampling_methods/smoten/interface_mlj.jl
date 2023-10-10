@@ -122,8 +122,8 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 # Example
 
-```
-using Imbalance
+```julia
+using MLJ
 using ScientificTypes
 import Imbalance
 

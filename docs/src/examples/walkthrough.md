@@ -491,39 +491,3 @@ evaluate!(mach_over, resampling=cv, measure=balanced_accuracy)
 
 This results in an interval `70±7.2%` which can be viewed as a reasonable improvement over `62.1±9.13%`. The uncertainty in the intervals can be explained by the fact that the dataset is small with many classes.
 
-# Google Colab
-
-It is possible to run this tutorial and others in the examples section on Google Colab.
-- Click the Colab icon link as your hover on the example
-- Paste and run the following in the first cell
-
-
-```julia
-%%capture
-%%shell
-if ! command -v julia 3>&1 > /dev/null
-then
-    wget -q 'https://julialang-s3.julialang.org/bin/linux/x64/1.7/julia-1.7.2-linux-x86_64.tar.gz' \
-        -O /tmp/julia.tar.gz
-    tar -x -f /tmp/julia.tar.gz -C /usr/local --strip-components 1
-    rm /tmp/julia.tar.gz
-fi
-julia -e 'using Pkg; pkg"add IJulia; precompile;"'
-echo 'Done'
-
-```
-
-- Change the runtime to Julia from the toolbar
-- `Pkg.add` Imbalance and any needed packages (those being used)
-```julia
-Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", "StatsBase", "ScientificTypes", "Plots", "Impute", "CategoricalArrays"])
-```
-- Click the folder icon on the left, make a `datasets` folder and drag and drop it in there
-- Run the notebook
-
-Sincere thanks to [Julia-on-Colab](https://github.com/Dsantra92/Julia-on-Colab) for making this possible
-
-
-
-from convert import convert_to_md; convert_to_md('walkthrough', copy=False)
-```

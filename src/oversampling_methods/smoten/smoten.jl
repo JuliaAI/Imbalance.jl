@@ -158,7 +158,7 @@ $(COMMON_DOCS["OUTPUTS"])
 
 # Example
 
-```@repl
+```julia
 using Imbalance
 using ScientificTypes
 
