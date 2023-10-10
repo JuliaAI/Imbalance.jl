@@ -29,10 +29,10 @@ end
 
 
 @testset "end-to-end borderline smote test" begin
-    X, y = Imbalance.generate_imbalanced_data(500, 4; min_sep=0.0, class_probs=[0.25, 0.5, 0.25], type="Matrix", rng=Random.Xoshiro(42))
+    X, y = Imbalance.generate_imbalanced_data(500, 4; min_sep=0.0, stds=[3.0 3.0 3.0], class_probs=[0.25, 0.5, 0.25], type="Matrix", rng=Imbalance.XoshiroOrMT(42))
     # manual filter
     bool_filter = Imbalance.borderline1_filter(X', y; m=5)
-    Xover, yover = borderline_smote1(X, y; k = 5, m = 5, ratios = 1.0, rng=Random.Xoshiro(42))
+    Xover, yover = borderline_smote1(X, y; k = 5, m = 5, ratios = 1.0, rng=Imbalance.XoshiroOrMT(42))
 
     # get filtered and unfilitered data
     X1, y1 = X[bool_filter, :], y[bool_filter]
@@ -55,16 +55,16 @@ end
     X = [1.0 1.0; 2.0 2.0; 2.2 2.2; 4.0 4.0; 5.0 5.0; 6.0 6.0]
     y = [1, 1, 1, 1, 1, 1]
     @test_throws Imbalance.ERR_NO_BORDERLINE begin
-        Xover, yover = borderline_smote1(X, y; k = 2, m = 2, ratios = 1.3, rng=Random.Xoshiro(42), verbosity=0)
+        Xover, yover = borderline_smote1(X, y; k = 2, m = 2, ratios = 1.3, rng=Imbalance.XoshiroOrMT(42), verbosity=0)
     end
     m = -5
     @test_throws Imbalance.ERR_NONPOS_M(m) begin
-        Xover, yover = borderline_smote1(X, y; k = 2, m = m, ratios = 1.3, rng=Random.Xoshiro(42), verbosity=0)
+        Xover, yover = borderline_smote1(X, y; k = 2, m = m, ratios = 1.3, rng=Imbalance.XoshiroOrMT(42), verbosity=0)
     end
     y = [1, 1, 2, 2, 1, 1]
     m = 7
     @test_logs (:warn, Imbalance.WRN_M_TOO_BIG(m, 6)) (:warn, Imbalance.WRN_NO_BORDERLINE_CLASS) begin
-        Xover, yover = borderline_smote1(X, y; k = 1, m = m, ratios = 1.3, rng=Random.Xoshiro(42), verbosity=0)
+        Xover, yover = borderline_smote1(X, y; k = 1, m = m, ratios = 1.3, rng=Imbalance.XoshiroOrMT(42), verbosity=0)
     end
 end
 

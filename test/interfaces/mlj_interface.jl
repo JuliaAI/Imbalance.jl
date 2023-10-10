@@ -103,8 +103,9 @@ end
     num_rows = 500
     num_cont_feats = 4
     class_probs = [0.25, 0.5, 0.25]
+    stds = [3.0 3.0 3.0]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; min_sep=0.0, class_probs, rng=42)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats;  min_sep=0.0, stds, class_probs, rng=42)
 
     X = DataFrame(X)
     model =
@@ -114,7 +115,7 @@ end
     borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; min_sep=0.0, class_probs, type="Matrix", rng=42)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; min_sep=0.0, stds, class_probs, type="Matrix", rng=42)
     @test transform(mach, X, y) ==
         borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
