@@ -168,3 +168,4 @@ julia> Imbalance.checkbalance(yover)
 ```
 
 """
+BorderlineSMOTE1

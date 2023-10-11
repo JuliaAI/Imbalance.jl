@@ -129,7 +129,7 @@ num_vals_per_category = [3, 2]
 
 # generate a table and categorical vector accordingly
 X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
-								class_probs, num_vals_per_category, rng=42)                      
+                                          class_probs, num_vals_per_category, rng=42)                      
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
