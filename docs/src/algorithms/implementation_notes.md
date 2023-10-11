@@ -5,4 +5,6 @@ Papers often propose the resampling algorithm for the case of binary classificat
 ### Generalizing to Real Ratios
 Papers often proposes the resampling algorithm using integer ratios. For instance, a ratio of `2` would mean to double the amount of data in a class and a ratio of $2.2$ is not allowed or will be rounded. In `Imbalance.jl` any appropriate real ratio can be used and the ratio is relative to the size of the majority or minority class depending on whether the algorithm is oversampling or undersampling. The generalization occurs by randomly choosing points instead of looping on each point. That is, if a $2.2$ ratio corresponds to $227$ examples then $227$ examples are chosen randomly by replacement then applying resampling logic to each. Given an integer ratio $k$, this falls back to be on average equivalent to looping on the points $k$ times.
 
-[1] López, V., Fernández, A., Moreno-Torres, J.G., & Herrera, F. (2012). Analysis of preprocessing vs. cost-sensitive learning for imbalanced classification. Open problems on intrinsic data characteristics. Expert Systems with Applications, 39(7), 6585-6608.
+[1] Fernández, A., López, V., Galar, M., Del Jesus, M. J., and Herrera, F. (2013). Analysing the classifi-
+cation of imbalanced data-sets with multiple classes: Binarization techniques and ad-hoc approaches.
+Knowledge-Based Systems, 42:97–110.
