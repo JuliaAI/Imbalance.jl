@@ -17,6 +17,8 @@ def convert_to_md(name, copy=True):
         # Task 1: Replace "python" with "julia"
         content = content.replace('python', 'julia')
 
+        content = re.sub(r'```julia[\s\S]*?```', "", content, count=1)
+
         # Task 2: Remove ANSI escape codes (e.g., "[1m")
         ansi_escape_regex = re.compile(r'\x1B\[\d+m')
         content = re.sub(ansi_escape_regex, '', content)
