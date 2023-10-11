@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Extras · Imbalance.jl</title><meta name="title" content="Extras · Imbalance.jl"/><meta property="og:title" content="Extras · Imbalance.jl"/><meta property="twitter:title" content="Extras · Imbalance.jl"/><meta name="description" content="Documentation for Imbalance.jl."/><meta property="og:description" content="Documentation for Imbalance.jl."/><meta property="twitter:description" content="Documentation for Imbalance.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&amp;display=swap" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.gif" alt="Imbalance.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">Imbalance.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Introduction</a></li><li><span class="tocitem">Algorithms</span><ul><li><a class="tocitem" href="../oversampling_algorithms/">Oversampling</a></li><li><a class="tocitem" href="../undersampling_algorithms/">Undersampling</a></li><li><a class="tocitem" href="../mlj_balancing/">Combination</a></li><li><a class="tocitem" href="../implementation_notes/">Implementation Notes</a></li><li class="is-active"><a class="tocitem" href>Extras</a><ul class="internal"><li><a class="tocitem" href="#Generate-Imbalanced-Data"><span>Generate Imbalanced Data</span></a></li><li><a class="tocitem" href="#Check-Balance-of-Data"><span>Check Balance of Data</span></a></li></ul></li></ul></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../../examples/walkthrough/">Introduction</a></li><li><a class="tocitem" href="../../examples/">More Examples</a></li><li><a class="tocitem" href="../../examples/Colab/">Google Colab</a></li></ul></li><li><a class="tocitem" href="../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Algorithms</a></li><li class="is-active"><a href>Extras</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Extras</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/Imbalance.jl/" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Extras"><a class="docs-heading-anchor" href="#Extras">Extras</a><a id="Extras-1"></a><a class="docs-heading-anchor-permalink" href="#Extras" title="Permalink"></a></h1><h2 id="Generate-Imbalanced-Data"><a class="docs-heading-anchor" href="#Generate-Imbalanced-Data">Generate Imbalanced Data</a><a id="Generate-Imbalanced-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Imbalanced-Data" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.generate_imbalanced_data" href="#Imbalance.generate_imbalanced_data"><code>Imbalance.generate_imbalanced_data</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">generate_imbalanced_data(
+    num_rows, num_continuous_feats;
+    means=nothing, min_sep=1.0, stds=nothing,
+    num_vals_per_category = [],
+    class_probs = [0.8, 0.2],
+    type= &quot;ColTable&quot;, insert_y= nothing,
+    rng= default_rng(),
+)</code></pre><p>Generate <code>num_rows</code> observations with target <code>y</code> respecting given probabilities of      each class. Supports generating continuous features with a specific mean and variance     and categorical features given the number of levels in each variable.</p><p><strong>Arguments</strong></p><ul><li><code>num_rows::Integer</code>: Number of observations to generate</li><li><code>num_continuous_feats::Integer</code>: Number of continuous features to generate</li><li><code>means::AbstractVector=nothing</code>: A vector of means for each continuous feature (must be as long as <code>num_continuous_feats</code>). If <code>nothing</code>, then will   be set randomly</li><li><code>min_sep::AbstractFloat=1.0</code>: Minimum distance between any two randomly chosen means. Will have no effect if the   means are given.</li><li><code>stds::AbstractVector=nothing</code>: A vector of standard deviations for each continuous feature (must be as long as <code>num_continuous_feats</code>). If <code>nothing</code>, then   will be set randomly</li><li><code>num_vals_per_category::AbstractVector=[]</code>: A vector of the number of levels of each extra categorical feature.   the number of categorical features is inferred from this.</li><li><code>class_probs::AbstractVector{&lt;:AbstractFloat}=[0.8, 0.2]</code>: A vector of probabilities of each class. The number of classes is inferred   from this vector.</li><li><code>type::AbstractString=&quot;ColTable&quot;</code>: Can be <code>&quot;Matrix&quot;</code> or <code>&quot;ColTable&quot;</code>. In the latter case, a named-tuple of vectors is returned.</li><li><code>insert_y::Integer=nothing</code>: If not nothing, insert the class labels column at the given index in the table</li><li><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Random number generator. If integer then used as <code>seed</code> in <code>Random.Xoshiro(seed)</code> if   the Julia <code>VERSION</code> supports it. Otherwise, uses Random.MersenneTwister(seed).</li></ul><p><strong>Returns</strong></p><ul><li><code>X:</code>: A column table or matrix with generated imbalanced data with <code>num_rows</code> rows and    <code>num_continuous_feats + length(num_vals_per_category)</code> columns. If <code>insert_y</code> is specified as in integer   then <code>y</code> is also inserted at the specified index as an extra column.</li><li><code>y::CategoricalArray</code>: An abstract vector of class labels with labels <span>$0$</span>, <span>$1$</span>, <span>$2$</span>, ..., <span>$k-1$</span>   where <code>k=length(class_probs)</code></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+using Plots
+
+num_rows = 500
+num_features = 2
+# generating continuous features given mean and std
+X, y = generate_imbalanced_data(
+	num_rows,
+	num_features;
+	means = [1.0, 4.0, [7.0 9.0]],
+	stds = [1.0, [0.5 0.8], 2.0],
+	class_probs=[0.5, 0.2, 0.3],
+	type=&quot;Matrix&quot;,
+	rng = 42,
+)
+
+p = plot()
+[scatter!(p, X[:, 1][y.==yi], X[:, 2][y.==yi], label = &quot;$y=yi$&quot;) for yi in unique(y)]
+
+julia&gt; plot(p)</code></pre><p><img src="../../assets/gen_one.png" alt="generated data"/></p><pre><code class="language-julia hljs"># generating continuous features with random mean and std
+X, y = generate_imbalanced_data(
+	num_rows,
+	num_features;
+    min_sep=0.3,      
+	class_probs=[0.5, 0.2, 0.3],
+	type=&quot;Matrix&quot;,
+	rng = 33,
+)
+
+p = plot()
+[scatter!(p, X[:, 1][y.==yi], X[:, 2][y.==yi], label = &quot;$y=yi$&quot;) for yi in unique(y)]
+
+julia&gt; plot(p)</code></pre><p><img src="../../assets/gen_two.png" alt="generated data"/></p><pre><code class="language-julia hljs">num_rows = 500
+num_features = 2
+X, y = generate_imbalanced_data(
+	num_rows,
+	num_features;
+    num_vals_per_category = [3, 5, 2],
+	class_probs=[0.9, 0.1],
+	insert_y=4,
+	type=&quot;ColTable&quot;,
+	rng = 33,
+)
+
+julia&gt; X
+(Column1 = [0.883, 0.9, 0.577  …  0.887,],
+ Column2 = [0.578, 0.718, 0.378  …  0.573,],
+ Column3 = [2.0, 2.0, 3.0, …  2.0,],
+ Column4 = [0.0, 0.0, 0.0, …  0.0,],
+ Column5 = [2.0, 3.0, 4.0, …  4.0,],
+ Column6 = [1.0, 1.0, 2.0, …  1.0,],)</code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article><h2 id="Check-Balance-of-Data"><a class="docs-heading-anchor" href="#Check-Balance-of-Data">Check Balance of Data</a><a id="Check-Balance-of-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Check-Balance-of-Data" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.checkbalance" href="#Imbalance.checkbalance"><code>Imbalance.checkbalance</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">checkbalance(y; reference=&quot;majority&quot;)</code></pre><p>A visual version of <code>StatsBase.countmap</code> that returns nothing and prints how      many observations in the dataset belong to each class and their percentage     relative to the size of majority or minority class.</p><p><strong>Arguments</strong></p><ul><li><code>y::AbstractVector</code>: A vector of categorical values to test for imbalance</li><li><code>reference=&quot;majority&quot;</code>: Either <code>&quot;majority&quot;</code> or <code>&quot;minority&quot;</code> and decides whether the percentage should be   relative to the size of majority or minority class.</li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">num_rows = 50000
+num_features = 2
+X, y = generate_imbalanced_data(
+	num_rows,
+	num_features;
+	class_probs=[0.8, 0.2],
+	type=&quot;Matrix&quot;,
+	rng = 42,
+)
+
+julia&gt; Imbalance.checkbalance(y; ref=&quot;majority&quot;)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 10034 (25.1%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 39966 (100.0%) 
+
+julia&gt; Imbalance.checkbalance(y; ref=&quot;minority&quot;)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 10034 (100.0%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 39966 (398.3%) </code></pre></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../implementation_notes/">« Implementation Notes</a><a class="docs-footer-nextpage" href="../../examples/walkthrough/">Introduction »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.0 on <span class="colophon-date" title="Wednesday 11 October 2023 02:05">Wednesday 11 October 2023</span>. Using Julia version 1.6.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>SMOTE-Tomek for Ethereum Fraud Detection · Imbalance.jl</title><meta name="title" content="SMOTE-Tomek for Ethereum Fraud Detection · Imbalance.jl"/><meta property="og:title" content="SMOTE-Tomek for Ethereum Fraud Detection · Imbalance.jl"/><meta property="twitter:title" content="SMOTE-Tomek for Ethereum Fraud Detection · Imbalance.jl"/><meta name="description" content="Documentation for Imbalance.jl."/><meta property="og:description" content="Documentation for Imbalance.jl."/><meta property="twitter:description" content="Documentation for Imbalance.jl."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&amp;display=swap" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.gif" alt="Imbalance.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">Imbalance.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Introduction</a></li><li><span class="tocitem">Algorithms</span><ul><li><a class="tocitem" href="../../../algorithms/oversampling_algorithms/">Oversampling</a></li><li><a class="tocitem" href="../../../algorithms/undersampling_algorithms/">Undersampling</a></li><li><a class="tocitem" href="../../../algorithms/mlj_balancing/">Combination</a></li><li><a class="tocitem" href="../../../algorithms/implementation_notes/">Implementation Notes</a></li><li><a class="tocitem" href="../../../algorithms/extra_algorithms/">Extras</a></li></ul></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../../walkthrough/">Introduction</a></li><li><a class="tocitem" href="../../">More Examples</a></li><li><a class="tocitem" href="../../Colab/">Google Colab</a></li></ul></li><li><a class="tocitem" href="../../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>SMOTE-Tomek for Ethereum Fraud Detection</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>SMOTE-Tomek for Ethereum Fraud Detection</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/Imbalance.jl/" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="SMOTE-Tomek-for-Ethereum-Fraud-Detection"><a class="docs-heading-anchor" href="#SMOTE-Tomek-for-Ethereum-Fraud-Detection">SMOTE-Tomek for Ethereum Fraud Detection</a><a id="SMOTE-Tomek-for-Ethereum-Fraud-Detection-1"></a><a class="docs-heading-anchor-permalink" href="#SMOTE-Tomek-for-Ethereum-Fraud-Detection" title="Permalink"></a></h1><pre><code class="language-julia hljs">import Pkg;
+Pkg.add([&quot;Random&quot;, &quot;CSV&quot;, &quot;DataFrames&quot;, &quot;MLJ&quot;, &quot;Imbalance&quot;, &quot;MLJBalancing&quot;, 
+         &quot;ScientificTypes&quot;,&quot;Impute&quot;, &quot;StatsBase&quot;,  &quot;Plots&quot;, &quot;Measures&quot;, &quot;HTTP&quot;])
+
+using Imbalance
+using MLJBalancing
+using CSV
+using DataFrames
+using ScientificTypes
+using CategoricalArrays
+using MLJ
+using Plots
+using Random
+using Impute
+using HTTP: download</code></pre><h2 id="Loading-Data"><a class="docs-heading-anchor" href="#Loading-Data">Loading Data</a><a id="Loading-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Loading-Data" title="Permalink"></a></h2><p>In this example, we will consider the <a href="https://www.kaggle.com/datasets/vagifa/ethereum-frauddetection-dataset">Ethereum Fraud Detection Dataset</a> found on Kaggle where the objective is to predict whether an Ethereum transaction is fraud or not (called <code>FLAG</code>) given some features about the transaction.</p><p><code>CSV</code> gives us the ability to easily read the dataset after it&#39;s downloaded as follows</p><pre><code class="language-julia hljs">download(&quot;https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/fraud_detection/transactions.csv&quot;, &quot;./&quot;)
+
+df = CSV.read(&quot;./transactions.csv&quot;, DataFrame)
+first(df, 5) |&gt; pretty</code></pre><p>There are plenty of useless columns that we can get rid of such as <code>Column1</code>, <code>Index</code> and probably, <code>Address</code>. We also have to get rid of the categorical features because SMOTE won&#39;t be able to deal with those and it leaves us with more options for the model.</p><pre><code class="language-julia hljs">df = df[:,
+	Not([
+		:Column1,
+		:Index,
+		:Address,
+		Symbol(&quot; ERC20 most sent token type&quot;),
+		Symbol(&quot; ERC20_most_rec_token_type&quot;),
+	]),
+] 
+first(df, 5) |&gt; pretty</code></pre><p>If you scroll through the printed data frame, you find that some columns also have <code>Missing</code> for their element type, meaning that they may be containing missing values. We will use <em>linear interpolation</em>, <em>last-observation carried forward</em> and <em>next observation carried backward</em> techniques to fill up the missing values. This will allow us to call <code>disallowmissing!(df)</code> to return a dataframe where <code>Missing</code> is not an element type for any column.</p><pre><code class="language-julia hljs">df = Impute.interp(df) |&gt; Impute.locf() |&gt; Impute.nocb(); disallowmissing!(df)
+first(df, 5) |&gt; pretty</code></pre><h2 id="Coercing-Data"><a class="docs-heading-anchor" href="#Coercing-Data">Coercing Data</a><a id="Coercing-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Coercing-Data" title="Permalink"></a></h2><p>Let&#39;s look at the schema first</p><pre><code class="language-julia hljs">ScientificTypes.schema(df)</code></pre><pre><code class="nohighlight hljs">┌──────────────────────────────────────────────────────┬────────────┬─────────┐
+│ names                                                │ scitypes   │ types   │
+├──────────────────────────────────────────────────────┼────────────┼─────────┤
+│ FLAG                                                 │ Count      │ Int64   │
+│ Avg min between sent tnx                             │ Continuous │ Float64 │
+│ Avg min between received tnx                         │ Continuous │ Float64 │
+│ Time Diff between first and last (Mins)              │ Continuous │ Float64 │
+│ Sent tnx                                             │ Count      │ Int64   │
+│ Received Tnx                                         │ Count      │ Int64   │
+│ Number of Created Contracts                          │ Count      │ Int64   │
+│ Unique Received From Addresses                       │ Count      │ Int64   │
+│ Unique Sent To Addresses                             │ Count      │ Int64   │
+│ min value received                                   │ Continuous │ Float64 │
+│ max value received                                   │ Continuous │ Float64 │
+│ avg val received                                     │ Continuous │ Float64 │
+│ min val sent                                         │ Continuous │ Float64 │
+│ max val sent                                         │ Continuous │ Float64 │
+│ avg val sent                                         │ Continuous │ Float64 │
+│ min value sent to contract                           │ Continuous │ Float64 │
+│                          ⋮                           │     ⋮      │    ⋮    │
+└──────────────────────────────────────────────────────┴────────────┴─────────┘
+                                                                30 rows omitted</code></pre><p>The <code>FLAG</code> target should definitely be Multiclass, the rest seems fine.</p><pre><code class="language-julia hljs">df = coerce(df, :FLAG =&gt;Multiclass)
+ScientificTypes.schema(df)</code></pre><pre><code class="nohighlight hljs">┌──────────────────────────────────────────────────────┬───────────────┬────────
+│ names                                                │ scitypes      │ types ⋯
+├──────────────────────────────────────────────────────┼───────────────┼────────
+│ FLAG                                                 │ Multiclass{2} │ Categ ⋯
+│ Avg min between sent tnx                             │ Continuous    │ Float ⋯
+│ Avg min between received tnx                         │ Continuous    │ Float ⋯
+│ Time Diff between first and last (Mins)              │ Continuous    │ Float ⋯
+│ Sent tnx                                             │ Count         │ Int64 ⋯
+│ Received Tnx                                         │ Count         │ Int64 ⋯
+│ Number of Created Contracts                          │ Count         │ Int64 ⋯
+│ Unique Received From Addresses                       │ Count         │ Int64 ⋯
+│ Unique Sent To Addresses                             │ Count         │ Int64 ⋯
+│ min value received                                   │ Continuous    │ Float ⋯
+│ max value received                                   │ Continuous    │ Float ⋯
+│ avg val received                                     │ Continuous    │ Float ⋯
+│ min val sent                                         │ Continuous    │ Float ⋯
+│ max val sent                                         │ Continuous    │ Float ⋯
+│ avg val sent                                         │ Continuous    │ Float ⋯
+│ min value sent to contract                           │ Continuous    │ Float ⋯
+│                          ⋮                           │       ⋮       │       ⋱
+└──────────────────────────────────────────────────────┴───────────────┴────────
+                                                    1 column and 30 rows omitted</code></pre><h2 id="Unpacking-and-Splitting-Data"><a class="docs-heading-anchor" href="#Unpacking-and-Splitting-Data">Unpacking and Splitting Data</a><a id="Unpacking-and-Splitting-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Unpacking-and-Splitting-Data" title="Permalink"></a></h2><p>Both <code>MLJ</code> and the pure functional interface of <code>Imbalance</code> assume that the observations table <code>X</code> and target vector <code>y</code> are separate. We can accomplish that by using <code>unpack</code> from <code>MLJ</code></p><pre><code class="language-julia hljs">y, X = unpack(df, ==(:FLAG); rng=123);
+first(X, 5) |&gt; pretty</code></pre><p>Splitting the data into train and test portions is also easy using <code>MLJ</code>&#39;s <code>partition</code> function.</p><pre><code class="language-julia hljs">(X_train, X_test), (y_train, y_test) = partition(
+	(X, y),
+	0.8,
+	multi = true,
+	shuffle = true,
+	stratify = y,
+	rng = Random.Xoshiro(41)
+)</code></pre><h2 id="Resampling"><a class="docs-heading-anchor" href="#Resampling">Resampling</a><a id="Resampling-1"></a><a class="docs-heading-anchor-permalink" href="#Resampling" title="Permalink"></a></h2><p>Before deciding to oversample, let&#39;s see how adverse is the imbalance problem, if it exists. Ideally, you may as well check if the classification model is robust to this problem.</p><pre><code class="language-julia hljs">checkbalance(y)         # comes from Imbalance</code></pre><p>This signals a potential class imbalance problem. Let&#39;s consider using <code>SMOTE-Tomek</code> to resample this data. The <code>SMOTE-Tomek</code> algorithm is nothing but <code>SMOTE</code> followed by <code>TomekUndersampler</code>. We can wrap these in a pipeline along with a classification model for predictions using <code>BalancedModel</code> from <code>MLJBalancing</code>. Let&#39;s go for a <code>RandomForestClassifier</code> from <code>DecisionTree.jl</code> for the model.</p><pre><code class="language-julia hljs">import Pkg; Pkg.add(&quot;DecisionTree&quot;)</code></pre><h4 id="Construct-the-Resampling-and-Classification-Models"><a class="docs-heading-anchor" href="#Construct-the-Resampling-and-Classification-Models">Construct the Resampling &amp; Classification Models</a><a id="Construct-the-Resampling-and-Classification-Models-1"></a><a class="docs-heading-anchor-permalink" href="#Construct-the-Resampling-and-Classification-Models" title="Permalink"></a></h4><pre><code class="language-julia hljs">oversampler = Imbalance.MLJ.SMOTE(ratios=Dict(1=&gt;0.5), rng=Random.Xoshiro(42))
+undersampler = Imbalance.MLJ.TomekUndersampler(min_ratios=Dict(0=&gt;1.3), force_min_ratios=true)
+RandomForestClassifier = @load RandomForestClassifier pkg=DecisionTree
+model = RandomForestClassifier(n_trees=2, rng=Random.Xoshiro(42))</code></pre><pre><code class="nohighlight hljs">RandomForestClassifier(
+  max_depth = -1, 
+  min_samples_leaf = 1, 
+  min_samples_split = 2, 
+  min_purity_increase = 0.0, 
+  n_subfeatures = -1, 
+  n_trees = 2, 
+  sampling_fraction = 0.7, 
+  feature_importance = :impurity, 
+  rng = Xoshiro(0xa379de7eeeb2a4e8, 0x953dccb6b532b3af, 0xf597b8ff8cfd652a, 0xccd7337c571680d1))</code></pre><h4 id="Form-the-Pipeline-using-BalancedModel"><a class="docs-heading-anchor" href="#Form-the-Pipeline-using-BalancedModel">Form the Pipeline using <code>BalancedModel</code></a><a id="Form-the-Pipeline-using-BalancedModel-1"></a><a class="docs-heading-anchor-permalink" href="#Form-the-Pipeline-using-BalancedModel" title="Permalink"></a></h4><pre><code class="language-julia hljs">balanced_model = BalancedModel(model=model, balancer1=oversampler, balancer2=undersampler)</code></pre><pre><code class="nohighlight hljs">BalancedModelProbabilistic(
+  model = RandomForestClassifier(
+        max_depth = -1, 
+        min_samples_leaf = 1, 
+        min_samples_split = 2, 
+        min_purity_increase = 0.0, 
+        n_subfeatures = -1, 
+        n_trees = 2, 
+        sampling_fraction = 0.7, 
+        feature_importance = :impurity, 
+        rng = Xoshiro(0xa379de7eeeb2a4e8, 0x953dccb6b532b3af, 0xf597b8ff8cfd652a, 0xccd7337c571680d1)), 
+  balancer1 = SMOTE(
+        k = 5, 
+        ratios = Dict(1 =&gt; 0.5), 
+        rng = Xoshiro(0xa379de7eeeb2a4e8, 0x953dccb6b532b3af, 0xf597b8ff8cfd652a, 0xccd7337c571680d1), 
+        try_preserve_type = true), 
+  balancer2 = TomekUndersampler(
+        min_ratios = Dict(0 =&gt; 1.3), 
+        force_min_ratios = true, 
+        rng = TaskLocalRNG(), 
+        try_preserve_type = true))</code></pre><p>Now we can treat <code>balanced_model</code> like any <code>MLJ</code> model.</p><h4 id="Fit-the-BalancedModel"><a class="docs-heading-anchor" href="#Fit-the-BalancedModel">Fit the <code>BalancedModel</code></a><a id="Fit-the-BalancedModel-1"></a><a class="docs-heading-anchor-permalink" href="#Fit-the-BalancedModel" title="Permalink"></a></h4><pre><code class="language-julia hljs"># 3. Wrap it with the data in a machine
+mach_over = machine(balanced_model, X_train, y_train)
+
+# 4. fit the machine learning model
+fit!(mach_over, verbosity=0)</code></pre><pre><code class="nohighlight hljs">trained Machine; does not cache data
+  model: BalancedModelProbabilistic(model = RandomForestClassifier(max_depth = -1, …), …)
+  args: 
+    1:	Source @967 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}
+    2:	Source @913 ⏎ AbstractVector{Multiclass{2}}</code></pre><h4 id="Validate-the-BalancedModel"><a class="docs-heading-anchor" href="#Validate-the-BalancedModel">Validate the <code>BalancedModel</code></a><a id="Validate-the-BalancedModel-1"></a><a class="docs-heading-anchor-permalink" href="#Validate-the-BalancedModel" title="Permalink"></a></h4><pre><code class="language-julia hljs">cv=CV(nfolds=10)
+evaluate!(mach_over, resampling=cv, measure=balanced_accuracy) </code></pre><pre><code class="nohighlight hljs">PerformanceEvaluation object with these fields:
+  model, measure, operation, measurement, per_fold,
+  per_observation, fitted_params_per_fold,
+  report_per_fold, train_test_rows, resampling, repeats
+Extract:
+┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+│ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+│ BalancedAccuracy(   │ predict_mode │ 0.93        │ 0.00757 │ [0.927, 0.936,  ⋯
+│   adjusted = false) │              │             │         │                 ⋯
+└─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                1 column omitted</code></pre><h4 id="Compare-with-RandomForestClassifier-only"><a class="docs-heading-anchor" href="#Compare-with-RandomForestClassifier-only">Compare with <code>RandomForestClassifier</code> only</a><a id="Compare-with-RandomForestClassifier-only-1"></a><a class="docs-heading-anchor-permalink" href="#Compare-with-RandomForestClassifier-only" title="Permalink"></a></h4><p>To see if this represents any form of improvement, fitting and validating the original model by itself.</p><pre><code class="language-julia hljs"># 3. Wrap it with the data in a machine
+mach = machine(model, X_train, y_train, scitype_check_level=0)
+fit!(mach)
+
+evaluate!(mach, resampling=cv, measure=balanced_accuracy) </code></pre><pre><code class="nohighlight hljs">PerformanceEvaluation object with these fields:
+  model, measure, operation, measurement, per_fold,
+  per_observation, fitted_params_per_fold,
+  report_per_fold, train_test_rows, resampling, repeats
+Extract:
+┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+│ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+│ BalancedAccuracy(   │ predict_mode │ 0.908       │ 0.00932 │ [0.903, 0.898,  ⋯
+│   adjusted = false) │              │             │         │                 ⋯
+└─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                1 column omitted</code></pre><p>Assuming normal scores, the <code>95%</code> confidence interval was <code>90.8±0.9</code> and after resampling it has become <code>93±0.7</code> which corresponds to a small improvement in accuracy.</p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.0 on <span class="colophon-date" title="Wednesday 11 October 2023 02:05">Wednesday 11 October 2023</span>. Using Julia version 1.6.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Effect of ENN Hyperparameters · Imbalance.jl</title><meta name="title" content="Effect of ENN Hyperparameters · Imbalance.jl"/><meta property="og:title" content="Effect of ENN Hyperparameters · Imbalance.jl"/><meta property="twitter:title" content="Effect of ENN Hyperparameters · Imbalance.jl"/><meta name="description" content="Documentation for Imbalance.jl."/><meta property="og:description" content="Documentation for Imbalance.jl."/><meta property="twitter:description" content="Documentation for Imbalance.jl."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&amp;display=swap" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.gif" alt="Imbalance.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">Imbalance.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Introduction</a></li><li><span class="tocitem">Algorithms</span><ul><li><a class="tocitem" href="../../../algorithms/oversampling_algorithms/">Oversampling</a></li><li><a class="tocitem" href="../../../algorithms/undersampling_algorithms/">Undersampling</a></li><li><a class="tocitem" href="../../../algorithms/mlj_balancing/">Combination</a></li><li><a class="tocitem" href="../../../algorithms/implementation_notes/">Implementation Notes</a></li><li><a class="tocitem" href="../../../algorithms/extra_algorithms/">Extras</a></li></ul></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../../walkthrough/">Introduction</a></li><li><a class="tocitem" href="../../">More Examples</a></li><li><a class="tocitem" href="../../Colab/">Google Colab</a></li></ul></li><li><a class="tocitem" href="../../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>Effect of ENN Hyperparameters</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Effect of ENN Hyperparameters</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/Imbalance.jl/" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Effect-of-ENN-Hyperparameters"><a class="docs-heading-anchor" href="#Effect-of-ENN-Hyperparameters">Effect of ENN Hyperparameters</a><a id="Effect-of-ENN-Hyperparameters-1"></a><a class="docs-heading-anchor-permalink" href="#Effect-of-ENN-Hyperparameters" title="Permalink"></a></h1><pre><code class="language-julia hljs">import Pkg;
+Pkg.add([&quot;Random&quot;, &quot;CSV&quot;, &quot;DataFrames&quot;, &quot;MLJ&quot;, &quot;Imbalance&quot;, 
+         &quot;ScientificTypes&quot;,  &quot;Plots&quot;, &quot;Measures&quot;, &quot;HTTP&quot;])
+
+using Random
+using CSV
+using DataFrames
+using MLJ
+using Imbalance
+using ScientificTypes
+using Plots, Measures
+using HTTP: download</code></pre><h2 id="Loading-Data"><a class="docs-heading-anchor" href="#Loading-Data">Loading Data</a><a id="Loading-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Loading-Data" title="Permalink"></a></h2><p>In this example, we will consider the <a href="https://www.kaggle.com/datasets/yasserh/bmidataset">BMI dataset</a> found on Kaggle where the objective is to predict the BMI index of individuals given their gender, weight and height. </p><p><code>CSV</code> gives us the ability to easily read the dataset after it&#39;s downloaded as follows</p><pre><code class="language-julia hljs">download(&quot;https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/effect_of_k_enn/bmi.csv&quot;, &quot;./&quot;)
+
+df = CSV.read(&quot;./bmi.csv&quot;, DataFrame)
+
+# Display the first 5 rows with DataFrames
+first(df, 5) |&gt; pretty</code></pre><pre><code class="nohighlight hljs">┌─────────┬────────┬────────┬───────┐
+│ Gender  │ Height │ Weight │ Index │
+│ String7 │ Int64  │ Int64  │ Int64 │
+│ Textual │ Count  │ Count  │ Count │
+├─────────┼────────┼────────┼───────┤
+│ Male    │ 174    │ 96     │ 4     │
+│ Male    │ 189    │ 87     │ 2     │
+│ Female  │ 185    │ 110    │ 4     │
+│ Female  │ 195    │ 104    │ 3     │
+│ Male    │ 149    │ 61     │ 3     │
+└─────────┴────────┴────────┴───────┘</code></pre><p>We will drop the gender attribute for purposes of visualization and to have more options for the model.</p><pre><code class="language-julia hljs">select!(df, Not(:Gender)) |&gt; pretty</code></pre><h2 id="Coercing-Data"><a class="docs-heading-anchor" href="#Coercing-Data">Coercing Data</a><a id="Coercing-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Coercing-Data" title="Permalink"></a></h2><pre><code class="language-julia hljs">ScientificTypes.schema(df)</code></pre><pre><code class="nohighlight hljs">┌────────┬──────────┬───────┐
+│ names  │ scitypes │ types │
+├────────┼──────────┼───────┤
+│ Height │ Count    │ Int64 │
+│ Weight │ Count    │ Int64 │
+│ Index  │ Count    │ Int64 │
+└────────┴──────────┴───────┘</code></pre><p>Weight and Height should be <code>Continuous</code> and Index should be an <code>OrderedFactor</code></p><pre><code class="language-julia hljs">df = coerce(df,
+            :Height =&gt; Continuous,
+            :Weight =&gt; Continuous,
+            :Index =&gt; OrderedFactor)
+ScientificTypes.schema(df)</code></pre><pre><code class="nohighlight hljs">┌────────┬──────────────────┬─────────────────────────────────┐
+│ names  │ scitypes         │ types                           │
+├────────┼──────────────────┼─────────────────────────────────┤
+│ Height │ Continuous       │ Float64                         │
+│ Weight │ Continuous       │ Float64                         │
+│ Index  │ OrderedFactor{6} │ CategoricalValue{Int64, UInt32} │
+└────────┴──────────────────┴─────────────────────────────────┘</code></pre><h2 id="Unpacking-Data"><a class="docs-heading-anchor" href="#Unpacking-Data">Unpacking Data</a><a id="Unpacking-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Unpacking-Data" title="Permalink"></a></h2><p>Both <code>MLJ</code> and the pure functional interface of <code>Imbalance</code> assume that the observations table <code>X</code> and target vector <code>y</code> are separate. We can accomplish that by using <code>unpack</code> from <code>MLJ</code></p><pre><code class="language-julia hljs">y, X = unpack(df, ==(:Index); rng=123);
+first(X, 5) |&gt; pretty</code></pre><pre><code class="nohighlight hljs">┌────────────┬────────────┐
+│ Height     │ Weight     │
+│ Float64    │ Float64    │
+│ Continuous │ Continuous │
+├────────────┼────────────┤
+│ 173.0      │ 82.0       │
+│ 187.0      │ 121.0      │
+│ 144.0      │ 145.0      │
+│ 156.0      │ 74.0       │
+│ 167.0      │ 151.0      │
+└────────────┴────────────┘</code></pre><p>We will skip splitting the data since the main purpose of this tutorial is visualization.</p><h2 id="Undersampling"><a class="docs-heading-anchor" href="#Undersampling">Undersampling</a><a id="Undersampling-1"></a><a class="docs-heading-anchor-permalink" href="#Undersampling" title="Permalink"></a></h2><p>Before undersampling, let&#39;s check the balance of the data</p><pre><code class="language-julia hljs">checkbalance(y; ref=&quot;minority&quot;)</code></pre><pre><code class="nohighlight hljs">0: ▇▇▇ 13 (100.0%) 
+1: ▇▇▇▇▇▇ 22 (169.2%) 
+3: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 68 (523.1%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 69 (530.8%) 
+4: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 130 (1000.0%) 
+5: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 198 (1523.1%)</code></pre><p>Let&#39;s use ENN undersampling to undersample the data. ENN undersamples the data by &quot;cleaning it out&quot; or in another words deleting any point that violates a certain condition. We can limit the number of points that are deleted by setting the <code>min_ratios</code> parameter. </p><p>We will set <code>k=1</code> and <code>keep_condition=&quot;only mode&quot;</code> which means that any point with a label that is not the only most common one amongst its 1-nearest neighbors will be deleted (i.e., must have same label as its nearest neighbor). By setting <code>min_ratios=1.0</code> we constraint that points should never be deleted form any class if it&#39;s ratio relative to the minority class will be less than <code>1.0</code>. This also means that no points will be deleted from the minority class.</p><pre><code class="language-julia hljs">X_under, y_under = enn_undersample(
+	X,
+	y;
+	k = 1,
+	keep_condition = &quot;only mode&quot;,
+	min_ratios=0.01,
+	rng = 42,
+)</code></pre><pre><code class="nohighlight hljs">(448×2 DataFrame
+ Row │ Height   Weight  
+     │ Float64  Float64 
+─────┼──────────────────
+   1 │   173.0     82.0
+   2 │   182.0     70.0
+   3 │   156.0     52.0
+   4 │   172.0     67.0
+   5 │   162.0     58.0
+   6 │   180.0     75.0
+   7 │   190.0     83.0
+   8 │   195.0     81.0
+  ⋮  │    ⋮        ⋮
+ 442 │   196.0     50.0
+ 443 │   191.0     54.0
+ 444 │   185.0     52.0
+ 445 │   182.0     50.0
+ 446 │   198.0     50.0
+ 447 │   198.0     50.0
+ 448 │   181.0     51.0
+        433 rows omitted, CategoricalArrays.CategoricalValue{Int64, UInt32}[2, 2, 2, 2, 2, 2, 2, 2, 2, 2  …  0, 0, 0, 0, 0, 0, 0, 0, 0, 0])</code></pre><pre><code class="language-julia hljs">checkbalance(y_under; ref=&quot;minority&quot;)</code></pre><pre><code class="nohighlight hljs">0: ▇▇▇ 11 (100.0%) 
+1: ▇▇▇▇▇ 19 (172.7%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 56 (509.1%) 
+3: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 58 (527.3%) 
+4: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 115 (1045.5%) 
+5: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 189 (1718.2%)</code></pre><p>This indeeds aligns with the desired ratios we have set earlier.</p><h2 id="Training-the-Model"><a class="docs-heading-anchor" href="#Training-the-Model">Training the Model</a><a id="Training-the-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Training-the-Model" title="Permalink"></a></h2><p>Because we have scientific types setup, we can easily check what models will be able to train on our data. This should guarantee that the model we choose won&#39;t throw an error due to types after feeding it the data.</p><pre><code class="language-julia hljs">models(matching(X_under, y_under))</code></pre><pre><code class="nohighlight hljs">53-element Vector{NamedTuple{(:name, :package_name, :is_supervised, :abstract_type, :deep_properties, :docstring, :fit_data_scitype, :human_name, :hyperparameter_ranges, :hyperparameter_types, :hyperparameters, :implemented_methods, :inverse_transform_scitype, :is_pure_julia, :is_wrapper, :iteration_parameter, :load_path, :package_license, :package_url, :package_uuid, :predict_scitype, :prediction_type, :reporting_operations, :reports_feature_importances, :supports_class_weights, :supports_online, :supports_training_losses, :supports_weights, :transform_scitype, :input_scitype, :target_scitype, :output_scitype)}}:
+ (name = AdaBoostClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = AdaBoostStumpClassifier, package_name = DecisionTree, ... )
+ (name = BaggingClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianLDA, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianLDA, package_name = MultivariateStats, ... )
+ (name = BayesianQDA, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianSubspaceLDA, package_name = MultivariateStats, ... )
+ (name = CatBoostClassifier, package_name = CatBoost, ... )
+ (name = ConstantClassifier, package_name = MLJModels, ... )
+ (name = DecisionTreeClassifier, package_name = BetaML, ... )
+ ⋮
+ (name = SGDClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVC, package_name = LIBSVM, ... )
+ (name = SVMClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVMLinearClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVMNuClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = StableForestClassifier, package_name = SIRUS, ... )
+ (name = StableRulesClassifier, package_name = SIRUS, ... )
+ (name = SubspaceLDA, package_name = MultivariateStats, ... )
+ (name = XGBoostClassifier, package_name = XGBoost, ... )</code></pre><p>Let&#39;s go for an <code>SVM</code> from <code>LIBSVM</code></p><pre><code class="language-julia hljs">import Pkg; Pkg.add(&quot;LIBSVM&quot;)
+import LIBSVM;</code></pre><pre><code class="nohighlight hljs">    Updating registry at `~/.julia/registries/General`
+    Updating git-repo `https://github.com/JuliaRegistries/General.git`
+   Resolving package versions...
+  No Changes to `~/Documents/GitHub/Imbalance.jl/docs/Project.toml`
+  No Changes to `~/Documents/GitHub/Imbalance.jl/docs/Manifest.toml`</code></pre><h3 id="Before-Undersampling"><a class="docs-heading-anchor" href="#Before-Undersampling">Before Undersampling</a><a id="Before-Undersampling-1"></a><a class="docs-heading-anchor-permalink" href="#Before-Undersampling" title="Permalink"></a></h3><pre><code class="language-julia hljs"># 1. Load the model
+SVC = @load SVC pkg=LIBSVM
+
+# 2. Instantiate it
+model = SVC(kernel=LIBSVM.Kernel.RadialBasis, gamma=0.01) ## instance
+
+# 3. Wrap it with the data in a machine
+mach = machine(model, X, y)
+
+# 4. fit the machine learning model
+fit!(mach)</code></pre><pre><code class="nohighlight hljs">import MLJLIBSVMInterface ✔
+
+
+┌ Info: For silent loading, specify `verbosity=0`. 
+└ @ Main /Users/essam/.julia/packages/MLJModels/EkXIe/src/loading.jl:159
+┌ Info: Training machine(SVC(kernel = RadialBasis, …), …).
+└ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
+
+
+
+trained Machine; caches model-specific representations of data
+  model: SVC(kernel = RadialBasis, …)
+  args: 
+    1:	Source @987 ⏎ Table{AbstractVector{Continuous}}
+    2:	Source @104 ⏎ AbstractVector{OrderedFactor{6}}</code></pre><h3 id="After-Undersampling"><a class="docs-heading-anchor" href="#After-Undersampling">After Undersampling</a><a id="After-Undersampling-1"></a><a class="docs-heading-anchor-permalink" href="#After-Undersampling" title="Permalink"></a></h3><pre><code class="language-julia hljs"># 3. Wrap it with the data in a machine
+mach_under = machine(model, X_under, y_under)
+
+# 4. fit the machine learning model
+fit!(mach_under)</code></pre><pre><code class="nohighlight hljs">┌ Info: Training machine(SVC(kernel = RadialBasis, …), …).
+└ @ MLJBase /Users/essam/.julia/packages/MLJBase/ByFwA/src/machines.jl:492
+
+
+
+trained Machine; caches model-specific representations of data
+  model: SVC(kernel = RadialBasis, …)
+  args: 
+    1:	Source @123 ⏎ Table{AbstractVector{Continuous}}
+    2:	Source @423 ⏎ AbstractVector{OrderedFactor{6}}</code></pre><h2 id="Plot-Decision-Boundaries"><a class="docs-heading-anchor" href="#Plot-Decision-Boundaries">Plot Decision Boundaries</a><a id="Plot-Decision-Boundaries-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-Decision-Boundaries" title="Permalink"></a></h2><p>Construct ranges for each feature and consecutively a grid</p><pre><code class="language-julia hljs">height_range =
+	range(minimum(X.Height) - 1, maximum(X.Height) + 1, length = 400)
+weight_range =
+range(minimum(X.Weight) - 1, maximum(X.Weight) + 1, length = 400)
+grid_points = [(h, w) for h in height_range, w in weight_range]</code></pre><pre><code class="nohighlight hljs">400×400 Matrix{Tuple{Float64, Float64}}:
+ (139.0, 49.0)    (139.0, 49.2807)    (139.0, 49.5614)    …  (139.0, 161.0)
+ (139.153, 49.0)  (139.153, 49.2807)  (139.153, 49.5614)     (139.153, 161.0)
+ (139.306, 49.0)  (139.306, 49.2807)  (139.306, 49.5614)     (139.306, 161.0)
+ (139.459, 49.0)  (139.459, 49.2807)  (139.459, 49.5614)     (139.459, 161.0)
+ (139.612, 49.0)  (139.612, 49.2807)  (139.612, 49.5614)     (139.612, 161.0)
+ (139.764, 49.0)  (139.764, 49.2807)  (139.764, 49.5614)  …  (139.764, 161.0)
+ (139.917, 49.0)  (139.917, 49.2807)  (139.917, 49.5614)     (139.917, 161.0)
+ (140.07, 49.0)   (140.07, 49.2807)   (140.07, 49.5614)      (140.07, 161.0)
+ (140.223, 49.0)  (140.223, 49.2807)  (140.223, 49.5614)     (140.223, 161.0)
+ (140.376, 49.0)  (140.376, 49.2807)  (140.376, 49.5614)     (140.376, 161.0)
+ ⋮                                                        ⋱  
+ (198.777, 49.0)  (198.777, 49.2807)  (198.777, 49.5614)     (198.777, 161.0)
+ (198.93, 49.0)   (198.93, 49.2807)   (198.93, 49.5614)      (198.93, 161.0)
+ (199.083, 49.0)  (199.083, 49.2807)  (199.083, 49.5614)     (199.083, 161.0)
+ (199.236, 49.0)  (199.236, 49.2807)  (199.236, 49.5614)     (199.236, 161.0)
+ (199.388, 49.0)  (199.388, 49.2807)  (199.388, 49.5614)  …  (199.388, 161.0)
+ (199.541, 49.0)  (199.541, 49.2807)  (199.541, 49.5614)     (199.541, 161.0)
+ (199.694, 49.0)  (199.694, 49.2807)  (199.694, 49.5614)     (199.694, 161.0)
+ (199.847, 49.0)  (199.847, 49.2807)  (199.847, 49.5614)     (199.847, 161.0)
+ (200.0, 49.0)    (200.0, 49.2807)    (200.0, 49.5614)       (200.0, 161.0)</code></pre><p>Evaluate the grid with the machine before and after undersampling</p><pre><code class="language-julia hljs">grid_predictions =[
+    predict(mach, Tables.table(reshape(collect(point), 1, 2)))[1] for
+ 	point in grid_points
+ ]
+ 
+grid_predictions_under = [
+    predict(mach_under, Tables.table(reshape(collect(point), 1, 2)))[1] for
+    point in grid_points
+]</code></pre><p>Make two contour plots using the grid predictions before and after oversampling</p><pre><code class="language-julia hljs">colors = [:green, :aqua, :violet, :red, :blue, :yellow]
+p = contourf(weight_range, height_range, grid_predictions,
+levels = 6, color = colors, colorbar = false)
+p_under = contourf(weight_range, height_range,  grid_predictions_under,
+levels = 6, color = colors, colorbar = false)
+println()</code></pre><pre><code class="language-julia hljs">labels = unique(y)
+colors = Dict(
+	0 =&gt; &quot;green&quot;,
+	1 =&gt; &quot;cyan3&quot;,
+	2 =&gt; &quot;violet&quot;,
+	3 =&gt; &quot;red&quot;,
+	4 =&gt; &quot;dodgerblue&quot;,
+	5 =&gt; &quot;gold2&quot;,
+)
+
+for label in labels
+	scatter!(p, X.Weight[y.==label], X.Height[y.==label],
+		color = colors[label], label = label, markerstrokewidth = 1.5,
+		title = &quot;Before Undersampling&quot;)
+	scatter!(p_under, X_under.Weight[y_under.==label], X_under.Height[y_under.==label],
+		color = colors[label], label = label, markerstrokewidth = 1.5,
+		title = &quot;After Undersampling&quot;)
+end
+
+plot_res = plot(
+	p,
+	p_under,
+	layout = (1, 2),
+	xlabel = &quot;Height&quot;,
+	ylabel = &quot;Width&quot;,
+	size = (1200, 450),
+	margin = 5mm, dpi = 200,
+	legend = :outerbottomright,
+)
+savefig(plot_res, &quot;./assets/ENN-before-after.png&quot;)
+</code></pre><p><img src="../assets/ENN-before-after.png" alt="enn comparison"/></p><h3 id="Effect-of-k-Hyperparameter"><a class="docs-heading-anchor" href="#Effect-of-k-Hyperparameter">Effect of <span>$k$</span> Hyperparameter</a><a id="Effect-of-k-Hyperparameter-1"></a><a class="docs-heading-anchor-permalink" href="#Effect-of-k-Hyperparameter" title="Permalink"></a></h3><p>Now let&#39;s study the cleaning effect as <code>k</code> increases for all types of keep conditions of undersampling.</p><pre><code class="language-julia hljs">anim = @animate for k ∈ 1:15
+	conditions = [&quot;exists&quot;, &quot;mode&quot;, &quot;only mode&quot;, &quot;all&quot;]
+	plots = [plot() for _ in 1:4]
+	data_list = []
+
+	for i in 1:4
+
+		X_under, y_under = enn_undersample(
+			X,
+			y;
+			k = k,
+			keep_condition = conditions[i],
+			min_ratios = 0.01,
+			rng = 42,
+		)
+
+		# fit machine
+		mach_under = machine(model, X_under, y_under)
+		fit!(mach_under, verbosity = 0)
+
+		# grid predictions
+		grid_predictions_under = [
+			predict(mach_under, Tables.table(reshape(collect(point), 1, 2)))[1] for
+			point in grid_points
+		]
+
+		# plot
+		colors = [:green, :aqua, :violet, :red, :blue, :yellow]
+		contourf!(plots[i], weight_range, height_range, grid_predictions_under,
+			levels = 6, color = colors, colorbar = false)
+
+		colors = Dict(
+			0 =&gt; &quot;green&quot;,
+			1 =&gt; &quot;cyan3&quot;,
+			2 =&gt; &quot;violet&quot;,
+			3 =&gt; &quot;red&quot;,
+			4 =&gt; &quot;dodgerblue&quot;,
+			5 =&gt; &quot;gold2&quot;,
+		)
+		for label in labels
+			scatter!(plots[i], X_under.Weight[y_under.==label],
+				X_under.Height[y_under.==label],
+				color = colors[label], label = label, markerstrokewidth = 1.5,
+				title = &quot;$(conditions[i])&quot;, legend = ((i == 2) ? :bottomright : :none))
+		end
+		plot!(
+			plots[1], plots[2], plots[3], plots[4],
+			layout = (1, 4),
+			size = (1300, 420),
+			plot_title = &quot;Undersampling with k =$k&quot;,
+		)
+	end
+	plot!(dpi = 150)
+end
+</code></pre><pre><code class="language-julia hljs">gif(anim, &quot;./assets/enn-k-animation.gif&quot;, fps=1)</code></pre><p><img src="../assets/enn-k-animation.gif" alt="enn-gif-hyperparameter"/></p><p>As we can see, the most constraining condition is <code>all</code>. It deletes any point where the label is different than any of the nearest <code>k</code> neighbors which also explains why it&#39;s the most sensitive to  the hyperparameter <code>k</code>.</p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.1.0 on <span class="colophon-date" title="Wednesday 11 October 2023 02:05">Wednesday 11 October 2023</span>. Using Julia version 1.6.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
