@@ -1,8 +1,8 @@
 # Google Colab
 
-It is possible to run tutorials found in the examples section on Google Colab. The same applies to the illustrative examples in the API documentation.
-- Click the Colab icon link (shows up upon hovering if on the example if not visible)
-- Paste and run the following in the first cell to install Julia
+It is possible to run tutorials found in the examples section or API documentation on Google colab. It should be evident how so by launching the notebook. This section describes what happens under the hood.
+
+- The first cell runs the following bash script to install Julia:
 
 ```julia
 %%capture
@@ -18,14 +18,6 @@ julia -e 'using Pkg; pkg"add IJulia; precompile;"'
 echo 'Done'
 ```
 
-- Change the runtime to `Julia` by choosing `Runtime` from the toolbar then `Change runtime type` 
-- `Pkg.add` Imbalance and any needed packages (those being used). For a comprehensive list:
-```julia
-Pkg.add(["Random", "CSV", "DataFrames", 
-         "MLJ", "MLJBase", "Imbalance", "MLJBalancing", 
-         "ScientificTypes", "CategoricalArrays", "Impute", 
-         "TableTransforms",  "StatsBase",  
-         "Plots", "Colors"
-         ])
-```
-Sincere thanks to [Julia-on-Colab](https://github.com/Dsantra92/Julia-on-Colab) for making this possible
+- Once that is done, one can change the runtime to `Julia` by choosing `Runtime` from the toolbar then `Change runtime type` and at this point they can delete the cell
+
+Sincere thanks to [Julia-on-Colab](https://github.com/Dsantra92/Julia-on-Colab) for making this possible.

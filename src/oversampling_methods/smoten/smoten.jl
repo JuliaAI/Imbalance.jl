@@ -246,7 +246,7 @@ reverts the transform by removing the oversampled observations from the table.
 
 # Illustration
 A full basic example can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smoten.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References

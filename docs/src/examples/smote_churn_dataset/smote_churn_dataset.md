@@ -1,7 +1,14 @@
+
+
 # SMOTE on Customer Churn Data
 
 
 ```julia
+
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", 
+         "ScientificTypes","Impute", "StatsBase",  "Plots", "Measures", "HTTP"])
+
 using Imbalance
 using MLJBalancing
 using CSV
@@ -11,6 +18,7 @@ using CategoricalArrays
 using MLJ
 using Plots
 using Random
+using HTTP: download
 ```
 
 ## Loading Data
@@ -20,7 +28,8 @@ In this example, we will consider the [Churn for Bank Customers](https://www.kag
 
 
 ```julia
-df = CSV.read("../datasets/churn.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smote_churn_dataset/churn.csv")
+df = CSV.read("./churn.csv", DataFrame)
 first(df, 5) |> pretty
 ```
 

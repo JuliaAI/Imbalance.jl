@@ -122,7 +122,7 @@ is not supported.
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/undersample_random.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 """
 function random_undersample(

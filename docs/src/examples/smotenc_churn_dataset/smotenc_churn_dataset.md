@@ -1,7 +1,13 @@
+
+
 # SMOTENC on Customer Churn Data
 
 
 ```julia
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", 
+         "ScientificTypes","Impute", "StatsBase",  "Plots", "Measures", "HTTP"])
+
 using Imbalance
 using MLJBalancing
 using CSV
@@ -11,6 +17,7 @@ using CategoricalArrays
 using MLJ
 using Plots
 using Random
+using HTTP: download
 ```
 
 ## Loading Data
@@ -20,7 +27,8 @@ We already considered this dataset using SMOTE, in this example we see if the re
 
 
 ```julia
-df = CSV.read("../datasets/churn.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smotenc_churn_dataset/churn.csv")
+df = CSV.read("./churn.csv", DataFrame)
 first(df, 5) |> pretty
 ```
 

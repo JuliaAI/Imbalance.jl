@@ -1,7 +1,13 @@
+
+
 # Effect of ENN Hyperparameters
 
 
 ```julia
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", 
+         "ScientificTypes",  "Plots", "Measures", "HTTP"])
+
 using Random
 using CSV
 using DataFrames
@@ -9,6 +15,7 @@ using MLJ
 using Imbalance
 using ScientificTypes
 using Plots, Measures
+using HTTP: download
 ```
 
 ## Loading Data
@@ -20,7 +27,9 @@ In this example, we will consider the [BMI dataset](https://www.kaggle.com/datas
 
 
 ```julia
-df = CSV.read("../datasets/bmi.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/effect_of_k_enn/bmi.csv")
+
+df = CSV.read("./bmi.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames
 first(df, 5) |> pretty

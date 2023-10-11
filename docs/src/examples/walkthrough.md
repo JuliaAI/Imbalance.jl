@@ -1,6 +1,8 @@
+
+
 # Introduction
 
-In this section of the docs, we will walk you through some examples to demonstrate how you can use `Imbalance.jl` in your machine learning project. Although we focus on examples, you can learn more about how the algorithms work by reading this series of blogposts on  [Medium](https://medium.com/@essamwissam/class-imbalance-and-oversampling-a-formal-introduction-c77b918e586d).
+In this section of the docs, we will walk you through some examples to demonstrate how you can use `Imbalance.jl` in your machine learning project. Although we focus on examples, you can learn more about how specific algorithms work by reading this series of blogposts on  [Medium](https://medium.com/towards-data-science/class-imbalance-from-random-oversampling-to-rose-517e06d7a9b).
 
 # Prerequisites
 
@@ -9,6 +11,10 @@ In further examples, we will assume familiarity with the [CSV](https://csv.julia
 
 
 ```julia
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", 
+         "Imbalance", "MLJBalancing", "ScientificTypes", "HTTP"])
+
 using Random
 using CSV
 using DataFrames
@@ -16,6 +22,7 @@ using MLJ
 using Imbalance
 using MLJBalancing
 using ScientificTypes
+using HTTP: download
 ```
 
 ## Loading Data
@@ -24,10 +31,9 @@ In this example, we will consider the [BMI dataset](https://www.kaggle.com/datas
 `CSV` gives us the ability to easily read the dataset after it's downloaded as follows
 
 
-
-
 ```julia
-df = CSV.read("datasets/bmi.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/bmi.csv")
+df = CSV.read("./bmi.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames
 first(df, 5) |> pretty
