@@ -103,38 +103,8 @@ Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned
 - Should support a pure functional interface and other interfaces common in Julia packages such as `MLJ`, `FeatureTransforms` and `TableTransforms`
 - Should be possible to wrap an arbitrary number of resampler models with an MLJ model to behave as a unified model using MLJBalancing
 
-Methods implemented in the `Imbalance.jl` toolbox meet all the interface design principles above. It particularly implements the `MLJ` and `TableTransforms` interface for each method. An arbitrary resampling method `resample` with a pure functional interface that is operated in this way:
+Methods implemented in the `Imbalance.jl` toolbox meet all the interface design principles above. It particularly implements the `MLJ` and `TableTransforms` interface for each method. `BalancedModel` from `MLJBalancing.jl` also allows fusing an arbitrary number of resampling models and a classifier together to behave as one unified model.
 
-```julia
-X_after, y_after = resample(X, y; a, ratios,  b, c)
-```
-
-is equivalent to an `MLJ` interface that is operated in this way. 
-
-```julia
-Resampler = @load Resampler pkg=Imbalance
-
-resampler = Resampler(a, ratios,  b, c)
-
-mach = machine(resampler)
-
-Xover, yover = transform(mach, X, y)
-```
-
-where `Resampler` is the equivalent model name specified for `resample`. This is further equivalent to a `TableTransforms` interface that is operated in this way:
-
-```julia
-resampler = Resampler(y_ind; a, ratios,  b, c)
-Xyover = Xy |> resampler                 
-Xyover, cache = TableTransforms.apply(resampler, Xy)    
-```
-The `TableTransforms` interface does not assume that the target `y` is given separately. It rather assumes that it is oneof the columns given in `Xy`, specifically the column given by `y_ind`.
-
-It is also possible to wrap an arbitrary number of resamplers with a machine learning model using the `BalancedModel` construct from `MLJBalancing` by simply passing the model, followed by the resamplers, as keyword arguments.
-```julia
-balanced_model = BalancedModel(model=model; balancer1=resampler1, balancer2=resampler2, ...)
-```
-In this, during training, data is passed to balancer1 and the result is passed to balancer2 and so on. The final result from the resampling pipeline is then passed to the model for training. During prediction, the balancers have no effect.
 
 ## Developer Experience and Testing
 
@@ -145,7 +115,7 @@ In this, during training, data is passed to balancer1 and the result is passed t
 - Functions should be implemented in smaller units to aid for testing
 - Testing coverage should be maximized; even the most basic functions should be tested
 
-This set of design principles is also satisfied by `Imbalance.jl`. Redundancy is generally avoided and common functionality such as generalizing to multiple classes or dealing with table inputs are centralized. Implemented techniques are tested by testing smaller units that form the technique. End-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` package from Python and comparing outputs.
+This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form the technique. End-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` package from Python and comparing outputs.
 
 ## User Experience
 
@@ -156,5 +126,4 @@ This set of design principles is also satisfied by `Imbalance.jl`. Redundancy is
 - Users should be able to easily run the illustrative or practical examples (e.g., via Google colab)
 - If an implemented method lacks an online explanation, an article that explains the method after its implemented should be preferably written
 
-All techniques initially implemented in `Imbalance.jl` come with an example with shown outputs that can be copy-paste and run for the three interfaces, and almost always, also another example that shows a visual plot for the output from the algorithm on synthetic data  and an animation for the algorithm operation. There are also initially a set of 9 tutorials that use `Imbalance.jl` techniques with real world dataset to improve model performance or study hyperparameter effects. All techniques initially implemented in `Imbalance.jl` also correspond to an article on the Medium website written by the author that explains how the technique works.
-
+The `Imbalance.jl` documentation indeed satisfies this set of design principles. Methods are associated with examples that can be copy-pasted, examples that demonstrate the operation of the technique visually and possibly, examples that use it with a real world dataset to improve the performance of a classification model.
