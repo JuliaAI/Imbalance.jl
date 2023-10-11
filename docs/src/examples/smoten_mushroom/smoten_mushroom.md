@@ -27,7 +27,7 @@ In this example, we will consider the [Mushroom dataset](https://www.kaggle.com/
 
 
 ```julia
-download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smoten_mushroom/mushroom.csv")
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smoten_mushroom/mushrooms.csv", "./")
 df = CSV.read("./mushrooms.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames

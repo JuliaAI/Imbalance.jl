@@ -28,7 +28,7 @@ In this example, we will consider the [Churn for Bank Customers](https://www.kag
 
 
 ```julia
-download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smote_churn_dataset/churn.csv")
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smote_churn_dataset/churn.csv", "./")
 df = CSV.read("./churn.csv", DataFrame)
 first(df, 5) |> pretty
 ```

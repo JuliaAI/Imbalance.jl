@@ -28,7 +28,7 @@ In this example, we will consider the [Ethereum Fraud Detection Dataset](https:/
 
 
 ```julia
-download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/fraud_detection/transactions.csv")
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/fraud_detection/transactions.csv", "./")
 
 df = CSV.read("./transactions.csv", DataFrame)
 first(df, 5) |> pretty

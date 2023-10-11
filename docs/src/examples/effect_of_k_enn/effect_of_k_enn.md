@@ -27,7 +27,7 @@ In this example, we will consider the [BMI dataset](https://www.kaggle.com/datas
 
 
 ```julia
-download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/effect_of_k_enn/bmi.csv")
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/effect_of_k_enn/bmi.csv", "./")
 
 df = CSV.read("./bmi.csv", DataFrame)
 

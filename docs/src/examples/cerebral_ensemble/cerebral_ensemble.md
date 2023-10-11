@@ -28,7 +28,7 @@ In this example, we will consider the [Cerebral Stroke Prediction Dataset](https
 
 
 ```julia
-download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/cerebral_ensemble/cerebral.csv")
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/cerebral_ensemble/cerebral.csv", "./")
 df = CSV.read("./cerebral.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames

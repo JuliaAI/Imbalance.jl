@@ -32,7 +32,7 @@ In this example, we will consider the [BMI dataset](https://www.kaggle.com/datas
 
 
 ```julia
-download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/bmi.csv")
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/bmi.csv", "./")
 df = CSV.read("./bmi.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames
@@ -50,6 +50,23 @@ first(df, 5) |> pretty
     │ Female  │ 195    │ 104    │ 3     │
     │ Male    │ 149    │ 61     │ 3     │
     └─────────┴────────┴────────┴───────┘
+
+
+    ┌ Warning: Reading one byte at a time from HTTP.Stream is inefficient.
+    │ Use: io = BufferedInputStream(http::HTTP.Stream) instead.
+    │ See: https://github.com/BioJulia/BufferedStreams.jl
+    └ @ HTTP.Streams /Users/essam/.julia/packages/HTTP/SN7VW/src/Streams.jl:240
+    ┌ Info: Downloading
+    │   source = https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/bmi.csv
+    │   dest = ./bmi.csv
+    │   progress = NaN
+    │   time_taken = 0.0 s
+    │   time_remaining = NaN s
+    │   average_speed = 7.933 MiB/s
+    │   downloaded = 8.123 KiB
+    │   remaining = ∞ B
+    │   total = ∞ B
+    └ @ HTTP /Users/essam/.julia/packages/HTTP/SN7VW/src/download.jl:132
 
 
 ## Coercing Data
@@ -496,4 +513,5 @@ evaluate!(mach_over, resampling=cv, measure=balanced_accuracy)
 
 
 This results in an interval `70±7.2%` which can be viewed as a reasonable improvement over `62.1±9.13%`. The uncertainty in the intervals can be explained by the fact that the dataset is small with many classes.
+
 

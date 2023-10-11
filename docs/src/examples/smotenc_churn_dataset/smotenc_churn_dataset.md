@@ -27,7 +27,7 @@ We already considered this dataset using SMOTE, in this example we see if the re
 
 
 ```julia
-download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smotenc_churn_dataset/churn.csv")
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smotenc_churn_dataset/churn.csv", "./")
 df = CSV.read("./churn.csv", DataFrame)
 first(df, 5) |> pretty
 ```
