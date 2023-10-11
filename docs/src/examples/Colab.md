@@ -1,6 +1,6 @@
 # Google Colab
 
-It is possible to run tutorials found in the examples section or API documentation on Google colab. It should be evident how so by launching the notebook. This section describes what happens under the hood.
+It is possible to run tutorials found in the examples section or API documentation on Google Colab (using provided link or icon). It should be evident how so by launching the notebook. This section describes what happens under the hood.
 
 - The first cell runs the following bash script to install Julia:
 
