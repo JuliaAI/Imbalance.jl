@@ -1,7 +1,14 @@
+
+
 # From RandomOversampling to ROSE
 
 
 ```julia
+
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance",
+         "ScientificTypes", "Plots", "Measures", "HTTP"])
+
 using Random
 using CSV
 using DataFrames
@@ -9,6 +16,7 @@ using MLJ
 using ScientificTypes
 using Imbalance
 using Plots, Measures
+using HTTP: download
 ```
 
 ## Loading Data

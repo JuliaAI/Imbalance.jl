@@ -5,7 +5,7 @@ mutable struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}} <: Static
     min_ratios::T
     force_min_ratios::Bool
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end;
 
 """
@@ -15,9 +15,9 @@ function TomekUndersampler(;
     min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     force_min_ratios::Bool = false,
     rng::Union{Integer, AbstractRNG} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 ) where {T}
-    model = TomekUndersampler(min_ratios, force_min_ratios, rng, try_perserve_type)
+    model = TomekUndersampler(min_ratios, force_min_ratios, rng, try_preserve_type)
     return model
 end
 
@@ -31,7 +31,7 @@ function MMI.transform(r::TomekUndersampler, _, X, y)
         min_ratios = r.min_ratios,
         force_min_ratios = r.force_min_ratios,
         rng = r.rng,
-        try_perserve_type = r.try_perserve_type,
+        try_preserve_type = r.try_preserve_type,
     )
 end
 function MMI.transform(r::TomekUndersampler, _, X::AbstractMatrix{<:Real}, y)
@@ -94,7 +94,7 @@ $(COMMON_DOCS["FORCE-MIN-RATIOS"])
 
 $((COMMON_DOCS["RNG"]))
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Transform Inputs
 
@@ -112,16 +112,15 @@ $(COMMON_DOCS["OUTPUTS-UNDER"])
 
 # Example
 
-```
-import MLJ
-
-using Imbalance
+```julia
+using MLJ
+import Imbalance
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)   
 
 julia> Imbalance.checkbalance(y; ref="minority")

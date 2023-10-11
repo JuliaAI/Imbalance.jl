@@ -12,7 +12,7 @@ mutable struct ENNUndersampler{
 	min_ratios::T
 	force_min_ratios::Bool
 	rng::R
-	try_perserve_type::Bool
+	try_preserve_type::Bool
 end;
 
 """
@@ -24,7 +24,7 @@ function ENNUndersampler(;
 	min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
 	force_min_ratios::Bool = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-	try_perserve_type::Bool = true,
+	try_preserve_type::Bool = true,
 ) where {T}
 	model = ENNUndersampler(
 		k,
@@ -32,7 +32,7 @@ function ENNUndersampler(;
 		min_ratios,
 		force_min_ratios,
 		rng,
-		try_perserve_type,
+		try_preserve_type,
 	)
 	return model
 end
@@ -49,7 +49,7 @@ function MMI.transform(r::ENNUndersampler, _, X, y)
 		min_ratios = r.min_ratios,
 		force_min_ratios = r.force_min_ratios,
 		rng = r.rng,
-		try_perserve_type = r.try_perserve_type,
+		try_preserve_type = r.try_preserve_type,
 	)
 end
 function MMI.transform(r::ENNUndersampler, _, X::AbstractMatrix{<:Real}, y)
@@ -124,7 +124,7 @@ $(COMMON_DOCS["FORCE-MIN-RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Transform Inputs
 
@@ -142,7 +142,7 @@ $(COMMON_DOCS["OUTPUTS-UNDER"])
 
 # Example
 
-```
+```julia
 using MLJ
 import Imbalance
 
@@ -150,10 +150,10 @@ import Imbalance
 class_probs = [0.5, 0.2, 0.3]                         
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)     
 
-julia> checkbalance(y; ref="minority")
+julia> Imbalance.checkbalance(y; ref="minority")
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (100.0%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (173.7%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (252.6%) 
@@ -161,12 +161,12 @@ julia> checkbalance(y; ref="minority")
 # load ENN model type:
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
-# Underample the majority classes to  sizes relative to the minority class:
-undersampler = ENNUndersampler(keep_condition="all", min_ratios=0.5, rng=42)
+# underample the majority classes to  sizes relative to the minority class:
+undersampler = ENNUndersampler(min_ratios=0.5, rng=42)
 mach = machine(undersampler)
 X_under, y_under = transform(mach, X, y)
 
-julia> checkbalance(y_under; ref="minority")
+julia> Imbalance.checkbalance(y_under; ref="minority")
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 24 (240.0%) 

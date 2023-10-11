@@ -90,7 +90,7 @@ and if m>=N, it warns the user and sets m=N-1.
 """
 function check_m(m, N)
     if m < 1
-        throw(ArgumentError(ERR_NONPOS_M(m)))
+        throw((ERR_NONPOS_M(m)))
     end
     if m >= N
         @warn WRN_M_TOO_BIG(m, N)
@@ -127,7 +127,7 @@ function borderline1_filter(X, y; m=5, verbosity=1)
     y1 = y[bool_filter]
     y1_stats = match(r"\((.*?)\)", string(countmap(y1))).captures[1]
     verbosity > 0 && @info INFO_BORDERLINE_PTS(y1_stats)
-    length(y1) == 0 && throw(ArgumentError(ERR_NO_BORDERLINE))
+    length(y1) == 0 && throw((ERR_NO_BORDERLINE))
     return BitVector(bool_filter)
 end
 
@@ -136,7 +136,7 @@ end
     borderline_smote1(
         X, y;
         m=5, k=5, ratios=1.0, rng=default_rng(),
-        try_perserve_type=true, verbosity=1
+        try_preserve_type=true, verbosity=1
     )
 
 # Description
@@ -160,7 +160,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 - `verbosity::Integer=1`: Whenever higher than `0` info regarding the points that will participate in oversampling is logged.
 
@@ -171,7 +171,7 @@ $(COMMON_DOCS["OUTPUTS"])
 
 # Example
 
-```@repl
+```julia
 using Imbalance
 
 # set probability of each class
@@ -179,7 +179,7 @@ class_probs = [0.5, 0.2, 0.3]
 num_rows, num_continuous_feats = 1000, 5
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                min_sep=0.01, class_probs, rng=42)            
+                                stds=[0.1 0.1 0.1], min_sep=0.01, class_probs, rng=42)            
 
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
@@ -191,8 +191,8 @@ Xover, yover = borderline_smote1(X, y; m = 3,
                k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
 
 julia> Imbalance.checkbalance(yover)
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 392 (80.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 441 (90.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 ```
 
@@ -212,8 +212,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here]().
-
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
@@ -245,7 +244,7 @@ reverts the transform by removing the oversampled observations from the table.
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smote1_borderline.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -259,7 +258,7 @@ function borderline_smote1(
 	k::Integer = 5,
 	ratios = 1.0,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     verbosity::Integer = 1
 )
     # this function is a variation on generic_oversampling to use in borderline smote
@@ -278,10 +277,10 @@ function borderline_smote1(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     verbosity::Integer = 1
 )
-    Xover, yover = tablify(borderline_smote1, X, y; try_perserve_type=try_perserve_type,  m, k, ratios, rng, verbosity)
+    Xover, yover = tablify(borderline_smote1, X, y; try_preserve_type=try_preserve_type,  m, k, ratios, rng, verbosity)
     return Xover, yover
 end
 
@@ -293,9 +292,9 @@ function borderline_smote1(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     verbosity::Integer = 1
 )
-    Xyover = tablify(borderline_smote1, Xy, y_ind; try_perserve_type=try_perserve_type, m, k, ratios, rng, verbosity)
+    Xyover = tablify(borderline_smote1, Xy, y_ind; try_preserve_type=try_preserve_type, m, k, ratios, rng, verbosity)
     return Xyover
 end

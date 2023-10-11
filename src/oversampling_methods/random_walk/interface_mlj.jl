@@ -3,7 +3,7 @@
 mutable struct RandomWalkOversampler{T,R<:Union{Integer,AbstractRNG}} <: Static
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 
@@ -15,9 +15,9 @@ Initiate a RandomWalkOversampler model with the given hyper-parameters.
 function RandomWalkOversampler(;
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} =1.0,
     rng::Union{Integer,AbstractRNG} = default_rng(),
-    try_perserve_type::Bool=true
+    try_preserve_type::Bool=true
 ) where {T}
-    model = RandomWalkOversampler(ratios, rng, try_perserve_type)
+    model = RandomWalkOversampler(ratios, rng, try_preserve_type)
     return model
 end
 
@@ -28,7 +28,7 @@ end
 Oversample data X, y using RandomWalkOversampler
 """
 function MMI.transform(s::RandomWalkOversampler, _, X, y)
-    random_walk_oversample(X, y; ratios = s.ratios, rng = s.rng, try_perserve_type=s.try_perserve_type)
+    random_walk_oversample(X, y; ratios = s.ratios, rng = s.rng, try_preserve_type=s.try_preserve_type)
 end
 
 
@@ -115,9 +115,9 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 # Example
 
-```
+```julia
 using MLJ
-import Random.seed!
+using ScientificTypes
 import Imbalance
 
 # set probability of each class
@@ -129,7 +129,7 @@ num_vals_per_category = [3, 2]
 
 # generate a table and categorical vector accordingly
 X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
-								class_probs, num_vals_per_category, rng=42)                      
+                                          class_probs, num_vals_per_category, rng=42)                      
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
@@ -144,7 +144,7 @@ X = coerce(X, :Column4=>Multiclass, :Column5=>Multiclass)
 # load RandomWalkOversampler model type:
 RandomWalkOversampler = @load RandomWalkOversampler pkg=Imbalance
 
-# Oversample the minority classes to  sizes relative to the majority class:
+# oversample the minority classes to  sizes relative to the majority class:
 oversampler = RandomWalkOversampler(ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
 mach = machine(oversampler)
 Xover, yover = transform(mach, X, y)

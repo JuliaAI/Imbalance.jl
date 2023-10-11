@@ -5,7 +5,7 @@ mutable struct SMOTEN{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Static
     k::I
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end;
 
 
@@ -16,7 +16,7 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::SMOTEN)
     message = ""
     if s.k < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.k)))
+        throw((ERR_NONPOS_K(s.k)))
     end
     return message
 end
@@ -27,9 +27,9 @@ Initiate a SMOTEN model with the given hyper-parameters.
 function SMOTEN(;
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool=true
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool=true
 ) where {T}
-    model = SMOTEN(k, ratios, rng, try_perserve_type)
+    model = SMOTEN(k, ratios, rng, try_preserve_type)
     MMI.clean!(model)
     return model
 end
@@ -40,7 +40,7 @@ Oversample data X, y using SMOTEN
 """
 function MMI.transform(s::SMOTEN, _, X, y)
     smoten(X, y; k = s.k, ratios = s.ratios, rng = s.rng, 
-        try_perserve_type = s.try_perserve_type)
+        try_preserve_type = s.try_preserve_type)
 end
 function MMI.transform(s::SMOTEN, _, X::AbstractMatrix{<:Integer}, y)
     smoten(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
@@ -122,12 +122,10 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 # Example
 
-```
+```julia
 using MLJ
-import Random.seed!
-using MLUtils
-import StatsBase.countmap
-import Imbalance.generate_imbalanced_data
+using ScientificTypes
+import Imbalance
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -137,13 +135,12 @@ num_continuous_feats = 0
 num_vals_per_category = [3, 2]
 
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 class_probs, num_vals_per_category, rng=42)                      
-julia> StatsBase.countmap(y)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 33
-1 => 19
+julia> Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 
 julia> ScientificTypes.schema(X).scitypes
 (Count, Count)
@@ -154,16 +151,17 @@ X = coerce(X, autotype(X, :few_to_finite))
 # load SMOTEN
 SMOTEN = @load SMOTEN pkg=Imbalance
 
-# apply SMOTEN
-SMOTEN = SMOTEN(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-mach = machine(SMOTEN)
+# wrap the model in a machine
+oversampler = SMOTEN(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+mach = machine(oversampler)
+
+# provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 
-julia> StatsBase.countmap(yover)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 33
-1 => 19
+julia> Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 ```
 
 """

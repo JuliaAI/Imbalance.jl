@@ -2,12 +2,12 @@
 
 The following table portrays the supported undersampling algorithms, whether the mechanism deletes or generates new data and the supported types of data.
 
-| Undersampling Method | Mechanism | Supported Data Type |
+| Undersampling Method | Mechanism | Supported Data Types |
 |:----------:|:----------:|:----------:|
-| Random Undersampler | Delete existing data as needed | Continuous and/or nominal  |
-| Cluster Undersampler | Generate new data or delete existing data | Continuous |
-| ENN Undersampler | Delete existing data meeting certain conditions (cleaning) | Continuous |
-| Tomek Undersampler | Delete existing data meeting certain conditions (cleaning) | Continuous |
+| [Random Undersampler](@ref) | Delete existing data as needed | Continuous and/or nominal  |
+| [Cluster Undersampler](@ref) | Generate new data or delete existing data | Continuous |
+| [Edited Nearest Neighbors Undersampler](@ref) | Delete existing data meeting certain conditions (cleaning) | Continuous |
+| [Tomek Links Undersampler](@ref) | Delete existing data meeting certain conditions (cleaning) | Continuous |
 
 
 

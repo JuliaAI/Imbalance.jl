@@ -41,11 +41,11 @@ Tables = "1.10"
 TransformsBase = "1.2"
 julia = "1.6"
 
-
 [extras]
 Conda = "8f4d0f93-b110-5947-807f-2305c1781a2d"
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 IOCapture = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 MLJBase = "a7f614a8-145f-11e9-1d2a-a57a1082229d"
 Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
@@ -54,4 +54,4 @@ TableTransforms = "0d432bfd-3ee1-4ac1-886a-39f05cc69a3e"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "DataFrames", "MLJBase", "TableTransforms", "StableRNGs", "PyCall", "Pkg", "Conda", "IOCapture"]
+test = ["Test", "DataFrames", "MLJBase", "TableTransforms", "StableRNGs", "PyCall", "Pkg", "Conda", "IOCapture", "JLD2"]

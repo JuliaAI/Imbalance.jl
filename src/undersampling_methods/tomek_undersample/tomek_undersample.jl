@@ -31,7 +31,7 @@ end
     tomek_undersample(
         X, y;
 	    min_ratios = 1.0, force_min_ratios = false,
-        rng = default_rng(), try_perserve_type=true
+        rng = default_rng(), try_preserve_type=true
     )
 
 # Description
@@ -51,7 +51,7 @@ $(COMMON_DOCS["FORCE-MIN-RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -99,8 +99,7 @@ mach = machine(undersampler)
 # Provide the data to transform (there is nothing to fit)
 X_under, y_under = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here]().
-
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
@@ -130,7 +129,7 @@ is not supported.
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/undersample_tomek.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -142,7 +141,7 @@ function tomek_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     X = transpose(X)
@@ -169,13 +168,13 @@ function tomek_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     X_under, y_under = tablify(
         tomek_undersample,
         X,
         y;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         min_ratios,
@@ -192,13 +191,13 @@ function tomek_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xy_under = tablify(
         tomek_undersample,
         Xy,
         y_ind;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         min_ratios,

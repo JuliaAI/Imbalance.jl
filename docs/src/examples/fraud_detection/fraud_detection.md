@@ -1,7 +1,13 @@
+
+
 # SMOTE-Tomek for Ethereum Fraud Detection
 
 
 ```julia
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", 
+         "ScientificTypes","Impute", "StatsBase",  "Plots", "Measures", "HTTP"])
+
 using Imbalance
 using MLJBalancing
 using CSV
@@ -12,6 +18,7 @@ using MLJ
 using Plots
 using Random
 using Impute
+using HTTP: download
 ```
 
 ## Loading Data
@@ -21,11 +28,13 @@ In this example, we will consider the [Ethereum Fraud Detection Dataset](https:/
 
 
 ```julia
-df = CSV.read("../datasets/transactions.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/fraud_detection/transactions.csv", "./")
+
+df = CSV.read("./transactions.csv", DataFrame)
 first(df, 5) |> pretty
 ```
 
-There are plenty of useless columns that we can get rid of such as `Column1`, `Index` and probably, `Address`. We also have to get rid of the cateogircal features because SMOTE won't be able to deal with those and it leaves us with more options for the model.
+There are plenty of useless columns that we can get rid of such as `Column1`, `Index` and probably, `Address`. We also have to get rid of the categorical features because SMOTE won't be able to deal with those and it leaves us with more options for the model.
 
 
 ```julia
@@ -84,7 +93,7 @@ ScientificTypes.schema(df)
 
 
 
-The `FLAG` target should definetly be Multiclass, the rest seems fine.
+The `FLAG` target should definitely be Multiclass, the rest seems fine.
 
 
 ```julia
@@ -206,12 +215,12 @@ balanced_model = BalancedModel(model=model, balancer1=oversampler, balancer2=und
             k = 5, 
             ratios = Dict(1 => 0.5), 
             rng = Xoshiro(0xa379de7eeeb2a4e8, 0x953dccb6b532b3af, 0xf597b8ff8cfd652a, 0xccd7337c571680d1), 
-            try_perserve_type = true), 
+            try_preserve_type = true), 
       balancer2 = TomekUndersampler(
             min_ratios = Dict(0 => 1.3), 
             force_min_ratios = true, 
             rng = TaskLocalRNG(), 
-            try_perserve_type = true))
+            try_preserve_type = true))
 
 
 Now we can treat `balanced_model` like any `MLJ` model.
@@ -262,7 +271,7 @@ evaluate!(mach_over, resampling=cv, measure=balanced_accuracy)
 
 #### Compare with `RandomForestClassifier` only
 
-To see if this represents any form of improvement, fitting and validationg the original model by itself.
+To see if this represents any form of improvement, fitting and validating the original model by itself.
 
 
 ```julia

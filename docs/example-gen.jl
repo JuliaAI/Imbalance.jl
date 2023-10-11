@@ -78,7 +78,8 @@ for item in data
       <a href="$colab_link"><img id="colab" src="./assets/colab.png"/></a>
       <a href="$link">
       <img src="$img_src" alt="Image">
-      <div class="item-title">$title
+      <div class="item-title">
+      <b>$title</b>
       <p>$description</p>
       </div>
       </a>

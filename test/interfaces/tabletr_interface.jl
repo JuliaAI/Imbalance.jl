@@ -86,6 +86,7 @@ end
             500,
             4;
             min_sep=0.0,
+            stds=[3.0 3.0 3.0],
             class_probs = [0.25, 0.5, 0.25],
             type = tables[i],
             insert_y = y_ind,

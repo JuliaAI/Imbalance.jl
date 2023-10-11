@@ -51,7 +51,7 @@ end
     enn_undersample(
         X, y; k = 5, keep_condition = "mode",
 	    min_ratios = 1.0, force_min_ratios = false,
-        rng = default_rng(), try_perserve_type=true
+        rng = default_rng(), try_preserve_type=true
     )
 
 # Description
@@ -80,7 +80,7 @@ $(COMMON_DOCS["FORCE-MIN-RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -107,7 +107,7 @@ julia> Imbalance.checkbalance(y; ref="minority")
 X_under, y_under = enn_undersample(X, y; k=3, keep_condition="only mode", 
                                    min_ratios=0.5, rng=42)
 
-julia> checkbalance(y_under; ref="minority")
+julia> Imbalance.checkbalance(y_under; ref="minority")
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 10 (100.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 24 (240.0%) 
@@ -123,14 +123,13 @@ using MLJ
 ENNUndersampler = @load ENNUndersampler pkg=Imbalance
 
 # Wrap the model in a machine
-undersampler = ENNUndersampler(k=5, min_ratios=0.5, rng=42)
+undersampler = ENNUndersampler(k=3, keep_condition="only mode", min_ratios=0.5, rng=42)
 mach = machine(undersampler)
 
 # Provide the data to transform (there is nothing to fit)
 X_under, y_under = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here]().
-
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
@@ -151,7 +150,7 @@ Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  min_sep=0.01, stds=[3.0 3.0 3.0], class_probs, rng=42)
 
 # Initiate ENN Undersampler model
-undersampler = ENNUndersampler(y_ind; min_ratios=0.5, rng=42)
+undersampler = ENNUndersampler(y_ind; k=3, keep_condition="only mode", rng=42)
 Xy_under = Xy |> undersampler                    
 Xy_under, cache = TableTransforms.apply(undersampler, Xy)    # equivalently
 ```
@@ -160,7 +159,7 @@ is not supported.
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/undersample_enn.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -175,12 +174,12 @@ function enn_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     check_k(k, size(X, 1))
     (keep_condition in ["exists", "mode", "only mode", "all"]) ||
-        throw(ArgumentError(ERR_KEEP_CONDS))
+        throw((ERR_KEEP_CONDS))
     X = transpose(X)
     filter = compute_enn_filter(X, y, k, keep_condition)
     pass_inds, is_transposed = true, true
@@ -207,13 +206,13 @@ function enn_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     X_under, y_under = tablify(
         enn_undersample,
         X,
         y;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         k,
@@ -234,13 +233,13 @@ function enn_undersample(
     min_ratios = 1.0,
     force_min_ratios = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xy_under = tablify(
         enn_undersample,
         Xy,
         y_ind;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         k,

@@ -27,15 +27,18 @@ makedocs(sitename = "Imbalance.jl",
 			"Oversampling"=>"algorithms/oversampling_algorithms.md",
 			"Undersampling"=>"algorithms/undersampling_algorithms.md",
       "Combination"=>"algorithms/mlj_balancing.md",
+	  "Implementation Notes"=>"algorithms/implementation_notes.md",
 			"Extras"=>"algorithms/extra_algorithms.md",
+			
 		],
-    "Walkthrough" => Any[
+    "Tutorial" => Any[
 			"Introduction"=>"examples/walkthrough.md",
 			"More Examples"=>"examples.md",
+			"Google Colab"=>"examples/Colab.md"
 		],
 		"Contributing" => "contributing.md",
 		"About" => "about.md"],
-	warnonly = true,
+		warnonly=true
 )
 
 

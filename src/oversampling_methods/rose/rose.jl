@@ -47,7 +47,7 @@ end
     rose(
         X, y; 
         s=1.0, ratios=1.0, rng=default_rng(),
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 # Description
@@ -69,7 +69,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 
 # Returns
@@ -118,8 +118,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here]().
-
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
@@ -151,7 +150,7 @@ reverts the transform by removing the oversampled observations from the table.
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_rose.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -166,10 +165,10 @@ function rose(
     s::AbstractFloat = 1.0,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     if s < 0.0
-        throw(ArgumentError(ERR_NEG_S(s)))
+        throw((ERR_NEG_S(s)))
     end
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, rose_per_class; s, ratios, rng,)
@@ -183,9 +182,9 @@ function rose(
     s::AbstractFloat = 1.0,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true
+    try_preserve_type::Bool = true
 )
-    Xover, yover = tablify(rose, X, y; try_perserve_type=try_perserve_type, s, ratios, rng, 
+    Xover, yover = tablify(rose, X, y; try_preserve_type=try_preserve_type, s, ratios, rng, 
                            )
     return Xover, yover
 end
@@ -197,7 +196,7 @@ function rose(
     s::AbstractFloat = 1.0,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
-    return tablify(rose, Xy, y_ind;try_perserve_type=try_perserve_type,  s, ratios, rng)
+    return tablify(rose, Xy, y_ind;try_preserve_type=try_preserve_type,  s, ratios, rng)
 end

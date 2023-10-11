@@ -23,7 +23,7 @@ end
     random_oversample(
         X, y; 
         ratios=1.0, rng=default_rng(), 
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 
@@ -41,7 +41,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -49,6 +49,7 @@ $(COMMON_DOCS["OUTPUTS"])
 
 
 # Example
+
 ```julia
 using Imbalance
 
@@ -89,8 +90,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here]().
-
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
@@ -121,7 +121,7 @@ reverts the transform by removing the oversampled observations from the table.
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_random.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 """
 function random_oversample(
@@ -129,7 +129,7 @@ function random_oversample(
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, random_oversample_per_class; ratios, rng,)
@@ -142,10 +142,10 @@ function random_oversample(
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool=true
+    try_preserve_type::Bool=true
 )
     Xover, yover = tablify(random_oversample, X, y; 
-                           try_perserve_type=try_perserve_type, 
+                           try_preserve_type=try_preserve_type, 
                            encode_func = generic_encoder,
                            decode_func = generic_decoder,
                            ratios, 
@@ -160,10 +160,10 @@ function random_oversample(
     y_ind::Integer;
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool=true
+    try_preserve_type::Bool=true
 )
     Xyover = tablify(random_oversample, Xy, y_ind; 
-                    try_perserve_type=try_perserve_type, 
+                    try_preserve_type=try_preserve_type, 
                     encode_func = generic_encoder,
                     decode_func = generic_decoder,
                     ratios, rng)

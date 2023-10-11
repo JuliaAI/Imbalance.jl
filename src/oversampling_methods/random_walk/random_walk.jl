@@ -18,7 +18,7 @@ Check that columns have the correct scientific types and if not, throw an error.
 function check_scitypes_random_walk(ncols, cat_inds, cont_inds, types)	
 	bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))	# columns with wrong scitype
 	if !isempty(bad_cols)
-		throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
+		throw((ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
 	end
 end
 
@@ -119,7 +119,7 @@ end
 	random_walk_oversample(
 		X, y, cat_inds;
 		ratios=1.0, rng=default_rng(),
-		try_perserve_type=true
+		try_preserve_type=true
 	)
 
 # Description
@@ -144,15 +144,16 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
 $(COMMON_DOCS["OUTPUTS"])
 
 # Example
-```@repl
+```julia
 using Imbalance
+using ScientificTypes
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -200,7 +201,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here](). Note that only `Table` input is supported by the MLJ interface for this method.
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/). Note that only `Table` input is supported by the MLJ interface for this method.
 
 
 # TableTransforms Interface
@@ -236,7 +237,7 @@ Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_randomwalk.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -249,7 +250,7 @@ function random_walk_oversample(
     cat_inds::AbstractVector{<:Int};
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-	try_perserve_type::Bool = true,
+	try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     # implictly infer the continuous indices
@@ -265,13 +266,13 @@ function random_walk_oversample(
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-	try_perserve_type::Bool = true,
+	try_preserve_type::Bool = true,
 )
 	Xover, yover = tablify(
 		random_walk_oversample,
 		X,
 		y;
-		try_perserve_type = try_perserve_type,
+		try_preserve_type = try_preserve_type,
 		encode_func = random_walk_encoder,
 		decode_func = random_walk_decoder,
 		ratios,
@@ -286,13 +287,13 @@ function random_walk_oversample(
 	y_ind::Integer;
 	ratios = 1.0,
 	rng::Union{AbstractRNG, Integer} = default_rng(),
-	try_perserve_type::Bool = true,
+	try_preserve_type::Bool = true,
 )
 	Xyover = tablify(
 		random_walk_oversample,
 		Xy,
 		y_ind;
-		try_perserve_type = try_perserve_type,
+		try_preserve_type = try_preserve_type,
 		encode_func = random_walk_encoder,
 		decode_func = random_walk_decoder,
 		ratios,

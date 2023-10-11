@@ -6,7 +6,7 @@ mutable struct BorderlineSMOTE1{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: 
     k::I
     ratios::T
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
     verbosity::I
 end;
 
@@ -18,10 +18,10 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::BorderlineSMOTE1)
     message = ""
     if s.k < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.k)))
+        throw((ERR_NONPOS_K(s.k)))
     end
     if s.m < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.m)))
+        throw((ERR_NONPOS_K(s.m)))
     end
     return message
 end
@@ -36,9 +36,9 @@ function BorderlineSMOTE1(;
     m::Integer = 5,
     k::Integer = 5,
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_perserve_type::Bool=true, verbosity::Integer=1
+    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool=true, verbosity::Integer=1
 ) where {T}
-    model = BorderlineSMOTE1(m, k, ratios, rng, try_perserve_type, verbosity)
+    model = BorderlineSMOTE1(m, k, ratios, rng, try_preserve_type, verbosity)
     MMI.clean!(model)
     return model
 end
@@ -48,7 +48,7 @@ Oversample data X, y using BorderlineSMOTE1
 """
 function MMI.transform(s::BorderlineSMOTE1, _, X, y)
     borderline_smote1(X, y; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng, 
-        try_perserve_type = s.try_perserve_type, verbosity = s.verbosity)
+        try_preserve_type = s.try_preserve_type, verbosity = s.verbosity)
 end
 function MMI.transform(s::BorderlineSMOTE1, _, X::AbstractMatrix{<:Real}, y)
     borderline_smote1(X, y; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng, verbosity = s.verbosity)
@@ -134,7 +134,7 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 # Example
 
-```
+```julia
 using MLJ
 import Imbalance
 
@@ -142,25 +142,30 @@ import Imbalance
 class_probs = [0.5, 0.2, 0.3]                         
 num_rows, num_continuous_feats = 1000, 5
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                min_sep=0.01, class_probs, rng=42)            
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                stds=[0.1 0.1 0.1], min_sep=0.01, class_probs, rng=42)            
 
 julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 310 (63.3%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 
-# apply BorderlineSMOTE1
+# load BorderlineSMOTE1
 BorderlineSMOTE1 = @load BorderlineSMOTE1 pkg=Imbalance
-oversampler = BorderlineSMOTE1(k=10, ratios=Dict("setosa"=>1.0, "versicolor"=> 0.8, "virginica"=>1.0), rng=42)
+
+# wrap the model in a machine
+oversampler = BorderlineSMOTE1(m=3, k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 mach = machine(oversampler)
+
+# provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 
 
 julia> Imbalance.checkbalance(yover)
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 392 (80.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 441 (90.0%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
 ```
 
 """
+BorderlineSMOTE1

@@ -4,7 +4,7 @@ mutable struct SMOTENC{T,R<:Union{Integer,AbstractRNG}, S<:AbstractString, I<:In
     ratios::T
     knn_tree::S
     rng::R
-    try_perserve_type::Bool
+    try_preserve_type::Bool
 end
 
 
@@ -14,9 +14,9 @@ Check whether the given model hyperparameters are valid and clean them if necess
 function MMI.clean!(s::SMOTENC)
     message = ""
     if s.k < 1
-        throw(ArgumentError(ERR_NONPOS_K(s.k)))
+        throw((ERR_NONPOS_K(s.k)))
     end
-    (s.knn_tree ∈ ["Ball", "Brute"]) || throw(ArgumentError(ERR_WRNG_TREE(knn_tree)))
+    (s.knn_tree ∈ ["Ball", "Brute"]) || throw((ERR_WRNG_TREE(knn_tree)))
     return message
 end
 
@@ -29,9 +29,9 @@ function SMOTENC(;
     ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} =1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{Integer,AbstractRNG} = default_rng(),
-    try_perserve_type::Bool=true
+    try_preserve_type::Bool=true
 ) where {T}
-    model = SMOTENC(k, ratios, knn_tree, rng, try_perserve_type)
+    model = SMOTENC(k, ratios, knn_tree, rng, try_preserve_type)
     MMI.clean!(model)
     return model
 end
@@ -43,7 +43,7 @@ end
 Oversample data X, y using SMOTENC
 """
 function MMI.transform(s::SMOTENC, _, X, y)
-    smotenc(X, y; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_perserve_type=s.try_perserve_type)
+    smotenc(X, y; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_preserve_type=s.try_preserve_type)
 end
 
 
@@ -134,11 +134,10 @@ $((COMMON_DOCS["OUTPUTS"]))
 
 # Example
 
-```
+```julia
 using MLJ
-import Random.seed!
-import Imbalance.generate_imbalanced_data
-import StatsBase.countmap
+using ScientificTypes
+import Imbalance
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -148,33 +147,32 @@ num_continuous_feats = 3
 num_vals_per_category = [3, 2]
 
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                class_probs, num_vals_per_category, rng=42)     
-
-julia> StatsBase.countmap(y)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 33
-1 => 19
+X, y = Imbalance.generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, num_vals_per_category, rng=42)                      
+julia> Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 
 julia> ScientificTypes.schema(X).scitypes
 (Continuous, Continuous, Continuous, Continuous, Continuous)
 # coerce nominal columns to a finite scitype (multiclass or ordered factor)
 X = coerce(X, :Column4=>Multiclass, :Column5=>Multiclass)
 
-# load SMOTENC model type:
+# load SMOTE-NC
 SMOTENC = @load SMOTENC pkg=Imbalance
 
-# Oversample the minority classes to  sizes relative to the majority class:
-smotenc = SMOTENC(k = 5, ratios = Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng = 42)
-mach = machine(smotenc)
+# wrap the model in a machine
+oversampler = SMOTENC(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
+mach = machine(oversampler)
+
+# provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 
-julia>StatsBase.countmap(yover)
-Dict{CategoricalArrays.CategoricalValue{Int64, UInt32}, Int64} with 3 entries:
-0 => 48
-2 => 33
-1 => 19
+julia> Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
 ```
 """
 SMOTENC

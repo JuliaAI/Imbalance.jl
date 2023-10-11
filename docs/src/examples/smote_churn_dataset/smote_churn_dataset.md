@@ -1,7 +1,14 @@
+
+
 # SMOTE on Customer Churn Data
 
 
 ```julia
+
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", 
+         "ScientificTypes","Impute", "StatsBase",  "Plots", "Measures", "HTTP"])
+
 using Imbalance
 using MLJBalancing
 using CSV
@@ -11,6 +18,7 @@ using CategoricalArrays
 using MLJ
 using Plots
 using Random
+using HTTP: download
 ```
 
 ## Loading Data
@@ -20,7 +28,8 @@ In this example, we will consider the [Churn for Bank Customers](https://www.kag
 
 
 ```julia
-df = CSV.read("../datasets/churn.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smote_churn_dataset/churn.csv", "./")
+df = CSV.read("./churn.csv", DataFrame)
 first(df, 5) |> pretty
 ```
 
@@ -37,7 +46,7 @@ first(df, 5) |> pretty
     └───────────┴────────────┴──────────┴─────────────┴───────────┴─────────┴───────┴────────┴────────────┴───────────────┴───────────┴────────────────┴─────────────────┴────────┘
 
 
-There are plenty of useless columns that we can get rid of such as `RowNumber` and `CustomerID`. We also have to get rid of the cateogircal features because SMOTE won't be able to deal with those; however, other variants such as SMOTE-NC can which we will consider in another tutorial.
+There are plenty of useless columns that we can get rid of such as `RowNumber` and `CustomerID`. We also have to get rid of the categoircal features because SMOTE won't be able to deal with those; however, other variants such as SMOTE-NC can which we will consider in another tutorial.
 
 
 ```julia
@@ -306,7 +315,7 @@ This looks good. Negligble standard deviation; point estimates are all centered 
 
 ### After Oversampling
 
-At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an arbitrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
 
 In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
 

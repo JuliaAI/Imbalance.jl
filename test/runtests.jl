@@ -15,6 +15,7 @@ using TableTransforms
 using TransformsBase
 using ScientificTypes
 using IOCapture
+using JLD2
 ENV["PYTHON"] = ""
 using Pkg: Pkg;
 Pkg.build("PyCall");
@@ -22,6 +23,11 @@ using PyCall
 using Conda
 
 include("test_utils.jl")
+
+# When the following variable is set to false, offline results from PyCall will be used
+# When it is set to true, PyCall will be used instead of saved resules and it will save the results.
+# For purposes of testing with Github actions, keep it true
+offline_python_test = true
 
 ### general
 
@@ -41,6 +47,7 @@ end
 	include("extras.jl")
 end
 
+
 @testset "distance metrics" begin
 	include("distance_metrics.jl")
 end
@@ -48,31 +55,13 @@ end
 
 
 ### interfaces
+
 @testset "MLJ Interface" begin
 	include("interfaces/mlj_interface.jl")
 end
 
 @testset "tabletransforms" begin
 	include("interfaces/tabletr_interface.jl")
-end
-
-
-### undersampling
-
-@testset "Basic Random Undersampler" begin
-	include("undersampling/random_undersample.jl")
-end
-
-@testset "ENN Undersampler" begin
-	include("undersampling/enn_undersample.jl")
-end
-
-@testset "Tomek Undersampler" begin
-	include("undersampling/tomek_undersample.jl")
-end
-
-@testset "Cluster Undersampler" begin
-	include("undersampling/cluster_undersample.jl")
 end
 
 
@@ -107,3 +96,24 @@ end
 @testset "SMOTENC" begin
 	include("oversampling/smotenc.jl")
 end
+
+
+### undersampling
+
+@testset "Basic Random Undersampler" begin
+	include("undersampling/random_undersample.jl")
+end
+
+@testset "ENN Undersampler" begin
+	include("undersampling/enn_undersample.jl")
+end
+
+@testset "Tomek Undersampler" begin
+	include("undersampling/tomek_undersample.jl")
+end
+
+
+@testset "Cluster Undersampler" begin
+	include("undersampling/cluster_undersample.jl")
+end
+

@@ -20,7 +20,7 @@ function cluster_undersample_per_class(
     rng::Union{AbstractRNG,Integer} = default_rng()
 )
     (mode in ["center", "nearest"]) ||
-        throw(ArgumentError(ERR_INVALID_MODE))
+        throw((ERR_INVALID_MODE))
     # to undersample down to n points find k=n clusters
     result = kmeans(X, n; maxiter, rng)
     # the n cluster centers are the undersampled points
@@ -39,7 +39,7 @@ end
     cluster_undersample(
         X, y; 
         mode= "nearest", ratios = 1.0, maxiter = 100,
-        rng=default_rng(), try_perserve_type=true
+        rng=default_rng(), try_preserve_type=true
     )
 
 
@@ -62,7 +62,7 @@ $(COMMON_DOCS["RATIOS-UNDERSAMPLE"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -112,8 +112,7 @@ mach = machine(undersampler)
 # Provide the data to transform (there is nothing to fit)
 X_under, y_under = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here]().
-
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
@@ -145,7 +144,7 @@ is not supported.
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/undersample_cluster.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -174,13 +173,13 @@ function cluster_undersample(
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     X_under, y_under = tablify(
         cluster_undersample,
         X,
         y;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         mode,
@@ -199,13 +198,13 @@ function cluster_undersample(
     ratios = 1.0,
     maxiter::Integer = 100,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xy_under = tablify(
         cluster_undersample,
         Xy,
         y_ind;
-        try_perserve_type = try_perserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = generic_encoder,
         decode_func = generic_decoder,
         mode,

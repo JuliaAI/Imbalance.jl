@@ -23,7 +23,7 @@ Check that all columns are either categorical or continuous. If not, throw an er
 function check_scitypes_smoten(ncols, cat_inds, cont_inds, types)
     bad_cols = setdiff(1:ncols, cat_inds)
     if !isempty(bad_cols)
-        throw(ArgumentError(ERR_BAD_NOM_COL_TYPES(bad_cols, types[bad_cols])))
+        throw((ERR_BAD_NOM_COL_TYPES(bad_cols, types[bad_cols])))
     end
     return
 end
@@ -126,7 +126,7 @@ end
     smoten(
         X, y;
         k=5, ratios=1.0, rng=default_rng(),
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 # Description
@@ -150,7 +150,7 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
@@ -158,8 +158,9 @@ $(COMMON_DOCS["OUTPUTS"])
 
 # Example
 
-```@repl
+```julia
 using Imbalance
+using ScientificTypes
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -171,7 +172,7 @@ num_vals_per_category = [3, 2]
 # generate a table and categorical vector accordingly
 X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
                                 class_probs, num_vals_per_category, rng=42)                      
-julia> Imbalance.countmap(y)
+julia> Imbalance.checkbalance(y)
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
@@ -185,7 +186,7 @@ X = coerce(X, autotype(X, :few_to_finite))
 # apply SMOTEN
 Xover, yover = smoten(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 
-julia> Imbalance.countmap(y)
+julia> Imbalance.checkbalance(yover)
 2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
 1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
 0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
@@ -207,8 +208,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here]().
-
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
@@ -246,7 +246,7 @@ reverts the transform by removing the oversampled observations from the table.
 
 # Illustration
 A full basic example can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smoten.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -260,7 +260,7 @@ function smoten(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     mvdm_encoder, num_categories_per_col = precompute_value_encodings(X, y)
     all_pairwise_mvdm = precompute_mvdm_distances(mvdm_encoder, num_categories_per_col)
@@ -277,13 +277,13 @@ function smoten(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xover, yover = tablify(
         smoten,
         X,
         y;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smoten_encoder,
         decode_func = smoten_decoder,
         k,
@@ -300,13 +300,13 @@ function smoten(
     k::Integer = 5,
     ratios = 1.0,
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xyover = tablify(
         smoten,
         Xy,
         y_ind;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smoten_encoder,
         decode_func = smoten_decoder,
         k,

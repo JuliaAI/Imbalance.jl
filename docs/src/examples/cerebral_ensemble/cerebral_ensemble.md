@@ -1,7 +1,13 @@
+
+
 # Balanced Bagging for Cerebral Stroke Prediction
 
 
 ```julia
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", 
+         "ScientificTypes","Impute", "StatsBase",  "Plots", "Measures", "HTTP"])
+
 using Random
 using CSV
 using DataFrames
@@ -12,20 +18,21 @@ using StatsBase
 using ScientificTypes
 using Plots, Measures
 using Impute
+using HTTP: download
 ```
 
 ## Loading Data
-In this example, we will consider the [Cerebral Stroke Prediction Dataset](https://www.kaggle.com/datasets/shashwatwork/cerebral-stroke-predictionimbalaced-dataset) found on Kaggle for the objective of predicting where a stroke has occured given medical features about patients.
+In this example, we will consider the [Cerebral Stroke Prediction Dataset](https://www.kaggle.com/datasets/shashwatwork/cerebral-stroke-predictionimbalaced-dataset) found on Kaggle for the objective of predicting where a stroke has occurred given medical features about patients.
 
 `CSV` gives us the ability to easily read the dataset after it's downloaded as follows
 
 
 ```julia
-df = CSV.read("../datasets/cerebral.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/cerebral_ensemble/cerebral.csv", "./")
+df = CSV.read("./cerebral.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames
 first(df, 5) |> pretty
-
 ```
 
     ┌───────┬─────────┬────────────┬──────────────┬───────────────┬──────────────┬──────────────┬────────────────┬───────────────────┬────────────────────────────┬──────────────────────────┬────────┐

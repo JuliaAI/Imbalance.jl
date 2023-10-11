@@ -22,7 +22,7 @@ Check that all columns are categorical . If not, throw an error.
 function check_scitypes_smotenc(ncols, cat_inds, cont_inds, types)
     bad_cols = setdiff(1:ncols, vcat(cat_inds, cont_inds))
     if !isempty(bad_cols)
-        throw(ArgumentError(ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
+        throw((ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
     end
 end
 
@@ -138,7 +138,7 @@ function smotenc_per_class(
     
     p = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(p, cont_inds, cat_inds)
-    (knn_tree ∈ ["Ball", "Brute"]) || throw(ArgumentError(ERR_WRNG_TREE(knn_tree)))
+    (knn_tree ∈ ["Ball", "Brute"]) || throw((ERR_WRNG_TREE(knn_tree)))
     tree = (knn_tree == "Brute") ? BruteTree(X, metric) : BallTree(X, metric)
     knn_map, _ = knn(tree, X, k + 1, true)
 
@@ -157,7 +157,7 @@ end
     smotenc(
         X, y, split_ind;
         k=5, ratios=1.0, knn_tree="Brute", rng=default_rng(),
-        try_perserve_type=true
+        try_preserve_type=true
     )
 
 # Description
@@ -168,7 +168,7 @@ Oversamples a dataset using `SMOTE-NC` (Synthetic Minority Oversampling Techniqu
 
 !!! warning "SMOTE-NC Assumes Continuous Features Exist"
     SMOTE-NC will not work if the dataset is purely nominal. In that case, refer to [SMOTE-N](@ref) instead.
-        Meanwhile, if the dataset is purely continuous then it's equivalent to the standard [SMOTE`](@ref).
+        Meanwhile, if the dataset is purely continuous then it's equivalent to the standard [SMOTE](@ref).
 
 # Positional Arguments
 
@@ -193,15 +193,16 @@ $(COMMON_DOCS["RATIOS"])
 
 $(COMMON_DOCS["RNG"])
 
-$(COMMON_DOCS["TRY_PERSERVE_TYPE"])
+$(COMMON_DOCS["TRY_PRESERVE_TYPE"])
 
 # Returns
 
 $(COMMON_DOCS["OUTPUTS"])
 
 # Example
-```@repl
+```julia
 using Imbalance
+using ScientificTypes
 
 # set probability of each class
 class_probs = [0.5, 0.2, 0.3]                         
@@ -238,7 +239,7 @@ Simply pass the keyword arguments while initiating the `SMOTENC` model and pass 
 
 ```julia
 using MLJ
-SMOTEN = @load SMOTEN pkg=Imbalance
+SMOTENC = @load SMOTENC pkg=Imbalance
 
 # Wrap the model in a machine
 oversampler = SMOTENC(k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
@@ -247,7 +248,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface [here](). Note that only `Table` input is supported by the MLJ interface for this method.
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/). Note that only `Table` input is supported by the MLJ interface for this method.
 
 
 
@@ -283,7 +284,7 @@ Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 
 # Illustration
 A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smotenc.ipynb). 
-    You may find more practical examples in the [walkthrough](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
+    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
     section which also explains running code on Google Colab.
 
 # References
@@ -300,7 +301,7 @@ function smotenc(
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     # implictly infer the continuous indices
@@ -318,13 +319,13 @@ function smotenc(
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xover, yover = tablify(
         smotenc,
         X,
         y;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smotenc_encoder,
         decode_func = smotenc_decoder,
         k,
@@ -343,13 +344,13 @@ function smotenc(
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
     rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 )
     Xyover = tablify(
         smotenc,
         Xy,
         y_ind;
-        try_perserve_type=try_perserve_type,
+        try_preserve_type=try_preserve_type,
         encode_func = smotenc_encoder,
         decode_func = smotenc_decoder,
         k,

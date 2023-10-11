@@ -1,3 +1,5 @@
+
+
 # Introduction
 
 In this section of the docs, we will walk you through some examples to demonstrate how you can use `Imbalance.jl` in your machine learning project. Although we focus on examples, you can learn more about how specific algorithms work by reading this series of blogposts on  [Medium](https://medium.com/towards-data-science/class-imbalance-from-random-oversampling-to-rose-517e06d7a9b).
@@ -9,6 +11,10 @@ In further examples, we will assume familiarity with the [CSV](https://csv.julia
 
 
 ```julia
+import Pkg;
+Pkg.add(["Random", "CSV", "DataFrames", "MLJ", 
+         "Imbalance", "MLJBalancing", "ScientificTypes", "HTTP"])
+
 using Random
 using CSV
 using DataFrames
@@ -16,6 +22,7 @@ using MLJ
 using Imbalance
 using MLJBalancing
 using ScientificTypes
+using HTTP: download
 ```
 
 ## Loading Data
@@ -24,10 +31,9 @@ In this example, we will consider the [BMI dataset](https://www.kaggle.com/datas
 `CSV` gives us the ability to easily read the dataset after it's downloaded as follows
 
 
-
-
 ```julia
-df = CSV.read("datasets/bmi.csv", DataFrame)
+download("https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/bmi.csv", "./")
+df = CSV.read("./bmi.csv", DataFrame)
 
 # Display the first 5 rows with DataFrames
 first(df, 5) |> pretty
@@ -44,6 +50,23 @@ first(df, 5) |> pretty
     │ Female  │ 195    │ 104    │ 3     │
     │ Male    │ 149    │ 61     │ 3     │
     └─────────┴────────┴────────┴───────┘
+
+
+    ┌ Warning: Reading one byte at a time from HTTP.Stream is inefficient.
+    │ Use: io = BufferedInputStream(http::HTTP.Stream) instead.
+    │ See: https://github.com/BioJulia/BufferedStreams.jl
+    └ @ HTTP.Streams /Users/essam/.julia/packages/HTTP/SN7VW/src/Streams.jl:240
+    ┌ Info: Downloading
+    │   source = https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/bmi.csv
+    │   dest = ./bmi.csv
+    │   progress = NaN
+    │   time_taken = 0.0 s
+    │   time_remaining = NaN s
+    │   average_speed = 7.933 MiB/s
+    │   downloaded = 8.123 KiB
+    │   remaining = ∞ B
+    │   total = ∞ B
+    └ @ HTTP /Users/essam/.julia/packages/HTTP/SN7VW/src/download.jl:132
 
 
 ## Coercing Data
@@ -424,7 +447,7 @@ Under the normality assumption, the `95%` confidence interval is `62.1±9.13%` w
 
 ### After Oversampling
 
-At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an aribtrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
+At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the `MLJBalancing` helps us avoid doing this manually by offering `BalancedModel` where we can wrap any `MLJ` classification model with an arbitrary number of `Imbalance.jl` resamplers in a pipeline that behaves like a single `MLJ` model.
 
 In this, we must construct the resampling model via it's `MLJ` interface then pass it along with the classification model to `BalancedModel`.
 
@@ -491,39 +514,4 @@ evaluate!(mach_over, resampling=cv, measure=balanced_accuracy)
 
 This results in an interval `70±7.2%` which can be viewed as a reasonable improvement over `62.1±9.13%`. The uncertainty in the intervals can be explained by the fact that the dataset is small with many classes.
 
-# Google Colab
 
-It is possible to run this tutorial and others in the examples section on Google Colab.
-- Click the Colab icon link as your hover on the example
-- Paste and run the following in the first cell
-
-
-```julia
-%%capture
-%%shell
-if ! command -v julia 3>&1 > /dev/null
-then
-    wget -q 'https://julialang-s3.julialang.org/bin/linux/x64/1.7/julia-1.7.2-linux-x86_64.tar.gz' \
-        -O /tmp/julia.tar.gz
-    tar -x -f /tmp/julia.tar.gz -C /usr/local --strip-components 1
-    rm /tmp/julia.tar.gz
-fi
-julia -e 'using Pkg; pkg"add IJulia; precompile;"'
-echo 'Done'
-
-```
-
-- Change the runtime to Julia from the toolbar
-- `Pkg.add` Imbalance and any needed packages (those being used)
-```julia
-Pkg.add(["Random", "CSV", "DataFrames", "MLJ", "Imbalance", "MLJBalancing", "StatsBase", "ScientificTypes", "Plots", "Impute", "CategoricalArrays"])
-```
-- Click the folder icon on the left, make a `datasets` folder and drag and drop it in there
-- Run the notebook
-
-Sincere thanks to [Julia-on-Colab](https://github.com/Dsantra92/Julia-on-Colab) for making this possible
-
-
-
-from convert import convert_to_md; convert_to_md('walkthrough', copy=False)
-```

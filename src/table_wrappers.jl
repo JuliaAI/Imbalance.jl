@@ -15,7 +15,7 @@ Takes a table and returns a matrix and the column names of the table.
 - `names`: A vector of column names
 """
 function matrixify(X)
-    Tables.istable(X) || throw(ArgumentError(ERR_TABLE_TYPE(typeof(X))))
+    Tables.istable(X) || throw((ERR_TABLE_TYPE(typeof(X))))
     # Get the column names using Tables.columns or the first row
     # Former is efficient for column tables, latter is efficient for row tables
     if Tables.columnaccess(X)
@@ -40,7 +40,7 @@ applies the function, then converts the matrix back to a table.
     and returns a matrix of oversampled observations and a vector of oversampled labels
 - `X`: A table where each row is an observation of floats
 - `y`: An abstract vector of class labels
-- `try_perserve_type`::Bool`: Whether to convert the output back to the original table type
+- `try_preserve_type`::Bool`: Whether to convert the output back to the original table type
 - `encode_func`: A function that takes the table and performs discrete encoding on it
     then returns the encoded table, a dictionary to decode it, and the indices of the categorical
     columns.
@@ -58,7 +58,7 @@ function tablify(
     matrix_func,
     X,
     y::AbstractVector;
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     encode_func = X -> (X, nothing, nothing),
     decode_func = (X, d) -> (X),
     kwargs...,
@@ -81,7 +81,7 @@ function tablify(
     Xover = decode_func(Xover, decode_dict)
 
     # 6. Maintain original table type if needed
-    try_perserve_type && (Xover = Tables.materializer(X)(Xover))
+    try_preserve_type && (Xover = Tables.materializer(X)(Xover))
 
     return Xover, yover
 end
@@ -94,7 +94,7 @@ function tablify(
     matrix_func,
     Xy,
     y_ind::Integer;
-    try_perserve_type::Bool = true,
+    try_preserve_type::Bool = true,
     encode_func = X -> (X, nothing, nothing),
     decode_func = (X, d) -> (X),
     kwargs...,
@@ -130,7 +130,7 @@ function tablify(
     Xyover = decode_func(Xyover, decode_dict)
 
     # 8. Maintain original table type if needed
-    try_perserve_type && (Xyover = Tables.materializer(Xy)(Xyover))
+    try_preserve_type && (Xyover = Tables.materializer(Xy)(Xyover))
 
     return Xyover
 end
