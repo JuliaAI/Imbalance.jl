@@ -95,7 +95,7 @@ The toolbox implementation follows a specific set of design principles in terms 
 - Should offer solutions to heterogenous data settings (continuous and nominal data)
 - When possible, preference should be given to techniques that are more common in the literature or industry
 
-Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned design principles for the implemented techniques. The one-vs-rest scheme as proposed in [@Fernández:2013] which was used to generalize the technique to multi-class when needed.
+Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned design principles for the implemented techniques. The one-vs-rest scheme as proposed in [@Fernández:2013] was used to generalize the technique to multi-class when needed.
 
 ## Interface Support
 - Should support both matrix and table inputs
