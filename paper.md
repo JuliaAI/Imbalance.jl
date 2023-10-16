@@ -57,7 +57,7 @@ c = ...
 X_after, y_after = resample(X, y; a, ratios, b, c)
 ```
 
-`ratios` is a hyperparameter that controls the amount of oversampling or undersampling to be done for each class, when it is a float, each class will be oversampled or undersampled to the size of the majority or minority class respectively times the float. Thus, `ratios=1.0` would oversample all classes to the size of the majority class or undersample all classes to the size of the minority class depending on the type of the `resample` technique. `ratios` can also be a dictionary mapping each class label to the float ratio for that particular class.
+The `ratios` hyperparameter controls the amount of oversampling or undersampling to be done for each class. When it is a float, each class will be oversampled or undersampled to the size of the majority or minority class respectively, multiplied by the float. Thus, `ratios=1.0` would oversample all classes to the size of the majority class or undersample all classes to the size of the minority class depending on the type of the `resample` technique. Alternatively,`ratios` can be a dictionary mapping each class label to the float ratio for that particular class.
 
 : Resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl`. []{label="techniques"}
 
