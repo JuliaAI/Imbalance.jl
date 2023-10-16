@@ -100,7 +100,7 @@ Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned
 ## Interface Support
 - Should support both matrix and table inputs
 - Target variable may or may not be given separately
-- Should support a pure functional interface and other interfaces common in Julia packages such as `MLJ`, `FeatureTransforms` and `TableTransforms`
+- Should expose a pure functional implementation, but also support popular Julia machine learning interfaces.
 - Should be possible to wrap an arbitrary number of resampler models with an MLJ model to behave as a unified model using MLJBalancing
 
 Methods implemented in the `Imbalance.jl` toolbox meet all the interface design principles above. It particularly implements the `MLJ` and `TableTransforms` interface for each method. `BalancedModel` from `MLJBalancing.jl` also allows fusing an arbitrary number of resampling models and a classifier together to behave as one unified model.
