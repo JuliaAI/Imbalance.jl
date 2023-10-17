@@ -33,11 +33,11 @@ bibliography: paper.bib
 
 Given a set of observations that each belong to a certain class, supervised classification aims to learn a classification model that can predict the class of a new, unlabeled observation [@Cunningham:2008]. This modeling process finds extensive application in real-life scenarios, including but not limited to medical diagnostics, recommendation systems, credit scoring, and sentiment analysis.
 
-In various real-world scenarios, such as those pertaining to the detection of particular conditions like fraud, faults, pollution, or rare diseases, a severe discrepancy between the number of observations in each class can occur. This is known as class imbalance. This poses a problem if assumptions inherent in the classification model imply hindered performance when the model is trained on imbalanced data as is commonly the case [@Ali:2015]. Two prevalent strategies for mitigating class imbalance, when it poses a problem to the classification model, involve either increasing the representation of less frequently occurring classes through oversampling or reducing instances of more frequently occurring classes through undersampling. It may be also possible to achieve even greater performance by combining both approaches [@Zeng:2016] or by resampling the data multiple times and training the classification model on each resampled dataset to form an ensemble model that aggregates results from different model instances [@Liu:2009].
+In various real-world scenarios where supervised classification is employed, such as those pertaining to the detection of particular conditions like fraud, faults, pollution, or rare diseases, a severe discrepancy between the number of observations in each class can occur. This is known as class imbalance. This poses a problem if assumptions inherent in the classification model imply hindered performance when the model is trained on imbalanced data as is commonly the case [@Ali:2015]. Two prevalent strategies for mitigating class imbalance, when it poses a problem to the classification model, involve either increasing the representation of less frequently occurring classes through oversampling or reducing instances of more frequently occurring classes through undersampling. It may be also possible to achieve even greater performance by combining both approaches [@Zeng:2016] or by resampling the data multiple times and training the classification model on each resampled dataset to form an ensemble model that aggregates results from different model instances [@Liu:2009].
 
 ## Imbalance.jl
 
-In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown \autoref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
+In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models via the `BalancedModel` construct, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown \autoref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
 
 
 The toolbox offers a pure functional interface for each method implemented. For example, `SMOTE` can be used in the following fashion:
@@ -47,16 +47,10 @@ Xover, yover = smote(X, y)
 ```
 Here `Xover, yover` are `X, y` after oversampling.
 
-A `ratios` hyperparameter is almost always present to control the degree of oversampling or undersampling to be done for each class. All hyperparameters for a resampling method have default values that can be overridden. The following example shows how to use the `smote` method with a custom `ratios` hyperparameter:
+A `ratios` hyperparameter or similar is always present to control the degree of oversampling or undersampling to be done for each class. All hyperparameters for a resampling method have default values that can be overridden.
 
-```julia
-X_after, y_after = smote(X, y; ratios=1.2)
-```
-
-The `ratios` hyperparameter controls the amount of oversampling or undersampling to be done for each class. When it is a float, each class will be oversampled or undersampled to the size of the majority or minority class respectively, multiplied by the float. Thus, `ratios=1.0` would oversample all classes to the size of the majority class or undersample all classes to the size of the minority class depending on the type of the `resample` technique. Alternatively,`ratios` can be a dictionary mapping each class label to the float ratio for that particular class.
 
 : Resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl`. []{label="techniques"}
-
 | Technique                  | Type          | Supported Data Types          |
 |----------------------------|---------------|-------------------------------|
 | BalancedBaggingClassifier  | Ensemble      | Continuous and/or nominal         |
@@ -96,7 +90,7 @@ Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned
 ## Interface Support
 - Should support both matrix and table inputs
 - Target variable may or may not be given as a separate column
-- Should expose a pure functional implementation, but also support popular Julia machine learning interfaces.
+- Should expose a pure functional implementation, but also support popular Julia machine learning interfaces
 - Should be possible to wrap an arbitrary number of resampler models with an MLJ model to behave as a unified model using MLJBalancing
 
 Methods implemented in the `Imbalance.jl` toolbox meet all the interface design principles above. It particularly implements the `MLJ` and `TableTransforms` interface for each method. `BalancedModel` from `MLJBalancing.jl` also allows fusing an arbitrary number of resampling models and a classifier together to behave as one unified model.
@@ -107,9 +101,9 @@ Methods implemented in the `Imbalance.jl` toolbox meet all the interface design 
 - Should document all functions, including internal ones
 - Comments should be included to justify or simplify written implementations when needed
 - Features commonly used by multiple resampling techniques should be implemented in a single function and reused
-- There should exist a developer guide to encourage and guide contribution
 - Functions should be implemented in smaller units to aid for testing
 - Testing coverage should be maximized; even the most basic functions should be tested
+- There should exist a developer guide to encourage and guide contribution
 
 This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form the technique. End-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` toolbox from Python and comparing outputs.
 
@@ -118,8 +112,8 @@ This set of design principles is also satisfied by `Imbalance.jl`. Implemented t
 - Functional documentation should be comprehensive and clear
 - Examples (with shown output) that work after copy-pasting should accompany each method
 - An illustrative visual example that presents a plot or animation should preferably accompany each method
-- A practical example that uses the method with real data should preferably accompany each method. Practical examples that study hyperparameter effects may also be provided.
-- Users should be able to easily run the illustrative or practical examples (e.g., via Google Colab)
+- A practical example that uses the method with real data should preferably accompany each method
+- Users should preferably be able to easily run the illustrative or practical examples (e.g., via Google Colab)
 - If an implemented method lacks an online explanation, an article that explains the method after its implemented should be preferably written
 
 The `Imbalance.jl` documentation indeed satisfies this set of design principles. Methods are associated with examples that can be copy-pasted, examples that demonstrate the operation of the technique visually and possibly, examples that use it with a real world dataset to improve the performance of a classification model.
@@ -127,3 +121,5 @@ The `Imbalance.jl` documentation indeed satisfies this set of design principles.
 ## Author Contributions
 
 Design: E. Wisam, A. Blaom. Implementation, tests and documentation: E. Wisam. Code and documentation review: A. Blaom.
+
+## References
