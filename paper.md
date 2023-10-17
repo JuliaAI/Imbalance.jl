@@ -37,7 +37,7 @@ In various real-world scenarios where supervised classification is employed, suc
 
 ## Imbalance.jl
 
-In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models via the `BalancedModel` construct, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown \ref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
+In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well-established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models via the `BalancedModel` construct, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown in \ref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
 
 
 The toolbox offers a pure functional interface for each method implemented. For example, `SMOTE` can be used in the following fashion:
@@ -71,9 +71,9 @@ A `ratios` hyperparameter or similar is always present to control the degree of 
 
 A substantial body of literature in the field of machine learning and statistics is devoted to addressing the class imbalance issue. This predicament has often been aptly labeled the "curse of class imbalance," as noted in [@Picek:2018] and [@Kubt:1997] which follows from the pervasive nature of the issue across diverse real-world applications and its pronounced severity; a classifier may incur an extraordinarily large performance penalty in response to training on imbalanced data.
 
-The literature encompasses a myriad of oversampling and undersampling techniques to approach the class imbalance issue. These include SMOTE [@Chawla:2002] which operates by generating synthetic examples along the lines joining existing points, SMOTE-N and SMOTE-NC [@Chawla:2002] which are variants of SMOTE that can deal with categorical data. The sheer number of SMOTE variants makes them a body of literature on their own. Notably, the most widely cited variant of SMOTE is BorderlineSMOTE [@Han:2005]. Other well established oversampling techniques include RWO [@Zhang:2014] and ROSE [@Menardi:2012]. On the other hand, the literature also encompasses many undersampling techniques such as cluster undersampling [@Lin:2016] and condensed nearest neighbors [@Hart:1968]. Furthermore, methods that combine oversampling and undersampling [@Zeng:2016] or resampling with ensemble learning [@Liu:2009] are also present.
+The literature encompasses a myriad of oversampling and undersampling techniques to approach the class imbalance issue. These include SMOTE [@Chawla:2002] which operates by generating synthetic examples along the lines joining existing points, SMOTE-N and SMOTE-NC [@Chawla:2002] which are variants of SMOTE that can deal with categorical data. The sheer number of SMOTE variants makes them a body of literature on their own. Notably, the most widely cited variant of SMOTE is BorderlineSMOTE [@Han:2005]. Other well-established oversampling techniques include RWO [@Zhang:2014] and ROSE [@Menardi:2012]. On the other hand, the literature also encompasses many undersampling techniques such as cluster undersampling [@Lin:2016] and condensed nearest neighbors [@Hart:1968]. Furthermore, methods that combine oversampling and undersampling [@Zeng:2016] or resampling with ensemble learning [@Liu:2009] are also present.
 
-The existence of a toolbox with techniques that harness this wealth of research is necessary for the development of novel approaches to the class imbalance problem and for machine learning research in general. Aside from addressing class imbalance in a general machine learning research setting, the toolbox can help in class imbalance research settings by making it possible to juxtapose different methods, compose them together or form variants of them without having to reimplement them from scratch. In popular programming languages, such as Python, a variety of such toolboxes already exist, such as imbalanced-learn [@Lematre:2016] and SMOTE-variants [@Kovács:2019]. Meanwhile, Julia, a well known programming language with over 40M downloads [@DataCamp:2023], has been lacking a similar toolbox to address the class imbalance issue in general multi-class, heterogeneous data settings. This has served as the primary motivation for the creation of the `Imbalance.jl` toolbox.
+The existence of a toolbox with techniques that harness this wealth of research is necessary for the development of novel approaches to the class imbalance problem and for machine learning research in general. Aside from addressing class imbalance in a general machine learning research setting, the toolbox can help in class imbalance research settings by making it possible to juxtapose different methods, compose them together, or form variants of them without having to reimplement them from scratch. In popular programming languages, such as Python, a variety of such toolboxes already exist, such as imbalanced-learn [@Lematre:2016] and SMOTE-variants [@Kovács:2019]. Meanwhile, Julia, a well known programming language with over 40M downloads [@DataCamp:2023], has been lacking a similar toolbox to address the class imbalance issue in general multi-class, heterogeneous data settings. This has served as the primary motivation for the creation of the `Imbalance.jl` toolbox.
 
 
 # Imbalance.jl Design Principles
@@ -83,7 +83,7 @@ The toolbox implementation follows a specific set of design principles in terms 
 ## Implemented Techniques 
 - Should support all four major types of resampling approaches
 - Should be generally compatible with multi-class settings
-- Should offer solutions to heterogenous data settings (continuous and nominal data)
+- Should offer solutions to heterogeneous data settings (continuous and nominal data)
 - When possible, preference should be given to techniques that are more common in the literature or industry
 
 Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned design principles for the implemented techniques. The one-vs-rest scheme as proposed in [@Fernández:2013] was used to generalize the technique to multi-class when needed.
@@ -102,7 +102,7 @@ Methods implemented in the `Imbalance.jl` toolbox meet all the interface design 
 - Should document all functions, including internal ones
 - Comments should be included to justify or simplify written implementations when needed
 - Features commonly used by multiple resampling techniques should be implemented in a single function and reused
-- Functions should be implemented in smaller units to aid for testing
+- Functions should be implemented in smaller units to aid in testing
 - Testing coverage should be maximized; even the most basic functions should be tested
 - There should exist a developer guide to encourage and guide contribution
 
@@ -115,9 +115,9 @@ This set of design principles is also satisfied by `Imbalance.jl`. Implemented t
 - An illustrative visual example that presents a plot or animation should preferably accompany each method
 - A practical example that uses the method with real data should preferably accompany each method
 - Users should preferably be able to easily run the illustrative or practical examples (e.g., via Google Colab)
-- If an implemented method lacks an online explanation, an article that explains the method after its implemented should be preferably written
+- If an implemented method lacks an online explanation, an article that explains the method after it is implemented should be preferably written
 
-The `Imbalance.jl` documentation indeed satisfies this set of design principles. Methods are associated with examples that can be copy-pasted, examples that demonstrate the operation of the technique visually and possibly, examples that use it with a real world dataset to improve the performance of a classification model.
+The `Imbalance.jl` documentation indeed satisfies this set of design principles. Methods are associated with examples that can be copy-pasted, examples that demonstrate the operation of the technique visually, and possibly, examples that use it with a real-world dataset to improve the performance of a classification model.
 
 ## Author Contributions
 
