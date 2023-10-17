@@ -40,21 +40,17 @@ In various real-world scenarios, such as those pertaining to the detection of pa
 In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown \autoref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
 
 
-The package offers a pure functional interface for each method implemented. An arbitrary `Imbalance.jl` resampling method `resample` can be used in the following fashion:
+The package offers a pure functional interface for each method implemented. For example, `smote` can be used in the following fashion:
 
 ```julia
-X_after, y_after = resample(X, y)
+Xover, yover = smote(X, y)
 ```
-Here `X_after, y_after` are `X, y` after resampling.
+Here `Xover, yover` are `X, y` after oversampling.
 
-A `ratios` hyperparameter is almost always present to control the degree of oversampling or undersampling to be done for each class. All hyperparameters for a resampling method have default values. To avoid using the defaults, an arbitrary `Imbalance.jl` resampling method `resample` that also has other hyperparameters `a`, `b` and `c` can be used in the following fashion:
+A `ratios` hyperparameter is almost always present to control the degree of oversampling or undersampling to be done for each class. All hyperparameters for a resampling method have default values that can be overridden. The following example shows how to use the `smote` method with a custom `ratios` hyperparameter:
 
 ```julia
-a = ...
-ratios = 1.0
-b = ...
-c = ...
-X_after, y_after = resample(X, y; a, ratios, b, c)
+X_after, y_after = smote(X, y; ratios=1.2)
 ```
 
 The `ratios` hyperparameter controls the amount of oversampling or undersampling to be done for each class. When it is a float, each class will be oversampled or undersampled to the size of the majority or minority class respectively, multiplied by the float. Thus, `ratios=1.0` would oversample all classes to the size of the majority class or undersample all classes to the size of the minority class depending on the type of the `resample` technique. Alternatively,`ratios` can be a dictionary mapping each class label to the float ratio for that particular class.
