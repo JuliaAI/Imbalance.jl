@@ -1,5 +1,5 @@
 ---
-title: 'Imbalance: A comprehensive, multi-interface, extensively documented Julia toolbox to address class imbalance'
+title: 'Imbalance: A comprehensive multi-interface Julia toolbox to address class imbalance'
 tags:
   - machine learning
   - classification
@@ -25,7 +25,7 @@ affiliations:
  - name: University of Auckland, New Zealand
    index: 2
 
-date: 11 October 2023
+date: 17 October 2023
 bibliography: paper.bib
 ---
 
