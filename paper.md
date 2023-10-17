@@ -37,7 +37,7 @@ In various real-world scenarios where supervised classification is employed, suc
 
 ## Imbalance.jl
 
-In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models via the `BalancedModel` construct, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown \autoref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
+In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models via the `BalancedModel` construct, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown \ref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
 
 
 The toolbox offers a pure functional interface for each method implemented. For example, `SMOTE` can be used in the following fashion:
@@ -51,6 +51,7 @@ A `ratios` hyperparameter or similar is always present to control the degree of 
 
 
 : Resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl`. []{label="techniques"}
+
 | Technique                  | Type          | Supported Data Types          |
 |----------------------------|---------------|-------------------------------|
 | BalancedBaggingClassifier  | Ensemble      | Continuous and/or nominal         |
