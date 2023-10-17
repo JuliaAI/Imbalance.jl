@@ -10,7 +10,7 @@ tags:
   - julia
 
 authors:
-  - name: Essam W. Amin
+  - name: Essam Wisam
     orcid: 0009-0009-1198-7166
     equal-contrib: true
     affiliation: 1
@@ -40,7 +40,7 @@ In various real-world scenarios, such as those pertaining to the detection of pa
 In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown \autoref{techniques}. Although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
 
 
-The package offers a pure functional interface for each method implemented. For example, `smote` can be used in the following fashion:
+The toolbox offers a pure functional interface for each method implemented. For example, `SMOTE` can be used in the following fashion:
 
 ```julia
 Xover, yover = smote(X, y)
@@ -95,7 +95,7 @@ Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned
 
 ## Interface Support
 - Should support both matrix and table inputs
-- Target variable may or may not be given separately
+- Target variable may or may not be given as a separate column
 - Should expose a pure functional implementation, but also support popular Julia machine learning interfaces.
 - Should be possible to wrap an arbitrary number of resampler models with an MLJ model to behave as a unified model using MLJBalancing
 
@@ -111,7 +111,7 @@ Methods implemented in the `Imbalance.jl` toolbox meet all the interface design 
 - Functions should be implemented in smaller units to aid for testing
 - Testing coverage should be maximized; even the most basic functions should be tested
 
-This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form the technique. End-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` package from Python and comparing outputs.
+This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form the technique. End-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` toolbox from Python and comparing outputs.
 
 ## User Experience
 
@@ -119,7 +119,11 @@ This set of design principles is also satisfied by `Imbalance.jl`. Implemented t
 - Examples (with shown output) that work after copy-pasting should accompany each method
 - An illustrative visual example that presents a plot or animation should preferably accompany each method
 - A practical example that uses the method with real data should preferably accompany each method. Practical examples that study hyperparameter effects may also be provided.
-- Users should be able to easily run the illustrative or practical examples (e.g., via Google colab)
+- Users should be able to easily run the illustrative or practical examples (e.g., via Google Colab)
 - If an implemented method lacks an online explanation, an article that explains the method after its implemented should be preferably written
 
 The `Imbalance.jl` documentation indeed satisfies this set of design principles. Methods are associated with examples that can be copy-pasted, examples that demonstrate the operation of the technique visually and possibly, examples that use it with a real world dataset to improve the performance of a classification model.
+
+## Author Contributions
+
+Design: E. Wisam, A. Blaom. Implementation, tests and documentation: E. Wisam. Code and documentation review: A. Blaom.
