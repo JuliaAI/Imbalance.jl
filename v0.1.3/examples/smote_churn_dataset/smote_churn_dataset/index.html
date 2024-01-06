@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>SMOTE on Customer Churn Data · Imbalance.jl</title><meta name="title" content="SMOTE on Customer Churn Data · Imbalance.jl"/><meta property="og:title" content="SMOTE on Customer Churn Data · Imbalance.jl"/><meta property="twitter:title" content="SMOTE on Customer Churn Data · Imbalance.jl"/><meta name="description" content="Documentation for Imbalance.jl."/><meta property="og:description" content="Documentation for Imbalance.jl."/><meta property="twitter:description" content="Documentation for Imbalance.jl."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&amp;display=swap" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.gif" alt="Imbalance.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">Imbalance.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Introduction</a></li><li><span class="tocitem">Algorithms</span><ul><li><a class="tocitem" href="../../../algorithms/oversampling_algorithms/">Oversampling</a></li><li><a class="tocitem" href="../../../algorithms/undersampling_algorithms/">Undersampling</a></li><li><a class="tocitem" href="../../../algorithms/mlj_balancing/">Combination</a></li><li><a class="tocitem" href="../../../algorithms/implementation_notes/">Implementation Notes</a></li><li><a class="tocitem" href="../../../algorithms/extra_algorithms/">Extras</a></li></ul></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../../walkthrough/">Introduction</a></li><li><a class="tocitem" href="../../">More Examples</a></li><li><a class="tocitem" href="../../Colab/">Google Colab</a></li></ul></li><li><a class="tocitem" href="../../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>SMOTE on Customer Churn Data</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>SMOTE on Customer Churn Data</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/Imbalance.jl/" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="SMOTE-on-Customer-Churn-Data"><a class="docs-heading-anchor" href="#SMOTE-on-Customer-Churn-Data">SMOTE on Customer Churn Data</a><a id="SMOTE-on-Customer-Churn-Data-1"></a><a class="docs-heading-anchor-permalink" href="#SMOTE-on-Customer-Churn-Data" title="Permalink"></a></h1><pre><code class="language-julia hljs">
+import Pkg;
+Pkg.add([&quot;Random&quot;, &quot;CSV&quot;, &quot;DataFrames&quot;, &quot;MLJ&quot;, &quot;Imbalance&quot;, &quot;MLJBalancing&quot;, 
+         &quot;ScientificTypes&quot;,&quot;Impute&quot;, &quot;StatsBase&quot;,  &quot;Plots&quot;, &quot;Measures&quot;, &quot;HTTP&quot;])
+
+using Imbalance
+using MLJBalancing
+using CSV
+using DataFrames
+using ScientificTypes
+using CategoricalArrays
+using MLJ
+using Plots
+using Random
+using HTTP: download</code></pre><h2 id="Loading-Data"><a class="docs-heading-anchor" href="#Loading-Data">Loading Data</a><a id="Loading-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Loading-Data" title="Permalink"></a></h2><p>In this example, we will consider the <a href="https://www.kaggle.com/datasets/mathchi/churn-for-bank-customers">Churn for Bank Customers</a> found on Kaggle where the objective is to predict whether a customer is likely to leave a bank given financial and demographic features.</p><p><code>CSV</code> gives us the ability to easily read the dataset after it&#39;s downloaded as follows</p><pre><code class="language-julia hljs">download(&quot;https://raw.githubusercontent.com/JuliaAI/Imbalance.jl/dev/docs/src/examples/smote_churn_dataset/churn.csv&quot;, &quot;./&quot;)
+df = CSV.read(&quot;./churn.csv&quot;, DataFrame)
+first(df, 5) |&gt; pretty</code></pre><pre><code class="nohighlight hljs">┌───────────┬────────────┬──────────┬─────────────┬───────────┬─────────┬───────┬────────┬────────────┬───────────────┬───────────┬────────────────┬─────────────────┬────────┐
+│ RowNumber │ CustomerId │ Surname  │ CreditScore │ Geography │ Gender  │ Age   │ Tenure │ Balance    │ NumOfProducts │ HasCrCard │ IsActiveMember │ EstimatedSalary │ Exited │
+│ Int64     │ Int64      │ String31 │ Int64       │ String7   │ String7 │ Int64 │ Int64  │ Float64    │ Int64         │ Int64     │ Int64          │ Float64         │ Int64  │
+│ Count     │ Count      │ Textual  │ Count       │ Textual   │ Textual │ Count │ Count  │ Continuous │ Count         │ Count     │ Count          │ Continuous      │ Count  │
+├───────────┼────────────┼──────────┼─────────────┼───────────┼─────────┼───────┼────────┼────────────┼───────────────┼───────────┼────────────────┼─────────────────┼────────┤
+│ 1         │ 15634602   │ Hargrave │ 619         │ France    │ Female  │ 42    │ 2      │ 0.0        │ 1             │ 1         │ 1              │ 1.01349e5       │ 1      │
+│ 2         │ 15647311   │ Hill     │ 608         │ Spain     │ Female  │ 41    │ 1      │ 83807.9    │ 1             │ 0         │ 1              │ 1.12543e5       │ 0      │
+│ 3         │ 15619304   │ Onio     │ 502         │ France    │ Female  │ 42    │ 8      │ 1.59661e5  │ 3             │ 1         │ 0              │ 1.13932e5       │ 1      │
+│ 4         │ 15701354   │ Boni     │ 699         │ France    │ Female  │ 39    │ 1      │ 0.0        │ 2             │ 0         │ 0              │ 93826.6         │ 0      │
+│ 5         │ 15737888   │ Mitchell │ 850         │ Spain     │ Female  │ 43    │ 2      │ 1.25511e5  │ 1             │ 1         │ 1              │ 79084.1         │ 0      │
+└───────────┴────────────┴──────────┴─────────────┴───────────┴─────────┴───────┴────────┴────────────┴───────────────┴───────────┴────────────────┴─────────────────┴────────┘</code></pre><p>There are plenty of useless columns that we can get rid of such as <code>RowNumber</code> and <code>CustomerID</code>. We also have to get rid of the categoircal features because SMOTE won&#39;t be able to deal with those; however, other variants such as SMOTE-NC can which we will consider in another tutorial.</p><pre><code class="language-julia hljs">df = df[:, Not([:RowNumber, :CustomerId, :Surname, 
+           :Geography, :Gender])]
+
+first(df, 5) |&gt; pretty</code></pre><pre><code class="nohighlight hljs">┌─────────────┬───────┬────────┬────────────┬───────────────┬───────────┬────────────────┬─────────────────┬────────┐
+│ CreditScore │ Age   │ Tenure │ Balance    │ NumOfProducts │ HasCrCard │ IsActiveMember │ EstimatedSalary │ Exited │
+│ Int64       │ Int64 │ Int64  │ Float64    │ Int64         │ Int64     │ Int64          │ Float64         │ Int64  │
+│ Count       │ Count │ Count  │ Continuous │ Count         │ Count     │ Count          │ Continuous      │ Count  │
+├─────────────┼───────┼────────┼────────────┼───────────────┼───────────┼────────────────┼─────────────────┼────────┤
+│ 619.0       │ 42.0  │ 2.0    │ 0.0        │ 1.0           │ 1.0       │ 1.0            │ 1.01349e5       │ 1.0    │
+│ 608.0       │ 41.0  │ 1.0    │ 83807.9    │ 1.0           │ 0.0       │ 1.0            │ 1.12543e5       │ 0.0    │
+│ 502.0       │ 42.0  │ 8.0    │ 1.59661e5  │ 3.0           │ 1.0       │ 0.0            │ 1.13932e5       │ 1.0    │
+│ 699.0       │ 39.0  │ 1.0    │ 0.0        │ 2.0           │ 0.0       │ 0.0            │ 93826.6         │ 0.0    │
+│ 850.0       │ 43.0  │ 2.0    │ 1.25511e5  │ 1.0           │ 1.0       │ 1.0            │ 79084.1         │ 0.0    │
+└─────────────┴───────┴────────┴────────────┴───────────────┴───────────┴────────────────┴─────────────────┴────────┘</code></pre><p>Ideally, we may even remove ordinal variables because SMOTE will treat them as continuous and the synthetic data it generates will taking floating point values which will not occur in future data. Some models may be robust to this whatsoever and the main purpose of this tutorial is to later compare SMOTE-NC with SMOTE.</p><h2 id="Coercing-Data"><a class="docs-heading-anchor" href="#Coercing-Data">Coercing Data</a><a id="Coercing-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Coercing-Data" title="Permalink"></a></h2><p>Let&#39;s coerce everything to continuous except for the target variable.</p><pre><code class="language-julia hljs">df = coerce(df, :Age=&gt;Continuous,
+                :Tenure=&gt;Continuous,
+                :Balance=&gt;Continuous,
+                :NumOfProducts=&gt;Continuous,
+                :HasCrCard=&gt;Continuous,
+                :IsActiveMember=&gt;Continuous,
+                :EstimatedSalary=&gt;Continuous,
+                :Exited=&gt;Multiclass)
+
+ScientificTypes.schema(df)</code></pre><pre><code class="nohighlight hljs">┌─────────────────┬───────────────┬─────────────────────────────────┐
+│ names           │ scitypes      │ types                           │
+├─────────────────┼───────────────┼─────────────────────────────────┤
+│ CreditScore     │ Count         │ Int64                           │
+│ Age             │ Continuous    │ Float64                         │
+│ Tenure          │ Continuous    │ Float64                         │
+│ Balance         │ Continuous    │ Float64                         │
+│ NumOfProducts   │ Continuous    │ Float64                         │
+│ HasCrCard       │ Continuous    │ Float64                         │
+│ IsActiveMember  │ Continuous    │ Float64                         │
+│ EstimatedSalary │ Continuous    │ Float64                         │
+│ Exited          │ Multiclass{2} │ CategoricalValue{Int64, UInt32} │
+└─────────────────┴───────────────┴─────────────────────────────────┘</code></pre><h2 id="Unpacking-and-Splitting-Data"><a class="docs-heading-anchor" href="#Unpacking-and-Splitting-Data">Unpacking and Splitting Data</a><a id="Unpacking-and-Splitting-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Unpacking-and-Splitting-Data" title="Permalink"></a></h2><p>Both <code>MLJ</code> and the pure functional interface of <code>Imbalance</code> assume that the observations table <code>X</code> and target vector <code>y</code> are separate. We can accomplish that by using <code>unpack</code> from <code>MLJ</code></p><pre><code class="language-julia hljs">y, X = unpack(df, ==(:Exited); rng=123);
+first(X, 5) |&gt; pretty</code></pre><pre><code class="nohighlight hljs">┌─────────────┬────────────┬────────────┬────────────┬───────────────┬────────────┬────────────────┬─────────────────┐
+│ CreditScore │ Age        │ Tenure     │ Balance    │ NumOfProducts │ HasCrCard  │ IsActiveMember │ EstimatedSalary │
+│ Int64       │ Float64    │ Float64    │ Float64    │ Float64       │ Float64    │ Float64        │ Float64         │
+│ Count       │ Continuous │ Continuous │ Continuous │ Continuous    │ Continuous │ Continuous     │ Continuous      │
+├─────────────┼────────────┼────────────┼────────────┼───────────────┼────────────┼────────────────┼─────────────────┤
+│ 669.0       │ 31.0       │ 6.0        │ 1.13001e5  │ 1.0           │ 1.0        │ 0.0            │ 40467.8         │
+│ 822.0       │ 37.0       │ 3.0        │ 105563.0   │ 1.0           │ 1.0        │ 0.0            │ 1.82625e5       │
+│ 423.0       │ 36.0       │ 5.0        │ 97665.6    │ 1.0           │ 1.0        │ 0.0            │ 1.18373e5       │
+│ 623.0       │ 21.0       │ 10.0       │ 0.0        │ 2.0           │ 0.0        │ 1.0            │ 1.35851e5       │
+│ 691.0       │ 37.0       │ 7.0        │ 1.23068e5  │ 1.0           │ 1.0        │ 1.0            │ 98162.4         │
+└─────────────┴────────────┴────────────┴────────────┴───────────────┴────────────┴────────────────┴─────────────────┘</code></pre><p>Splitting the data into train and test portions is also easy using <code>MLJ</code>&#39;s <code>partition</code> function.</p><pre><code class="language-julia hljs">train_inds, test_inds = partition(eachindex(y), 0.8, shuffle=true, rng=Random.Xoshiro(42))
+X_train, X_test = X[train_inds, :], X[test_inds, :]
+y_train, y_test = y[train_inds], y[test_inds]</code></pre><pre><code class="nohighlight hljs">(CategoricalValue{Int64, UInt32}[0, 1, 1, 0, 0, 0, 0, 0, 0, 0  …  0, 0, 0, 1, 0, 0, 0, 0, 1, 0], CategoricalValue{Int64, UInt32}[0, 0, 0, 0, 0, 1, 1, 0, 0, 0  …  0, 0, 0, 0, 0, 0, 0, 0, 0, 0])</code></pre><h2 id="Oversampling"><a class="docs-heading-anchor" href="#Oversampling">Oversampling</a><a id="Oversampling-1"></a><a class="docs-heading-anchor-permalink" href="#Oversampling" title="Permalink"></a></h2><p>Before deciding to oversample, let&#39;s see how adverse is the imbalance problem, if it exists. Ideally, you may as well check if the classification model is robust to this problem.</p><pre><code class="language-julia hljs">checkbalance(y)         # comes from Imbalance</code></pre><pre><code class="nohighlight hljs">1: ▇▇▇▇▇▇▇▇▇▇▇▇▇ 2037 (25.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 7963 (100.0%)</code></pre><p>Looks like we have a class imbalance problem. Let&#39;s oversample with SMOTE and set the desired ratios so that the positive minority class is 90% of the majority class</p><pre><code class="language-julia hljs">Xover, yover = smote(X_train, y_train; k=3, ratios=Dict(1=&gt;0.9), rng=42)
+checkbalance(yover)</code></pre><pre><code class="nohighlight hljs">1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 5736 (90.0%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 6373 (100.0%)</code></pre><h2 id="Training-the-Model"><a class="docs-heading-anchor" href="#Training-the-Model">Training the Model</a><a id="Training-the-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Training-the-Model" title="Permalink"></a></h2><p>Because we have scientific types setup, we can easily check what models will be able to train on our data. This should guarantee that the model we choose won&#39;t throw an error due to types after feeding it the data.</p><pre><code class="language-julia hljs">models(matching(Xover, yover))</code></pre><pre><code class="nohighlight hljs">54-element Vector{NamedTuple{(:name, :package_name, :is_supervised, :abstract_type, :deep_properties, :docstring, :fit_data_scitype, :human_name, :hyperparameter_ranges, :hyperparameter_types, :hyperparameters, :implemented_methods, :inverse_transform_scitype, :is_pure_julia, :is_wrapper, :iteration_parameter, :load_path, :package_license, :package_url, :package_uuid, :predict_scitype, :prediction_type, :reporting_operations, :reports_feature_importances, :supports_class_weights, :supports_online, :supports_training_losses, :supports_weights, :transform_scitype, :input_scitype, :target_scitype, :output_scitype)}}:
+ (name = AdaBoostClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = AdaBoostStumpClassifier, package_name = DecisionTree, ... )
+ (name = BaggingClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianLDA, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianLDA, package_name = MultivariateStats, ... )
+ (name = BayesianQDA, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianSubspaceLDA, package_name = MultivariateStats, ... )
+ (name = CatBoostClassifier, package_name = CatBoost, ... )
+ (name = ConstantClassifier, package_name = MLJModels, ... )
+ (name = DecisionTreeClassifier, package_name = BetaML, ... )
+ ⋮
+ (name = SGDClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVC, package_name = LIBSVM, ... )
+ (name = SVMClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVMLinearClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVMNuClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = StableForestClassifier, package_name = SIRUS, ... )
+ (name = StableRulesClassifier, package_name = SIRUS, ... )
+ (name = SubspaceLDA, package_name = MultivariateStats, ... )
+ (name = XGBoostClassifier, package_name = XGBoost, ... )</code></pre><p>Let&#39;s go for a logistic classifier form MLJLinearModels</p><pre><code class="language-julia hljs">import Pkg; Pkg.add(&quot;MLJLinearModels&quot;)</code></pre><h3 id="Before-Oversampling"><a class="docs-heading-anchor" href="#Before-Oversampling">Before Oversampling</a><a id="Before-Oversampling-1"></a><a class="docs-heading-anchor-permalink" href="#Before-Oversampling" title="Permalink"></a></h3><pre><code class="language-julia hljs"># 1. Load the model
+LogisticClassifier = @load LogisticClassifier pkg=MLJLinearModels verbosity=0
+
+# 2. Instantiate it
+model = LogisticClassifier()
+
+# 3. Wrap it with the data in a machine
+mach = machine(model, X_train, y_train, scitype_check_level=0)
+
+# 4. fit the machine learning model
+fit!(mach, verbosity=0)</code></pre><pre><code class="nohighlight hljs">trained Machine; caches model-specific representations of data
+  model: LogisticClassifier(lambda = 2.220446049250313e-16, …)
+  args: 
+    1:	Source @113 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}
+    2:	Source @972 ⏎ AbstractVector{Multiclass{2}}</code></pre><h3 id="After-Oversampling"><a class="docs-heading-anchor" href="#After-Oversampling">After Oversampling</a><a id="After-Oversampling-1"></a><a class="docs-heading-anchor-permalink" href="#After-Oversampling" title="Permalink"></a></h3><pre><code class="language-julia hljs"># 3. Wrap it with the data in a machine
+mach_over = machine(model, Xover, yover)
+
+# 4. fit the machine learning model
+fit!(mach_over)</code></pre><h2 id="Evaluating-the-Model"><a class="docs-heading-anchor" href="#Evaluating-the-Model">Evaluating the Model</a><a id="Evaluating-the-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Evaluating-the-Model" title="Permalink"></a></h2><p>To evaluate the model, we will use the balanced accuracy metric which equally account for all classes. </p><h3 id="Before-Oversampling-2"><a class="docs-heading-anchor" href="#Before-Oversampling-2">Before Oversampling</a><a class="docs-heading-anchor-permalink" href="#Before-Oversampling-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">y_pred = predict_mode(mach, X_test)                         
+
+score = round(balanced_accuracy(y_pred, y_test), digits=2)</code></pre><pre><code class="nohighlight hljs">0.5</code></pre><h3 id="After-Oversampling-2"><a class="docs-heading-anchor" href="#After-Oversampling-2">After Oversampling</a><a class="docs-heading-anchor-permalink" href="#After-Oversampling-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">y_pred_over = predict_mode(mach_over, X_test)
+
+score = round(balanced_accuracy(y_pred_over, y_test), digits=2)</code></pre><pre><code class="nohighlight hljs">0.57</code></pre><h2 id="Evaluating-the-Model-Revisited"><a class="docs-heading-anchor" href="#Evaluating-the-Model-Revisited">Evaluating the Model - Revisited</a><a id="Evaluating-the-Model-Revisited-1"></a><a class="docs-heading-anchor-permalink" href="#Evaluating-the-Model-Revisited" title="Permalink"></a></h2><p>We have previously evaluated the model using a single point estimate of the balanced accuracy resulting in a <code>7%</code> improvement. A more precise evaluation would use cross validation to combine many different point estimates into a more precise one (their average). The standard deviation among such point estimates also allows us to quantify the uncertainty of the estimate; a smaller standard deviation would imply a smaller confidence interval at the same probability.</p><h3 id="Before-Oversampling-3"><a class="docs-heading-anchor" href="#Before-Oversampling-3">Before Oversampling</a><a class="docs-heading-anchor-permalink" href="#Before-Oversampling-3" title="Permalink"></a></h3><pre><code class="language-julia hljs">cv=CV(nfolds=10)
+evaluate!(mach, resampling=cv, measure=balanced_accuracy) </code></pre><pre><code class="nohighlight hljs">Evaluating over 10 folds: 100%[=========================] Time: 0:00:00[K
+
+
+
+PerformanceEvaluation object with these fields:
+  model, measure, operation, measurement, per_fold,
+  per_observation, fitted_params_per_fold,
+  report_per_fold, train_test_rows, resampling, repeats
+Extract:
+┌─────────────────────┬──────────────┬─────────────┬──────────┬─────────────────
+│ measure             │ operation    │ measurement │ 1.96*SE  │ per_fold       ⋯
+├─────────────────────┼──────────────┼─────────────┼──────────┼─────────────────
+│ BalancedAccuracy(   │ predict_mode │ 0.5         │ 3.29e-16 │ [0.5, 0.5, 0.5 ⋯
+│   adjusted = false) │              │             │          │                ⋯
+└─────────────────────┴──────────────┴─────────────┴──────────┴─────────────────
+                                                                1 column omitted</code></pre><p>This looks good. Negligble standard deviation; point estimates are all centered around <code>0.5</code>.</p><h3 id="After-Oversampling-3"><a class="docs-heading-anchor" href="#After-Oversampling-3">After Oversampling</a><a class="docs-heading-anchor-permalink" href="#After-Oversampling-3" title="Permalink"></a></h3><p>At first glance, this seems really nontrivial since resampling will have to be performed before training the model on each fold during cross-validation. Thankfully, the <code>MLJBalancing</code> helps us avoid doing this manually by offering <code>BalancedModel</code> where we can wrap any <code>MLJ</code> classification model with an arbitrary number of <code>Imbalance.jl</code> resamplers in a pipeline that behaves like a single <code>MLJ</code> model.</p><p>In this, we must construct the resampling model via it&#39;s <code>MLJ</code> interface then pass it along with the classification model to <code>BalancedModel</code>.</p><pre><code class="language-julia hljs"># 2. Instantiate the models
+oversampler = Imbalance.MLJ.SMOTE(k=3, ratios=Dict(1=&gt;0.9), rng=42)
+
+# 2.1 Wrap them in one model
+balanced_model = BalancedModel(model=model, balancer1=oversampler)
+
+# 3. Wrap it with the data in a machine
+mach_over = machine(balanced_model, X_train, y_train, scitype_check_level=0)
+
+# 4. fit the machine learning model
+fit!(mach_over, verbosity=0)</code></pre><pre><code class="nohighlight hljs">trained Machine; does not cache data
+  model: BalancedModelProbabilistic(model = LogisticClassifier(lambda = 2.220446049250313e-16, …), …)
+  args: 
+    1:	Source @991 ⏎ Table{Union{AbstractVector{Continuous}, AbstractVector{Count}}}
+    2:	Source @939 ⏎ AbstractVector{Multiclass{2}}</code></pre><p>We can easily confirm that this is equivalent to what we had earlier</p><pre><code class="language-julia hljs">predict_mode(mach_over, X_test) == y_pred_over</code></pre><pre><code class="nohighlight hljs">true</code></pre><p>Now let&#39;s cross-validate</p><pre><code class="language-julia hljs">cv=CV(nfolds=10)
+evaluate!(mach_over, resampling=cv, measure=balanced_accuracy) </code></pre><pre><code class="nohighlight hljs">Evaluating over 10 folds: 100%[=========================] Time: 0:00:00[K
+
+
+
+PerformanceEvaluation object with these fields:
+  model, measure, operation, measurement, per_fold,
+  per_observation, fitted_params_per_fold,
+  report_per_fold, train_test_rows, resampling, repeats
+Extract:
+┌─────────────────────┬──────────────┬─────────────┬─────────┬──────────────────
+│ measure             │ operation    │ measurement │ 1.96*SE │ per_fold        ⋯
+├─────────────────────┼──────────────┼─────────────┼─────────┼──────────────────
+│ BalancedAccuracy(   │ predict_mode │ 0.552       │ 0.0145  │ [0.549, 0.563,  ⋯
+│   adjusted = false) │              │             │         │                 ⋯
+└─────────────────────┴──────────────┴─────────────┴─────────┴──────────────────
+                                                                1 column omitted</code></pre><p>The improvement is about <code>5.2%</code> after cross-validation. If we are further to assume scores to be normally distributed, then the <code>95%</code> confidence interval is <code>5.2±1.45%</code> improvement. Let&#39;s see if this gets any better when we rather use <code>SMOTE-NC</code> in a later example.</p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Saturday 6 January 2024 19:09">Saturday 6 January 2024</span>. Using Julia version 1.6.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
