@@ -35,7 +35,6 @@ where that value occurs.
 """
 function group_inds(categorical_array::AbstractVector{T}) where {T}
     result = LittleDict{T,AbstractVector{Int}}()
-    freeze(result)
     for (i, v) in enumerate(categorical_array)
         # Make a new entry in the dict if it doesn't exist
         if !haskey(result, v)
@@ -44,6 +43,6 @@ function group_inds(categorical_array::AbstractVector{T}) where {T}
         # It exists, so push the index belonging to the class
         push!(result[v], i)
     end
-    return result
+    return freeze(result)
 end
 
