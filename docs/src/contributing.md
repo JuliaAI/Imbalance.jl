@@ -24,7 +24,13 @@ Any method resampling method implemented in the `oversampling_methods` or `under
 │   └── resample_method.jl   # implements the method itself (pure functional interface)
 ```
 
-# Adding New Resampling Methods
+# Contribution
+
+
+## Reporting Problems or Seeking Support
+- Do not hesitate to post a Github issue with your question or problem.
+
+## Adding New Resampling Methods
 - Make a new folder `resample_method` for the method in the `oversampling_methods` or `undersampling_methods`
 - Implement in `resample_method/resample_method.jl` the method over matrices for one minority class
 - Use `generic_oversample.jl` to generalize it to work on the whole data
@@ -42,10 +48,13 @@ Surely, you can ignore ignore the third step if the algorithm you are implementi
 - `BorderlineSMOTE2`: A small modification of the `BorderlineSMOTE1` condition
 - `RepeatedENNUndersampler`: Simply repeats `ENNUndersampler` multiple times
 
-# Adding New Tutorials
+
+## Adding New Tutorials
 - Make a new notebook with the tutorial in the `examples` folder found in `docs/src/examples`
 - Run the notebook so that the output is shown below each cell
 - If the notebook produces visuals then save and load them in the notebook
 - Convert it to markdown by using Python to run `from convert import convert_to_md; convert_to_md('<filename>')`
 - Set a title, description, image and links for it in the dictionary found in `docs/examples.jl`
 - For the colab link, you do not need to upload anything just follow the link pattern in the file
+
+
