@@ -39,9 +39,20 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
   RandomOversampler,
-  input_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  output_scitype = Union{Table(Continuous),AbstractMatrix{Continuous}},
-  target_scitype = AbstractVector,
+    input_scitype = Tuple{
+                        Union{
+                            Table(Union{Infinite, Finite}),
+                            AbstractMatrix{Infinite}
+                        }, 
+                        AbstractVector
+                    },
+    output_scitype = Tuple{
+        Union{
+            Table(Continuous),
+            AbstractMatrix{Continuous}
+        }, 
+        AbstractVector
+    },
   load_path = "Imbalance.MLJ.RandomOversampler" 
 )
 function MMI.transform_scitype(s::RandomOversampler)

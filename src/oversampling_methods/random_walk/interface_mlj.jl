@@ -44,13 +44,14 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     RandomWalkOversampler,
-    input_scitype = Union{
+    input_scitype = Tuple{
         Table(Union{Infinite, Finite}),
+        AbstractVector
     },
-    output_scitype = Union{
+    output_scitype = Tuple{
         Table(Union{Infinite, Finite}),
+        AbstractVector
     },
-    target_scitype = AbstractVector,
     load_path = "Imbalance.MLJ.RandomWalkOversampler"
 )
 
