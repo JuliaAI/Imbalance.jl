@@ -41,8 +41,8 @@ MMI.metadata_model(
   RandomOversampler,
     input_scitype = Tuple{
                         Union{
-                            Table(Continuous),
-                            AbstractMatrix{Continuous}
+                            Table(Union{Infinite, Finite}),
+                            AbstractMatrix{Infinite}
                         }, 
                         AbstractVector
                     },
