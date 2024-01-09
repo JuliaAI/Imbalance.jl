@@ -66,12 +66,12 @@ MMI.metadata_pkg(
 MMI.metadata_model(
     BorderlineSMOTE1,
     input_scitype = Tuple{
-                        Union{
-                            Table(Continuous),
-                            AbstractMatrix{Continuous}
-                        }, 
-                        AbstractVector
-                    },
+         Union{
+            Table(Continuous),
+            AbstractMatrix{Continuous}
+        }, 
+        AbstractVector
+    },
     output_scitype = Tuple{
         Union{
             Table(Continuous),
