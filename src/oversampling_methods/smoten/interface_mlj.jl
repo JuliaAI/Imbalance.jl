@@ -58,9 +58,20 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     SMOTEN,
-    input_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
-    output_scitype = Union{Table(Finite),AbstractMatrix{Finite}},
-    target_scitype = AbstractVector,
+    input_scitype = Tuple{
+                        Union{
+                            Table(Finite),
+                            AbstractMatrix{Finite}
+                        }, 
+                        AbstractVector
+                    },
+    output_scitype = Tuple{
+        Union{
+            Table(Finite),
+            AbstractMatrix{Finite}
+        }, 
+        AbstractVector
+    },
     load_path = "Imbalance.MLJ.SMOTEN"
 )
 

@@ -74,9 +74,20 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
 	ENNUndersampler,
-	input_scitype = Union{Table(Continuous)},
-	output_scitype = Union{Table(Continuous)},
-	target_scitype = AbstractVector,
+    input_scitype = Tuple{
+                        Union{
+                            Table(Continuous),
+                            AbstractMatrix{Continuous}
+                        }, 
+                        AbstractVector
+                    },
+    output_scitype = Tuple{
+        Union{
+            Table(Continuous),
+            AbstractMatrix{Continuous}
+        }, 
+        AbstractVector
+    },
 	load_path = "Imbalance.MLJ.ENNUndersampler" 
 )
 function MMI.transform_scitype(s::ENNUndersampler)
