@@ -136,7 +136,7 @@ end
 
     num_vals_per_category = [3, 4, 2, 5]
 
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats;  class_probs, num_vals_per_category)
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
 
@@ -145,6 +145,14 @@ end
     mach = machine(smotenc_model)
     @test transform(mach, X, y) ==
       smotenc(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+
+    # consider matrix input for MLJ
+    num_vals_per_category = [3, 4, 2]
+    cat_inds = [5, 6, 7]
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category, type="Matrix")
+    @test transform(mach, X, y, cat_inds) ==
+      smotenc(X, y, cat_inds; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+
 end
 
 
@@ -164,7 +172,7 @@ end
 
     num_vals_per_category = [3, 4, 2, 5]
 
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats;  class_probs, num_vals_per_category)
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
 
@@ -173,6 +181,13 @@ end
     mach = machine(rwo_model)
     @test transform(mach, X, y) ==
       random_walk_oversample(X, y; ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+
+    # consider matrix input for MLJ
+    num_vals_per_category = [3, 4, 2]
+    cat_inds = [5, 6, 7]
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats;class_probs, num_vals_per_category, type="Matrix")
+    @test transform(mach, X, y, cat_inds) ==
+    random_walk_oversample(X, y, cat_inds;  ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
 
 # For SMOTEN, need dataset with categorical variables. let's (perhaps) consider a PR later.

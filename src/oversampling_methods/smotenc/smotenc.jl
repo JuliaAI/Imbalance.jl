@@ -248,7 +248,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/). Note that only `Table` input is supported by the MLJ interface for this method.
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/). 
 
 
 

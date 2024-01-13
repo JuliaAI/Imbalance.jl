@@ -45,6 +45,13 @@ Oversample data X, y using SMOTENC
 function MMI.transform(s::SMOTENC, _, X, y)
     smotenc(X, y; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_preserve_type=s.try_preserve_type)
 end
+function MMI.transform(s::SMOTENC, _, 
+                       X::AbstractMatrix{<:AbstractFloat}, 
+                       y::AbstractVector, 
+                       cat_inds::AbstractVector{<:Int})
+    smotenc(X, y, cat_inds; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_preserve_type=s.try_preserve_type)
+end
+
 
 
 
@@ -126,6 +133,9 @@ $((COMMON_DOCS["RNG"]))
      elements in continuous columns should subtype `Infinite` (i.e., have [scitype](https://juliaai.github.io/ScientificTypes.jl/) `Count` or `Continuous`).
 
 - `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
+
+- `cat_inds::AbstractVector{<:Int}`: A vector of the indices of the nominal features. Supplied only if `X` is a matrix.
+        Otherwise, they are inferred from the table's scitypes.
 
 # Transform Outputs
 
