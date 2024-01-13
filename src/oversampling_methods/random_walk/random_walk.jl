@@ -188,7 +188,7 @@ julia> Imbalance.checkbalance(yover)
 # MLJ Model Interface
 
 Simply pass the keyword arguments while initiating the `RandomWalkOversampling` model and pass the 
-	positional arguments (optionally `cat_inds`) to the `transform` method. 
+	positional arguments (excluding `cat_inds`) to the `transform` method. 
 
 ```julia
 using MLJ
@@ -201,7 +201,7 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/). 
+You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/). Note that only `Table` input is supported by the MLJ interface for this method.
 
 
 # TableTransforms Interface

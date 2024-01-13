@@ -30,12 +30,6 @@ Oversample data X, y using RandomWalkOversampler
 function MMI.transform(s::RandomWalkOversampler, _, X, y)
     random_walk_oversample(X, y; ratios = s.ratios, rng = s.rng, try_preserve_type=s.try_preserve_type)
 end
-function MMI.transform(s::RandomWalkOversampler, _, 
-                       X::AbstractMatrix{<:AbstractFloat}, 
-                       y::AbstractVector, 
-                       cat_inds::AbstractVector{<:Int})
-    random_walk_oversample(X, y, cat_inds; ratios = s.ratios, rng = s.rng, try_preserve_type=s.try_preserve_type)
-end
 
 
 
@@ -110,9 +104,6 @@ $((COMMON_DOCS["RNG"]))
      [scitype](https://juliaai.github.io/ScientificTypes.jl/) `Count` or `Continuous`).
 
 - `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
-
-- `cat_inds::AbstractVector{<:Int}`: A vector of the indices of the nominal features. Supplied only if `X` is a matrix.
-        Otherwise, they are inferred from the table's scitypes.
 
 # Transform Outputs
 
