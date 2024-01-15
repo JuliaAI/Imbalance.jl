@@ -61,14 +61,14 @@ MMI.metadata_model(
     input_scitype = Tuple{
                         Union{
                             Table(Finite),
-                            AbstractMatrix{Finite}
+                            AbstractMatrix{<:Finite}
                         }, 
                         AbstractVector
                     },
     output_scitype = Tuple{
         Union{
             Table(Finite),
-            AbstractMatrix{Finite}
+            AbstractMatrix{<:Finite}
         }, 
         AbstractVector
     },
@@ -77,7 +77,7 @@ MMI.metadata_model(
 
 function MMI.transform_scitype(s::SMOTEN)
     return Tuple{
-        Union{Table(Finite),AbstractMatrix{Finite}},
+        Union{Table(Finite),AbstractMatrix{<:Finite}},
         AbstractVector{<:Finite},
     }
 end
@@ -119,7 +119,11 @@ $((COMMON_DOCS["RNG"]))
 
 # Transform Inputs
 
-$((COMMON_DOCS["INPUTS"]))
+- `X`: A matrix of integers or a table with element [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Finite`. 
+     That is, for table inputs each column should have either `OrderedFactor` or `Multiclass` as the element [scitype](https://juliaai.github.io/ScientificTypes.jl/).
+
+- `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
+
 
 # Transform Outputs
 
