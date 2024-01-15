@@ -33,7 +33,11 @@ Naively oversample a dataset by randomly repeating existing observations with re
 
 # Positional Arguments
 
-$(COMMON_DOCS["INPUTS"])
+- `X`: A matrix of real numbers or a table with element [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Union{Finite, Infinite}`. 
+     Elements in nominal columns should subtype `Finite` (i.e., have [scitype](https://juliaai.github.io/ScientificTypes.jl/) `OrderedFactor` or `Multiclass`) and
+     elements in continuous columns should subtype `Infinite` (i.e., have [scitype](https://juliaai.github.io/ScientificTypes.jl/) `Count` or `Continuous`).
+
+- `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
 
 # Keyword Arguments
 
