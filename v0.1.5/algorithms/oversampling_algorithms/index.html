@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Oversampling · Imbalance.jl</title><meta name="title" content="Oversampling · Imbalance.jl"/><meta property="og:title" content="Oversampling · Imbalance.jl"/><meta property="twitter:title" content="Oversampling · Imbalance.jl"/><meta name="description" content="Documentation for Imbalance.jl."/><meta property="og:description" content="Documentation for Imbalance.jl."/><meta property="twitter:description" content="Documentation for Imbalance.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&amp;display=swap" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.gif" alt="Imbalance.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">Imbalance.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Introduction</a></li><li><span class="tocitem">Algorithms</span><ul><li class="is-active"><a class="tocitem" href>Oversampling</a><ul class="internal"><li><a class="tocitem" href="#Random-Oversampler"><span>Random Oversampler</span></a></li><li><a class="tocitem" href="#Random-Walk-Oversampler"><span>Random Walk Oversampler</span></a></li><li><a class="tocitem" href="#ROSE"><span>ROSE</span></a></li><li><a class="tocitem" href="#SMOTE"><span>SMOTE</span></a></li><li><a class="tocitem" href="#Borderline-SMOTE1"><span>Borderline SMOTE1</span></a></li><li><a class="tocitem" href="#SMOTE-N"><span>SMOTE-N</span></a></li><li><a class="tocitem" href="#SMOTE-NC"><span>SMOTE-NC</span></a></li></ul></li><li><a class="tocitem" href="../undersampling_algorithms/">Undersampling</a></li><li><a class="tocitem" href="../mlj_balancing/">Combination</a></li><li><a class="tocitem" href="../implementation_notes/">Implementation Notes</a></li><li><a class="tocitem" href="../extra_algorithms/">Extras</a></li></ul></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../../examples/walkthrough/">Introduction</a></li><li><a class="tocitem" href="../../examples/">More Examples</a></li><li><a class="tocitem" href="../../examples/Colab/">Google Colab</a></li></ul></li><li><a class="tocitem" href="../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Algorithms</a></li><li class="is-active"><a href>Oversampling</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Oversampling</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/Imbalance.jl/" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Oversampling-Algorithms"><a class="docs-heading-anchor" href="#Oversampling-Algorithms">Oversampling Algorithms</a><a id="Oversampling-Algorithms-1"></a><a class="docs-heading-anchor-permalink" href="#Oversampling-Algorithms" title="Permalink"></a></h1><p>The following table portrays the supported oversampling algorithms, whether the mechanism repeats or generates data and the supported types of data.</p><table><tr><th style="text-align: center">Oversampling Method</th><th style="text-align: center">Mechanism</th><th style="text-align: center">Supported Data Types</th></tr><tr><td style="text-align: center"><a href="#Random-Oversampler">Random Oversampler</a></td><td style="text-align: center">Repeat existing data</td><td style="text-align: center">Continuous and/or nominal</td></tr><tr><td style="text-align: center"><a href="#Random-Walk-Oversampler">Random Walk Oversampler</a></td><td style="text-align: center">Generate synthetic data</td><td style="text-align: center">Continuous and/or nominal</td></tr><tr><td style="text-align: center"><a href="#ROSE">ROSE</a></td><td style="text-align: center">Generate synthetic data</td><td style="text-align: center">Continuous</td></tr><tr><td style="text-align: center"><a href="#SMOTE">SMOTE</a></td><td style="text-align: center">Generate synthetic data</td><td style="text-align: center">Continuous</td></tr><tr><td style="text-align: center"><a href="#Borderline-SMOTE1">Borderline SMOTE1</a></td><td style="text-align: center">Generate synthetic data</td><td style="text-align: center">Continuous</td></tr><tr><td style="text-align: center"><a href="#SMOTE-N">SMOTE-N</a></td><td style="text-align: center">Generate synthetic data</td><td style="text-align: center">Nominal</td></tr><tr><td style="text-align: center"><a href="#SMOTE-NC">SMOTE-NC</a></td><td style="text-align: center">Generate synthetic data</td><td style="text-align: center">Continuous and nominal</td></tr></table><h2 id="Random-Oversampler"><a class="docs-heading-anchor" href="#Random-Oversampler">Random Oversampler</a><a id="Random-Oversampler-1"></a><a class="docs-heading-anchor-permalink" href="#Random-Oversampler" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.random_oversample" href="#Imbalance.random_oversample"><code>Imbalance.random_oversample</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">random_oversample(
+    X, y; 
+    ratios=1.0, rng=default_rng(), 
+    try_preserve_type=true
+)</code></pre><p><strong>Description</strong></p><p>Naively oversample a dataset by randomly repeating existing observations with replacement.</p><p><strong>Positional Arguments</strong></p><ul><li><p><code>X</code>: A matrix of real numbers or a table with element <a href="https://juliaai.github.io/ScientificTypes.jl/">scitypes</a> that subtype <code>Union{Finite, Infinite}</code>.     Elements in nominal columns should subtype <code>Finite</code> (i.e., have <a href="https://juliaai.github.io/ScientificTypes.jl/">scitype</a> <code>OrderedFactor</code> or <code>Multiclass</code>) and    elements in continuous columns should subtype <code>Infinite</code> (i.e., have <a href="https://juliaai.github.io/ScientificTypes.jl/">scitype</a> <code>Count</code> or <code>Continuous</code>).</p></li><li><p><code>y</code>: An abstract vector of labels (e.g., strings) that correspond to the observations in <code>X</code></p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><code>ratios=1.0</code>: A parameter that controls the amount of oversampling to be done for each class<ul><li>Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By default, all classes are oversampled to the size of the majority class</li><li>Can be a dictionary mapping each class label to the float ratio for that class</li></ul></li></ul><ul><li><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Either an <code>AbstractRNG</code> object or an <code>Integer</code>    seed to be used with <code>Xoshiro</code> if the Julia <code>VERSION</code> supports it. Otherwise, uses MersenneTwister`.</li></ul><ul><li><code>try_preserve_type::Bool=true</code>: When <code>true</code>, the function will try to not change the type of the input    table (e.g., <code>DataFrame</code>). However, for some tables, this may not succeed, and in this case, the table returned will   be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.</li></ul><p><strong>Returns</strong></p><ul><li><p><code>Xover</code>: A matrix or table that includes original data and the new observations    due to oversampling. depending on whether the input <code>X</code> is a matrix or table respectively</p></li><li><p><code>yover</code>: An abstract vector of labels corresponding to <code>Xover</code></p></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 100, 5
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, rng=42)    
+
+julia&gt; Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+
+# apply random oversampling
+Xover, yover = random_oversample(X, y; ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+
+julia&gt; Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) </code></pre><p><strong>MLJ Model Interface</strong></p><p>Simply pass the keyword arguments while initiating the <code>RandomOversampler</code> model and pass the      positional arguments <code>X, y</code> to the <code>transform</code> method. </p><pre><code class="language-julia hljs">using MLJ
+RandomOversampler = @load RandomOversampler pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = RandomOversampler(ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)</code></pre><p>You can read more about this <code>MLJ</code> interface by accessing it from MLJ&#39;s <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/">model browser</a>.</p><p><strong>TableTransforms Interface</strong></p><p>This interface assumes that the input is one table <code>Xy</code> and that <code>y</code> is one of the columns. Hence, an integer <code>y_ind</code>     must be specified to the constructor to specify which column <code>y</code> is followed by other keyword arguments.      Only <code>Xy</code> is provided while applying the transform.</p><pre><code class="language-julia hljs">using Imbalance
+using Imbalance.TableTransforms
+
+# Generate imbalanced data
+num_rows = 100
+num_features = 5
+y_ind = 3
+Xy, _ = generate_imbalanced_data(num_rows, num_features; 
+                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+
+# Initiate Random Oversampler model
+oversampler = RandomOversampler(y_ind; ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+Xyover = Xy |&gt; oversampler                    
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently</code></pre><p>The <code>reapply(oversampler, Xy, cache)</code> method from <code>TableTransforms</code> simply falls back to <code>apply(oversample, Xy)</code> and the <code>revert(oversampler, Xy, cache)</code> reverts the transform by removing the oversampled observations from the table.</p><p><strong>Illustration</strong></p><p>A full basic example along with an animation can be found <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_random.ipynb">here</a>.      You may find more practical examples in the <a href="https://juliaai.github.io/Imbalance.jl/dev/examples/">tutorial</a>      section which also explains running code on Google Colab.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article><h2 id="Random-Walk-Oversampler"><a class="docs-heading-anchor" href="#Random-Walk-Oversampler">Random Walk Oversampler</a><a id="Random-Walk-Oversampler-1"></a><a class="docs-heading-anchor-permalink" href="#Random-Walk-Oversampler" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.random_walk_oversample" href="#Imbalance.random_walk_oversample"><code>Imbalance.random_walk_oversample</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">random_walk_oversample(
+	X, y, cat_inds;
+	ratios=1.0, rng=default_rng(),
+	try_preserve_type=true
+)</code></pre><p><strong>Description</strong></p><p>Oversamples a dataset using random walk oversampling as presented in [1]. </p><p><strong>Positional Arguments</strong></p><ul><li><p><code>X</code>: A matrix of floats or a table with element <a href="https://juliaai.github.io/ScientificTypes.jl/">scitypes</a> that subtype <code>Union{Finite, Infinite}</code>.     Elements in nominal columns should subtype <code>Finite</code> (i.e., have scitype <code>OrderedFactor</code> or <code>Multiclass</code>) and    elements in continuous columns should subtype <code>Infinite</code> (i.e., have scitype <code>Count</code> or <code>Continuous</code>).</p></li><li><p><code>y</code>: An abstract vector of labels (e.g., strings) that correspond to the observations in <code>X</code></p></li><li><p><code>cat_inds::AbstractVector{&lt;:Int}</code>: A vector of the indices of the nominal features. Supplied only if <code>X</code> is a matrix.       Otherwise, they are inferred from the table&#39;s scitypes.</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><code>ratios=1.0</code>: A parameter that controls the amount of oversampling to be done for each class<ul><li>Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By default, all classes are oversampled to the size of the majority class</li><li>Can be a dictionary mapping each class label to the float ratio for that class</li></ul></li></ul><ul><li><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Either an <code>AbstractRNG</code> object or an <code>Integer</code>    seed to be used with <code>Xoshiro</code> if the Julia <code>VERSION</code> supports it. Otherwise, uses MersenneTwister`.</li></ul><ul><li><code>try_preserve_type::Bool=true</code>: When <code>true</code>, the function will try to not change the type of the input    table (e.g., <code>DataFrame</code>). However, for some tables, this may not succeed, and in this case, the table returned will   be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.</li></ul><p><strong>Returns</strong></p><ul><li><p><code>Xover</code>: A matrix or table that includes original data and the new observations    due to oversampling. depending on whether the input <code>X</code> is a matrix or table respectively</p></li><li><p><code>yover</code>: An abstract vector of labels corresponding to <code>Xover</code></p></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+using ScientificTypes
+
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows = 100
+num_continuous_feats = 3
+# want two categorical features with three and two possible values respectively
+num_vals_per_category = [3, 2]
+
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, num_vals_per_category, rng=42)    
+								                  
+julia&gt; Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+
+julia&gt; ScientificTypes.schema(X).scitypes
+(Continuous, Continuous, Continuous, Continuous, Continuous)
+# coerce nominal columns to a finite scitype (multiclass or ordered factor)
+X = coerce(X, :Column4=&gt;Multiclass, :Column5=&gt;Multiclass)
+
+# apply random walk oversampling
+Xover, yover = random_walk_oversample(X, y; 
+                                      ratios = Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng = 42)
+
+julia&gt; Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) </code></pre><p><strong>MLJ Model Interface</strong></p><p>Simply pass the keyword arguments while initiating the <code>RandomWalkOversampling</code> model and pass the  	positional arguments (excluding <code>cat_inds</code>) to the <code>transform</code> method. </p><pre><code class="language-julia hljs">using MLJ
+RandomWalkOversampler = @load RandomWalkOversampler pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = RandomWalkOversampler(ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)</code></pre><p>You can read more about this <code>MLJ</code> interface by accessing it from MLJ&#39;s <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/">model browser</a>. Note that only <code>Table</code> input is supported by the MLJ interface for this method.</p><p><strong>TableTransforms Interface</strong></p><p>This interface assumes that the input is one table <code>Xy</code> and that <code>y</code> is one of the columns. Hence, an integer <code>y_ind</code> 	must be specified to the constructor to specify which column <code>y</code> is followed by other keyword arguments.  	Only <code>Xy</code> is provided while applying the transform.</p><pre><code class="language-julia hljs">using Imbalance
+using ScientificTypes
+using Imbalance.TableTransforms
+
+# Generate imbalanced data
+num_rows = 100
+num_continuous_feats = 3
+y_ind = 2
+
+# generate a table and categorical vector accordingly
+Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
+                                class_probs= [0.5, 0.2, 0.3], num_vals_per_category=[3, 2],
+                                 rng=42)  
+
+# Table must have only finite or continuous scitypes                                
+Xy = coerce(Xy, :Column2=&gt;Multiclass, :Column5=&gt;Multiclass, :Column6=&gt;Multiclass)
+
+# Initiate Random Walk Oversampler model
+oversampler = RandomWalkOversampler(y_ind;
+                                    ratios=Dict(1=&gt;1.0, 2=&gt; 0.9, 3=&gt;0.9), rng=42)
+Xyover = Xy |&gt; oversampler                               
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently</code></pre><p><strong>Illustration</strong></p><p>A full basic example along with an animation can be found <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_randomwalk.ipynb">here</a>.      You may find more practical examples in the <a href="https://juliaai.github.io/Imbalance.jl/dev/examples/">tutorial</a>      section which also explains running code on Google Colab.</p><p><strong>References</strong></p><p>[1] Zhang, H., &amp; Li, M. (2014). RWO-Sampling: A random walk over-sampling approach to imbalanced data classification.  Information Fusion, 25, 4-20.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article><h2 id="ROSE"><a class="docs-heading-anchor" href="#ROSE">ROSE</a><a id="ROSE-1"></a><a class="docs-heading-anchor-permalink" href="#ROSE" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.rose" href="#Imbalance.rose"><code>Imbalance.rose</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">rose(
+    X, y; 
+    s=1.0, ratios=1.0, rng=default_rng(),
+    try_preserve_type=true
+)</code></pre><p><strong>Description</strong></p><p>Oversamples a dataset using <code>ROSE</code> (Random Oversampling Examples) algorithm to      correct for class imbalance as presented in [1]</p><p><strong>Positional Arguments</strong></p><ul><li><p><code>X</code>: A matrix or table of floats where each row is an observation from the dataset </p></li><li><p><code>y</code>: An abstract vector of labels (e.g., strings) that correspond to the observations in <code>X</code></p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>s::float=1.0</code>: A parameter that proportionally controls the bandwidth of the Gaussian kernel</p></li><li><p><code>ratios=1.0</code>: A parameter that controls the amount of oversampling to be done for each class</p><ul><li>Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By default, all classes are oversampled to the size of the majority class</li><li>Can be a dictionary mapping each class label to the float ratio for that class</li></ul></li></ul><ul><li><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Either an <code>AbstractRNG</code> object or an <code>Integer</code>    seed to be used with <code>Xoshiro</code> if the Julia <code>VERSION</code> supports it. Otherwise, uses MersenneTwister`.</li></ul><ul><li><code>try_preserve_type::Bool=true</code>: When <code>true</code>, the function will try to not change the type of the input    table (e.g., <code>DataFrame</code>). However, for some tables, this may not succeed, and in this case, the table returned will   be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.</li></ul><p><strong>Returns</strong></p><ul><li><p><code>Xover</code>: A matrix or table that includes original data and the new observations    due to oversampling. depending on whether the input <code>X</code> is a matrix or table respectively</p></li><li><p><code>yover</code>: An abstract vector of labels corresponding to <code>Xover</code></p></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 100, 5
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, rng=42)  
+
+julia&gt; Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+
+# apply ROSE
+Xover, yover = rose(X, y; s=0.3, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+
+julia&gt; Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) </code></pre><p><strong>MLJ Model Interface</strong></p><p>Simply pass the keyword arguments while initiating the <code>ROSE</code> model and pass the      positional arguments <code>X, y</code> to the <code>transform</code> method. </p><pre><code class="language-julia hljs">using MLJ
+ROSE = @load ROSE pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = ROSE(s=0.3, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)</code></pre><p>You can read more about this <code>MLJ</code> interface by accessing it from MLJ&#39;s <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/">model browser</a>.</p><p><strong>TableTransforms Interface</strong></p><p>This interface assumes that the input is one table <code>Xy</code> and that <code>y</code> is one of the columns. Hence, an integer <code>y_ind</code>     must be specified to the constructor to specify which column <code>y</code> is followed by other keyword arguments.      Only <code>Xy</code> is provided while applying the transform.</p><pre><code class="language-julia hljs">using Imbalance
+using Imbalance.TableTransforms
+
+# Generate imbalanced data
+num_rows = 200
+num_features = 5
+y_ind = 3
+Xy, _ = generate_imbalanced_data(num_rows, num_features; 
+                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+
+# Initiate ROSE model
+oversampler = ROSE(y_ind; s=0.3, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+Xyover = Xy |&gt; oversampler                              
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently</code></pre><p>The <code>reapply(oversampler, Xy, cache)</code> method from <code>TableTransforms</code> simply falls back to <code>apply(oversample, Xy)</code> and the <code>revert(oversampler, Xy, cache)</code> reverts the transform by removing the oversampled observations from the table.</p><p><strong>Illustration</strong></p><p>A full basic example along with an animation can be found <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_rose.ipynb">here</a>.      You may find more practical examples in the <a href="https://juliaai.github.io/Imbalance.jl/dev/examples/">tutorial</a>      section which also explains running code on Google Colab.</p><p><strong>References</strong></p><p>[1] G Menardi, N. Torelli, “Training and assessing classification rules with imbalanced data,”  Data Mining and Knowledge Discovery, 28(1), pp.92-122, 2014.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article><h2 id="SMOTE"><a class="docs-heading-anchor" href="#SMOTE">SMOTE</a><a id="SMOTE-1"></a><a class="docs-heading-anchor-permalink" href="#SMOTE" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.smote" href="#Imbalance.smote"><code>Imbalance.smote</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">smote(
+    X, y;
+    k=5, ratios=1.0, rng=default_rng(),
+    try_preserve_type=true
+)</code></pre><p><strong>Description</strong></p><p>Oversamples a dataset using <code>SMOTE</code> (Synthetic Minority Oversampling Techniques) algorithm to      correct for class imbalance as presented in [1]</p><p><strong>Positional Arguments</strong></p><ul><li><p><code>X</code>: A matrix or table of floats where each row is an observation from the dataset </p></li><li><p><code>y</code>: An abstract vector of labels (e.g., strings) that correspond to the observations in <code>X</code></p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><code>k::Integer=5</code>: Number of nearest neighbors to consider in the algorithm. Should be within the range <code>0 &lt; k &lt; n</code> where n is the number of observations in the smallest class. It will be automatically set to <code>m-1</code> for any class with <code>m</code> points where <code>m ≤ k</code>.</li></ul><ul><li><code>ratios=1.0</code>: A parameter that controls the amount of oversampling to be done for each class<ul><li>Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By default, all classes are oversampled to the size of the majority class</li><li>Can be a dictionary mapping each class label to the float ratio for that class</li></ul></li></ul><ul><li><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Either an <code>AbstractRNG</code> object or an <code>Integer</code>    seed to be used with <code>Xoshiro</code> if the Julia <code>VERSION</code> supports it. Otherwise, uses MersenneTwister`.</li></ul><ul><li><code>try_preserve_type::Bool=true</code>: When <code>true</code>, the function will try to not change the type of the input    table (e.g., <code>DataFrame</code>). However, for some tables, this may not succeed, and in this case, the table returned will   be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.</li></ul><p><strong>Returns</strong></p><ul><li><p><code>Xover</code>: A matrix or table that includes original data and the new observations    due to oversampling. depending on whether the input <code>X</code> is a matrix or table respectively</p></li><li><p><code>yover</code>: An abstract vector of labels corresponding to <code>Xover</code></p></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 100, 5
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, rng=42)    
+
+julia&gt; Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+
+# apply SMOTE
+Xover, yover = smote(X, y; k = 5, ratios = Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng = 42)
+
+julia&gt; Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) </code></pre><p><strong>MLJ Model Interface</strong></p><p>Simply pass the keyword arguments while initiating the <code>SMOTE</code> model and pass the      positional arguments <code>X, y</code> to the <code>transform</code> method. </p><pre><code class="language-julia hljs">using MLJ
+SMOTE = @load SMOTE pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = SMOTE(k=5, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)</code></pre><p>You can read more about this <code>MLJ</code> interface by accessing it from MLJ&#39;s <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/">model browser</a>.</p><p><strong>TableTransforms Interface</strong></p><p>This interface assumes that the input is one table <code>Xy</code> and that <code>y</code> is one of the columns. Hence, an integer <code>y_ind</code>     must be specified to the constructor to specify which column <code>y</code> is followed by other keyword arguments.      Only <code>Xy</code> is provided while applying the transform.</p><pre><code class="language-julia hljs">using Imbalance
+using Imbalance.TableTransforms
+
+# Generate imbalanced data
+num_rows = 200
+num_features = 5
+y_ind = 3
+Xy, _ = generate_imbalanced_data(num_rows, num_features; 
+                                 class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
+
+# Initiate SMOTE model
+oversampler = SMOTE(y_ind; k=5, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+Xyover = Xy |&gt; oversampler                              
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently</code></pre><p>The <code>reapply(oversampler, Xy, cache)</code> method from <code>TableTransforms</code> simply falls back to <code>apply(oversample, Xy)</code> and the <code>revert(oversampler, Xy, cache)</code> reverts the transform by removing the oversampled observations from the table.</p><p><strong>Illustration</strong></p><p>A full basic example along with an animation can be found <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smote.ipynb">here</a>.      You may find more practical examples in the <a href="https://juliaai.github.io/Imbalance.jl/dev/examples/">tutorial</a>      section which also explains running code on Google Colab.</p><p><strong>References</strong></p><p>[1] N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer, “SMOTE: synthetic minority over-sampling technique,” Journal of artificial intelligence research, 321-357, 2002.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article><h2 id="Borderline-SMOTE1"><a class="docs-heading-anchor" href="#Borderline-SMOTE1">Borderline SMOTE1</a><a id="Borderline-SMOTE1-1"></a><a class="docs-heading-anchor-permalink" href="#Borderline-SMOTE1" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.borderline_smote1" href="#Imbalance.borderline_smote1"><code>Imbalance.borderline_smote1</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">borderline_smote1(
+    X, y;
+    m=5, k=5, ratios=1.0, rng=default_rng(),
+    try_preserve_type=true, verbosity=1
+)</code></pre><p><strong>Description</strong></p><p>Oversamples a dataset using borderline SMOTE1 algorithm to      correct for class imbalance as presented in [1]</p><p><strong>Positional Arguments</strong></p><ul><li><p><code>X</code>: A matrix or table of floats where each row is an observation from the dataset </p></li><li><p><code>y</code>: An abstract vector of labels (e.g., strings) that correspond to the observations in <code>X</code></p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><p><code>m::Integer=5</code>: The number of neighbors to consider while checking the BorderlineSMOTE1 condition. Should be within the range   <code>0 &lt; m &lt; N</code> where N is the number of observations in the data. It will be automatically set to <code>N-1</code> if <code>N ≤ m</code>.</p></li><li><p><code>k::Integer=5</code>: Number of nearest neighbors to consider in the SMOTE part of the algorithm. Should be within the range  <code>0 &lt; k &lt; n</code> where n is the number of observations in the smallest class. It will be automatically set to  <code>l-1</code> for any class with <code>l</code> points where <code>l ≤ k</code>.</p></li><li><p><code>ratios=1.0</code>: A parameter that controls the amount of oversampling to be done for each class</p><ul><li>Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By default, all classes are oversampled to the size of the majority class</li><li>Can be a dictionary mapping each class label to the float ratio for that class</li></ul></li></ul><ul><li><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Either an <code>AbstractRNG</code> object or an <code>Integer</code>    seed to be used with <code>Xoshiro</code> if the Julia <code>VERSION</code> supports it. Otherwise, uses MersenneTwister`.</li></ul><ul><li><code>try_preserve_type::Bool=true</code>: When <code>true</code>, the function will try to not change the type of the input    table (e.g., <code>DataFrame</code>). However, for some tables, this may not succeed, and in this case, the table returned will   be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.</li></ul><ul><li><code>verbosity::Integer=1</code>: Whenever higher than <code>0</code> info regarding the points that will participate in oversampling is logged.</li></ul><p><strong>Returns</strong></p><ul><li><p><code>Xover</code>: A matrix or table that includes original data and the new observations    due to oversampling. depending on whether the input <code>X</code> is a matrix or table respectively</p></li><li><p><code>yover</code>: An abstract vector of labels corresponding to <code>Xover</code></p></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows, num_continuous_feats = 1000, 5
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                stds=[0.1 0.1 0.1], min_sep=0.01, class_probs, rng=42)            
+
+julia&gt; Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 200 (40.8%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 310 (63.3%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) 
+
+# apply BorderlineSMOTE1
+Xover, yover = borderline_smote1(X, y; m = 3, 
+               k = 5, ratios = Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng = 42)
+
+julia&gt; Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 392 (80.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 441 (90.0%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 490 (100.0%) </code></pre><p><strong>MLJ Model Interface</strong></p><p>Simply pass the keyword arguments while initiating the <code>BorderlineSMOTE1</code> model and pass the      positional arguments <code>X, y</code> to the <code>transform</code> method. </p><pre><code class="language-julia hljs">using MLJ
+BorderlineSMOTE1 = @load BorderlineSMOTE1 pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = BorderlineSMOTE1(m=3, k=5, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)</code></pre><p>You can read more about this <code>MLJ</code> interface by accessing it from MLJ&#39;s <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/">model browser</a>.</p><p><strong>TableTransforms Interface</strong></p><p>This interface assumes that the input is one table <code>Xy</code> and that <code>y</code> is one of the columns. Hence, an integer <code>y_ind</code>     must be specified to the constructor to specify which column <code>y</code> is followed by other keyword arguments.      Only <code>Xy</code> is provided while applying the transform.</p><pre><code class="language-julia hljs">using Imbalance
+using Imbalance.TableTransforms
+
+# Generate imbalanced data
+num_rows = 1000
+num_features = 5
+y_ind = 3
+Xy, _ = generate_imbalanced_data(num_rows, num_features; 
+                                 class_probs=[0.5, 0.2, 0.3], min_sep=0.01, insert_y=y_ind, rng=42)
+
+# Initiate BorderlineSMOTE1 Oversampler model
+oversampler = BorderlineSMOTE1(y_ind; m=3, k=5, 
+              ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+Xyover = Xy |&gt; oversampler                              
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    </code></pre><p>The <code>reapply(oversampler, Xy, cache)</code> method from <code>TableTransforms</code> simply falls back to <code>apply(oversample, Xy)</code> and the <code>revert(oversampler, Xy, cache)</code> reverts the transform by removing the oversampled observations from the table.</p><p><strong>Illustration</strong></p><p>A full basic example along with an animation can be found <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smote1_borderline.ipynb">here</a>.      You may find more practical examples in the <a href="https://juliaai.github.io/Imbalance.jl/dev/examples/">tutorial</a>      section which also explains running code on Google Colab.</p><p><strong>References</strong></p><p>[1] Han, H., Wang, W.-Y., &amp; Mao, B.-H. (2005). Borderline-SMOTE: A new over-sampling method in imbalanced data sets learning.      In D.S. Huang, X.-P. Zhang, &amp; G.-B. Huang (Eds.), Advances in Intelligent Computing (pp. 878-887). Springer. </p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article><h2 id="SMOTE-N"><a class="docs-heading-anchor" href="#SMOTE-N">SMOTE-N</a><a id="SMOTE-N-1"></a><a class="docs-heading-anchor-permalink" href="#SMOTE-N" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.smoten" href="#Imbalance.smoten"><code>Imbalance.smoten</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">smoten(
+    X, y;
+    k=5, ratios=1.0, rng=default_rng(),
+    try_preserve_type=true
+)</code></pre><p><strong>Description</strong></p><p>Oversamples a dataset using <code>SMOTE-N</code> (Synthetic Minority Oversampling Techniques-Nominal) algorithm to      correct for class imbalance as presented in [1]. This is a variant of <code>SMOTE</code> to deal with datasets      where all features are nominal.</p><p><strong>Positional Arguments</strong></p><ul><li><p><code>X</code>: A matrix of integers or a table with element <a href="https://juliaai.github.io/ScientificTypes.jl/">scitypes</a> that subtype <code>Finite</code>.     That is, for table inputs each column should have either <code>OrderedFactor</code> or <code>Multiclass</code> as the element <a href="https://juliaai.github.io/ScientificTypes.jl/">scitype</a>.</p></li><li><p><code>y</code>: An abstract vector of labels (e.g., strings) that correspond to the observations in <code>X</code></p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><code>k::Integer=5</code>: Number of nearest neighbors to consider in the algorithm. Should be within the range <code>0 &lt; k &lt; n</code> where n is the number of observations in the smallest class. It will be automatically set to <code>m-1</code> for any class with <code>m</code> points where <code>m ≤ k</code>.</li></ul><ul><li><code>ratios=1.0</code>: A parameter that controls the amount of oversampling to be done for each class<ul><li>Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By default, all classes are oversampled to the size of the majority class</li><li>Can be a dictionary mapping each class label to the float ratio for that class</li></ul></li></ul><ul><li><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Either an <code>AbstractRNG</code> object or an <code>Integer</code>    seed to be used with <code>Xoshiro</code> if the Julia <code>VERSION</code> supports it. Otherwise, uses MersenneTwister`.</li></ul><ul><li><code>try_preserve_type::Bool=true</code>: When <code>true</code>, the function will try to not change the type of the input    table (e.g., <code>DataFrame</code>). However, for some tables, this may not succeed, and in this case, the table returned will   be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.</li></ul><p><strong>Returns</strong></p><ul><li><p><code>Xover</code>: A matrix or table that includes original data and the new observations    due to oversampling. depending on whether the input <code>X</code> is a matrix or table respectively</p></li><li><p><code>yover</code>: An abstract vector of labels corresponding to <code>Xover</code></p></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+using ScientificTypes
+
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows = 100
+num_continuous_feats = 0
+# want two categorical features with three and two possible values respectively
+num_vals_per_category = [3, 2]
+
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, num_vals_per_category, rng=42)                      
+julia&gt; Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+
+julia&gt; ScientificTypes.schema(X).scitypes
+(Count, Count)
+
+# coerce to a finite scitype (multiclass or ordered factor)
+X = coerce(X, autotype(X, :few_to_finite))
+
+# apply SMOTEN
+Xover, yover = smoten(X, y; k=5, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+
+julia&gt; Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) </code></pre><p><strong>MLJ Model Interface</strong></p><p>Simply pass the keyword arguments while initiating the <code>SMOTEN</code> model and pass the      positional arguments <code>X, y</code> to the <code>transform</code> method. </p><pre><code class="language-julia hljs">using MLJ
+SMOTEN = @load SMOTEN pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = SMOTEN(k=5, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)</code></pre><p>You can read more about this <code>MLJ</code> interface by accessing it from MLJ&#39;s <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/">model browser</a>.</p><p><strong>TableTransforms Interface</strong></p><p>This interface assumes that the input is one table <code>Xy</code> and that <code>y</code> is one of the columns. Hence, an integer <code>y_ind</code>     must be specified to the constructor to specify which column <code>y</code> is followed by other keyword arguments.      Only <code>Xy</code> is provided while applying the transform.</p><pre><code class="language-julia hljs">using Imbalance
+using ScientificTypes
+using Imbalance.TableTransforms
+
+# Generate imbalanced data
+num_rows = 100
+num_continuous_feats = 0
+y_ind = 2
+# generate a table and categorical vector accordingly
+Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
+                                class_probs= [0.5, 0.2, 0.3], num_vals_per_category=[3, 2],
+                                 rng=42)  
+
+# Table must have only finite scitypes                                
+Xy = coerce(Xy, :Column1=&gt;Multiclass, :Column2=&gt;Multiclass, :Column3=&gt;Multiclass)
+
+# Initiate SMOTEN model
+oversampler = SMOTEN(y_ind; k=5, ratios=Dict(1=&gt;1.0, 2=&gt; 0.9, 3=&gt;0.9), rng=42)
+Xyover = Xy |&gt; oversampler                               
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently</code></pre><p>The <code>reapply(oversampler, Xy, cache)</code> method from <code>TableTransforms</code> simply falls back to <code>apply(oversample, Xy)</code> and the <code>revert(oversampler, Xy, cache)</code> reverts the transform by removing the oversampled observations from the table.</p><p><strong>Illustration</strong></p><p>A full basic example can be found <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smoten.ipynb">here</a>.      You may find more practical examples in the <a href="https://juliaai.github.io/Imbalance.jl/dev/examples/">tutorial</a>      section which also explains running code on Google Colab.</p><p><strong>References</strong></p><p>[1] N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer, “SMOTE: synthetic minority over-sampling technique,” Journal of artificial intelligence research, 321-357, 2002.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article><h2 id="SMOTE-NC"><a class="docs-heading-anchor" href="#SMOTE-NC">SMOTE-NC</a><a id="SMOTE-NC-1"></a><a class="docs-heading-anchor-permalink" href="#SMOTE-NC" title="Permalink"></a></h2><article class="docstring"><header><a class="docstring-article-toggle-button fa-solid fa-chevron-down" href="javascript:;" title="Collapse docstring"></a><a class="docstring-binding" id="Imbalance.smotenc" href="#Imbalance.smotenc"><code>Imbalance.smotenc</code></a> — <span class="docstring-category">Function</span></header><section><div><pre><code class="language-julia hljs">smotenc(
+    X, y, split_ind;
+    k=5, ratios=1.0, knn_tree=&quot;Brute&quot;, rng=default_rng(),
+    try_preserve_type=true
+)</code></pre><p><strong>Description</strong></p><p>Oversamples a dataset using <code>SMOTE-NC</code> (Synthetic Minority Oversampling Techniques-Nominal Continuous)      algorithm to correct for class imbalance as presented in [1]. This is a variant of <code>SMOTE</code>      to deal with datasets with both nominal and continuous features. </p><div class="admonition is-warning"><header class="admonition-header">SMOTE-NC Assumes Continuous Features Exist</header><div class="admonition-body"><p>SMOTE-NC will not work if the dataset is purely nominal. In that case, refer to <a href="#SMOTE-N">SMOTE-N</a> instead.     Meanwhile, if the dataset is purely continuous then it&#39;s equivalent to the standard <a href="#SMOTE">SMOTE</a>.</p></div></div><p><strong>Positional Arguments</strong></p><ul><li><p><code>X</code>: A matrix of floats or a table with element <a href="https://juliaai.github.io/ScientificTypes.jl/">scitypes</a> that subtype <code>Union{Finite, Infinite}</code>.     Elements in nominal columns should subtype <code>Finite</code> (i.e., have <a href="https://juliaai.github.io/ScientificTypes.jl/">scitype</a> <code>OrderedFactor</code> or <code>Multiclass</code>) and    elements in continuous columns should subtype <code>Infinite</code> (i.e., have <a href="https://juliaai.github.io/ScientificTypes.jl/">scitype</a> <code>Count</code> or <code>Continuous</code>).</p></li><li><p><code>y</code>: An abstract vector of labels (e.g., strings) that correspond to the observations in <code>X</code></p></li><li><p><code>cat_inds::AbstractVector{&lt;:Int}</code>: A vector of the indices of the nominal features. Supplied only if <code>X</code> is a matrix.       Otherwise, they are inferred from the table&#39;s <a href="https://juliaai.github.io/ScientificTypes.jl/">scitypes</a>.</p></li></ul><p><strong>Keyword Arguments</strong></p><ul><li><code>k::Integer=5</code>: Number of nearest neighbors to consider in the algorithm. Should be within the range <code>0 &lt; k &lt; n</code> where n is the number of observations in the smallest class. It will be automatically set to <code>m-1</code> for any class with <code>m</code> points where <code>m ≤ k</code>.</li></ul><ul><li><code>ratios=1.0</code>: A parameter that controls the amount of oversampling to be done for each class<ul><li>Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By default, all classes are oversampled to the size of the majority class</li><li>Can be a dictionary mapping each class label to the float ratio for that class</li></ul></li></ul><ul><li><p><code>knn_tree</code>: Decides the tree used in KNN computations. Either <code>&quot;Brute&quot;</code> or <code>&quot;Ball&quot;</code>.   BallTree can be much faster but may lead to inaccurate results.</p></li><li><p><code>rng::Union{AbstractRNG, Integer}=default_rng()</code>: Either an <code>AbstractRNG</code> object or an <code>Integer</code>    seed to be used with <code>Xoshiro</code> if the Julia <code>VERSION</code> supports it. Otherwise, uses MersenneTwister`.</p></li></ul><ul><li><code>try_preserve_type::Bool=true</code>: When <code>true</code>, the function will try to not change the type of the input    table (e.g., <code>DataFrame</code>). However, for some tables, this may not succeed, and in this case, the table returned will   be a column table (named-tuple of vectors). This parameter is ignored if the input is a matrix.</li></ul><p><strong>Returns</strong></p><ul><li><p><code>Xover</code>: A matrix or table that includes original data and the new observations    due to oversampling. depending on whether the input <code>X</code> is a matrix or table respectively</p></li><li><p><code>yover</code>: An abstract vector of labels corresponding to <code>Xover</code></p></li></ul><p><strong>Example</strong></p><pre><code class="language-julia hljs">using Imbalance
+using ScientificTypes
+
+# set probability of each class
+class_probs = [0.5, 0.2, 0.3]                         
+num_rows = 100
+num_continuous_feats = 3
+# want two categorical features with three and two possible values respectively
+num_vals_per_category = [3, 2]
+
+# generate a table and categorical vector accordingly
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
+                                class_probs, num_vals_per_category, rng=42)                      
+julia&gt; Imbalance.checkbalance(y)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+
+julia&gt; ScientificTypes.schema(X).scitypes
+(Continuous, Continuous, Continuous, Continuous, Continuous)
+# coerce nominal columns to a finite scitype (multiclass or ordered factor)
+X = coerce(X, :Column4=&gt;Multiclass, :Column5=&gt;Multiclass)
+
+# apply SMOTE-NC
+Xover, yover = smotenc(X, y; k = 5, ratios = Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng = 42)
+
+julia&gt; Imbalance.checkbalance(yover)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) </code></pre><p><strong>MLJ Model Interface</strong></p><p>Simply pass the keyword arguments while initiating the <code>SMOTENC</code> model and pass the      positional arguments (excluding <code>cat_inds</code>) to the <code>transform</code> method. </p><pre><code class="language-julia hljs">using MLJ
+SMOTENC = @load SMOTENC pkg=Imbalance
+
+# Wrap the model in a machine
+oversampler = SMOTENC(k=5, ratios=Dict(0=&gt;1.0, 1=&gt; 0.9, 2=&gt;0.8), rng=42)
+mach = machine(oversampler)
+
+# Provide the data to transform (there is nothing to fit)
+Xover, yover = transform(mach, X, y)</code></pre><p>You can read more about this <code>MLJ</code> interface by accessing it from MLJ&#39;s <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/">model browser</a>. Note that only <code>Table</code> input is supported by the MLJ interface for this method.</p><p><strong>TableTransforms Interface</strong></p><p>This interface assumes that the input is one table <code>Xy</code> and that <code>y</code> is one of the columns. Hence, an integer <code>y_ind</code>     must be specified to the constructor to specify which column <code>y</code> is followed by other keyword arguments.      Only <code>Xy</code> is provided while applying the transform.</p><pre><code class="language-julia hljs">using Imbalance
+using ScientificTypes
+using Imbalance.TableTransforms
+
+# Generate imbalanced data
+num_rows = 100
+num_continuous_feats = 3
+y_ind = 2
+# generate a table and categorical vector accordingly
+Xy, _ = generate_imbalanced_data(num_rows, num_continuous_feats; insert_y=y_ind,
+                                class_probs= [0.5, 0.2, 0.3], num_vals_per_category=[3, 2],
+                                 rng=42)  
+
+# Table must have only finite or continuous scitypes                                
+Xy = coerce(Xy, :Column2=&gt;Multiclass, :Column5=&gt;Multiclass, :Column6=&gt;Multiclass)
+
+# Initiate SMOTENC model
+oversampler = SMOTENC(y_ind; k=5, ratios=Dict(1=&gt;1.0, 2=&gt; 0.9, 3=&gt;0.9), rng=42)
+Xyover = Xy |&gt; oversampler                               
+# equivalently if TableTransforms is used
+Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently</code></pre><p><strong>Illustration</strong></p><p>A full basic example along with an animation can be found <a href="https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_smotenc.ipynb">here</a>.      You may find more practical examples in the <a href="https://juliaai.github.io/Imbalance.jl/dev/examples/">tutorial</a>      section which also explains running code on Google Colab.</p><p><strong>References</strong></p><p>[1] N. V. Chawla, K. W. Bowyer, L. O.Hall, W. P. Kegelmeyer, “SMOTE: synthetic minority over-sampling technique,” Journal of artificial intelligence research, 321-357, 2002.</p></div><a class="docs-sourcelink" target="_blank" href="https://github.com/JuliaAI/Imbalance.jl/">source</a></section></article></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Introduction</a><a class="docs-footer-nextpage" href="../undersampling_algorithms/">Undersampling »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="auto">Automatic (OS)</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.2.1 on <span class="colophon-date" title="Monday 15 January 2024 03:31">Monday 15 January 2024</span>. Using Julia version 1.6.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
