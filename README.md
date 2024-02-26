@@ -34,7 +34,7 @@ The package implements the following resampling algorithms
 - Tomek Links Undersampling
 - Balanced Bagging Classifier (@MLJBalancing.jl)
 
-To see various examples where such methods help improve classification performance, check the [tutorials sections](https://juliaai.github.io/Imbalance.jl/dev/examples/) of the documentation.
+To see various examples where such methods help improve classification performance, check the [tutorials section](https://juliaai.github.io/Imbalance.jl/dev/examples/) of the documentation.
 
 Interested in contributing with more? Check [this](https://juliaai.github.io/Imbalance.jl/dev/contributing/).
 
