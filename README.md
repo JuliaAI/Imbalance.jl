@@ -34,6 +34,8 @@ The package implements the following resampling algorithms
 - Tomek Links Undersampling
 - Balanced Bagging Classifier (@MLJBalancing.jl)
 
+To see various examples where such methods help improve classification performance, check the [tutorials sections](https://juliaai.github.io/Imbalance.jl/dev/examples/) of the documentation.
+
 Interested in contributing with more? Check [this](https://juliaai.github.io/Imbalance.jl/dev/contributing/).
 
 ## 🚀 Quick Start
@@ -53,8 +55,8 @@ X, y = generate_imbalanced_data(num_rows, num_continuous_feats; class_probs, rng
 
 # Apply SMOTE to oversample the classes
 Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-
 ```
+In following code blocks, it will be assumed that `X` and `y` are readily available.
 
 ### 🤖 MLJ Interface
 All methods support the [`MLJ` interface](https://alan-turing-institute.github.io/MLJ.jl/dev/) where instead of directly calling the method, one instantiates a model for the method while optionally passing the keyword parameters found in the functional interface then wraps the model in a `machine` and follows by calling `transform` on the machine and data.
@@ -81,10 +83,12 @@ If [MLJBalancing](https://github.com/JuliaAI/MLJBalancing.jl) is also used, an a
 ```julia
 using MLJBalancing
 
-# grab one more resampler and a classifier
+# grab two resamplers and a classifier
 LogisticClassifier = @load LogisticClassifier pkg=MLJLinearModels verbosity=0
+SMOTE = @load SMOTE pkg=Imbalance verbosity=0
 TomekUndersampler = @load TomekUndersampler pkg=Imbalance verbosity=0
 
+oversampler = SMOTE(k=5, ratios=1.0, rng=42)
 undersampler = TomekUndersampler(min_ratios=0.5, rng=42)
 logistic_model = LogisticClassifier()
 
