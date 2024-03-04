@@ -33,11 +33,20 @@ bibliography: paper.bib
 
 Given a set of observations that each belong to a certain class, supervised classification aims to learn a classification model that can predict the class of a new, unlabeled observation [@Cunningham:2008]. This modeling process finds extensive application in real-life scenarios, including but not limited to medical diagnostics, recommendation systems, credit scoring, and sentiment analysis.
 
-In various real-world scenarios where supervised classification is employed, such as those pertaining to the detection of particular conditions like fraud, faults, pollution, or rare diseases, a severe discrepancy between the number of observations in each class can occur. This is known as class imbalance. This poses a problem if assumptions inherent in the classification model imply hindered performance when the model is trained on imbalanced data as is commonly the case [@Ali:2015]. Two prevalent strategies for mitigating class imbalance, when it poses a problem to the classification model, involve either increasing the representation of less frequently occurring classes through oversampling or reducing instances of more frequently occurring classes through undersampling. It may be also possible to achieve even greater performance by combining both approaches [@Zeng:2016] or by resampling the data multiple times and training the classification model on each resampled dataset to form an ensemble model that aggregates results from different model instances [@Liu:2009].
+In various real-world scenarios where supervised classification is employed, such as those pertaining to the detection of particular conditions like fraud, faults, pollution, or rare diseases, a severe discrepancy between the number of observations in each class can occur. This is known as class imbalance. This poses a problem if assumptions inherent in the classification model imply hindered performance when the model is trained on imbalanced data as is commonly the case [@Ali:2015]. Two prevalent strategies for mitigating class imbalance, when it poses a problem to the classification model, involve either increasing the representation of less frequently occurring classes through oversampling or reducing instances of more frequently occurring classes through undersampling. It may be also possible to achieve even greater performance by combining both approaches in a sequential pipeline [@Zeng:2016] or by undersampling the data multiple times and training the classification model on each resampled dataset to form an ensemble model that aggregates results from different model instances [@Liu:2009]. Contrary to undersampling, oversampling or their combination, the ensemble approach possesses the ability to address class imbalance while making use of the entire dataset and without generating synthetic data.
 
 # Imbalance.jl
 
-In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well-established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the integration of resampling methods with classification models via the `BalancedModel` construct, to create a seamless machine learning pipeline that behaves like a single unified model;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown in the table below. Note that although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
+In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well-established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the inclusion of resampling methods in pipelines with classification models via the `BalancedModel` construct;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown in the table below. Note that although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
+
+The toolbox offers a pure functional interface for each method implemented. For example, `SMOTE` can be used in the following fashion:
+
+```julia
+Xover, yover = smote(X, y)
+```
+Here `Xover, yover` are `X, y` after oversampling.
+
+A `ratios` hyperparameter or similar is always present to control the degree of oversampling or undersampling to be done for each class. All hyperparameters for a resampling method have default values that can be overridden.
 
 : Resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl`. []{label="techniques"}
 
@@ -55,15 +64,6 @@ In this work, we present, `Imbalance.jl`, a software toolbox implemented in the 
 | SMOTE-N                    | Oversampling  | Nominal                        |
 | SMOTE-NC                   | Oversampling  | Continuous and nominal         |
 | Tomek Links Undersampler   | Undersampling  | Continuous |
-
-The toolbox offers a pure functional interface for each method implemented. For example, `SMOTE` can be used in the following fashion:
-
-```julia
-Xover, yover = smote(X, y)
-```
-Here `Xover, yover` are `X, y` after oversampling.
-
-A `ratios` hyperparameter or similar is always present to control the degree of oversampling or undersampling to be done for each class. All hyperparameters for a resampling method have default values that can be overridden.
 
 ## Imbalance.jl Design Principles
 
