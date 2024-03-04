@@ -122,6 +122,6 @@ The existence of a toolbox with techniques that harness this wealth of research 
 
 ## Author Contributions
 
-Design: E. Wisam, A. Blaom. Implementation, tests and documentation: E. Wisam. Code and documentation review: A. Blaom.
+Design: E. Wisam, A. Blaom. Implementation, tests and documentation: E. Wisam. Code and documentation review: A. Blaom. The authors would like to acknowledge the financial support provided by the Google Summer of Code program, which made this project possible.
 
 ## References
