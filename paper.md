@@ -37,7 +37,7 @@ In various real-world scenarios where supervised classification is employed, suc
 
 # Imbalance.jl
 
-In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well-established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the inclusion of resampling methods in pipelines with classification models via the `BalancedModel` construct;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009]. The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown in the table below. Note that although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
+In this work, we present, `Imbalance.jl`, a software toolbox implemented in the Julia programming language that offers over 10 well-established techniques that help address the class imbalance issue. Additionally, we present a companion package, `MLJBalancing.jl`, which: (i)  facilitates the inclusion of resampling methods in pipelines with classification models via the `BalancedModel` construct;  and (ii) implements a general version of the EasyEnsemble algorithm presented in [@Liu:2009].
 
 The toolbox offers a pure functional interface for each method implemented. For example, `SMOTE` can be used in the following fashion:
 
@@ -47,6 +47,8 @@ Xover, yover = smote(X, y)
 Here `Xover, yover` are `X, y` after oversampling.
 
 A `ratios` hyperparameter or similar is always present to control the degree of oversampling or undersampling to be done for each class. All hyperparameters for a resampling method have default values that can be overridden.
+
+The set of resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl` are shown in the table below. Note that although no combination resampling techniques are explicitly presented, they are easy to form using the `BalancedModel` wrapper found in `MLJBalancing.jl`.
 
 : Resampling techniques implemented in `Imbalance.jl` and `MLJBalancing.jl`. []{label="techniques"}
 
