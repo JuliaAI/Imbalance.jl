@@ -118,6 +118,8 @@ Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
 The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)` reverts the transform by removing the oversampled observations from the table.
 
+Notice that because the interfaces of `MLJ` and `TableTransforms` use the same model names, you will have to specify the source of the model if both are used in the same file (e.g., `Imbalance.TableTransforms.SMOTE`) for the example above.
+
 
 ## Features
 - Supports multi-class variants of the algorithms and both nominal and continuous features
