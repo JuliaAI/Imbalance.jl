@@ -56,7 +56,6 @@ using Imbalance
 # Apply SMOTE to oversample the classes
 Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 ```
-In following code blocks, it will be assumed that `X` and `y` are readily available.
 
 ### MLJ Interface
 All methods support the [`MLJ` interface](https://alan-turing-institute.github.io/MLJ.jl/dev/) where instead of directly calling the method, one instantiates a model for the method while optionally passing the keyword parameters found in the functional interface then wraps the model in a `machine` and follows by calling `transform` on the machine and data.
