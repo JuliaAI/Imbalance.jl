@@ -217,8 +217,7 @@ ms = models(matching(Xover, yover))
      (name = RandomForestClassifier, package_name = BetaML, ... )
 
 
-Let's go for a logistic classifier form MLJLinearModels
-
+Let's go for a decision tree classifier from [BetaML](https://github.com/sylvaticus/BetaML.jl).
 
 ```julia
 import Pkg; Pkg.add("BetaML")

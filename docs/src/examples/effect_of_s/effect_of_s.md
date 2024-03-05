@@ -160,7 +160,7 @@ models(matching(Xover, yover))
      (name = XGBoostClassifier, package_name = XGBoost, ... )
 
 
-Let's go for a [Decision Tree](https://alan-turing-institute.github.io/MLJ.jl/dev/models/DecisionTreeClassifier_DecisionTree/#DecisionTreeClassifier_DecisionTree). This is just like the normal perceptron but it learns the separating hyperplane in a higher dimensional space using the kernel trick so that it corresponds to a nonlinear separating hypersurface in the original space. This isn't necessarily helpful in our case, but just to experiment.
+Let's go for a [BayesianLDA](https://alan-turing-institute.github.io/MLJ.jl/dev/models/BayesianLDA_MultivariateStats/#BayesianLDA_MultivariateStats).
 
 
 ```julia
