@@ -55,8 +55,7 @@ const COMMON_DOCS = Dict(
 
     "K" => """
     - `k::Integer=5`: Number of nearest neighbors to consider in the algorithm. Should be within the range """*
-        """`0 < k < n` where n is the number of observations in the smallest class. It will be automatically set to """*
-        """`m-1` for any class with `m` points where `m ≤ k`.
+        """`0 < k < n` where n is the number of observations in the smallest class.
     """,
     "K-FULL" => """
     - `k::Integer=5`: Number of nearest neighbors to consider in the algorithm. Should be within the range """*
