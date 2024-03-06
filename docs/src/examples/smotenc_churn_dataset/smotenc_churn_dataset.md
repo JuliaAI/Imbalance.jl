@@ -216,14 +216,11 @@ ms = models(matching(Xover, yover))
      (name = DeterministicConstantClassifier, package_name = MLJModels, ... )
      (name = RandomForestClassifier, package_name = BetaML, ... )
 
-
-Let's go for a decision tree classifier from [BetaML](https://github.com/sylvaticus/BetaML.jl).
+We can't go for logistic regression as we did in the SMOTE tutorial because it does not support categotical features. Let's go hence for a decision tree classifier from [BetaML](https://github.com/sylvaticus/BetaML.jl). 
 
 ```julia
 import Pkg; Pkg.add("BetaML")
 ```
-
-Let's go for a decision tree from BetaML. We can't go for logistic regression as we did in the SMOTE tutorial because it does not support categotical features.
 
 ### Before Oversampling
 
