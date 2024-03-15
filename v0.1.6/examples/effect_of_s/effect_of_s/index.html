@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>From RandomOversampling to ROSE · Imbalance.jl</title><meta name="title" content="From RandomOversampling to ROSE · Imbalance.jl"/><meta property="og:title" content="From RandomOversampling to ROSE · Imbalance.jl"/><meta property="twitter:title" content="From RandomOversampling to ROSE · Imbalance.jl"/><meta name="description" content="Documentation for Imbalance.jl."/><meta property="og:description" content="Documentation for Imbalance.jl."/><meta property="twitter:description" content="Documentation for Imbalance.jl."/><script data-outdated-warner src="../../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../search_index.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/><link href="https://fonts.googleapis.com/css?family=Montserratwght@100;200;300;400;500;600;700;800;900|Source+Code+Pro&amp;display=swap" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../../"><img src="../../../assets/logo.gif" alt="Imbalance.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../../">Imbalance.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../../">Introduction</a></li><li><span class="tocitem">Algorithms</span><ul><li><a class="tocitem" href="../../../algorithms/oversampling_algorithms/">Oversampling</a></li><li><a class="tocitem" href="../../../algorithms/undersampling_algorithms/">Undersampling</a></li><li><a class="tocitem" href="../../../algorithms/mlj_balancing/">Combination</a></li><li><a class="tocitem" href="../../../algorithms/implementation_notes/">Implementation Notes</a></li><li><a class="tocitem" href="../../../algorithms/extra_algorithms/">Extras</a></li></ul></li><li><span class="tocitem">Tutorial</span><ul><li><a class="tocitem" href="../../walkthrough/">Introduction</a></li><li><a class="tocitem" href="../../">More Examples</a></li><li><a class="tocitem" href="../../Colab/">Google Colab</a></li></ul></li><li><a class="tocitem" href="../../../contributing/">Contributing</a></li><li><a class="tocitem" href="../../../about/">About</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>From RandomOversampling to ROSE</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>From RandomOversampling to ROSE</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaAI/Imbalance.jl/" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="From-RandomOversampling-to-ROSE"><a class="docs-heading-anchor" href="#From-RandomOversampling-to-ROSE">From RandomOversampling to ROSE</a><a id="From-RandomOversampling-to-ROSE-1"></a><a class="docs-heading-anchor-permalink" href="#From-RandomOversampling-to-ROSE" title="Permalink"></a></h1><pre><code class="language-julia hljs">
+import Pkg;
+Pkg.add([&quot;Random&quot;, &quot;CSV&quot;, &quot;DataFrames&quot;, &quot;MLJ&quot;, &quot;Imbalance&quot;,
+         &quot;ScientificTypes&quot;, &quot;Plots&quot;, &quot;Measures&quot;, &quot;HTTP&quot;])
+
+using Random
+using CSV
+using DataFrames
+using MLJ
+using ScientificTypes
+using Imbalance
+using Plots, Measures
+using HTTP: download</code></pre><h2 id="Loading-Data"><a class="docs-heading-anchor" href="#Loading-Data">Loading Data</a><a id="Loading-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Loading-Data" title="Permalink"></a></h2><p>Let&#39;s load the Iris dataset, the objective of this dataset is to predict the type of flower as one of &quot;virginica&quot;, &quot;versicolor&quot; and &quot;setosa&quot; using its sepal and petal length and width. </p><p>We don&#39;t need to so from a CSV file this time because <code>MLJ</code> has a macro for loading it already! The only difference is that we will need to explictly convert it to a dataframe as <code>MLJ</code> loads it as a named tuple of vectors.</p><pre><code class="language-julia hljs">X, y = @load_iris
+X = DataFrame(X)
+first(X, 5) |&gt; pretty</code></pre><pre><code class="nohighlight hljs">┌──────────────┬─────────────┬──────────────┬─────────────┐
+│ sepal_length │ sepal_width │ petal_length │ petal_width │
+│ Float64      │ Float64     │ Float64      │ Float64     │
+│ Continuous   │ Continuous  │ Continuous   │ Continuous  │
+├──────────────┼─────────────┼──────────────┼─────────────┤
+│ 5.1          │ 3.5         │ 1.4          │ 0.2         │
+│ 4.9          │ 3.0         │ 1.4          │ 0.2         │
+│ 4.7          │ 3.2         │ 1.3          │ 0.2         │
+│ 4.6          │ 3.1         │ 1.5          │ 0.2         │
+│ 5.0          │ 3.6         │ 1.4          │ 0.2         │
+└──────────────┴─────────────┴──────────────┴─────────────┘</code></pre><p>Our purpose for this tutorial is primarily visuallization. Thus, let&#39;s select two of the continuous features only to work with. It&#39;s known that the sepal length and width play a much bigger role in classifying the type of flower so let&#39;s keep those only.</p><pre><code class="language-julia hljs">X = select(X, :petal_width, :petal_length)
+first(X, 5) |&gt; pretty</code></pre><pre><code class="nohighlight hljs">┌─────────────┬──────────────┐
+│ petal_width │ petal_length │
+│ Float64     │ Float64      │
+│ Continuous  │ Continuous   │
+├─────────────┼──────────────┤
+│ 0.2         │ 1.4          │
+│ 0.2         │ 1.4          │
+│ 0.2         │ 1.3          │
+│ 0.2         │ 1.5          │
+│ 0.2         │ 1.4          │
+└─────────────┴──────────────┘</code></pre><h2 id="Coercing-Data"><a class="docs-heading-anchor" href="#Coercing-Data">Coercing Data</a><a id="Coercing-Data-1"></a><a class="docs-heading-anchor-permalink" href="#Coercing-Data" title="Permalink"></a></h2><pre><code class="language-julia hljs">ScientificTypes.schema(X)</code></pre><pre><code class="nohighlight hljs">┌──────────────┬────────────┬─────────┐
+│ names        │ scitypes   │ types   │
+├──────────────┼────────────┼─────────┤
+│ petal_width  │ Continuous │ Float64 │
+│ petal_length │ Continuous │ Float64 │
+└──────────────┴────────────┴─────────┘</code></pre><p>Things look good, no coercion is needed.</p><h2 id="Oversampling"><a class="docs-heading-anchor" href="#Oversampling">Oversampling</a><a id="Oversampling-1"></a><a class="docs-heading-anchor-permalink" href="#Oversampling" title="Permalink"></a></h2><p>Iris, by default has no imbalance problem</p><pre><code class="language-julia hljs">checkbalance(y)</code></pre><pre><code class="nohighlight hljs">virginica:  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 50 (100.0%) 
+setosa:     ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 50 (100.0%) 
+versicolor: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 50 (100.0%)</code></pre><p>To simulate that there is a balance problem, we will consider a random sample of 100 observations. A random sample does not guarantee perserving the proportion of classes; in this, we actually set the seed to get a very unlikely random sample that suffers from strong imbalance.</p><pre><code class="language-julia hljs">Random.seed!(803429)
+subset_indices = rand(1:size(X, 1), 100)
+X, y = X[subset_indices, :], y[subset_indices]
+checkbalance(y)         # comes from Imbalance</code></pre><pre><code class="nohighlight hljs">versicolor: ▇▇▇▇▇▇▇▇▇▇▇ 12 (22.6%) 
+setosa:     ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 35 (66.0%) 
+virginica:  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%)</code></pre><p>We will treat this as our training set going forward so we don&#39;t need to partition. Now let&#39;s oversample it with ROSE.</p><pre><code class="language-julia hljs">Xover, yover = rose(X, y; s=0.3, ratios=Dict(&quot;versicolor&quot; =&gt; 1.0, &quot;setosa&quot;=&gt;1.0))
+checkbalance(yover)</code></pre><pre><code class="nohighlight hljs">Progress:  67%|███████████████████████████▍             |  ETA: 0:00:00[K
+[A
+
+virginica:  ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%) 
+setosa:     ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%) 
+versicolor: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 53 (100.0%)</code></pre><h2 id="Training-the-Model"><a class="docs-heading-anchor" href="#Training-the-Model">Training the Model</a><a id="Training-the-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Training-the-Model" title="Permalink"></a></h2><pre><code class="language-julia hljs">models(matching(Xover, yover))</code></pre><pre><code class="nohighlight hljs">53-element Vector{NamedTuple{(:name, :package_name, :is_supervised, :abstract_type, :deep_properties, :docstring, :fit_data_scitype, :human_name, :hyperparameter_ranges, :hyperparameter_types, :hyperparameters, :implemented_methods, :inverse_transform_scitype, :is_pure_julia, :is_wrapper, :iteration_parameter, :load_path, :package_license, :package_url, :package_uuid, :predict_scitype, :prediction_type, :reporting_operations, :reports_feature_importances, :supports_class_weights, :supports_online, :supports_training_losses, :supports_weights, :transform_scitype, :input_scitype, :target_scitype, :output_scitype)}}:
+ (name = AdaBoostClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = AdaBoostStumpClassifier, package_name = DecisionTree, ... )
+ (name = BaggingClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianLDA, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianLDA, package_name = MultivariateStats, ... )
+ (name = BayesianQDA, package_name = MLJScikitLearnInterface, ... )
+ (name = BayesianSubspaceLDA, package_name = MultivariateStats, ... )
+ (name = CatBoostClassifier, package_name = CatBoost, ... )
+ (name = ConstantClassifier, package_name = MLJModels, ... )
+ (name = DecisionTreeClassifier, package_name = BetaML, ... )
+ ⋮
+ (name = SGDClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVC, package_name = LIBSVM, ... )
+ (name = SVMClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVMLinearClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = SVMNuClassifier, package_name = MLJScikitLearnInterface, ... )
+ (name = StableForestClassifier, package_name = SIRUS, ... )
+ (name = StableRulesClassifier, package_name = SIRUS, ... )
+ (name = SubspaceLDA, package_name = MultivariateStats, ... )
+ (name = XGBoostClassifier, package_name = XGBoost, ... )</code></pre><p>Let&#39;s go for a <a href="https://alan-turing-institute.github.io/MLJ.jl/dev/models/BayesianLDA_MultivariateStats/#BayesianLDA_MultivariateStats">BayesianLDA</a>.</p><pre><code class="language-julia hljs">import Pkg; Pkg.add(&quot;MultivariateStats&quot;)</code></pre><h3 id="Before-Oversampling"><a class="docs-heading-anchor" href="#Before-Oversampling">Before Oversampling</a><a id="Before-Oversampling-1"></a><a class="docs-heading-anchor-permalink" href="#Before-Oversampling" title="Permalink"></a></h3><pre><code class="language-julia hljs"># 1. Load the model
+BayesianLDA = @load BayesianLDA pkg=MultivariateStats
+
+# 2. Instantiate it 
+model = BayesianLDA()
+
+# 3. Wrap it with the data in a machine
+mach = machine(model, X, y)
+
+# 4. fit the machine learning model
+fit!(mach, verbosity=0)</code></pre><h3 id="After-Oversampling"><a class="docs-heading-anchor" href="#After-Oversampling">After Oversampling</a><a id="After-Oversampling-1"></a><a class="docs-heading-anchor-permalink" href="#After-Oversampling" title="Permalink"></a></h3><pre><code class="language-julia hljs"># 3. Wrap it with the data in a machine
+mach_over = machine(model, Xover, yover)
+
+# 4. fit the machine learning model
+fit!(mach_over, verbosity=0)</code></pre><h2 id="Plot-Decision-Boundaries"><a class="docs-heading-anchor" href="#Plot-Decision-Boundaries">Plot Decision Boundaries</a><a id="Plot-Decision-Boundaries-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-Decision-Boundaries" title="Permalink"></a></h2><p>Construct ranges for each feature and consecutively a grid</p><pre><code class="language-julia hljs">petal_width_range =
+	range(minimum(X.petal_width) - 1, maximum(X.petal_width) + 1, length = 200)
+petal_length_range =
+	range(minimum(X.petal_length) - 1, maximum(X.petal_length) + 1, length = 200)
+grid_points = [(pw, pl) for pw in petal_width_range, pl in petal_length_range]
+</code></pre><pre><code class="nohighlight hljs">200×200 Matrix{Tuple{Float64, Float64}}:
+ (-0.9, 0.2)       (-0.9, 0.238693)       …  (-0.9, 7.9)
+ (-0.878894, 0.2)  (-0.878894, 0.238693)     (-0.878894, 7.9)
+ (-0.857789, 0.2)  (-0.857789, 0.238693)     (-0.857789, 7.9)
+ (-0.836683, 0.2)  (-0.836683, 0.238693)     (-0.836683, 7.9)
+ (-0.815578, 0.2)  (-0.815578, 0.238693)     (-0.815578, 7.9)
+ (-0.794472, 0.2)  (-0.794472, 0.238693)  …  (-0.794472, 7.9)
+ (-0.773367, 0.2)  (-0.773367, 0.238693)     (-0.773367, 7.9)
+ (-0.752261, 0.2)  (-0.752261, 0.238693)     (-0.752261, 7.9)
+ (-0.731156, 0.2)  (-0.731156, 0.238693)     (-0.731156, 7.9)
+ (-0.71005, 0.2)   (-0.71005, 0.238693)      (-0.71005, 7.9)
+ ⋮                                        ⋱  
+ (3.13116, 0.2)    (3.13116, 0.238693)       (3.13116, 7.9)
+ (3.15226, 0.2)    (3.15226, 0.238693)       (3.15226, 7.9)
+ (3.17337, 0.2)    (3.17337, 0.238693)       (3.17337, 7.9)
+ (3.19447, 0.2)    (3.19447, 0.238693)       (3.19447, 7.9)
+ (3.21558, 0.2)    (3.21558, 0.238693)    …  (3.21558, 7.9)
+ (3.23668, 0.2)    (3.23668, 0.238693)       (3.23668, 7.9)
+ (3.25779, 0.2)    (3.25779, 0.238693)       (3.25779, 7.9)
+ (3.27889, 0.2)    (3.27889, 0.238693)       (3.27889, 7.9)
+ (3.3, 0.2)        (3.3, 0.238693)           (3.3, 7.9)</code></pre><p>Evaluate the grid with the machine before and after oversampling</p><pre><code class="language-julia hljs">grid_predictions = [
+	predict_mode(mach, Tables.table(reshape(collect(point), 1, 2)))[1] for
+	point in grid_points
+]
+grid_predictions_over = [
+	predict_mode(mach_over, Tables.table(reshape(collect(point), 1, 2)))[1] for
+	point in grid_points
+]</code></pre><pre><code class="nohighlight hljs">200×200 CategoricalArrays.CategoricalArray{String,2,UInt32}:
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;     …  &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;     …  &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ &quot;setosa&quot;     &quot;setosa&quot;     &quot;setosa&quot;        &quot;versicolor&quot;  &quot;versicolor&quot;
+ ⋮                                      ⋱                
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;  …  &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;
+ &quot;virginica&quot;  &quot;virginica&quot;  &quot;virginica&quot;     &quot;virginica&quot;   &quot;virginica&quot;</code></pre><p>Make two contour plots using the grid predictions before and after oversampling</p><pre><code class="language-julia hljs">p = contourf(petal_length_range, petal_width_range, grid_predictions,
+	levels = 3, color = :Set3_3, colorbar = false)
+p_over = contourf(petal_length_range, petal_width_range, grid_predictions_over,
+	levels = 3, color = :Set3_3, colorbar = false)
+println()</code></pre><p>Scatter plot the data before and after oversampling</p><pre><code class="language-julia hljs">old_count = size(X, 1)
+labels = unique(y)
+colors = Dict(&quot;setosa&quot; =&gt; &quot;green&quot;, &quot;versicolor&quot; =&gt; &quot;yellow&quot;,
+	&quot;virginica&quot; =&gt; &quot;purple&quot;)
+
+for label in labels
+	scatter!(p, X.petal_length[y.==label], X.petal_width[y.==label],
+		color = colors[label], label = label,
+		title = &quot;Before Oversampling&quot;)
+	scatter!(p_over, X.petal_length[y.==label], X.petal_width[y.==label],
+		color = colors[label], label = label,
+		title = &quot;After Oversampling&quot;)
+	# find new points only and plot with different shape
+	scatter!(p_over, Xover.petal_length[old_count+1:end][yover[old_count+1:end].==label],
+		Xover.petal_width[old_count+1:end][yover[old_count+1:end].==label],
+		color = colors[label], label = label*&quot;-over&quot;, markershape = :diamond,
+		title = &quot;After Oversampling&quot;)
+end
+
+plot_res = plot(
+	p,
+	p_over,
+	layout = (1, 2),
+	xlabel = &quot;petal length&quot;,
+	ylabel = &quot;petal width&quot;,
+	size = (900, 300),
+	margin = 5mm, dpi = 200
+)
+savefig(plot_res, &quot;./assets/ROSE-before-after.png&quot;)</code></pre><p><img src="../assets/ROSE-before-after.png" alt="Before After ROSE"/></p><h2 id="Effect-of-Increasing-s"><a class="docs-heading-anchor" href="#Effect-of-Increasing-s">Effect of Increasing <code>s</code></a><a id="Effect-of-Increasing-s-1"></a><a class="docs-heading-anchor-permalink" href="#Effect-of-Increasing-s" title="Permalink"></a></h2><pre><code class="language-julia hljs">anim = @animate for s ∈ 0:0.03:6.0
+	# oversample
+	Xover, yover =
+		rose(X, y; s = s, ratios = Dict(&quot;setosa&quot; =&gt; 1.0, &quot;versicolor&quot; =&gt; 1.0), rng = 42)
+
+	model = BayesianLDA()
+	mach_over = machine(model, Xover, yover)
+	fit!(mach_over, verbosity = 0)
+
+	# grid predictions
+	grid_predictions_over = [
+		predict_mode(mach_over, Tables.table(reshape(collect(point), 1, 2)))[1] for
+		point in grid_points
+	]
+
+	p_over = contourf(petal_length_range, petal_width_range, grid_predictions_over,
+		levels = 3, color = :Set3_3, colorbar = false)
+
+	old_count = size(X, 1)
+	for label in labels
+		scatter!(p_over, X.petal_length[y.==label], X.petal_width[y.==label],
+			color = colors[label], label = label,
+			title = &quot;Oversampling with s=$s&quot;)
+		# find new points only and plot with different shape
+		scatter!(p_over,
+			Xover.petal_length[old_count+1:end][yover[old_count+1:end].==label],
+			Xover.petal_width[old_count+1:end][yover[old_count+1:end].==label],
+			color = colors[label], label = label * &quot;-over&quot;, markershape = :diamond,
+			title = &quot;Oversampling with s=$s&quot;)
+	end
+	plot!(dpi = 150)
+end
+</code></pre><pre><code class="language-julia hljs">gif(anim, &quot;./assets/rose-animation.gif&quot;, fps=6)
+println()</code></pre><p><img src="../assets/rose-animation.gif" alt="ROSE Effect of S"/></p><p>As we can see, the larger <code>s</code> is the more spread out are the oversampled points. This is expected because what ROSE does is oversample by sampling from the distribution that corresponds to placing Gaussians on the existing points and <code>s</code> is a hyperparameter proportional to the bandwidth of the Gaussians. When <code>s=0</code> the only points that can be generated lie on top of others; i.e., ROSE becomes equivalent to random oversampling</p><p>The decision boundary is mainly unstable because we used a small number of epochs with the perceptron to generate this animation. It still took plenty of time.</p></article><nav class="docs-footer"><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Friday 15 March 2024 23:02">Friday 15 March 2024</span>. Using Julia version 1.6.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
