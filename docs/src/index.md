@@ -36,21 +36,26 @@ Interested in contributing with more? Check [this](https://juliaai.github.io/Imb
 
 We will illustrate using the package to oversample with`SMOTE`; however, all other implemented oversampling methods follow the same pattern.
 
-### Standard API
-All methods by default support a pure functional interface.
+Let's start by generating some dummy imbalanced data:
+
 ```julia
 using Imbalance
 
 # Set dataset properties then generate imbalanced data
 class_probs = [0.5, 0.2, 0.3]                  # probability of each class      
 num_rows, num_continuous_feats = 100, 5
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; class_probs, rng=42)      
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats; class_probs, rng=42)
+```
+In following code blocks, it will be assumed that `X` and `y` are readily available.
+
+### Standard API
+All methods by default support a pure functional interface.
+```julia
+using Imbalance
 
 # Apply SMOTE to oversample the classes
 Xover, yover = smote(X, y; k=5, ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-
 ```
-In following code blocks, it will be assumed that `X` and `y` are readily available.
 
 ### MLJ Interface
 All methods support the [`MLJ` interface](https://alan-turing-institute.github.io/MLJ.jl/dev/) where instead of directly calling the method, one instantiates a model for the method while optionally passing the keyword parameters found in the functional interface then wraps the model in a `machine` and follows by calling `transform` on the machine and data.
@@ -75,7 +80,7 @@ All implemented oversampling methods are considered static transforms and hence,
 If `MLJBalancing` is also used, an arbitrary number of resampling methods from `Imbalance.jl` can be wrapped with a classification model from `MLJ` to function as a unified model where resampling automatically takes place on given data before training the model (and is bypassed during prediction).
 
 ```julia
-using MLJBalancing
+using MLJ, MLJBalancing
 
 # grab two resamplers and a classifier
 LogisticClassifier = @load LogisticClassifier pkg=MLJLinearModels verbosity=0

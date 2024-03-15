@@ -21,6 +21,15 @@ using Imbalance: random_undersample
     )
     # Check that X_under is a subset of X
     @test issubset(Set(eachrow(X_under)), Set(eachrow(X)))
+
+    y = ["A", "A", "B", "A", "B"]
+    X = [1 1.1 2.1;
+        1 1.2 2.2;
+        2 1.3 2.3;
+        1 1.4 missing;
+        2 1.5 2.5; ]
+    X_under, y_under = random_undersample(X, y) 
+    @test issubset(Set(eachrow(X_under)), Set(eachrow(X)))
 end
 
 # test that the materializer works for dataframes

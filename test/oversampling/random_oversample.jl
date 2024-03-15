@@ -21,6 +21,16 @@ using Imbalance: random_oversample
     )
     # Check that the number of uniques is the same
     @test length(unique(Xover, dims = 1)) == length(unique(X, dims = 1))
+
+    y = ["A", "A", "B", "A", "B"]
+    X = [1 1.1 2.1;
+        1 1.2 2.2;
+        2 1.3 2.3;
+        1 1.4 missing;
+        2 1.5 2.5; ]
+    Xover, yover = random_oversample(X, y) 
+    @test length(unique(Xover, dims = 1)) == length(unique(X, dims = 1))
+
 end
 
 

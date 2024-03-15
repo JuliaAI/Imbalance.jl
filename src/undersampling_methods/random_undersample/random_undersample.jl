@@ -10,7 +10,7 @@ randomly remove n observations for that class using random undersampling
 - `Xnew`: A matrix containing the undersampled observations
 """
 function random_undersample_per_class(
-    X::AbstractMatrix{<:Real},
+    X::AbstractMatrix{<:Union{Real, Missing}},
     n::Integer;
     rng::AbstractRNG = default_rng(),
 )
@@ -130,7 +130,7 @@ A full basic example along with an animation can be found [here](https://githubt
     section which also explains running code on Google Colab.
 """
 function random_undersample(
-    X::AbstractMatrix{<:Real},
+    X::AbstractMatrix{<:Union{Real, Missing}},
     y::AbstractVector;
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
