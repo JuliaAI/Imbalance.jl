@@ -96,7 +96,7 @@ Methods implemented in the `Imbalance.jl` toolbox indeed meet all aforementioned
 - Should expose a pure functional implementation, but also support popular Julia machine learning interfaces
 - Should be possible to wrap an arbitrary number of resampler models with a classification model to behave as a unified model
 
-Methods implemented in the `Imbalance.jl` toolbox meet all the interface design principles above. It particularly implements the `MLJ` and `TableTransforms` interface for each method. `BalancedModel` from `MLJBalancing.jl` also allows fusing an arbitrary number of resampling models and a classifier together to behave as one unified model.
+Methods implemented in the `Imbalance.jl` toolbox meet all the interface design principles above. It particularly implements the `MLJ` [@Blaom2020MLJAJ] and `TableTransforms` interface for each method. `BalancedModel` from `MLJBalancing.jl` also allows fusing an arbitrary number of resampling models and a classifier together to behave as one unified model.
 
 
 ### Developer Experience and Testing
@@ -108,7 +108,7 @@ Methods implemented in the `Imbalance.jl` toolbox meet all the interface design 
 - Should document all functions, including internal ones
 - Comments should be included to justify or simplify written implementations when needed
 
-This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form the technique. Aside from that, end-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` toolbox from Python and comparing outputs.
+This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form them. Aside from that, end-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` toolbox from Python and comparing outputs.
 
 ### User Experience
 
@@ -118,7 +118,7 @@ This set of design principles is also satisfied by `Imbalance.jl`. Implemented t
 - A practical example that uses the method with real data should preferably accompany each method
 - If an implemented method lacks an online explanation, an article that explains the method after it is implemented should be preferably written
 
-The `Imbalance.jl` documentation indeed satisfies this set of design principles. Methods are associated with examples that can be copy-pasted, examples that demonstrate the operation of the technique visually, and possibly, examples that use it with a real-world dataset to improve the performance of a classification model.
+The `Imbalance.jl` documentation indeed satisfies this set of design principles. Methods are each associated with an example that can be copy-pasted, a visual example that demonstrates the operation of the technique, and possibly, an example that utilizes it with a real-world dataset to improve the performance of a classification model.
 
 
 
