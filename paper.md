@@ -108,7 +108,7 @@ Methods implemented in the `Imbalance.jl` toolbox meet all the interface design 
 - Should document all functions, including internal ones
 - Comments should be included to justify or simplify written implementations when needed
 
-This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form them. Aside from that, end-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` toolbox from Python and comparing outputs.
+This set of design principles is also satisfied by `Imbalance.jl`. Implemented techniques are tested by testing smaller units that form them. Aside from that, end-to-end tests are performed for each technique by testing properties and characteristics of the technique or by using the `imbalanced-learn` toolbox [@Lematre:2016] in Python and comparing outputs.
 
 ### User Experience
 
