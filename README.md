@@ -10,6 +10,8 @@ A Julia package with resampling methods to correct for class imbalance in a wide
 [![Build Status](https://github.com/JuliaAI/Imbalance.jl/workflows/CI/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions)
 [![codecov](https://codecov.io/gh/JuliaAI/Imbalance.jl/graph/badge.svg?token=K5UBZ3DCO6)](https://codecov.io/gh/JuliaAI/Imbalance.jl)
 [![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliaai.github.io/Imbalance.jl/dev/)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.06310/status.svg)](https://doi.org/10.21105/joss.06310)
+
 
 ## ⏬ Installation
 ```julia
