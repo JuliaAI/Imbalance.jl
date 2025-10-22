@@ -1,5 +1,5 @@
 """
-Entry points to the package.
+Entry points to the package. 
 """
 
 module Imbalance
