@@ -1,6 +1,6 @@
 using Test
 using Imbalance
-using CategoricalArrays
+import CategoricalArrays.CategoricalArray
 using DataFrames
 using Random
 using MLJTestInterface
