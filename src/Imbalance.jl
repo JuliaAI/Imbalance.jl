@@ -1,5 +1,5 @@
 """
-Entry points to the package.
+Entry points to the package. 
 """
 
 module Imbalance
@@ -16,7 +16,7 @@ using CategoricalDistributions
 using TableOperations
 using Tables
 using OrderedCollections
-using CategoricalArrays
+import CategoricalArrays.CategoricalArray
 using ProgressMeter
 
 include("common/docs.jl")

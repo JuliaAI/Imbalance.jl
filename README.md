@@ -10,6 +10,8 @@ A Julia package with resampling methods to correct for class imbalance in a wide
 [![Build Status](https://github.com/JuliaAI/Imbalance.jl/workflows/CI/badge.svg)](https://github.com/JuliaAI/Imbalance.jl/actions)
 [![codecov](https://codecov.io/gh/JuliaAI/Imbalance.jl/graph/badge.svg?token=K5UBZ3DCO6)](https://codecov.io/gh/JuliaAI/Imbalance.jl)
 [![Docs](https://img.shields.io/badge/docs-dev-blue.svg)](https://juliaai.github.io/Imbalance.jl/dev/)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.06310/status.svg)](https://doi.org/10.21105/joss.06310)
+
 
 ## ⏬ Installation
 ```julia
@@ -158,3 +160,18 @@ To our knowledge, there are no existing maintained Julia packages that implement
 
 ## 👥 Credits
 This package was created by [Essam Wisam](https://github.com/JuliaAI) as a Google Summer of Code project, under the mentorship of [Anthony Blaom](https://ablaom.github.io). Special thanks also go to [Rik Huijzer](https://github.com/rikhuijzer) for his friendliness and the binary `SMOTE` implementation in `Resample.jl`.
+
+You may cite the following paper should you use Imbalance.jl or MLJBalancing.jl in a scientific publication
+```
+@article{
+Wisam2024,
+doi = {10.21105/joss.06310},
+url = {https://doi.org/10.21105/joss.06310},
+year = {2024},
+publisher = {The Open Journal},
+volume = {9}, number = {95}, pages = {6310},
+author = {Essam Wisam and Anthony Blaom},
+title = {Imbalance: A comprehensive multi-interface Julia toolbox to address class imbalance},
+journal = {Journal of Open Source Software}
+}
+```

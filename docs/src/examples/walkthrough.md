@@ -6,7 +6,7 @@ In this section of the docs, we will walk you through some examples to demonstra
 
 # Prerequisites
 
-In further examples, we will assume familiarity with the [CSV](https://csv.juliadata.org/stable/index.html), [DataFrames](https://dataframes.juliadata.org/stable/), [ScientificTypes](https://juliaai.github.io/ScientificTypes.jl/dev/) and [MLJ](https://alan-turing-institute.github.io/MLJ.jl/dev/) packages, all of which come with excellent documentation. This example is devoted to assuring and enforcing your familiarity with such packages. You can try this all examples in the docs on your browser using [Google Colab](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/docs/src/examples/walkthrough.ipynb) and you can read more about that in the last section.
+In further examples, we will assume familiarity with the [CSV](https://csv.juliadata.org/stable/index.html), [DataFrames](https://dataframes.juliadata.org/stable/), [ScientificTypes](https://juliaai.github.io/ScientificTypes.jl/dev/) and [MLJ](https://alan-turing-institute.github.io/MLJ.jl/dev/) packages, all of which come with excellent documentation. This example is devoted to assuring and enforcing your familiarity with such packages.
 
 
 
