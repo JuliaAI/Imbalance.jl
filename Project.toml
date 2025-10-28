@@ -3,7 +3,6 @@ uuid = "c709b415-507b-45b7-9a3d-1767c89fde68"
 authors = ["Essam Wisam <essamwisam@outlook.com>", "Anthony Blaom <anthony.blaom@gmail.com> and contributors"]
 version = "0.1.7"
 
-
 [deps]
 CategoricalArrays = "324d7699-5711-5eae-9e2f-1d82baa6b597"
 CategoricalDistributions = "af321ab8-2d2e-40a6-b165-3d674595d28e"
