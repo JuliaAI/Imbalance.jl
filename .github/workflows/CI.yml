@@ -2,6 +2,7 @@ name: CI
 on: [push]
 jobs:
   test:
+    timeout-minutes: 60
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
