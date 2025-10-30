@@ -1,5 +1,5 @@
 """
-Assuming that all the observations in the observation matrix X belong to the same class, 
+Assuming that all the observations in the observation matrix X belong to the same class,
 generate n new observations for that class using random oversampling
 
 # Arguments
@@ -21,8 +21,8 @@ end
 
 """
     random_oversample(
-        X, y; 
-        ratios=1.0, rng=default_rng(), 
+        X, y;
+        ratios=1.0, rng=default_rng(),
         try_preserve_type=true
     )
 
@@ -33,11 +33,15 @@ Naively oversample a dataset by randomly repeating existing observations with re
 
 # Positional Arguments
 
-- `X`: A matrix of real numbers or a table with element [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Union{Finite, Infinite}`. 
-     Elements in nominal columns should subtype `Finite` (i.e., have [scitype](https://juliaai.github.io/ScientificTypes.jl/) `OrderedFactor` or `Multiclass`) and
-     elements in continuous columns should subtype `Infinite` (i.e., have [scitype](https://juliaai.github.io/ScientificTypes.jl/) `Count` or `Continuous`).
+- `X`: A matrix of real numbers or a table with element
+  [scitypes](https://juliaai.github.io/ScientificTypes.jl/) that subtype `Union{Finite,
+  Infinite}`.  Elements in nominal columns should subtype `Finite` (i.e., have
+  [scitype](https://juliaai.github.io/ScientificTypes.jl/) `OrderedFactor` or
+  `Multiclass`) and elements in continuous columns should subtype `Infinite` (i.e., have
+  [scitype](https://juliaai.github.io/ScientificTypes.jl/) `Count` or `Continuous`).
 
-- `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in `X`
+- `y`: An abstract vector of labels (e.g., strings) that correspond to the observations in
+  `X`
 
 # Keyword Arguments
 
@@ -58,30 +62,30 @@ $(COMMON_DOCS["OUTPUTS"])
 using Imbalance
 
 # set probability of each class
-class_probs = [0.5, 0.2, 0.3]                         
+class_probs = [0.5, 0.2, 0.3]
 num_rows, num_continuous_feats = 100, 5
 # generate a table and categorical vector accordingly
-X, y = generate_imbalanced_data(num_rows, num_continuous_feats; 
-                                class_probs, rng=42)    
+X, y = generate_imbalanced_data(num_rows, num_continuous_feats;
+                                class_probs, rng=42)
 
 julia> Imbalance.checkbalance(y)
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%) 
-2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%) 
-0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 19 (39.6%)
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 33 (68.8%)
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%)
 
 # apply random oversampling
 Xover, yover = random_oversample(X, y; ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
 
 julia> Imbalance.checkbalance(yover)
-2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%) 
-1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%) 
-0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%) 
+2: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 38 (79.2%)
+1: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 43 (89.6%)
+0: ▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇▇ 48 (100.0%)
 ```
 
 # MLJ Model Interface
 
-Simply pass the keyword arguments while initiating the `RandomOversampler` model and pass the 
-    positional arguments `X, y` to the `transform` method. 
+Simply pass the keyword arguments while initiating the `RandomOversampler` model and pass the
+    positional arguments `X, y` to the `transform` method.
 
 ```julia
 using MLJ
@@ -94,14 +98,17 @@ mach = machine(oversampler)
 # Provide the data to transform (there is nothing to fit)
 Xover, yover = transform(mach, X, y)
 ```
-You can read more about this `MLJ` interface by accessing it from MLJ's [model browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
+
+You can read more about this `MLJ` interface by accessing it from MLJ's [model
+browser](https://alan-turing-institute.github.io/MLJ.jl/dev/model_browser/).
 
 
 # TableTransforms Interface
 
-This interface assumes that the input is one table `Xy` and that `y` is one of the columns. Hence, an integer `y_ind`
-    must be specified to the constructor to specify which column `y` is followed by other keyword arguments. 
-    Only `Xy` is provided while applying the transform.
+This interface assumes that the input is one table `Xy` and that `y` is one of the
+columns. Hence, an integer `y_ind` must be specified to the constructor to specify which
+column `y` is followed by other keyword arguments.  Only `Xy` is provided while applying
+the transform.
 
 ```julia
 using Imbalance
@@ -111,22 +118,28 @@ using Imbalance.TableTransforms
 num_rows = 100
 num_features = 5
 y_ind = 3
-Xy, _ = generate_imbalanced_data(num_rows, num_features; 
+Xy, _ = generate_imbalanced_data(num_rows, num_features;
                                  class_probs=[0.5, 0.2, 0.3], insert_y=y_ind, rng=42)
 
 # Initiate Random Oversampler model
 oversampler = RandomOversampler(y_ind; ratios=Dict(0=>1.0, 1=> 0.9, 2=>0.8), rng=42)
-Xyover = Xy |> oversampler                    
+Xyover = Xy |> oversampler
 # equivalently if TableTransforms is used
 Xyover, cache = TableTransforms.apply(oversampler, Xy)    # equivalently
 ```
-The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to `apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)`
-reverts the transform by removing the oversampled observations from the table.
+
+The `reapply(oversampler, Xy, cache)` method from `TableTransforms` simply falls back to
+`apply(oversample, Xy)` and the `revert(oversampler, Xy, cache)` reverts the transform by
+removing the oversampled observations from the table.
 
 # Illustration
-A full basic example along with an animation can be found [here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_random.ipynb). 
-    You may find more practical examples in the [tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) 
-    section which also explains running code on Google Colab.
+
+A full basic example along with an animation can be found
+[here](https://githubtocolab.com/JuliaAI/Imbalance.jl/blob/dev/examples/oversample_random.ipynb).
+You may find more practical examples in the
+[tutorial](https://juliaai.github.io/Imbalance.jl/dev/examples/) section which also
+explains running code on Google Colab.
+
 """
 function random_oversample(
     X::AbstractMatrix{<:Union{Real, Missing}},
@@ -149,11 +162,11 @@ function random_oversample(
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_preserve_type::Bool=true
 )
-    Xover, yover = tablify(random_oversample, X, y; 
-                           try_preserve_type=try_preserve_type, 
+    Xover, yover = tablify(random_oversample, X, y;
+                           try_preserve_type=try_preserve_type,
                            encode_func = generic_encoder,
                            decode_func = generic_decoder,
-                           ratios, 
+                           ratios,
                            rng)
     return Xover, yover
 end
@@ -167,8 +180,8 @@ function random_oversample(
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_preserve_type::Bool=true
 )
-    Xyover = tablify(random_oversample, Xy, y_ind; 
-                    try_preserve_type=try_preserve_type, 
+    Xyover = tablify(random_oversample, Xy, y_ind;
+                    try_preserve_type=try_preserve_type,
                     encode_func = generic_encoder,
                     decode_func = generic_decoder,
                     ratios, rng)
