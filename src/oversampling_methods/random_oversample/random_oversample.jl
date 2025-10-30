@@ -148,7 +148,6 @@ function random_oversample(
     rng::Union{AbstractRNG,Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
-    println("lolss")
     rng = rng_handler(rng)
     Xover, yover = generic_oversample(X, y, random_oversample_per_class; ratios, rng,)
     return Xover, yover
