@@ -6,51 +6,54 @@ using Imbalance: cluster_undersample
         2;
         class_probs = [0.1, 0.6, 0.3],
         type = "Matrix",
-        rng = MersenneTwister(192), 
-        # changing RNG is not recommended
-        # It's chosen to agree with Xoshiro (Julia 1.6 vs beyond)
-        # So the dict in generic_undersample is ordered in the same way
-        # in both cases. Code below assumes a specific ordering.
+        rng = StableRNG(192),
     )
-    
+
     counts_per_class = countmap(y)
     minority_count = minimum(values(counts_per_class))
-    
+
     n = Int(round(1.0 * minority_count))
-    
-    # Check implementation for nearest
+
+    # Check implementation for nearest mode
+    # Class 0 appears first in y and is processed first, so RNG state is fresh
     X_under, y_under = cluster_undersample(
         X,
         y;
         mode = "nearest",
         ratios = Dict(0 => 0.8, 1 => 1.2, 2 => 1.0),
-        rng = MersenneTwister(122),
+        rng = StableRNG(122),
     )
-    
-    X_c0 = X[y.==2, :]'
-    
-    center = kmeans(X_c0, n; maxiter = 100, rng=MersenneTwister(122)).centers[:, 2]
-    tree = BallTree(X_c0)
-    i_n, _ = knn(tree, center, 1, true)
-    x_n = X_c0[:, i_n[1]]
-    X_c0_under = X_under[y_under .==2, :]'
-    
-    @test x_n ≈  X_c0_under[:, 2]
-    
-    
-    # Check implementation for center
+
+    # Test class 0 (first processed class) against standalone kmeans
+    X_c0 = X[y.==0, :]'
+    n_c0 = 6  # 8 * 0.8 rounded
+    centers = kmeans(Matrix(X_c0), n_c0; maxiter = 100, rng = StableRNG(122)).centers
+    tree = BallTree(Matrix(X_c0))
+    keep_inds, _ = knn(tree, centers, 1, true)
+    keep_inds = vcat(keep_inds...)
+    X_expected = X_c0[:, keep_inds]
+
+    X_c0_under = X_under[y_under.==0, :]'
+    @test X_c0_under ≈ X_expected
+
+
+    # Check implementation for center mode
     X_under, y_under = cluster_undersample(
         X,
         y;
         mode = "center",
         ratios = Dict(0 => 0.8, 1 => 1.2, 2 => 1.0),
-        rng = MersenneTwister(122),
+        rng = StableRNG(122),
     )
-    
-    X_c0 = X[y.==2, :]'
-    
+
+    # For center mode, the undersampled points are the cluster centers themselves
+    X_c0 = X[y.==0, :]'
+    expected_centers =
+        kmeans(Matrix(X_c0), n_c0; maxiter = 100, rng = StableRNG(122)).centers
+
     @test !issubset(Set(eachrow(X_under)), Set(eachrow(X)))
-    @test sum(X_under[y_under.==2, :]') ≈ sum(kmeans(X_c0, n; maxiter = 100, rng=MersenneTwister(122)).centers)
+    X_c0_under = X_under[y_under.==0, :]'
+    @test X_c0_under ≈ expected_centers
 end
 
 # test that the materializer works for dataframes
