@@ -21,8 +21,8 @@ $(COMMON_DOCS["RATIOS"])
 """
 # Method for handling ratios as a dictionary
 function get_class_counts(
-    y::AbstractVector,
-    ratios::Dict{T,<:AbstractFloat};
+    y::AbstractVector{T},
+    ratios::AbstractDict;
     reference="majority",
     ) where {T}
     label_counts = countmap(y)
@@ -44,32 +44,29 @@ function get_class_counts(
     return counts
 end
 
-# Method for handling ratios as AbstractFloat
+# Method for handling ratios as AbstractFloat (dispaches the above on appropriate dict):
 function get_class_counts(
-    y::AbstractVector{T},
+    y::AbstractVector,
     ratio::AbstractFloat;
     reference="majority",
-    ) where {T}
-    label_counts = countmap(y)
-    (reference in ["majority", "minority"]) || throw(ERR_INVALID_REF)
-    ref_count = (reference == "majority") ? maximum(values(label_counts)) :
-        minimum(values(label_counts))
-    counts = OrderedDict{T,Int}()
-    # each class needs to be the size specified in `ratio`
-    for (label, count) in label_counts
-        ratio > 0 || throw((ERR_INVALID_RATIO(label)))
-        counts[label] = (reference == "majority") ?
-        calculate_extra_counts(ratio, ref_count, count, label) :
-        calculate_undersampled_counts(ratio, ref_count, count, label)
-    end
+    )
 
-    return counts
+    count_given_label = countmap(y)
+    reference_count = reference == "majority" ? maximum(values(count_given_label)) :
+        minimum(values(count_given_label))
+    labels = keys(count_given_label) |> collect
+    labeled_ratios = map(labels) do label
+        count = count_given_label[label]
+        return label => (count == reference_count ? 1.0 : ratio)
+    end
+    ratio_given_label = OrderedDict(labeled_ratios...)
+    return get_class_counts(y, ratio_given_label; reference)
 end
 
 
 """
 Helper function for calculating the number of extra samples needed for a class given a
-ratio, its count and majoiry count.  It assumes that if ratio is `a` and the majority
+ratio, its count and majority count.  It assumes that if ratio is `a` and the majority
 count is `N` then the class should have `aN` samples so it computes the number of extra
 samples.
 """

@@ -9,16 +9,16 @@ const ERR_INVALID_RATIO(c) = "Error: ratio for class $c must be greater than 0."
 const ERR_INVALID_REF = "reference must be either \"majority\" or \"minority\""
 
 const WRN_UNDERSAMPLE(new_ratio, label, less_counts, old_ratio) =
-	"ratio $new_ratio for class $label implies that the class" *
-	"should have $less_counts less samples because it is already $old_ratio" *
-	"of the majority class but this algorithm cannot undersample." *
-	"Will skip oversampling for this class."
+	"ratio $new_ratio for class $label implies that the class " *
+	"should have $(-less_counts) less samples because it is already $old_ratio " *
+	"of the majority class but this algorithm cannot undersample. " *
+	"Will skip oversampling for this class. "
 
 const WRN_OVERSAMPLE(new_ratio, label, extra_counts, old_ratio) =
-	"ratio $new_ratio for class $label implies that the class" *
-	"should have $extra_counts more samples because it is already $old_ratio" *
-	"of the minority class but this algorithm cannot oversample." *
-	"Will skip undersampling for this class."
+	"ratio $new_ratio for class $label implies that the class " *
+	"should have $extra_counts more samples because it is already $old_ratio " *
+	"of the minority class but this algorithm cannot oversample. " *
+	"Will skip undersampling for this class. "
 
 
 ### table_wrappers
