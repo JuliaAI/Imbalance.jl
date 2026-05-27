@@ -657,7 +657,7 @@ checkbalance(y; ref="minority")
 
 Let's use ENN undersampling to undersample the data. ENN undersamples the data by "cleaning it out" or in another words deleting any point that violates a certain condition. We can limit the number of points that are deleted by setting the `min_ratios` parameter. 
 
-We will set `k=1` and `keep_condition="only mode"` which means that any point with a label that is not the only most common one amongst its 1-nearest neighbors will be deleted (i.e., must have same label as its nearest neighbor). By setting min_ratios=0.01 we set a very low bar, allowing ENN to delete points freely from all classes
+We will set `k=1` and `keep_condition="only mode"` which means that any point with a label that is not the only most common one amongst its 1-nearest neighbors will be deleted (i.e., must have same label as its nearest neighbor). By setting all minimum ratios to 0.01 we set a very low bar, allowing ENN to delete points freely from all classes
 
 
 ```julia
