@@ -27,7 +27,7 @@
         y = np.random.randint(1, 4, size = rows)
     
         # test that all keep condition works
-        tl = imblearn.under_sampling.TomekLinks(sampling_strategy = "all")
+        tl = imblearn.under_sampling.TomekLinks(sampling_strategy = "not minority")
         X_res, y_res = tl.fit_resample(X, y)
         write_var((X, y), "saved_vars/imblearn_tomek_majority_XY.jls")
         write_var((X_res, y_res), "saved_vars/imblearn_tomek_majority_XY_under.jls")

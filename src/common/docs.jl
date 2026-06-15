@@ -26,13 +26,13 @@ const COMMON_DOCS = Dict(
     
     "RATIOS" => """
     - `ratios=1.0`: A parameter that controls the amount of oversampling to be done for each class
-        - Can be a float and in this case each class will be oversampled to the size of the majority class times the float. By """*
+        - Can be a float and in this case each non-majority class will be oversampled to the size of the majority class times the float; the majority class counts are preserved. By """*
         """default, all classes are oversampled to the size of the majority class
         - Can be a dictionary mapping each class label to the float ratio for that class
     """,
     "RATIOS-UNDERSAMPLE" => """
     - `ratios=1.0`: A parameter that controls the amount of undersampling to be done for each class
-        - Can be a float and in this case each class will be undersampled to the size of the minority class times the float. By """*
+        - Can be a float and in this case each non-minority class will be undersampled to the size of the minority class times the float; the minority class counts are preserved. By """*
         """default, all classes are undersampled to the size of the minority class
         - Can be a dictionary mapping each class label to the float ratio for that class
     """,
