@@ -68,7 +68,7 @@ end
     
         # test that all keep condition works
         enn = imblearn.under_sampling.EditedNearestNeighbours(
-            sampling_strategy = "all",
+            sampling_strategy = "not minority",
             kind_sel = "all",
         )
     
@@ -97,7 +97,7 @@ end
         y = np.random.randint(1, 3, size = rows)      
     
         enn = imblearn.under_sampling.EditedNearestNeighbours(
-            sampling_strategy = "all",
+            sampling_strategy = "not minority",
             kind_sel = "mode",
         )
         X_under1, y_under1 = enn.fit_resample(X, y)

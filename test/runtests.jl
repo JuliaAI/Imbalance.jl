@@ -24,10 +24,10 @@ using Conda
 
 include("test_utils.jl")
 
-# When the following variable is set to false, offline results from PyCall will be used
-# When it is set to true, PyCall will be used instead of saved resules and it will save the results.
-# For purposes of testing with Github actions, keep it true
+# For CI, set the following flag to `true`:
 offline_python_test = true
+offline_python_test && @info "Comparing with saved python model outcomes in some tests. "*
+    "For live comparisons, set `offline_python_test=false` in runtests.jl. "
 
 ### general
 

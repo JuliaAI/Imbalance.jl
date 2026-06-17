@@ -44,7 +44,7 @@ using Imbalance:
     @testset "Specify ratios with a float" begin
         y = [1, 1, 2, 3, 3, 3, 3]       # majority has 4 observations
         ratio = 1.5
-        expected_needed_counts = Dict(1 => 4, 2 => 5, 3 => 2)
+        expected_needed_counts = Dict(1 => 4, 2 => 5, 3 => 0)
         counts = get_class_counts(y, ratio)
         @test counts == expected_needed_counts
     end
@@ -52,23 +52,24 @@ using Imbalance:
     @testset "testing undersample dict ratio" begin
         y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3]
         ratios = Dict(0=>2.0, 1=>0.5, 2=>1.0, 3=>1.0)
-        @test get_class_counts(y, ratios; reference="minority") == Dict(0=>4, 2=>2, 3=>2, 1=>1)
+        @test get_class_counts(y, ratios; reference="minority") ==
+            Dict(0=>4, 2=>2, 3=>2, 1=>1)
     end
-    
+
     @testset "testing undersample float ratio" begin
+        # minority has 2 observations:
         y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3]
-        get_class_counts(y, 0.5; reference="minority") == Dict(0=>1, 2=>1, 3=>1, 1=>1)
+        get_class_counts(y, 0.5; reference="minority") == Dict(0=>1, 2=>1, 3=>1, 1=>2)
     end
-    
+
     @testset "invalid ratio warning" begin
-        @test_logs (:warn, WRN_OVERSAMPLE(2.0, 1, 2, 1.0)) begin
-                y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3]
-                get_class_counts(y, 2.0; reference="minority")
-            end
+        @test_logs (:warn, WRN_OVERSAMPLE(3.0, 3, 3, 1.5)) begin
+            # minority classes have 2 observations:
+            y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3]
+            get_class_counts(y, 3.0; reference="minority")
+        end
     end
 end
-
-
 
 @testset "randcols" begin
     rng = StableRNG(1234)
