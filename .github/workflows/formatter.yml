@@ -1,4 +1,7 @@
 name: format-pr
+permissions:
+  contents: write
+  pull-requests: write
 on:
   schedule:
     - cron: '0 0 * * *'
@@ -15,6 +18,10 @@ jobs:
 
       # https://github.com/marketplace/actions/create-pull-request
       # https://github.com/peter-evans/create-pull-request#reference-example
+      - name: Clear conflicting git auth headers
+        run: |
+          git config --local --unset-all http.https://github.com/.extraheader || true
+          git config --global --unset-all http.https://github.com/.extraheader || true
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
