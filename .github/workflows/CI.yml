@@ -1,5 +1,12 @@
 name: CI
-on: [push]
+on:
+  push:
+    branches:
+       - dev
+       - master
+    tags: ["*"]
+  pull_request:
+
 jobs:
   test:
     timeout-minutes: 60
