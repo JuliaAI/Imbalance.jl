@@ -1,27 +1,25 @@
 name: format-pr
-permissions:
-  contents: write
-  pull-requests: write
+env:
+  ACTIONS_STEP_DEBUG: true
 on:
   schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:      
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Julia
+        uses: julia-actions/setup-julia@v3
+        with:
+          version: 'min'
       - name: Install JuliaFormatter and format
         run: |
           julia  -e 'import Pkg; Pkg.add("JuliaFormatter")'
           julia  -e 'using JuliaFormatter; format(".")'
-
-      # https://github.com/marketplace/actions/create-pull-request
-      # https://github.com/peter-evans/create-pull-request#reference-example
-      - name: Clear conflicting git auth headers
-        run: |
-          git config --local --unset-all http.https://github.com/.extraheader || true
-          git config --global --unset-all http.https://github.com/.extraheader || true
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v3
