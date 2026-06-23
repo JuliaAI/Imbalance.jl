@@ -8,9 +8,6 @@ using Imbalance:
     ValueDifference,
     ERR_BAD_NOM_COL_TYPES
 
-
-
-
 # Test that generated smote point is collinear with some pair of points
 @testset "generate_new_smote_point" begin
     X = [
@@ -52,24 +49,24 @@ end
     @test size(smote_points, 2) == n
 end
 
-
 # Test bad column types error
 @testset "smotenc throws error if column types are not supported" begin
-    X = (Column1=[1, 2, 3, 4, 5],
-         Column2=["a", "b", "c", "d", "e"],
-         Column3=["a", "b", "c", "d", "e"],
-         Column4=[1.0, 2.0, 3.0, 4.0, 5.0]
+    X = (
+        Column1 = [1, 2, 3, 4, 5],
+        Column2 = ["a", "b", "c", "d", "e"],
+        Column3 = ["a", "b", "c", "d", "e"],
+        Column4 = [1.0, 2.0, 3.0, 4.0, 5.0],
     )
     y = [1, 2, 3, 4, 5]
     X = Tables.columntable(X)
     # coerce first column to multiclass and last column to continuous
     # second and third column to text
-    X = coerce(X, :Column1=>Multiclass, :Column4=>Continuous)
+    X = coerce(X, :Column1 => Multiclass, :Column4 => Continuous)
     types = ScientificTypes.schema(X).scitypes
-    cat_inds = findall( x -> x <: Multiclass, types)
-    cont_inds = findall( x -> x <: Union{Infinite, OrderedFactor}, types)    
+    cat_inds = findall(x -> x <: Multiclass, types)
+    cont_inds = findall(x -> x <: Union{Infinite, OrderedFactor}, types)
 
-    @test_throws ERR_BAD_NOM_COL_TYPES([2,3,4], types[[2,3,4]]) begin
+    @test_throws ERR_BAD_NOM_COL_TYPES([2, 3, 4], types[[2, 3, 4]]) begin
         smoten(X, y)
     end
 end

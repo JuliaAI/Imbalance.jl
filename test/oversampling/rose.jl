@@ -1,6 +1,5 @@
 using Imbalance: rose, rose_per_class, ERR_NEG_S
 
-
 # Test that it indeed generates n new points
 @testset "rose_per_class" begin
     X = [1.0 1.0; 2.0 2.0; 3.0 3.0; 4.0 4.0; 5.0 5.0]'
@@ -21,14 +20,8 @@ end
 
 # Test that ROSE adds the right number of points per class and that the input and output types are as expected
 @testset "ROSE Algorithm" begin
-    tables = [
-        "RowTable",
-        "ColTable",
-        "MatrixTable",
-        "DictRowTable",
-        "DictColTable",
-        "Matrix",
-    ]
+    tables =
+        ["RowTable", "ColTable", "MatrixTable", "DictRowTable", "DictColTable", "Matrix"]
     for i in eachindex(tables)
         @testset "ROSE with $tables[i] type" begin
             X, y = generate_imbalanced_data(
@@ -66,8 +59,6 @@ end
         end
     end
 end
-
-
 
 # Test that RNG can be int or Xoshiro of int in ROSE
 @testset "RNG in ROSE Algorithm" begin
@@ -114,12 +105,17 @@ end
     end
 end
 
-
 # test that the materializer works for dataframes
 @testset "materializer with rose" begin
-    X, y =
-        generate_imbalanced_data(1000, 2; class_probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
-    Xover, yover = rose(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
+    X, y = generate_imbalanced_data(
+        1000,
+        2;
+        class_probs = [0.2, 0.6, 0.2],
+        type = "MatrixTable",
+        rng = 121,
+    )
+    Xover, yover =
+        rose(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame
 end

@@ -1,12 +1,16 @@
 ### SMOTENC with MLJ Interface
-mutable struct SMOTENC{T,R<:Union{Integer,AbstractRNG}, S<:AbstractString, I<:Integer} <: Static
+mutable struct SMOTENC{
+    T,
+    R <: Union{Integer, AbstractRNG},
+    S <: AbstractString,
+    I <: Integer,
+} <: Static
     k::I
     ratios::T
     knn_tree::S
     rng::R
     try_preserve_type::Bool
 end
-
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 
@@ -20,34 +24,35 @@ function MMI.clean!(s::SMOTENC)
     return message
 end
 
-
 """
 Initiate a SMOTENC model with the given hyper-parameters.
 """
 function SMOTENC(;
     k::Integer = 5,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} =1.0,
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
     knn_tree::AbstractString = "Brute",
-    rng::Union{Integer,AbstractRNG} = default_rng(),
-    try_preserve_type::Bool=true
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_preserve_type::Bool = true,
 ) where {T}
     model = SMOTENC(k, ratios, knn_tree, rng, try_preserve_type)
     MMI.clean!(model)
     return model
 end
 
-
-
-
 """
 Oversample data X, y using SMOTENC
 """
 function MMI.transform(s::SMOTENC, _, X, y)
-    smotenc(X, y; k = s.k, ratios = s.ratios, knn_tree=s.knn_tree, rng = s.rng, try_preserve_type=s.try_preserve_type)
+    return smotenc(
+        X,
+        y;
+        k = s.k,
+        ratios = s.ratios,
+        knn_tree = s.knn_tree,
+        rng = s.rng,
+        try_preserve_type = s.try_preserve_type,
+    )
 end
-
-
-
 
 MMI.metadata_pkg(
     SMOTENC,
@@ -59,28 +64,17 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     SMOTENC,
-    input_scitype = Tuple{
-        Table(Union{Infinite, Finite}),
-        AbstractVector
-    },
-    output_scitype = Tuple{
-        Table(Union{Infinite, Finite}),
-        AbstractVector
-    },
-    load_path = "Imbalance.MLJ.SMOTENC"
+    input_scitype = Tuple{Table(Union{Infinite, Finite}), AbstractVector},
+    output_scitype = Tuple{Table(Union{Infinite, Finite}), AbstractVector},
+    load_path = "Imbalance.MLJ.SMOTENC",
 )
-
 
 function MMI.transform_scitype(s::SMOTENC)
     return Tuple{
-        Union{
-            Table(Union{Infinite,OrderedFactor,Multiclass}),
-        },
+        Union{Table(Union{Infinite, OrderedFactor, Multiclass})},
         AbstractVector{<:Finite},
     }
 end
-
-
 
 """
 $(MMI.doc_header(SMOTENC))
@@ -181,4 +175,3 @@ julia> Imbalance.checkbalance(yover)
 ```
 """
 SMOTENC
-

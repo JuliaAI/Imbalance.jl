@@ -36,7 +36,6 @@ using Imbalance: cluster_undersample
     X_c0_under = X_under[y_under.==0, :]'
     @test X_c0_under ≈ X_expected
 
-
     # Check implementation for center mode
     X_under, y_under = cluster_undersample(
         X,

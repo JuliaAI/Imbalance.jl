@@ -1,7 +1,7 @@
 
 ### BorderlineSMOTE1 with MLJ Interface
 
-mutable struct BorderlineSMOTE1{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Static
+mutable struct BorderlineSMOTE1{T, R <: Union{Integer, AbstractRNG}, I <: Integer} <: Static
     m::I
     k::I
     ratios::T
@@ -9,8 +9,6 @@ mutable struct BorderlineSMOTE1{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: 
     try_preserve_type::Bool
     verbosity::I
 end;
-
-
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 
@@ -26,17 +24,16 @@ function MMI.clean!(s::BorderlineSMOTE1)
     return message
 end
 
-
-
-
 """
 Initiate a BorderlineSMOTE1 model with the given hyper-parameters.
 """
 function BorderlineSMOTE1(;
     m::Integer = 5,
     k::Integer = 5,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool=true, verbosity::Integer=1
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_preserve_type::Bool = true,
+    verbosity::Integer = 1,
 ) where {T}
     model = BorderlineSMOTE1(m, k, ratios, rng, try_preserve_type, verbosity)
     MMI.clean!(model)
@@ -47,13 +44,28 @@ end
 Oversample data X, y using BorderlineSMOTE1
 """
 function MMI.transform(s::BorderlineSMOTE1, _, X, y)
-    borderline_smote1(X, y; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng, 
-        try_preserve_type = s.try_preserve_type, verbosity = s.verbosity)
+    return borderline_smote1(
+        X,
+        y;
+        m = s.m,
+        k = s.k,
+        ratios = s.ratios,
+        rng = s.rng,
+        try_preserve_type = s.try_preserve_type,
+        verbosity = s.verbosity,
+    )
 end
 function MMI.transform(s::BorderlineSMOTE1, _, X::AbstractMatrix{<:Real}, y)
-    borderline_smote1(X, y; m = s.m, k = s.k, ratios = s.ratios, rng = s.rng, verbosity = s.verbosity)
+    return borderline_smote1(
+        X,
+        y;
+        m = s.m,
+        k = s.k,
+        ratios = s.ratios,
+        rng = s.rng,
+        verbosity = s.verbosity,
+    )
 end
-
 
 MMI.metadata_pkg(
     BorderlineSMOTE1,
@@ -66,29 +78,21 @@ MMI.metadata_pkg(
 MMI.metadata_model(
     BorderlineSMOTE1,
     input_scitype = Tuple{
-         Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
     },
     output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
     },
-    load_path = "Imbalance.MLJ.BorderlineSMOTE1"
+    load_path = "Imbalance.MLJ.BorderlineSMOTE1",
 )
 function MMI.transform_scitype(s::BorderlineSMOTE1)
     return Tuple{
-        Union{Table(Continuous),AbstractMatrix{Continuous}},
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
         AbstractVector{<:Finite},
     }
 end
-
-
 
 """
 $(MMI.doc_header(BorderlineSMOTE1))

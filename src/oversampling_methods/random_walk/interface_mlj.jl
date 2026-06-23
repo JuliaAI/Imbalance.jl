@@ -1,38 +1,35 @@
 ### RandomWalkOversampler with MLJ Interface
 
-mutable struct RandomWalkOversampler{T,R<:Union{Integer,AbstractRNG}} <: Static
+mutable struct RandomWalkOversampler{T, R <: Union{Integer, AbstractRNG}} <: Static
     ratios::T
     rng::R
     try_preserve_type::Bool
 end
 
-
-
-
 """
 Initiate a RandomWalkOversampler model with the given hyper-parameters.
 """
 function RandomWalkOversampler(;
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} =1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(),
-    try_preserve_type::Bool=true
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_preserve_type::Bool = true,
 ) where {T}
     model = RandomWalkOversampler(ratios, rng, try_preserve_type)
     return model
 end
 
-
-
-
 """
 Oversample data X, y using RandomWalkOversampler
 """
 function MMI.transform(s::RandomWalkOversampler, _, X, y)
-    random_walk_oversample(X, y; ratios = s.ratios, rng = s.rng, try_preserve_type=s.try_preserve_type)
+    return random_walk_oversample(
+        X,
+        y;
+        ratios = s.ratios,
+        rng = s.rng,
+        try_preserve_type = s.try_preserve_type,
+    )
 end
-
-
-
 
 MMI.metadata_pkg(
     RandomWalkOversampler,
@@ -44,28 +41,17 @@ MMI.metadata_pkg(
 
 MMI.metadata_model(
     RandomWalkOversampler,
-    input_scitype = Tuple{
-        Table(Union{Infinite, Finite}),
-        AbstractVector
-    },
-    output_scitype = Tuple{
-        Table(Union{Infinite, Finite}),
-        AbstractVector
-    },
-    load_path = "Imbalance.MLJ.RandomWalkOversampler"
+    input_scitype = Tuple{Table(Union{Infinite, Finite}), AbstractVector},
+    output_scitype = Tuple{Table(Union{Infinite, Finite}), AbstractVector},
+    load_path = "Imbalance.MLJ.RandomWalkOversampler",
 )
-
 
 function MMI.transform_scitype(s::RandomWalkOversampler)
     return Tuple{
-        Union{
-            Table(Union{Infinite,OrderedFactor,Multiclass}),
-        },
+        Union{Table(Union{Infinite, OrderedFactor, Multiclass})},
         AbstractVector{<:Finite},
     }
 end
-
-
 
 """
 $(MMI.doc_header(RandomWalkOversampler))
@@ -157,4 +143,3 @@ julia> Imbalance.checkbalance(yover)
 ```
 """
 RandomWalkOversampler
-

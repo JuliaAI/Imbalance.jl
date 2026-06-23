@@ -24,14 +24,16 @@ using Imbalance:
     # table
     X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
-    model =
-        Imbalance.MLJ.RandomOversampler(ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    model = Imbalance.MLJ.RandomOversampler(
+        ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2),
+        rng = 42,
+    )
     mach = machine(model)
     @test transform(mach, X, y) ==
           random_oversample(X, y; ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
-    
+
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type = "Matrix")
     @test transform(mach, X, y) ==
           random_oversample(X, y; ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
@@ -52,15 +54,15 @@ end
     X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
-        Imbalance.MLJ.ROSE(s = 0.01,ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+        Imbalance.MLJ.ROSE(s = 0.01, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
     mach = machine(model)
     @test transform(mach, X, y) ==
           rose(X, y; s = 0.01, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
-    
+
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type = "Matrix")
     @test transform(mach, X, y) ==
-        rose(X, y; s = 0.01, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+          rose(X, y; s = 0.01, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
 
 @testset "SMOTE MLJ" begin
@@ -79,17 +81,16 @@ end
     X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
     model =
-        Imbalance.MLJ.SMOTE(k = 5,ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+        Imbalance.MLJ.SMOTE(k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
     mach = machine(model)
     @test transform(mach, X, y) ==
-    smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+          smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type = "Matrix")
     @test transform(mach, X, y) ==
-        smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+          smote(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
-
 
 @testset "BorderlineSMOTE1 MLJ" begin
     failures, summary = MLJTestInterface.test(
@@ -105,19 +106,50 @@ end
     class_probs = [0.25, 0.5, 0.25]
     stds = [3.0 3.0 3.0]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats;  min_sep=0.0, stds, class_probs, rng=42)
+    X, y = generate_imbalanced_data(
+        num_rows,
+        num_cont_feats;
+        min_sep = 0.0,
+        stds,
+        class_probs,
+        rng = 42,
+    )
 
     X = DataFrame(X)
-    model =
-        Imbalance.MLJ.BorderlineSMOTE1(k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    model = Imbalance.MLJ.BorderlineSMOTE1(
+        k = 5,
+        m = 6,
+        ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2),
+        rng = 42,
+    )
     mach = machine(model)
-    @test transform(mach, X, y) ==
-    borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    @test transform(mach, X, y) == borderline_smote1(
+        X,
+        y;
+        k = 5,
+        m = 6,
+        ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2),
+        rng = 42,
+    )
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; min_sep=0.0, stds, class_probs, type="Matrix", rng=42)
-    @test transform(mach, X, y) ==
-        borderline_smote1(X, y; k = 5, m=6, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    X, y = generate_imbalanced_data(
+        num_rows,
+        num_cont_feats;
+        min_sep = 0.0,
+        stds,
+        class_probs,
+        type = "Matrix",
+        rng = 42,
+    )
+    @test transform(mach, X, y) == borderline_smote1(
+        X,
+        y;
+        k = 5,
+        m = 6,
+        ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2),
+        rng = 42,
+    )
 end
 
 @testset "SMOTENC MLJ" begin
@@ -136,17 +168,21 @@ end
 
     num_vals_per_category = [3, 4, 2, 5]
 
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
+    X, y = generate_imbalanced_data(
+        num_rows,
+        num_cont_feats;
+        class_probs,
+        num_vals_per_category,
+    )
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
 
     smotenc_model =
-    Imbalance.MLJ.SMOTENC(k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+        Imbalance.MLJ.SMOTENC(k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
     mach = machine(smotenc_model)
     @test transform(mach, X, y) ==
-      smotenc(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+          smotenc(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
-
 
 @testset "RandomWalkOversampler MLJ" begin
     failures, summary = MLJTestInterface.test(
@@ -164,15 +200,26 @@ end
 
     num_vals_per_category = [3, 4, 2, 5]
 
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
+    X, y = generate_imbalanced_data(
+        num_rows,
+        num_cont_feats;
+        class_probs,
+        num_vals_per_category,
+    )
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
 
-    rwo_model =
-    Imbalance.MLJ.RandomWalkOversampler(ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    rwo_model = Imbalance.MLJ.RandomWalkOversampler(
+        ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2),
+        rng = 42,
+    )
     mach = machine(rwo_model)
-    @test transform(mach, X, y) ==
-      random_walk_oversample(X, y; ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+    @test transform(mach, X, y) == random_walk_oversample(
+        X,
+        y;
+        ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2),
+        rng = 42,
+    )
 end
 
 # For SMOTEN, need dataset with categorical variables. let's (perhaps) consider a PR later.
@@ -183,7 +230,12 @@ end
 
     num_vals_per_category = [3, 4, 2, 5]
     # table
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category)
+    X, y = generate_imbalanced_data(
+        num_rows,
+        num_cont_feats;
+        class_probs,
+        num_vals_per_category,
+    )
     X = DataFrame(X)
     X = coerce(X, autotype(X, :few_to_finite))
     smotenc_model =
@@ -193,10 +245,16 @@ end
           smoten(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, num_vals_per_category, type="Matrix")
+    X, y = generate_imbalanced_data(
+        num_rows,
+        num_cont_feats;
+        class_probs,
+        num_vals_per_category,
+        type = "Matrix",
+    )
     X = Int32.(X)
     @test transform(mach, X, y) ==
-        smoten(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
+          smoten(X, y; k = 5, ratios = Dict(0 => 1.2, 1 => 1.2, 2 => 1.2), rng = 42)
 end
 
 @testset "Random Undersampler MLJ" begin
@@ -213,16 +271,18 @@ end
     class_probs = [0.5, 0.2, 0.3]
     X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
-    model =
-        Imbalance.MLJ.RandomUndersampler(ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
+    model = Imbalance.MLJ.RandomUndersampler(
+        ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8),
+        rng = 42,
+    )
     mach = machine(model)
     @test transform(mach, X, y) ==
-    random_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
+          random_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type = "Matrix")
     @test transform(mach, X, y) ==
-        random_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
+          random_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end
 
 @testset "Cluster Undersampler MLJ" begin
@@ -241,14 +301,16 @@ end
     # table
     X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
-    model =
-        Imbalance.MLJ.ClusterUndersampler(ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
+    model = Imbalance.MLJ.ClusterUndersampler(
+        ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8),
+        rng = 42,
+    )
     mach = machine(model)
     @test transform(mach, X, y) ==
           cluster_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type = "Matrix")
     @test transform(mach, X, y) ==
           cluster_undersample(X, y; ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end
@@ -267,14 +329,16 @@ end
     class_probs = [0.5, 0.2, 0.3]
     X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
-    model =
-        Imbalance.MLJ.ENNUndersampler(min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
+    model = Imbalance.MLJ.ENNUndersampler(
+        min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8),
+        rng = 42,
+    )
     mach = machine(model)
     @test transform(mach, X, y) ==
           enn_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type = "Matrix")
     @test transform(mach, X, y) ==
           enn_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end
@@ -294,14 +358,16 @@ end
     # table
     X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs)
     X = DataFrame(X)
-    model =
-        Imbalance.MLJ.TomekUndersampler(min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
+    model = Imbalance.MLJ.TomekUndersampler(
+        min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8),
+        rng = 42,
+    )
     mach = machine(model)
     @test transform(mach, X, y) ==
           tomek_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 
     # matrix
-    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type="Matrix")
+    X, y = generate_imbalanced_data(num_rows, num_cont_feats; class_probs, type = "Matrix")
     @test transform(mach, X, y) ==
-        tomek_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
+          tomek_undersample(X, y; min_ratios = Dict(0 => 0.8, 1 => 0.8, 2 => 0.8), rng = 42)
 end

@@ -6,9 +6,8 @@ include("../../distance_metrics/mvdm.jl")
 """
 Label encoding and decoding
 """
-smoten_encoder(X) = generic_encoder(X; error_checker=check_scitypes_smoten)
+smoten_encoder(X) = generic_encoder(X; error_checker = check_scitypes_smoten)
 smoten_decoder(X, d) = generic_decoder(X, d)
-
 
 """
 Check that all columns are either categorical or continuous. If not, throw an error.
@@ -62,11 +61,7 @@ by taking the mode of each categorical variable over `x` and its `k` nearest nei
 # Returns
 - `x_new_cat`: A vector of the mode of each categorical variable over `x` and its `k` nearest neighbors
 """
-function generate_new_smoten_point(
-    X::AbstractMatrix{<:Integer},
-    knn_map;
-    rng::AbstractRNG,
-)
+function generate_new_smoten_point(X::AbstractMatrix{<:Integer}, knn_map; rng::AbstractRNG)
     # 1. Choose a random point (by index)
     ind = rand(rng, 1:size(X, 2))
     # 2. Find its k nearest neighbors (including itself)
@@ -76,7 +71,6 @@ function generate_new_smoten_point(
     # 4. Return the new point
     return x_new_cat
 end
-
 
 """
 Assuming that all the observations in the observation matrix X belong to the same class,
@@ -106,19 +100,19 @@ function smoten_per_class(
     # Automatically set k to the nearest of 1 and size(X, 1) - 1
     n_class = size(X, 2)
     k = check_k(k, n_class)
-    
+
     # Build KNN tree with modified distance metric
     metric = ValueDifference(all_pairwise_mvdm)
     tree = BruteTree(X, metric)
     knn_map, _ = knn(tree, X, k + 1)
 
     # Generate n new observations
-     Xnew = zeros(Float32, size(X, 1), n)
-     p = Progress(n)
-     for i=1:n
-         Xnew[:, i] = generate_new_smoten_point(X, knn_map; rng)
-         next!(p)
-     end
+    Xnew = zeros(Float32, size(X, 1), n)
+    p = Progress(n)
+    for i in 1:n
+        Xnew[:, i] = generate_new_smoten_point(X, knn_map; rng)
+        next!(p)
+    end
     return Xnew
 end
 
@@ -259,7 +253,7 @@ function smoten(
     y::AbstractVector;
     k::Integer = 5,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     mvdm_encoder, num_categories_per_col = precompute_value_encodings(X, y)
@@ -276,14 +270,14 @@ function smoten(
     y::AbstractVector;
     k::Integer = 5,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     Xover, yover = tablify(
         smoten,
         X,
         y;
-        try_preserve_type=try_preserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = smoten_encoder,
         decode_func = smoten_decoder,
         k,
@@ -299,14 +293,14 @@ function smoten(
     y_ind::Integer;
     k::Integer = 5,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     Xyover = tablify(
         smoten,
         Xy,
         y_ind;
-        try_preserve_type=try_preserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = smoten_encoder,
         decode_func = smoten_decoder,
         k,

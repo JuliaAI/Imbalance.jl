@@ -1,6 +1,6 @@
 ### Random Undersampling TableTransforms Interface
 # interface struct
-struct RandomUndersampler{T, R <: Union{Integer, AbstractRNG}, I<:Integer} <: Transform
+struct RandomUndersampler{T, R <: Union{Integer, AbstractRNG}, I <: Integer} <: Transform
     y_ind::I
     ratios::T
     rng::R

@@ -145,11 +145,11 @@ function random_oversample(
     X::AbstractMatrix{<:Union{Real, Missing}},
     y::AbstractVector;
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
-    Xover, yover = generic_oversample(X, y, random_oversample_per_class; ratios, rng,)
+    Xover, yover = generic_oversample(X, y, random_oversample_per_class; ratios, rng)
     return Xover, yover
 end
 
@@ -158,31 +158,39 @@ function random_oversample(
     X,
     y::AbstractVector;
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_preserve_type::Bool=true
+    rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_preserve_type::Bool = true,
 )
-    Xover, yover = tablify(random_oversample, X, y;
-                           try_preserve_type=try_preserve_type,
-                           encode_func = generic_encoder,
-                           decode_func = generic_decoder,
-                           ratios,
-                           rng)
+    Xover, yover = tablify(
+        random_oversample,
+        X,
+        y;
+        try_preserve_type = try_preserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        ratios,
+        rng,
+    )
     return Xover, yover
 end
-
 
 # dispatch for table inputs where y is one of the columns
 function random_oversample(
     Xy,
     y_ind::Integer;
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_preserve_type::Bool=true
+    rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_preserve_type::Bool = true,
 )
-    Xyover = tablify(random_oversample, Xy, y_ind;
-                    try_preserve_type=try_preserve_type,
-                    encode_func = generic_encoder,
-                    decode_func = generic_decoder,
-                    ratios, rng)
+    Xyover = tablify(
+        random_oversample,
+        Xy,
+        y_ind;
+        try_preserve_type = try_preserve_type,
+        encode_func = generic_encoder,
+        decode_func = generic_decoder,
+        ratios,
+        rng,
+    )
     return Xyover
 end

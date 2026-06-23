@@ -1,6 +1,6 @@
 
 @testset "testing filtering logic" begin
-    Xt = [   
+    Xt = [
         1 2 3 4 5
         1.1 2.1 3.1 4.1 5.1
         1.2 2.2 3.2 4.2 5.2
@@ -23,57 +23,102 @@
     X = transpose(Xt)
 
     y = [0, 0, 0, 10, 10, 10, 1, 11, 11, 11, 11, 11, 2, 21, 21, 2, 2, 2]
-    @test Imbalance.borderline1_filter(X, y; m=5) == [1, 1, 1, 1, 1 ,1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
+    @test Imbalance.borderline1_filter(X, y; m = 5) ==
+          [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0]
 end
 
-
-
 @testset "end-to-end borderline smote test" begin
-    X, y = Imbalance.generate_imbalanced_data(500, 4; min_sep=0.0, stds=[3.0 3.0 3.0], class_probs=[0.25, 0.5, 0.25], type="Matrix", rng=Imbalance.XoshiroOrMT(42))
+    X, y = Imbalance.generate_imbalanced_data(
+        500,
+        4;
+        min_sep = 0.0,
+        stds = [3.0 3.0 3.0],
+        class_probs = [0.25, 0.5, 0.25],
+        type = "Matrix",
+        rng = Imbalance.XoshiroOrMT(42),
+    )
     # manual filter
-    bool_filter = Imbalance.borderline1_filter(X', y; m=5)
-    Xover, yover = borderline_smote1(X, y; k = 5, m = 5, ratios = 1.0, rng=Imbalance.XoshiroOrMT(42))
+    bool_filter = Imbalance.borderline1_filter(X', y; m = 5)
+    Xover, yover =
+        borderline_smote1(X, y; k = 5, m = 5, ratios = 1.0, rng = Imbalance.XoshiroOrMT(42))
 
     # get filtered and unfilitered data
     X1, y1 = X[bool_filter, :], y[bool_filter]
     X0, y0 = X[.!bool_filter, :], y[.!bool_filter]
     # get oversampled data
-    oversampled_range =  length(y) + 1:length(yover)
+    oversampled_range = length(y)+1:length(yover)
     X_ex, y_ex = Xover[oversampled_range, :], yover[oversampled_range]
     # test that SMOTE condition is met for all oversampled points
     for l in eachindex(y_ex)
         @test any(
-        is_in_between(X_ex[l, :], X1[i, :], X[j, :]) && y1[i] == y[j] == y_ex[l] for
-        i = 1:size(X1, 1), j = 1:size(X, 1) if i != j
-    )
+            is_in_between(X_ex[l, :], X1[i, :], X[j, :]) && y1[i] == y[j] == y_ex[l] for
+            i in 1:size(X1, 1), j in 1:size(X, 1) if i != j
+        )
     end
 end
-
 
 # Test that it throws k or m too big warning when needed
 @testset "throws no borderline points" begin
     X = [1.0 1.0; 2.0 2.0; 2.2 2.2; 4.0 4.0; 5.0 5.0; 6.0 6.0]
     y = [1, 1, 1, 1, 1, 1]
-    ratios = Dict(1=>1.3)
+    ratios = Dict(1 => 1.3)
     @test_throws Imbalance.ERR_NO_BORDERLINE begin
-        Xover, yover = borderline_smote1(X, y; k = 2, m = 2, ratios, rng=Imbalance.XoshiroOrMT(42), verbosity=0)
+        Xover, yover = borderline_smote1(
+            X,
+            y;
+            k = 2,
+            m = 2,
+            ratios,
+            rng = Imbalance.XoshiroOrMT(42),
+            verbosity = 0,
+        )
     end
     m = -5
     @test_throws Imbalance.ERR_NONPOS_M(m) begin
-        Xover, yover = borderline_smote1(X, y; k = 2, m = m, ratios, rng=Imbalance.XoshiroOrMT(42), verbosity=0)
+        Xover, yover = borderline_smote1(
+            X,
+            y;
+            k = 2,
+            m = m,
+            ratios,
+            rng = Imbalance.XoshiroOrMT(42),
+            verbosity = 0,
+        )
     end
     y = [1, 1, 2, 2, 1, 1]
     m = 7
-    @test_logs (:warn, Imbalance.WRN_M_TOO_BIG(m, 6)) (:warn, Imbalance.WRN_NO_BORDERLINE_CLASS) begin
-        Xover, yover = borderline_smote1(X, y; k = 1, m = m, ratios, rng=Imbalance.XoshiroOrMT(42), verbosity=0)
+    @test_logs (:warn, Imbalance.WRN_M_TOO_BIG(m, 6)) (
+        :warn,
+        Imbalance.WRN_NO_BORDERLINE_CLASS,
+    ) begin
+        Xover, yover = borderline_smote1(
+            X,
+            y;
+            k = 1,
+            m = m,
+            ratios,
+            rng = Imbalance.XoshiroOrMT(42),
+            verbosity = 0,
+        )
     end
 end
 
 # test that the materializer works for dataframes
 @testset "materializer" begin
-    X, y =
-        generate_imbalanced_data(1000, 2; min_sep=0.0, class_probs = [0.2, 0.6, 0.2], type = "MatrixTable", rng = 121)
-    Xover, yover = borderline_smote1(DataFrame(X), y; ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9), rng = 121)
+    X, y = generate_imbalanced_data(
+        1000,
+        2;
+        min_sep = 0.0,
+        class_probs = [0.2, 0.6, 0.2],
+        type = "MatrixTable",
+        rng = 121,
+    )
+    Xover, yover = borderline_smote1(
+        DataFrame(X),
+        y;
+        ratios = Dict(0 => 1.0, 1 => 1.2, 2 => 0.9),
+        rng = 121,
+    )
     # Check that the number of samples increased correctly
     @test typeof(Xover) == DataFrame
 end

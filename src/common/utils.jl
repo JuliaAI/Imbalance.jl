@@ -2,7 +2,6 @@
 This file contains utility functions used by the oversampling methods.
 """
 
-
 # randomly sample one column of a matrix
 randcols(rng::AbstractRNG, X) = X[:, rand(rng, 1:size(X, 2))]
 # randomly sample n columns of a matrix
@@ -11,7 +10,8 @@ randcols(rng::AbstractRNG, X, n) = X[:, rand(rng, 1:size(X, 2), n)]
 rng_handler(rng::Integer) = XoshiroOrMT(rng)
 rng_handler(rng::AbstractRNG) = rng
 # To support Julia 1.6 which does not have Xoshiro
-XoshiroOrMT(rng::Integer) = (VERSION <= v"1.7") ? Random.MersenneTwister(rng) : Random.Xoshiro(rng)
+XoshiroOrMT(rng::Integer) =
+    (VERSION <= v"1.7") ? Random.MersenneTwister(rng) : Random.Xoshiro(rng)
 
 """
 Get the number of rows of a table. This implementations comes from Tables.jl as used internally there.
@@ -34,7 +34,7 @@ Return a dictionary mapping each unique value in an abstract vector to the indic
 where that value occurs.
 """
 function group_inds(categorical_array::AbstractVector{T}) where {T}
-    result = LittleDict{T,AbstractVector{Int}}()
+    result = LittleDict{T, AbstractVector{Int}}()
     for (i, v) in enumerate(categorical_array)
         # Make a new entry in the dict if it doesn't exist
         if !haskey(result, v)
@@ -45,4 +45,3 @@ function group_inds(categorical_array::AbstractVector{T}) where {T}
     end
     return freeze(result)
 end
-

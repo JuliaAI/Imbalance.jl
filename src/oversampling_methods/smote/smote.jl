@@ -22,8 +22,6 @@ function get_collinear_point(
     return @. (1 - r) * x₁ + r * x₂
 end
 
-
-
 # Used by SMOTE, SMOTENC
 """
 Randomly return one of the k-nearest neighbor of a given observation `x` from an observations 
@@ -79,7 +77,6 @@ function generate_new_smote_point(
     x_new = get_collinear_point(x_rand, x_rand_neigh; rng)
     return x_new
 end
-
 
 # Used by SMOTE, SMOTENC and SMOTEN
 """
@@ -139,13 +136,12 @@ function smote_per_class(
     # Generate n new observations
     Xnew = zeros(Float32, size(X, 1), n)
     p = Progress(n)
-    for i=1:n
+    for i in 1:n
         Xnew[:, i] = generate_new_smote_point(X, knn_map; rng)
         next!(p)
     end
     return Xnew
 end
-
 
 """
     smote(
@@ -263,7 +259,7 @@ function smote(
     y::AbstractVector;
     k::Integer = 5,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
@@ -277,10 +273,11 @@ function smote(
     y::AbstractVector;
     k::Integer = 5,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
-    Xover, yover = tablify(smote, X, y;try_preserve_type=try_preserve_type,  k, ratios, rng)
+    Xover, yover =
+        tablify(smote, X, y; try_preserve_type = try_preserve_type, k, ratios, rng)
     return Xover, yover
 end
 
@@ -290,9 +287,10 @@ function smote(
     y_ind::Integer;
     k::Integer = 5,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
-    Xyover = tablify(smote, Xy, y_ind; try_preserve_type=try_preserve_type, k, ratios, rng)
+    Xyover =
+        tablify(smote, Xy, y_ind; try_preserve_type = try_preserve_type, k, ratios, rng)
     return Xyover
 end
