@@ -1,14 +1,12 @@
 
 ### SMOTE with MLJ Interface
 
-mutable struct SMOTE{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Static
+mutable struct SMOTE{T, R <: Union{Integer, AbstractRNG}, I <: Integer} <: Static
     k::I
     ratios::T
     rng::R
     try_preserve_type::Bool
 end;
-
-
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 
@@ -21,16 +19,14 @@ function MMI.clean!(s::SMOTE)
     return message
 end
 
-
-
-
 """
 Initiate a SMOTE model with the given hyper-parameters.
 """
 function SMOTE(;
     k::Integer = 5,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool=true
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_preserve_type::Bool = true,
 ) where {T}
     model = SMOTE(k, ratios, rng, try_preserve_type)
     MMI.clean!(model)
@@ -41,13 +37,18 @@ end
 Oversample data X, y using SMOTE
 """
 function MMI.transform(s::SMOTE, _, X, y)
-    smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng, 
-        try_preserve_type = s.try_preserve_type)
+    return smote(
+        X,
+        y;
+        k = s.k,
+        ratios = s.ratios,
+        rng = s.rng,
+        try_preserve_type = s.try_preserve_type,
+    )
 end
 function MMI.transform(s::SMOTE, _, X::AbstractMatrix{<:Real}, y)
-    smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
+    return smote(X, y; k = s.k, ratios = s.ratios, rng = s.rng)
 end
-
 
 MMI.metadata_pkg(
     SMOTE,
@@ -60,29 +61,21 @@ MMI.metadata_pkg(
 MMI.metadata_model(
     SMOTE,
     input_scitype = Tuple{
-                        Union{
-                            Table(Continuous),
-                            AbstractMatrix{Continuous}
-                        }, 
-                        AbstractVector
-                    },
-    output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
     },
-    load_path = "Imbalance.MLJ.SMOTE"
+    output_scitype = Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
+    },
+    load_path = "Imbalance.MLJ.SMOTE",
 )
 function MMI.transform_scitype(s::SMOTE)
     return Tuple{
-        Union{Table(Continuous),AbstractMatrix{Continuous}},
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
         AbstractVector{<:Finite},
     }
 end
-
-
 
 """
 $(MMI.doc_header(SMOTE))

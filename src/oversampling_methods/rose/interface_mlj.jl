@@ -1,13 +1,11 @@
 ### ROSE MLJ Interface
 # interface struct
-mutable struct ROSE{T,R<:Union{Integer,AbstractRNG}, F<:AbstractFloat} <: MMI.Static
+mutable struct ROSE{T, R <: Union{Integer, AbstractRNG}, F <: AbstractFloat} <: MMI.Static
     s::F
     ratios::T
     rng::R
     try_preserve_type::Bool
 end;
-
-
 
 """
 Check whether the given model hyperparameters are valid and clean them if necessary. 
@@ -25,8 +23,9 @@ Initiate a ROSE model with the given hyper-parameters.
 """
 function ROSE(;
     s::AbstractFloat = 1.0,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool = true,
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_preserve_type::Bool = true,
 ) where {T}
     model = ROSE(s, ratios, rng, try_preserve_type)
     MMI.clean!(model)
@@ -37,11 +36,17 @@ end
 Oversample data X, y using ROSE
 """
 function MMI.transform(r::ROSE, _, X, y)
-    rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng, 
-        try_preserve_type = r.try_preserve_type)
+    return rose(
+        X,
+        y;
+        s = r.s,
+        ratios = r.ratios,
+        rng = r.rng,
+        try_preserve_type = r.try_preserve_type,
+    )
 end
 function MMI.transform(r::ROSE, _, X::AbstractMatrix{<:Real}, y)
-    rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng,)
+    return rose(X, y; s = r.s, ratios = r.ratios, rng = r.rng)
 end
 
 MMI.metadata_pkg(
@@ -55,28 +60,21 @@ MMI.metadata_pkg(
 MMI.metadata_model(
     ROSE,
     input_scitype = Tuple{
-                        Union{
-                            Table(Continuous),
-                            AbstractMatrix{Continuous}
-                        }, 
-                        AbstractVector
-                    },
-    output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
     },
-    load_path = "Imbalance.MLJ.ROSE"
+    output_scitype = Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
+    },
+    load_path = "Imbalance.MLJ.ROSE",
 )
 function MMI.transform_scitype(s::ROSE)
     return Tuple{
-        Union{Table(Continuous),AbstractMatrix{Continuous}},
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
         AbstractVector{<:Finite},
     }
 end
-
 
 """
 $(MMI.doc_header(ROSE))

@@ -38,8 +38,8 @@ include("oversampling_methods/borderline_smote1/borderline_smote1.jl")
 include("oversampling_methods/smoten/smoten.jl")
 include("oversampling_methods/smotenc/smotenc.jl")
 include("oversampling_methods/random_walk/random_walk.jl")
-export random_oversample, rose, smote, smoten, smotenc, random_walk_oversample,
-    borderline_smote1
+export random_oversample,
+    rose, smote, smoten, smotenc, random_walk_oversample, borderline_smote1
 
 include("undersampling_methods/random_undersample/random_undersample.jl")
 include("undersampling_methods/cluster_undersample/cluster_undersample.jl")

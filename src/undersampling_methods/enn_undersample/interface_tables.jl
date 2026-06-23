@@ -1,6 +1,11 @@
 ### ENN Undersampling TableTransforms Interface
 # interface struct
-struct ENNUndersampler{T, I<:Integer, S<:AbstractString, R<:Union{AbstractRNG, Integer}} <: Transform
+struct ENNUndersampler{
+    T,
+    I <: Integer,
+    S <: AbstractString,
+    R <: Union{AbstractRNG, Integer},
+} <: Transform
     y_ind::I
     k::I
     keep_condition::S

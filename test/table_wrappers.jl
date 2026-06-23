@@ -23,7 +23,6 @@ end
     X_over, y_over = tablify(oversample_func, X, y)
     @test X_over == DataFrame([1.0 2.0; 3.0 4.0; 1.0 2.0; 3.0 4.0], [:A, :B])
     @test y_over == [1, 2, 1, 2]
-
 end
 
 @testset "tablify with labels provided as column index" begin
