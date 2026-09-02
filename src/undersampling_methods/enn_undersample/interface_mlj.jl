@@ -2,99 +2,93 @@
 ### ENNUndersampler with MLJ Interface
 # interface struct
 mutable struct ENNUndersampler{
-	T,
-	S <: AbstractString,
-	I <: Integer,
-	R <: Union{Integer, AbstractRNG},
+    T,
+    S <: AbstractString,
+    I <: Integer,
+    R <: Union{Integer, AbstractRNG},
 } <: Static
-	k::I
-	keep_condition::S
-	min_ratios::T
-	force_min_ratios::Bool
-	rng::R
-	try_preserve_type::Bool
+    k::I
+    keep_condition::S
+    min_ratios::T
+    force_min_ratios::Bool
+    rng::R
+    try_preserve_type::Bool
 end;
 
 """
 Initiate a ENN undersampling model with the given hyper-parameters.
 """
 function ENNUndersampler(;
-	k::Integer = 5,
-	keep_condition::AbstractString = "mode",
-	min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
-	force_min_ratios::Bool = false,
+    k::Integer = 5,
+    keep_condition::AbstractString = "mode",
+    min_ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    force_min_ratios::Bool = false,
     rng::Union{AbstractRNG, Integer} = default_rng(),
-	try_preserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 ) where {T}
-	model = ENNUndersampler(
-		k,
-		keep_condition,
-		min_ratios,
-		force_min_ratios,
-		rng,
-		try_preserve_type,
-	)
-	return model
+    model = ENNUndersampler(
+        k,
+        keep_condition,
+        min_ratios,
+        force_min_ratios,
+        rng,
+        try_preserve_type,
+    )
+    return model
 end
 
 """
 Undersample data X, y 
 """
 function MMI.transform(r::ENNUndersampler, _, X, y)
-	return enn_undersample(
-		X,
-		y;
-		k = r.k,
-		keep_condition = r.keep_condition,
-		min_ratios = r.min_ratios,
-		force_min_ratios = r.force_min_ratios,
-		rng = r.rng,
-		try_preserve_type = r.try_preserve_type,
-	)
+    return enn_undersample(
+        X,
+        y;
+        k = r.k,
+        keep_condition = r.keep_condition,
+        min_ratios = r.min_ratios,
+        force_min_ratios = r.force_min_ratios,
+        rng = r.rng,
+        try_preserve_type = r.try_preserve_type,
+    )
 end
 function MMI.transform(r::ENNUndersampler, _, X::AbstractMatrix{<:Real}, y)
-	return enn_undersample(
-		X,
-		y;
-		k = r.k,
-		keep_condition = r.keep_condition,
-		min_ratios = r.min_ratios,
-		force_min_ratios = r.force_min_ratios,
-		rng = r.rng,
-	)
+    return enn_undersample(
+        X,
+        y;
+        k = r.k,
+        keep_condition = r.keep_condition,
+        min_ratios = r.min_ratios,
+        force_min_ratios = r.force_min_ratios,
+        rng = r.rng,
+    )
 end
 
 MMI.metadata_pkg(
-	ENNUndersampler,
-	name = "Imbalance",
-	package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-	package_url = "https://github.com/JuliaAI/Imbalance.jl",
-	is_pure_julia = true,
+    ENNUndersampler,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-	ENNUndersampler,
+    ENNUndersampler,
     input_scitype = Tuple{
-                        Union{
-                            Table(Continuous),
-                            AbstractMatrix{Continuous}
-                        }, 
-                        AbstractVector
-                    },
-    output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
     },
-	load_path = "Imbalance.MLJ.ENNUndersampler" 
+    output_scitype = Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
+    },
+    load_path = "Imbalance.MLJ.ENNUndersampler",
 )
 function MMI.transform_scitype(s::ENNUndersampler)
-	return Tuple{
-		Union{Table(Continuous), AbstractMatrix{Continuous}},
-		AbstractVector{<:Finite},
-	}
+    return Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
 end
 
 """
@@ -185,4 +179,3 @@ julia> Imbalance.checkbalance(y_under; ref="minority")
 
 """
 ENNUndersampler
-

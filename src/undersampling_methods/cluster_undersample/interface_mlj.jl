@@ -2,89 +2,83 @@
 ### ClusterUndersampler with MLJ Interface
 # interface struct
 mutable struct ClusterUndersampler{
-	S <: AbstractString,
-	T,
-	I <: Integer,
-	R <: Union{AbstractRNG, Integer},
+    S <: AbstractString,
+    T,
+    I <: Integer,
+    R <: Union{AbstractRNG, Integer},
 } <: Static
-	mode::S
-	ratios::T
-	maxiter::I
-	rng::R
-	try_preserve_type::Bool
+    mode::S
+    ratios::T
+    maxiter::I
+    rng::R
+    try_preserve_type::Bool
 end;
 
 """
 Initiate a cluster undersampling model with the given hyper-parameters.
 """
 function ClusterUndersampler(;
-	mode::AbstractString = "nearest",
-	ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
-	maxiter::Integer = 100,
+    mode::AbstractString = "nearest",
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    maxiter::Integer = 100,
     rng::Union{Integer, AbstractRNG} = default_rng(),
-	try_preserve_type::Bool = true,
+    try_preserve_type::Bool = true,
 ) where {T}
-	model = ClusterUndersampler(mode, ratios, maxiter, rng, try_preserve_type)
-	return model
+    model = ClusterUndersampler(mode, ratios, maxiter, rng, try_preserve_type)
+    return model
 end
 
 """
 Undersample data X, y 
 """
 function MMI.transform(r::ClusterUndersampler, _, X, y)
-	return cluster_undersample(
-		X,
-		y;
-		mode = r.mode,
-		ratios = r.ratios,
-		maxiter = r.maxiter,
-		rng = r.rng,
-		try_preserve_type = r.try_preserve_type,
-	)
+    return cluster_undersample(
+        X,
+        y;
+        mode = r.mode,
+        ratios = r.ratios,
+        maxiter = r.maxiter,
+        rng = r.rng,
+        try_preserve_type = r.try_preserve_type,
+    )
 end
 function MMI.transform(r::ClusterUndersampler, _, X::AbstractMatrix{<:Real}, y)
-	return cluster_undersample(
-		X,
-		y;
-		mode = r.mode,
-		ratios = r.ratios,
-		maxiter = r.maxiter,
-		rng = r.rng,
-	)
+    return cluster_undersample(
+        X,
+        y;
+        mode = r.mode,
+        ratios = r.ratios,
+        maxiter = r.maxiter,
+        rng = r.rng,
+    )
 end
 
 MMI.metadata_pkg(
-	ClusterUndersampler,
-	name = "Imbalance",
-	package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-	package_url = "https://github.com/JuliaAI/Imbalance.jl",
-	is_pure_julia = true,
+    ClusterUndersampler,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-	ClusterUndersampler,
+    ClusterUndersampler,
     input_scitype = Tuple{
-                        Union{
-                            Table(Continuous),
-                            AbstractMatrix{Continuous}
-                        }, 
-                        AbstractVector
-                    },
-    output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
     },
-	load_path = "Imbalance.MLJ.ClusterUndersampler" 
+    output_scitype = Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
+    },
+    load_path = "Imbalance.MLJ.ClusterUndersampler",
 )
 
 function MMI.transform_scitype(s::ClusterUndersampler)
-	return Tuple{
-		Union{Table(Continuous), AbstractMatrix{Continuous}},
-		AbstractVector{<:Finite},
-	}
+    return Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
 end
 
 """

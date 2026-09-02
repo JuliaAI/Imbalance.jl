@@ -1,5 +1,12 @@
 using Imbalance:
-    rose, smote, random_oversample, smoten, smotenc, random_undersample, cluster_undersample, random_walk_oversample
+    rose,
+    smote,
+    random_oversample,
+    smoten,
+    smotenc,
+    random_undersample,
+    cluster_undersample,
+    random_walk_oversample
 
 using Test
 
@@ -15,8 +22,10 @@ ClusterUndersampler = Imbalance.TableTransforms.ClusterUndersampler
 TomekUndersampler = Imbalance.TableTransforms.TomekUndersampler
 ENNUndersampler = Imbalance.TableTransforms.ENNUndersampler
 
-const oversampling_methods = [SMOTE, ROSE, SMOTEN, SMOTENC, RandomWalkOversampler, BorderlineSMOTE1]
-const undersampling_methods = [RandomUndersampler, ClusterUndersampler, TomekUndersampler, ENNUndersampler]
+const oversampling_methods =
+    [SMOTE, ROSE, SMOTEN, SMOTENC, RandomWalkOversampler, BorderlineSMOTE1]
+const undersampling_methods =
+    [RandomUndersampler, ClusterUndersampler, TomekUndersampler, ENNUndersampler]
 # Test isrevertible and isinvertible functions
 @testset "isrevertible" begin
     for method in oversampling_methods
@@ -85,8 +94,8 @@ end
         Xy, _ = generate_imbalanced_data(
             500,
             4;
-            min_sep=0.0,
-            stds=[3.0 3.0 3.0],
+            min_sep = 0.0,
+            stds = [3.0 3.0 3.0],
             class_probs = [0.25, 0.5, 0.25],
             type = tables[i],
             insert_y = y_ind,
@@ -111,7 +120,12 @@ end
             )
             Xy = coerce(Xy, autotype(Xy, :few_to_finite))
             test_tabletr(smotenc, SMOTENC(y_ind; k = 5, rng = 42), Xy, y_ind)
-            test_tabletr(random_walk_oversample, RandomWalkOversampler(y_ind; rng = 42), Xy, y_ind)
+            test_tabletr(
+                random_walk_oversample,
+                RandomWalkOversampler(y_ind; rng = 42),
+                Xy,
+                y_ind,
+            )
 
             Xy, _ = generate_imbalanced_data(
                 50,

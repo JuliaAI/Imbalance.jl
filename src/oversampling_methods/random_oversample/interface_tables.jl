@@ -1,6 +1,6 @@
 ### Random Oversample TableTransforms Interface
 # interface struct
-struct RandomOversampler{T,R<:Union{Integer,AbstractRNG}, I<:Integer} <: Transform
+struct RandomOversampler{T, R <: Union{Integer, AbstractRNG}, I <: Integer} <: Transform
     y_ind::I
     ratios::T
     rng::R
@@ -12,11 +12,10 @@ Instantiate a naive RandomOversampler table transform
 """
 RandomOversampler(
     y_ind::Integer;
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = 123,
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = 123,
     try_preserve_type::Bool = true,
 ) where {T} = RandomOversampler(y_ind, ratios, rng, try_preserve_type)
-
 
 TransformsBase.isrevertible(::Type{RandomOversampler}) = true
 
@@ -36,8 +35,13 @@ Apply the RandomOversampler transform to a table Xy
 - `cache`: A cache that can be used to revert the oversampling
 """
 function TransformsBase.apply(r::RandomOversampler, Xy)
-    Xyover = random_oversample(Xy, r.y_ind; ratios = r.ratios, rng = r.rng,
-                               try_preserve_type = r.try_preserve_type)
+    Xyover = random_oversample(
+        Xy,
+        r.y_ind;
+        ratios = r.ratios,
+        rng = r.rng,
+        try_preserve_type = r.try_preserve_type,
+    )
     # so that we can revert later by removing the new observations:
     cache = rowcount(Xy)
     return Xyover, cache

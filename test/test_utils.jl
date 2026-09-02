@@ -19,7 +19,6 @@ function is_in_between(a, b, c)::Bool
     return isapprox(dist_ab + dist_ac, dist_total)
 end
 
-
 """
 Read a Julia variable from a file
 """
@@ -35,5 +34,5 @@ end
 Save a Julia variable into a file
 """
 function write_var(var, filename)
-    save_object(filename, var)
+    return save_object(filename, var)
 end

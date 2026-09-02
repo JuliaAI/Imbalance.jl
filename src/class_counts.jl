@@ -23,21 +23,23 @@ $(COMMON_DOCS["RATIOS"])
 function get_class_counts(
     y::AbstractVector{T},
     ratios::AbstractDict;
-    reference="majority",
-    ) where {T}
+    reference = "majority",
+) where {T}
     label_counts = countmap(y)
     (reference in ["majority", "minority"]) || throw(())
-    ref_count = (reference == "majority") ? maximum(values(label_counts)) :
+    ref_count =
+        (reference == "majority") ? maximum(values(label_counts)) :
         minimum(values(label_counts))
     # extra_counts shall map each class to the number of extra samples needed
     # for the class to satisfy ratios
-    counts = OrderedDict{T,Int}()
+    counts = OrderedDict{T, Int}()
 
     # each class needs to be the size specified in `ratios`
     for (label, count) in label_counts
         (label in keys(ratios)) || continue
         ratios[label] > 0 || throw((ERR_INVALID_RATIO(label)))
-        counts[label] = (reference == "majority") ?
+        counts[label] =
+            (reference == "majority") ?
             calculate_extra_counts(ratios[label], ref_count, count, label) :
             calculate_undersampled_counts(ratios[label], ref_count, count, label)
     end
@@ -45,14 +47,10 @@ function get_class_counts(
 end
 
 # Method for handling ratios as AbstractFloat (dispaches the above on appropriate dict):
-function get_class_counts(
-    y::AbstractVector,
-    ratio::AbstractFloat;
-    reference="majority",
-    )
-
+function get_class_counts(y::AbstractVector, ratio::AbstractFloat; reference = "majority")
     count_given_label = countmap(y)
-    reference_count = reference == "majority" ? maximum(values(count_given_label)) :
+    reference_count =
+        reference == "majority" ? maximum(values(count_given_label)) :
         minimum(values(count_given_label))
     labels = keys(count_given_label) |> collect
     labeled_ratios = map(labels) do label
@@ -62,7 +60,6 @@ function get_class_counts(
     ratio_given_label = OrderedDict(labeled_ratios...)
     return get_class_counts(y, ratio_given_label; reference)
 end
-
 
 """
 Helper function for calculating the number of extra samples needed for a class given a
@@ -74,7 +71,8 @@ function calculate_extra_counts(
     ratio::AbstractFloat,
     majority_count::Integer,
     label_count::Integer,
-    label)
+    label,
+)
     extra_count = Int(round(ratio * majority_count)) - label_count
     if extra_count < 0
         old_ratio = label_count / majority_count
@@ -86,7 +84,6 @@ function calculate_extra_counts(
     return extra_count
 end
 
-
 """
 Helper function for calculating the number of final samples needed for a class given a
 ratio, its count and minority count.  It assumes that if ratio is `a` and the minority
@@ -96,8 +93,9 @@ function calculate_undersampled_counts(
     ratio::AbstractFloat,
     minority_count::Integer,
     label_count::Integer,
-    label)
-    undersampled_count =  Int(round(ratio * minority_count))
+    label,
+)
+    undersampled_count = Int(round(ratio * minority_count))
     if undersampled_count > label_count
         old_ratio = label_count / minority_count
         new_ratio = ratio

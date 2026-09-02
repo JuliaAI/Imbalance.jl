@@ -6,7 +6,8 @@ include("../../distance_metrics/penalized_euclidean.jl")
 """
 Label encode and decode each column in a given table X
 """
-smotenc_encoder(X) = generic_encoder(X; error_checker=check_scitypes_smotenc,  return_cat_inds = true)
+smotenc_encoder(X) =
+    generic_encoder(X; error_checker = check_scitypes_smotenc, return_cat_inds = true)
 smotenc_decoder(X, d) = generic_decoder(X, d)
 
 """
@@ -25,7 +26,6 @@ function check_scitypes_smotenc(ncols, cat_inds, cont_inds, types)
         throw((ERR_BAD_MIXED_COL_TYPES(bad_cols, types[bad_cols])))
     end
 end
-
 
 """
 Given a matrix of observations `X`, find the median of the standard deviations of the
@@ -46,8 +46,6 @@ function get_penalty(X::AbstractMatrix{<:AbstractFloat}, cont_inds::AbstractVect
     σₘ = median(σs)
     return σₘ^2
 end
-
-
 
 """
 Choose a random point from the given observations matrix `X` and generate a new point that
@@ -96,8 +94,6 @@ function generate_new_smotenc_point(
     return x_new
 end
 
-
-
 """
 Assuming that all the observations in the observation matrix X belong to the same class,
 use SMOTE-NC to generate `n` new observations for that class.
@@ -135,7 +131,7 @@ function smotenc_per_class(
     σₘ = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(σₘ, cont_inds, cat_inds)
     tree = BallTree(X, metric)          # May need to become BruteTree for accuracy
-    
+
     p = get_penalty(X, cont_inds)
     metric = EuclideanWithPenalty(p, cont_inds, cat_inds)
     (knn_tree ∈ ["Ball", "Brute"]) || throw((ERR_WRNG_TREE(knn_tree)))
@@ -145,13 +141,12 @@ function smotenc_per_class(
     # Generate n new observations
     Xnew = zeros(Float32, size(X, 1), n)
     p = Progress(n)
-    for i=1:n
+    for i in 1:n
         Xnew[:, i] = generate_new_smotenc_point(X, cont_inds, cat_inds, knn_map; rng)
         next!(p)
     end
     return Xnew
 end
-
 
 """
     smotenc(
@@ -300,14 +295,23 @@ function smotenc(
     k::Integer = 5,
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     rng = rng_handler(rng)
     # implictly infer the continuous indices
     cont_inds = setdiff(1:size(X, 2), cat_inds)
-    Xover, yover =
-        generic_oversample(X, y, smotenc_per_class, cont_inds, cat_inds; ratios, k, knn_tree, rng)
+    Xover, yover = generic_oversample(
+        X,
+        y,
+        smotenc_per_class,
+        cont_inds,
+        cat_inds;
+        ratios,
+        k,
+        knn_tree,
+        rng,
+    )
     return Xover, yover
 end
 
@@ -318,14 +322,14 @@ function smotenc(
     k::Integer = 5,
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     Xover, yover = tablify(
         smotenc,
         X,
         y;
-        try_preserve_type=try_preserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = smotenc_encoder,
         decode_func = smotenc_decoder,
         k,
@@ -343,14 +347,14 @@ function smotenc(
     k::Integer = 5,
     ratios = 1.0,
     knn_tree::AbstractString = "Brute",
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     Xyover = tablify(
         smotenc,
         Xy,
         y_ind;
-        try_preserve_type=try_preserve_type,
+        try_preserve_type = try_preserve_type,
         encode_func = smotenc_encoder,
         decode_func = smotenc_decoder,
         k,

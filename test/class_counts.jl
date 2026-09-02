@@ -8,7 +8,6 @@ using Imbalance:
     WRN_UNDERSAMPLE,
     WRN_OVERSAMPLE
 
-
 @testset "get_class_counts" begin
     @testset "Equalize classes" begin
         y = [1, 1, 2, 3, 3, 3]          # majority has 3 observations
@@ -51,22 +50,23 @@ using Imbalance:
 
     @testset "testing undersample dict ratio" begin
         y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 3, 3, 3, 3]
-        ratios = Dict(0=>2.0, 1=>0.5, 2=>1.0, 3=>1.0)
-        @test get_class_counts(y, ratios; reference="minority") ==
-            Dict(0=>4, 2=>2, 3=>2, 1=>1)
+        ratios = Dict(0 => 2.0, 1 => 0.5, 2 => 1.0, 3 => 1.0)
+        @test get_class_counts(y, ratios; reference = "minority") ==
+              Dict(0 => 4, 2 => 2, 3 => 2, 1 => 1)
     end
 
     @testset "testing undersample float ratio" begin
         # minority has 2 observations:
         y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3]
-        get_class_counts(y, 0.5; reference="minority") == Dict(0=>1, 2=>1, 3=>1, 1=>2)
+        get_class_counts(y, 0.5; reference = "minority") ==
+        Dict(0 => 1, 2 => 1, 3 => 1, 1 => 2)
     end
 
     @testset "invalid ratio warning" begin
         @test_logs (:warn, WRN_OVERSAMPLE(3.0, 3, 3, 1.5)) begin
             # minority classes have 2 observations:
             y = [0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 3]
-            get_class_counts(y, 3.0; reference="minority")
+            get_class_counts(y, 3.0; reference = "minority")
         end
     end
 end
@@ -77,7 +77,6 @@ end
     @test randcols(rng, X) in [[1, 3, 5], [2, 4, 6]]
 end
 
-
 @testset "randcols" begin
     rng = StableRNG(1234)
     X = [1 2; 3 4; 5 6]
@@ -85,13 +84,10 @@ end
     @test randcols(rng, X, 2)[:, 2] in [[1, 3, 5], [2, 4, 6]]
 end
 
-
 @testset "group_inds" begin
     categorical_array = ["a", "b", "a", "c", "b"]
     @test group_inds(categorical_array) == Dict("a" => [1, 3], "b" => [2, 5], "c" => [4])
 end
-
-
 
 # compare rng_handler(rng::Integer) = Imbalance.XoshiroOrMT(Integer) with rng_handler(rng::AbstractRNG) = rng
 @testset "rng_handler" begin

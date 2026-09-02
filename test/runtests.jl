@@ -26,94 +26,85 @@ include("test_utils.jl")
 
 # For CI, set the following flag to `true`:
 offline_python_test = true
-offline_python_test && @info "Comparing with saved python model outcomes in some tests. "*
-    "For live comparisons, set `offline_python_test=false` in runtests.jl. "
+offline_python_test && @info "Comparing with saved python model outcomes in some tests. " *
+      "For live comparisons, set `offline_python_test=false` in runtests.jl. "
 
 ### general
 
 @testset "class_counts" begin
-	include("class_counts.jl")
+    include("class_counts.jl")
 end
 
 @testset "table_wrappers" begin
-	include("table_wrappers.jl")
+    include("table_wrappers.jl")
 end
 
 @testset "generic_resample" begin
-	include("generic_resample.jl")
+    include("generic_resample.jl")
 end
 
 @testset "extras" begin
-	include("extras.jl")
+    include("extras.jl")
 end
-
 
 @testset "distance metrics" begin
-	include("distance_metrics.jl")
+    include("distance_metrics.jl")
 end
-
-
 
 ### interfaces
 
 @testset "MLJ Interface" begin
-	include("interfaces/mlj_interface.jl")
+    include("interfaces/mlj_interface.jl")
 end
 
 @testset "tabletransforms" begin
-	include("interfaces/tabletr_interface.jl")
+    include("interfaces/tabletr_interface.jl")
 end
-
-
 
 ### oversampling
 
 @testset "Basic Random Oversampler" begin
-	include("oversampling/random_oversample.jl")
+    include("oversampling/random_oversample.jl")
 end
 
 @testset "Random Walk Oversampling" begin
-	include("oversampling/random_walk.jl")
+    include("oversampling/random_walk.jl")
 end
 
 @testset "ROSE" begin
-	include("oversampling/rose.jl")
+    include("oversampling/rose.jl")
 end
 
 @testset "SMOTE" begin
-	include("oversampling/smote.jl")
+    include("oversampling/smote.jl")
 end
 
 @testset "BorderlineSMOTE1" begin
-	include("oversampling/borderline_smote1.jl")
+    include("oversampling/borderline_smote1.jl")
 end
 
-
 @testset "SMOTEN" begin
-	include("oversampling/smoten.jl")
+    include("oversampling/smoten.jl")
 end
 
 @testset "SMOTENC" begin
-	include("oversampling/smotenc.jl")
+    include("oversampling/smotenc.jl")
 end
-
 
 ### undersampling
 
 @testset "Basic Random Undersampler" begin
-	include("undersampling/random_undersample.jl")
+    include("undersampling/random_undersample.jl")
 end
 
 @testset "ENN Undersampler" begin
-	include("undersampling/enn_undersample.jl")
+    include("undersampling/enn_undersample.jl")
 end
 
 @testset "Tomek Undersampler" begin
-	include("undersampling/tomek_undersample.jl")
+    include("undersampling/tomek_undersample.jl")
 end
-
 
 @testset "Cluster Undersampler" begin
-	include("undersampling/cluster_undersample.jl")
+    include("undersampling/cluster_undersample.jl")
 end
-

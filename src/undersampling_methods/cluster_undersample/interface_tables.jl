@@ -1,6 +1,11 @@
 ### Cluster Undersampling TableTransforms Interface
 # interface struct
-struct ClusterUndersampler{T, I<:Integer, S<:AbstractString, R<:Union{AbstractRNG, Integer}} <: Transform
+struct ClusterUndersampler{
+    T,
+    I <: Integer,
+    S <: AbstractString,
+    R <: Union{AbstractRNG, Integer},
+} <: Transform
     y_ind::I
     mode::S
     ratios::T

@@ -3,7 +3,6 @@ This file defines the `tablify` method which is used by all the oversampling met
 to convert functions that operate on matrices to functions that operate on tables.
 """
 
-
 """
 Takes a table and returns a matrix and the column names of the table.
 
@@ -75,7 +74,7 @@ function tablify(
         matrix_func(Xm, y, inds; kwargs...)
 
     # 4. Transform back to table
-    Xover =  (; zip(names, eachcol(Xover))...)
+    Xover = (; zip(names, eachcol(Xover))...)
 
     # 5. Decode if needed
     Xover = decode_func(Xover, decode_dict)
@@ -85,7 +84,6 @@ function tablify(
 
     return Xover, yover
 end
-
 
 """
 Overloads `tablify` to work with inputs where the label is one of the table columns.
@@ -124,7 +122,7 @@ function tablify(
     Xyover = hcat(Xover[:, 1:y_ind-1], yover, Xover[:, y_ind:end])
 
     # 6. Transform back to table
-    Xyover =  (; zip(names, eachcol(Xyover))...)
+    Xyover = (; zip(names, eachcol(Xyover))...)
 
     # 7. Decode if needed
     Xyover = decode_func(Xyover, decode_dict)
@@ -134,7 +132,6 @@ function tablify(
 
     return Xyover
 end
-
 
 """
 A function to revert oversampling by simply removing the synthetic examples. Used

@@ -108,46 +108,51 @@ julia> X
 function generate_imbalanced_data(
     num_rows::Integer,
     num_continuous_feats::Integer;
-    means=nothing,
-    min_sep::AbstractFloat=1.0,
-    stds=nothing,
+    means = nothing,
+    min_sep::AbstractFloat = 1.0,
+    stds = nothing,
     num_vals_per_category::AbstractVector = [],
     class_probs::AbstractVector{<:AbstractFloat} = [0.8, 0.2],
     type::AbstractString = "ColTable",
-    insert_y= nothing,
+    insert_y = nothing,
     rng::Union{AbstractRNG, Integer} = default_rng(),
 )
     rng = rng_handler(rng)
-    
+
     # Generate y as a categorical array with classes 0, 1, 2, ..., k-1
     cum_class_probs = cumsum(class_probs)
     rands = rand(rng, num_rows)
-    y = CategoricalArray([findfirst(x -> rands[i] <= x, cum_class_probs) - 1 for i in 1:num_rows])
+    y = CategoricalArray([
+        findfirst(x -> rands[i] <= x, cum_class_probs) - 1 for i in 1:num_rows
+    ])
 
     # if no continuous features, go for an integer matrix
     if num_continuous_feats > 0
         Xc = Matrix{Float64}(undef, num_rows, num_continuous_feats)
         # set the previous means to -∞ so min_sep is satisfied for first random selection
-        μ_prevs =  [[-Inf for i in 1:num_continuous_feats]']
+        μ_prevs = [[-Inf for i in 1:num_continuous_feats]']
         # for each class generate data following means[i], stds[i] or randomly choose them
         for i in eachindex(class_probs)
             t = 1                   # will help min_sep be sastisfied
-            if isnothing(means) 
+            if isnothing(means)
                 # choose a random μ to satisfy min_sep
-                μ = rand(rng, num_continuous_feats)' 
-                while  any([sqrt(sum((μ-μ_prev).^2)) < min_sep for μ_prev in μ_prevs])
+                μ = rand(rng, num_continuous_feats)'
+                while any([sqrt(sum((μ - μ_prev) .^ 2)) < min_sep for μ_prev in μ_prevs])
                     μ = rand(rng, num_continuous_feats)' * ℯ^0.5t
-                    t+=1
+                    t += 1
                 end
-                push!(μ_prevs, μ) 
+                push!(μ_prevs, μ)
             else
                 μ = means[i]
             end
-            σ = isnothing(stds) ? rand(rng, num_continuous_feats)' * 0.3 :
-            stds[i]
+            σ = isnothing(stds) ? rand(rng, num_continuous_feats)' * 0.3 : stds[i]
             # put the generated data at the corresponding indices to y
-            class_inds = BitVector(y .== (i-1))
-            Xc[class_inds, :] = round.((randn(rng, sum(class_inds), num_continuous_feats) .* σ) .+ μ, digits=3)
+            class_inds = BitVector(y .== (i - 1))
+            Xc[class_inds, :] =
+                round.(
+                    (randn(rng, sum(class_inds), num_continuous_feats) .* σ) .+ μ,
+                    digits = 3,
+                )
         end
     else
         Xc = Matrix{Int64}(undef, num_rows, 0)
@@ -224,7 +229,7 @@ function checkbalance(y; ref = "majority")
     ref_class_count =
         (ref == "majority") ? maximum(values(counts)) : minimum(values(counts))
     majority_class_count = maximum(values(counts))      # in call cases, longer bar for max
-    longest_label_length = maximum(length.(string.(keys(counts))))  
+    longest_label_length = maximum(length.(string.(keys(counts))))
 
     for (key, count) in sorted_counts
         percentage = round(100 * count / ref_class_count, digits = 1)

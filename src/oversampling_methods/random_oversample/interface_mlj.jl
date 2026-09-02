@@ -1,7 +1,7 @@
 
 ### RandomOversampler with MLJ Interface
 # interface struct
-mutable struct RandomOversampler{T,R<:Union{Integer,AbstractRNG}} <: Static
+mutable struct RandomOversampler{T, R <: Union{Integer, AbstractRNG}} <: Static
     ratios::T
     rng::R
     try_preserve_type::Bool
@@ -11,8 +11,9 @@ end;
 Initiate a random oversampling model with the given hyper-parameters.
 """
 function RandomOversampler(;
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = default_rng(), try_preserve_type::Bool = true
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = default_rng(),
+    try_preserve_type::Bool = true,
 ) where {T}
     model = RandomOversampler(ratios, rng, try_preserve_type)
     return model
@@ -22,46 +23,44 @@ end
 Oversample data X, y using ROSE
 """
 function MMI.transform(r::RandomOversampler, _, X, y)
-    random_oversample(X, y; ratios = r.ratios, rng = r.rng, 
-                      try_preserve_type = r.try_preserve_type)
+    return random_oversample(
+        X,
+        y;
+        ratios = r.ratios,
+        rng = r.rng,
+        try_preserve_type = r.try_preserve_type,
+    )
 end
 function MMI.transform(r::RandomOversampler, _, X::AbstractMatrix{<:Real}, y)
-  random_oversample(X, y; ratios = r.ratios, rng = r.rng)
+    return random_oversample(X, y; ratios = r.ratios, rng = r.rng)
 end
 
 MMI.metadata_pkg(
-  RandomOversampler,
-  name = "Imbalance",
-  package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
-  package_url = "https://github.com/JuliaAI/Imbalance.jl",
-  is_pure_julia = true,
+    RandomOversampler,
+    name = "Imbalance",
+    package_uuid = "c709b415-507b-45b7-9a3d-1767c89fde68",
+    package_url = "https://github.com/JuliaAI/Imbalance.jl",
+    is_pure_julia = true,
 )
 
 MMI.metadata_model(
-  RandomOversampler,
+    RandomOversampler,
     input_scitype = Tuple{
-                        Union{
-                            Table(Union{Infinite, Finite}),
-                            AbstractMatrix{Infinite}
-                        }, 
-                        AbstractVector
-                    },
-    output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Union{Infinite, Finite}), AbstractMatrix{Infinite}},
+        AbstractVector,
     },
-  load_path = "Imbalance.MLJ.RandomOversampler" 
+    output_scitype = Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
+    },
+    load_path = "Imbalance.MLJ.RandomOversampler",
 )
 function MMI.transform_scitype(s::RandomOversampler)
-  return Tuple{
-      Union{Table(Continuous),AbstractMatrix{Continuous}},
-      AbstractVector{<:Finite},
-  }
+    return Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector{<:Finite},
+    }
 end
-
 
 """
 $(MMI.doc_header(RandomOversampler))

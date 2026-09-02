@@ -19,7 +19,11 @@ as any column with the scitype `Multiclass` or `OrderedFactor`.
 - `cat_inds`: A vector with the indices of the categorical columns
 
 """
-function generic_encoder(X; error_checker=(args...)->nothing, return_cat_inds::Bool = false)
+function generic_encoder(
+    X;
+    error_checker = (args...) -> nothing,
+    return_cat_inds::Bool = false,
+)
     # 1. Find the categorical and continuous columns
     types = ScientificTypes.schema(X).scitypes
     cat_inds = findall(x -> x <: Finite, types)
@@ -27,8 +31,8 @@ function generic_encoder(X; error_checker=(args...)->nothing, return_cat_inds::B
     error_checker(length(types), cat_inds, cont_inds, types)
 
     # 2. Setup the encode and decode transforms for categotical columns
-    encode_dict = Dict{Int,Function}()
-    decode_dict = Dict{Int,Function}()
+    encode_dict = Dict{Int, Function}()
+    decode_dict = Dict{Int, Function}()
 
     columns = Tables.columns(X)
     for c in cat_inds
@@ -45,7 +49,6 @@ function generic_encoder(X; error_checker=(args...)->nothing, return_cat_inds::B
     !return_cat_inds && return Xenc, decode_dict, nothing
     return Xenc, decode_dict, cat_inds
 end
-
 
 """
 Decode the label encoded categorical columns of a table.

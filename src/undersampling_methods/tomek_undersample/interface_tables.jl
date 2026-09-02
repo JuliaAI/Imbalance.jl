@@ -1,6 +1,6 @@
 ### Tomek Undersampling TableTransforms Interface
 # interface struct
-struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}, I<:Integer} <: Transform
+struct TomekUndersampler{T, R <: Union{Integer, AbstractRNG}, I <: Integer} <: Transform
     y_ind::I
     min_ratios::T
     force_min_ratios::Bool

@@ -55,20 +55,14 @@ MMI.metadata_pkg(
 MMI.metadata_model(
     TomekUndersampler,
     input_scitype = Tuple{
-                        Union{
-                            Table(Continuous),
-                            AbstractMatrix{Continuous}
-                        }, 
-                        AbstractVector
-                    },
-    output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
     },
-    load_path = "Imbalance.MLJ.TomekUndersampler"
+    output_scitype = Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
+    },
+    load_path = "Imbalance.MLJ.TomekUndersampler",
 )
 function MMI.transform_scitype(s::TomekUndersampler)
     return Tuple{
