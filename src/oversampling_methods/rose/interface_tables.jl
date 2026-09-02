@@ -1,7 +1,8 @@
 ### ROSE TableTransforms Interface
 ## Wrap all of this in a TableTransforms module and then can use ROSE 
 
-struct ROSE{T,R<:Union{Integer,AbstractRNG}, I<:Integer, F<:AbstractFloat} <: TransformsBase.Transform
+struct ROSE{T, R <: Union{Integer, AbstractRNG}, I <: Integer, F <: AbstractFloat} <:
+       TransformsBase.Transform
     y_ind::I
     s::F
     ratios::T
@@ -9,25 +10,20 @@ struct ROSE{T,R<:Union{Integer,AbstractRNG}, I<:Integer, F<:AbstractFloat} <: Tr
     try_preserve_type::Bool
 end
 
-
-
-
 """
 Instantiate a ROSE table transform
 """
 ROSE(
     y_ind::Integer;
     s::AbstractFloat = 1.0,
-    ratios::Union{Nothing,AbstractFloat,Dict{T,<:AbstractFloat}} = 1.0,
-    rng::Union{Integer,AbstractRNG} = 123,
-    try_preserve_type::Bool = true
+    ratios::Union{Nothing, AbstractFloat, Dict{T, <:AbstractFloat}} = 1.0,
+    rng::Union{Integer, AbstractRNG} = 123,
+    try_preserve_type::Bool = true,
 ) where {T} = ROSE(y_ind, s, ratios, rng, try_preserve_type)
-
 
 TransformsBase.isrevertible(::Type{ROSE}) = true
 
 TransformsBase.isinvertible(::Type{ROSE}) = false
-
 
 """
 Apply the ROSE transform to a table Xy
@@ -44,8 +40,14 @@ Apply the ROSE transform to a table Xy
 """
 
 function TransformsBase.apply(r::ROSE, Xy)
-    Xyover = rose(Xy, r.y_ind; s = r.s, ratios = r.ratios, rng = r.rng, 
-                  try_preserve_type = r.try_preserve_type)
+    Xyover = rose(
+        Xy,
+        r.y_ind;
+        s = r.s,
+        ratios = r.ratios,
+        rng = r.rng,
+        try_preserve_type = r.try_preserve_type,
+    )
     cache = rowcount(Xy)
     return Xyover, cache
 end

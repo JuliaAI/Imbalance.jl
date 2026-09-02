@@ -61,21 +61,21 @@ function borderline_smote1_per_class(
     # Build KDTree for KNN
     tree = KDTree(X)
     knn_map, _ = knn(tree, X, k + 1, true)
-    
+
     # get class filter (borderline points)
-    class_filter = filter[inds]         
-    sum(class_filter) == 0 && (@warn WRN_NO_BORDERLINE_CLASS; return Array{Float64}(undef, size(X, 1), 0))
+    class_filter = filter[inds]
+    sum(class_filter) == 0 &&
+        (@warn WRN_NO_BORDERLINE_CLASS; return Array{Float64}(undef, size(X, 1), 0))
 
     # Generate n new observations
     Xnew = zeros(Float32, size(X, 1), n)
     p = Progress(n)
-    for i=1:n
+    for i in 1:n
         Xnew[:, i] = generate_new_borderline_smote1_point(X, knn_map, class_filter; rng)
         next!(p)
     end
     return Xnew
 end
-
 
 """
 This function is only called when N>1 and checks whether 0<m<N or not. If m<0, it throws an error.
@@ -111,7 +111,7 @@ Compute a boolean filter according to filter (X, y) points that satisfy the Bord
 # Returns
 - A boolean filter that can be used to filter the data to remove the points violating the BorderlineSMOTE1 condition.
 """
-function borderline1_filter(X, y; m=5, verbosity=1)
+function borderline1_filter(X, y; m = 5, verbosity = 1)
     m = check_m(m, length(y))
     tree = BallTree(X)
     knn_map, _ = knn(tree, X, m + 1, true)
@@ -122,7 +122,7 @@ function borderline1_filter(X, y; m=5, verbosity=1)
     for i in eachindex(y)
         num_friendly_neighbors = sum(knn_matrix_labels[:, i] .== y[i])
         # borderline_smote1 condition
-        bool_filter[i] = 0 < num_friendly_neighbors  <= m/2
+        bool_filter[i] = 0 < num_friendly_neighbors <= m / 2
     end
     y1 = y[bool_filter]
     y1_stats = match(r"\((.*?)\)", string(countmap(y1))).captures[1]
@@ -130,7 +130,6 @@ function borderline1_filter(X, y; m=5, verbosity=1)
     length(y1) == 0 && throw((ERR_NO_BORDERLINE))
     return BitVector(bool_filter)
 end
-
 
 """
     borderline_smote1(
@@ -252,20 +251,30 @@ A full basic example along with an animation can be found [here](https://githubt
     In D.S. Huang, X.-P. Zhang, & G.-B. Huang (Eds.), Advances in Intelligent Computing (pp. 878-887). Springer. 
 """
 function borderline_smote1(
-	X::AbstractMatrix{<:AbstractFloat},
-	y::AbstractVector;
+    X::AbstractMatrix{<:AbstractFloat},
+    y::AbstractVector;
     m::Integer = 5,
-	k::Integer = 5,
-	ratios = 1.0,
-	rng::Union{AbstractRNG, Integer} = default_rng(),
+    k::Integer = 5,
+    ratios = 1.0,
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
-    verbosity::Integer = 1
+    verbosity::Integer = 1,
 )
     # this function is a variation on generic_oversampling to use in borderline smote
     rng = rng_handler(rng)
     X = transpose(X)
     filter = borderline1_filter(X, y; m, verbosity)
-    Xover, yover = generic_oversample(X, y, borderline_smote1_per_class, filter; pass_inds=true, is_transposed=true, k, ratios, rng)
+    Xover, yover = generic_oversample(
+        X,
+        y,
+        borderline_smote1_per_class,
+        filter;
+        pass_inds = true,
+        is_transposed = true,
+        k,
+        ratios,
+        rng,
+    )
     return Xover, yover
 end
 
@@ -278,9 +287,19 @@ function borderline_smote1(
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
-    verbosity::Integer = 1
+    verbosity::Integer = 1,
 )
-    Xover, yover = tablify(borderline_smote1, X, y; try_preserve_type=try_preserve_type,  m, k, ratios, rng, verbosity)
+    Xover, yover = tablify(
+        borderline_smote1,
+        X,
+        y;
+        try_preserve_type = try_preserve_type,
+        m,
+        k,
+        ratios,
+        rng,
+        verbosity,
+    )
     return Xover, yover
 end
 
@@ -293,8 +312,18 @@ function borderline_smote1(
     ratios = 1.0,
     rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
-    verbosity::Integer = 1
+    verbosity::Integer = 1,
 )
-    Xyover = tablify(borderline_smote1, Xy, y_ind; try_preserve_type=try_preserve_type, m, k, ratios, rng, verbosity)
+    Xyover = tablify(
+        borderline_smote1,
+        Xy,
+        y_ind;
+        try_preserve_type = try_preserve_type,
+        m,
+        k,
+        ratios,
+        rng,
+        verbosity,
+    )
     return Xyover
 end

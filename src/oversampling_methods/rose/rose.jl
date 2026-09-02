@@ -24,7 +24,7 @@ function rose_per_class(
     # compute the standard deviation feature-wise
     σs = vec(std(X, dims = 2))
     # compute h and then H as in the paper
-    d = size(X, 1)  
+    d = size(X, 1)
     N = size(X, 2)
     h = (4 / ((d + 2) * N))^(1 / (d + 4))
     # make a diagonal matrix of the result
@@ -164,14 +164,14 @@ function rose(
     y::AbstractVector;
     s::AbstractFloat = 1.0,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
     if s < 0.0
         throw((ERR_NEG_S(s)))
     end
     rng = rng_handler(rng)
-    Xover, yover = generic_oversample(X, y, rose_per_class; s, ratios, rng,)
+    Xover, yover = generic_oversample(X, y, rose_per_class; s, ratios, rng)
     return Xover, yover
 end
 
@@ -181,11 +181,11 @@ function rose(
     y::AbstractVector;
     s::AbstractFloat = 1.0,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
-    try_preserve_type::Bool = true
+    rng::Union{AbstractRNG, Integer} = default_rng(),
+    try_preserve_type::Bool = true,
 )
-    Xover, yover = tablify(rose, X, y; try_preserve_type=try_preserve_type, s, ratios, rng, 
-                           )
+    Xover, yover =
+        tablify(rose, X, y; try_preserve_type = try_preserve_type, s, ratios, rng)
     return Xover, yover
 end
 
@@ -195,8 +195,8 @@ function rose(
     y_ind::Integer;
     s::AbstractFloat = 1.0,
     ratios = 1.0,
-    rng::Union{AbstractRNG,Integer} = default_rng(),
+    rng::Union{AbstractRNG, Integer} = default_rng(),
     try_preserve_type::Bool = true,
 )
-    return tablify(rose, Xy, y_ind;try_preserve_type=try_preserve_type,  s, ratios, rng)
+    return tablify(rose, Xy, y_ind; try_preserve_type = try_preserve_type, s, ratios, rng)
 end

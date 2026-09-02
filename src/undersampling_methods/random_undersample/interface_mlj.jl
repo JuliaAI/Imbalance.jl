@@ -32,12 +32,7 @@ function MMI.transform(r::RandomUndersampler, _, X, y)
     )
 end
 function MMI.transform(r::RandomUndersampler, _, X::AbstractMatrix{<:Real}, y)
-    return random_undersample(
-        X,
-        y;
-        ratios = r.ratios,
-        rng = r.rng,
-    )
+    return random_undersample(X, y; ratios = r.ratios, rng = r.rng)
 end
 
 MMI.metadata_pkg(
@@ -51,20 +46,14 @@ MMI.metadata_pkg(
 MMI.metadata_model(
     RandomUndersampler,
     input_scitype = Tuple{
-                        Union{
-                            Table(Union{Infinite, Finite}),
-                            AbstractMatrix{Infinite}
-                        }, 
-                        AbstractVector
-                    },
-    output_scitype = Tuple{
-        Union{
-            Table(Continuous),
-            AbstractMatrix{Continuous}
-        }, 
-        AbstractVector
+        Union{Table(Union{Infinite, Finite}), AbstractMatrix{Infinite}},
+        AbstractVector,
     },
-    load_path = "Imbalance.MLJ.RandomUndersampler"
+    output_scitype = Tuple{
+        Union{Table(Continuous), AbstractMatrix{Continuous}},
+        AbstractVector,
+    },
+    load_path = "Imbalance.MLJ.RandomUndersampler",
 )
 function MMI.transform_scitype(s::RandomUndersampler)
     return Tuple{

@@ -5,8 +5,6 @@ struct EuclideanWithPenalty <: Metric
     cat_inds::AbstractVector{<:Int}
 end
 
-
-
 """
 This overloads the `evaluate` function of the `Metric` struct to use the modified
 distance metric which adds a penalty for each pair of corresponding categorical
