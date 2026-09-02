@@ -98,7 +98,7 @@ template = """
 ```"""
 
 
-output_filename = "./src/examples.md"
+output_filename = joinpath(@__DIR__, "src", "examples.md")
 open(output_filename, "w") do io
     write(io, template)
 end
